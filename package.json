@@ -18,6 +18,8 @@
     "electron": "electron ."
   },
   "devDependencies": {
-    "electron": "^1.7.6"
+    "electron": "^1.7.6",
+    "react": "^15.6.1",
+    "react-redux": "^5.0.6"
   }
 }
