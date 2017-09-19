@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "electron": "^1.7.6",
+    "jsondiffpatch": "^0.2.4",
     "react": "^15.6.1",
     "react-redux": "^5.0.6"
   }

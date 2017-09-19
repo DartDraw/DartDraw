@@ -1,19 +1,20 @@
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
 import Canvas from './Canvas';
-import { addShape } from './actions';
+import * as actions from './actions';
 
 const mapStateToProps = (state) => {
-    return {
-        drawingArray: state.drawingArray
+  const zIndexedShapeIds = state.zIndexedShapeIds.map(function(id) {
+    return state.drawing[id]
+  });
+
+  return {
+        zIndexedShapeIds: zIndexedShapeIds
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-        onCanvasClick: (shape) => {
-            dispatch(addShape(shape));
-        }
-    };
+    return { actions: bindActionCreators(actions, dispatch) };
 };
 
 export default connect(
