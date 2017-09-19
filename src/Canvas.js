@@ -5,8 +5,7 @@ import Shape from './Shape';
 
 class Canvas extends Component {
     static propTypes = {
-        drawingArray: PropTypes.array,
-        onCanvasClick: PropTypes.func
+        zIndexedShapeIds: PropTypes.array,
     };
 
     constructor(props) {
@@ -18,7 +17,7 @@ class Canvas extends Component {
 
     handleCanvasClick(e) {
         const { offsetX, offsetY } = e.nativeEvent;
-        this.props.onCanvasClick({
+        this.props.actions.addShape({
             height: 50,
             width: 50,
             x: offsetX,
@@ -27,8 +26,8 @@ class Canvas extends Component {
     }
 
     renderDrawing() {
-        const { drawingArray } = this.props;
-        return drawingArray.map(function(shape) {
+        const { zIndexedShapeIds } = this.props;
+        return zIndexedShapeIds.map(function(shape) {
             return (
                 <Shape
                     width={shape.width}
@@ -44,9 +43,13 @@ class Canvas extends Component {
 
     render() {
         return (
-            <svg className="Canvas" height="900" width="1200" onClick={this.handleCanvasClick}>
-                {this.renderDrawing()}
-            </svg>
+            <div>
+              <button onClick={this.props.actions.undo}>UNDO</button>
+              <button onClick={this.props.actions.redo}>REDO</button>
+              <svg className="Canvas" height="900" width="1200" onClick={this.handleCanvasClick}>
+                  {this.renderDrawing()}
+              </svg>
+            </div>
         );
     }
 }
