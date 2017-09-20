@@ -37,13 +37,15 @@ function undo(state) {
     updatedState.past = updatedState.past.slice();
     const delta = updatedState.past.pop();
 
-    const newState = jsondiffpatch.create().unpatch(updatedState, delta);
-    updatedState.drawing = newState.drawing;
-    updatedState.zIndexedShapeIds = newState.zIndexedShapeIds;
-    updatedState.nextShapeId = newState.nextShapeId;
+    if (typeof (delta) !== 'undefined') {
+        const newState = jsondiffpatch.create().unpatch(updatedState, delta);
+        updatedState.drawing = newState.drawing;
+        updatedState.zIndexedShapeIds = newState.zIndexedShapeIds;
+        updatedState.nextShapeId = newState.nextShapeId;
 
-    updatedState.future = updatedState.future.slice();
-    updatedState.future.push(delta);
+        updatedState.future = updatedState.future.slice();
+        updatedState.future.push(delta);
+    }
 
     return updatedState;
 }
@@ -54,13 +56,15 @@ function redo(state) {
     updatedState.future = updatedState.future.slice();
     const delta = updatedState.future.pop();
 
-    const newState = jsondiffpatch.create().patch(updatedState, delta);
-    updatedState.drawing = newState.drawing;
-    updatedState.zIndexedShapeIds = newState.zIndexedShapeIds;
-    updatedState.nextShapeId = newState.nextShapeId;
+    if (typeof (delta) !== 'undefined') {
+        const newState = jsondiffpatch.create().patch(updatedState, delta);
+        updatedState.drawing = newState.drawing;
+        updatedState.zIndexedShapeIds = newState.zIndexedShapeIds;
+        updatedState.nextShapeId = newState.nextShapeId;
 
-    updatedState.past = updatedState.past.slice();
-    updatedState.past.push(delta);
+        updatedState.past = updatedState.past.slice();
+        updatedState.past.push(delta);
+    }
 
     return updatedState;
 }
