@@ -1,28 +1,26 @@
 import * as actions from './../actions/actions';
 import jsondiffpatch from 'jsondiffpatch';
+import guid from 'guid';
 
 const initialState = {
     drawing: {},
     zIndexedShapeIds: [],
-    nextShapeId: 0, // replace with guid
     past: [],
     future: []
 };
 
 function addShape(state, action) {
     // Create a copy of the drawing and then add the new shape:
-    const currentState = Object.assign({}, state);
     const updatedState = Object.assign({}, state);
-    action.shape.id = currentState.nextShapeId;
-    updatedState.drawing[currentState.nextShapeId] = action.shape;
+    action.shape.id = guid.create();
+    updatedState.drawing[action.shape.id] = action.shape;
 
     // add the new shape:
     updatedState.zIndexedShapeIds = updatedState.zIndexedShapeIds.slice();
-    updatedState.zIndexedShapeIds.push(currentState.nextShapeId);
-    updatedState.nextShapeId = currentState.nextShapeId + 1;
+    updatedState.zIndexedShapeIds.push(action.shape.id);
 
     // get the diff
-    const delta = jsondiffpatch.create().diff(currentState, updatedState);
+    const delta = jsondiffpatch.create().diff(state, updatedState);
 
     updatedState.future = [];
     updatedState.past = updatedState.past.slice();
@@ -41,7 +39,6 @@ function undo(state) {
         const newState = jsondiffpatch.create().unpatch(updatedState, delta);
         updatedState.drawing = newState.drawing;
         updatedState.zIndexedShapeIds = newState.zIndexedShapeIds;
-        updatedState.nextShapeId = newState.nextShapeId;
 
         updatedState.future = updatedState.future.slice();
         updatedState.future.push(delta);
@@ -60,7 +57,6 @@ function redo(state) {
         const newState = jsondiffpatch.create().patch(updatedState, delta);
         updatedState.drawing = newState.drawing;
         updatedState.zIndexedShapeIds = newState.zIndexedShapeIds;
-        updatedState.nextShapeId = newState.nextShapeId;
 
         updatedState.past = updatedState.past.slice();
         updatedState.past.push(delta);

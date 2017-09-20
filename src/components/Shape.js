@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 class Shape extends Component {
     static propTypes = {
-        id: PropTypes.number,
+        id: PropTypes.object,
         width: PropTypes.number,
         height: PropTypes.number,
         x: PropTypes.number,
