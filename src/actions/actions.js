@@ -1,16 +1,31 @@
-export const ADD_SHAPE = 'ADD_SHAPE';
-export const ADD_ACTION = 'ADD_ACTION';
-export const UNDO = 'UNDO';
-export const REDO = 'REDO';
+export const UNDO_CLICK = 'UNDO_CLICK';
+export const REDO_CLICK = 'REDO_CLICK';
+export const SELECT = 'SELECT';
 
-export function addShape(shape) {
-    return { type: ADD_SHAPE, shape };
+export function undoClick(shape) {
+    return { type: UNDO_CLICK, shape };
 }
 
-export function undo(shape) {
-    return { type: UNDO, shape };
+export function redoClick() {
+    return { type: REDO_CLICK };
 }
 
-export function redo() {
-    return { type: REDO };
+export function select(id) {
+    return { type: SELECT, id };
+}
+
+export const CANVAS_DRAG = 'CANVAS_DRAG';
+export const CANVAS_DRAG_START = 'CANVAS_DRAG_START';
+export const CANVAS_DRAG_STOP = 'CANVAS_DRAG_STOP';
+
+export function canvasDrag(shape) {
+    return { type: CANVAS_DRAG, shape };
+}
+
+export function canvasDragStart(shape) {
+    return { type: CANVAS_DRAG_START, shape };
+}
+
+export function canvasDragStop() {
+    return { type: CANVAS_DRAG_STOP };
 }

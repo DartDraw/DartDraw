@@ -6,8 +6,9 @@ import registerServiceWorker from './registerServiceWorker';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import DartDraw from './reducers/reducer';
-let store = createStore(DartDraw);
+import reducer from './reducers/index';
+
+let store = createStore(reducer);
 
 ReactDOM.render(
     <Provider store={store}>

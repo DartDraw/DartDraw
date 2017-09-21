@@ -1,14 +1,16 @@
 import { connect } from 'react-redux';
 import Canvas from './Canvas';
 import {
-    undo,
-    redo,
-    addShape
+    undoClick,
+    redoClick,
+    canvasDragStart,
+    canvasDrag,
+    canvasDragStop
 } from './../../actions/actions';
 
 const mapStateToProps = (state) => {
-    const shapes = state.zIndexedShapeIds.map(function(id) {
-        return state.drawing[id];
+    const shapes = state.drawingState.zIndexedShapeIds.map(function(id) {
+        return state.drawingState.drawing[id];
     });
 
     return {
@@ -18,14 +20,20 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onCanvasClick: (shape) => {
-            dispatch(addShape(shape));
+        onCanvasDragStart: ({x, y}) => {
+            dispatch(canvasDragStart({x, y}));
+        },
+        onCanvasDrag: ({mouseDownPositionX, mouseDownPositionY, moveDeltaX, moveDeltaY}) => {
+            dispatch(canvasDrag({mouseDownPositionX, mouseDownPositionY, moveDeltaX, moveDeltaY}));
+        },
+        onCanvasDragStop: ({mouseDownPositionX, mouseDownPositionY, moveDeltaX, moveDeltaY}) => {
+            dispatch(canvasDragStop());
         },
         onUndoClick: () => {
-            dispatch(undo());
+            dispatch(undoClick());
         },
         onRedoClick: () => {
-            dispatch(redo());
+            dispatch(redoClick());
         }
     };
 };

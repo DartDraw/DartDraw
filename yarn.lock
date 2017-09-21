@@ -5339,6 +5339,10 @@ rc@^1.0.1, rc@^1.1.2, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-clickdrag@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/react-clickdrag/-/react-clickdrag-3.0.2.tgz#54df5f3df6d695c54e9978a08253f83de7611bd2"
+
 react-dev-utils@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-4.0.1.tgz#106ae3d29f811c169d459bb9215a5933b7e11fb6"
