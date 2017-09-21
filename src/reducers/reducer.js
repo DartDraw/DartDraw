@@ -13,6 +13,8 @@ function addShape(state, action) {
     // Create a copy of the drawing and then add the new shape:
     const updatedState = Object.assign({}, state);
     action.shape.id = guid.create();
+
+    updatedState.drawing = Object.assign({}, state.drawing);
     updatedState.drawing[action.shape.id] = action.shape;
 
     // add the new shape:
