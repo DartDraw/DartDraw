@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './../css/Canvas.css';
+import './Canvas.css';
 import Shape from './Shape';
 
 class Canvas extends Component {
     static propTypes = {
-        zIndexedShapeIds: PropTypes.array,
-        actions: PropTypes.object
+        shapes: PropTypes.array,
+        onCanvasClick: PropTypes.func,
+        onUndoClick: PropTypes.func,
+        onRedoClick: PropTypes.func
     };
 
     constructor(props) {
@@ -14,11 +16,13 @@ class Canvas extends Component {
 
         this.renderDrawing = this.renderDrawing.bind(this);
         this.handleCanvasClick = this.handleCanvasClick.bind(this);
+        this.handleUndoClick = this.handleUndoClick.bind(this);
+        this.handleRedoClick = this.handleRedoClick.bind(this);
     }
 
     handleCanvasClick(e) {
         const { offsetX, offsetY } = e.nativeEvent;
-        this.props.actions.addShape({
+        this.props.onCanvasClick({
             height: 50,
             width: 50,
             x: offsetX,
@@ -26,9 +30,17 @@ class Canvas extends Component {
         });
     }
 
+    handleUndoClick() {
+        this.props.onUndoClick();
+    }
+
+    handleRedoClick() {
+        this.props.onRedoClick();
+    }
+
     renderDrawing() {
-        const { zIndexedShapeIds } = this.props;
-        return zIndexedShapeIds.map(function(shape) {
+        const { shapes } = this.props;
+        return shapes.map(function(shape) {
             return (
                 <Shape
                     width={shape.width}
@@ -45,8 +57,8 @@ class Canvas extends Component {
     render() {
         return (
             <div>
-                <button onClick={this.props.actions.undo}>UNDO</button>
-                <button onClick={this.props.actions.redo}>REDO</button>
+                <button onClick={this.handleUndoClick}>UNDO</button>
+                <button onClick={this.handleRedoClick}>REDO</button>
                 <svg className="Canvas" height="900" width="1200" onClick={this.handleCanvasClick}>
                     {this.renderDrawing()}
                 </svg>

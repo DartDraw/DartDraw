@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CanvasContainer from './containers/CanvasContainer.js';
+import { CanvasContainer } from './components/drawing';
 
 class App extends Component {
     render() {
