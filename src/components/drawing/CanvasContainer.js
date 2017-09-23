@@ -7,8 +7,8 @@ import {
 } from './../../actions/actions';
 
 const mapStateToProps = (state) => {
-    const shapes = state.zIndexedShapeIds.map(function(id) {
-        return state.drawing[id];
+    const shapes = state.drawingState.zIndexedShapeIds.map(function(id) {
+        return state.drawingState.drawing[id];
     });
 
     return {
