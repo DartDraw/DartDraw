@@ -5,6 +5,7 @@ import * as undoredo from './functions/undoredo';
 
 const initialState = {
     selected: [],
+    editing: {},
     drawing: {},
     zIndexedShapeIds: [],
     past: [],

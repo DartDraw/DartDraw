@@ -1,4 +1,5 @@
 import guid from 'guid';
+import jsondiffpatch from 'jsondiffpatch';
 
 export function resizeShape(state, action) {
     // Create a copy of the drawing and then add the new shape:
@@ -57,5 +58,26 @@ export function addShape(state, action) {
 }
 
 export function dragRelease(state) {
-    return state;
+    const updatedState = Object.assign({}, state);
+
+    const oldState = Object.assign({}, state);
+    oldState.drawing = Object.assign({}, state.drawing);
+    oldState.zIndexedShapeIds = state.zIndexedShapeIds.slice();
+
+    state.selected.forEach(function(id) {
+        if (typeof (state.editing[id]) !== 'undefined') {
+            oldState.drawing[id] = state.editing[id];
+        } else {
+            delete oldState.drawing[id];
+            const index = oldState.zIndexedShapeIds.indexOf(id);
+            oldState.zIndexedShapeIds.splice(index, 1);
+        }
+    });
+
+    const delta = jsondiffpatch.create().diff(oldState, updatedState);
+    updatedState.future = [];
+    updatedState.past = updatedState.past.slice();
+    updatedState.past.push(delta);
+
+    return updatedState;
 }
