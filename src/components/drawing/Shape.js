@@ -23,18 +23,21 @@ class Shape extends Component {
     }
 
     handleDragStart(e, draggableData) {
+        const { onDragStart } = this.props;
         e.stopPropagation();
-        this.props.onDragStart(draggableData);
+        onDragStart && onDragStart(draggableData);
     }
 
     handleDrag(e, draggableData) {
+        const { id, onDrag } = this.props;
         e.stopPropagation();
-        this.props.onDrag(draggableData);
+        onDrag && onDrag(id, draggableData);
     }
 
     handleDragStop(e, draggableData) {
+        const { id, onDragStop } = this.props;
         e.stopPropagation();
-        this.props.onDragStop();
+        onDragStop && onDragStop(id);
     }
 
     render() {
