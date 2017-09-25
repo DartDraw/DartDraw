@@ -8,21 +8,23 @@ export function resizeShape(state, action) {
     updatedState.drawing = Object.assign({}, state.drawing);
 
     const shape = Object.assign({}, state.drawing[state.selected[0]]);
+    const mouseX = action.shape.x - action.shape.node.getBoundingClientRect().left;
+    const mouseY = action.shape.y - action.shape.node.getBoundingClientRect().top;
 
-    if (action.shape.moveDeltaX > 0) {
-        shape.x = action.shape.mouseDownPositionX;
-        shape.width = action.shape.moveDeltaX;
-    } else {
-        shape.x = action.shape.mouseDownPositionX + action.shape.moveDeltaX;
-        shape.width = -action.shape.moveDeltaX;
+    if (mouseX > shape.originX) {
+        shape.x = shape.originX;
+        shape.width = mouseX - shape.x;
+    } else if (mouseX < shape.originX) {
+        shape.x = mouseX;
+        shape.width = shape.originX - mouseX;
     }
 
-    if (action.shape.moveDeltaY > 0) {
-        shape.y = action.shape.mouseDownPositionY;
-        shape.height = action.shape.moveDeltaY;
-    } else {
-        shape.y = action.shape.mouseDownPositionY + action.shape.moveDeltaY;
-        shape.height = -action.shape.moveDeltaY;
+    if (mouseY > shape.originY) {
+        shape.y = shape.originY;
+        shape.height = mouseY - shape.y;
+    } else if (mouseY < shape.originY) {
+        shape.y = mouseY;
+        shape.height = shape.originY - mouseY;
     }
 
     updatedState.drawing[state.selected[0]] = shape;
@@ -31,10 +33,14 @@ export function resizeShape(state, action) {
 }
 
 function createSquare(shape) {
+    const x = shape.x - shape.node.getBoundingClientRect().left;
+    const y = shape.y - shape.node.getBoundingClientRect().top;
     const newShape = {};
     newShape.id = guid.create();
-    newShape.x = shape.x;
-    newShape.y = shape.y;
+    newShape.originX = x;
+    newShape.originY = y;
+    newShape.x = x;
+    newShape.y = y;
     newShape.width = 0;
     newShape.height = 0;
     return newShape;
