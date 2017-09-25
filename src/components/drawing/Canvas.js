@@ -89,6 +89,7 @@ class Canvas extends Component {
                 <svg className="Canvas" height="900" width="1200">
                     {this.renderDrawing()}
                 </svg>
+                <span>Error message</span>
             </div>
         );
     }
