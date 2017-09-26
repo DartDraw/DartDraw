@@ -24,4 +24,4 @@ class Menu extends Component {
     }
 }
 
-export default clickdrag(Menu);
+export default Menu;

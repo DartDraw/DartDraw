@@ -16,11 +16,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-      onCallAction: ({ userAction }) => {
-        dispatch(actionButtonClick({ userAction }));
+      onCallUserAction: ({ userAction }) => {
+        dispatch(callUserAction({ userAction }));
       },
-      onSelectTool: ({ toolType }) => {
-        dispatch(selectTool({ toolType}));
+      onSelectToolType: ({ toolType }) => {
+        dispatch(selectToolType({ toolType}));
       }
     };
 };

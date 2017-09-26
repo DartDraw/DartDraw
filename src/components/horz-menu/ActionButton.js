@@ -25,4 +25,4 @@ class ActionButton extends Component {
     }
 }
 
-export default clickdrag(Menu);
+export default ActionButton;

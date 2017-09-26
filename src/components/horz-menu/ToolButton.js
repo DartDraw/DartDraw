@@ -22,4 +22,4 @@ class ToolButton extends Component {
     }
 }
 
-export default clickdrag(Menu);
+export default ToolButton;
