@@ -1,0 +1,31 @@
+#top-bar {
+  background-color: #453f50;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  border: none;
+  background-color: rgba(0,0,0,0);
+  height: 40px;
+  width:40px;
+}
+
+button img:hover {
+  color: #605870;
+  background-color: rgba(255, 0, 0, 0);
+}
+
+#button-icon {
+  filter: grayscale(100%);
+}
+
+#button-icon:hover {
+  filter: grayscale(0%);
+}
+
+button:focus > #button-icon {
+  filter: grayscale(0%);
+}

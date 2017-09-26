@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { CanvasContainer } from './components/drawing';
-import { MenuContainer } from './components/menu';
+import { MenuContainer } from './components/horz-menu';
 
 class App extends Component {
     render() {
