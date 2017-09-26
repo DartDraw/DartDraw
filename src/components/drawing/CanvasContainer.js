@@ -20,13 +20,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onCanvasDragStart: ({x, y}) => {
-            dispatch(canvasDragStart({x, y}));
+        onDragStart: ({x, y, node}) => {
+            dispatch(canvasDragStart({x, y, node}));
         },
-        onCanvasDrag: ({mouseDownPositionX, mouseDownPositionY, moveDeltaX, moveDeltaY}) => {
-            dispatch(canvasDrag({mouseDownPositionX, mouseDownPositionY, moveDeltaX, moveDeltaY}));
+        onDrag: ({x, y, deltaX, deltaY, node}) => {
+            dispatch(canvasDrag({x, y, deltaX, deltaY, node}));
         },
-        onCanvasDragStop: ({mouseDownPositionX, mouseDownPositionY, moveDeltaX, moveDeltaY}) => {
+        onDragStop: () => {
             dispatch(canvasDragStop());
         },
         onUndoClick: () => {

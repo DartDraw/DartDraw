@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import clickdrag from 'react-clickdrag';
 import PropTypes from 'prop-types';
+import { DraggableCore } from 'react-draggable';
 import './Canvas.css';
 import Shape from './Shape';
 
@@ -8,9 +8,9 @@ class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
         dataDrag: PropTypes.object,
-        onCanvasDragStart: PropTypes.func,
-        onCanvasDrag: PropTypes.func,
-        onCanvasDragStop: PropTypes.func,
+        onDragStart: PropTypes.func,
+        onDrag: PropTypes.func,
+        onDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func
     };
@@ -19,42 +19,23 @@ class Canvas extends Component {
         super(props);
 
         this.renderDrawing = this.renderDrawing.bind(this);
-        this.handleCanvasDragStart = this.handleCanvasDragStart.bind(this);
-        this.handleCanvasDrag = this.handleCanvasDrag.bind(this);
-        this.handleCanvasDragStop = this.handleCanvasDragStop.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
+        this.handleDragStart = this.handleDragStart.bind(this);
+        this.handleDrag = this.handleDrag.bind(this);
+        this.handleDragStop = this.handleDragStop.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        const dataDrag = this.props.dataDrag;
-        const nextDataDrag = nextProps.dataDrag;
-        if (!dataDrag.isMouseDown && nextDataDrag.isMouseDown) {
-            this.handleCanvasDragStart({
-                x: nextDataDrag.mouseDownPositionX,
-                y: nextDataDrag.mouseDownPositionY
-            });
-        }
-
-        const moveDeltaXChanged = dataDrag.moveDeltaX !== nextDataDrag.moveDeltaX;
-        const moveDeltaYChanged = dataDrag.moveDeltaY !== nextDataDrag.moveDeltaY;
-        if (moveDeltaXChanged && moveDeltaYChanged) {
-            this.handleCanvasDrag(nextDataDrag);
-        } else if (dataDrag.isMoving && !nextDataDrag.isMoving) {
-            this.handleCanvasDragStop(nextDataDrag);
-        }
+    handleDragStart(e, draggableData) {
+        this.props.onDragStart(draggableData);
     }
 
-    handleCanvasDragStart({x, y}) {
-        this.props.onCanvasDragStart({x, y});
+    handleDrag(e, draggableData) {
+        this.props.onDrag(draggableData);
     }
 
-    handleCanvasDrag(dataDrag) {
-        this.props.onCanvasDrag(dataDrag);
-    }
-
-    handleCanvasDragStop(dataDrag) {
-        this.props.onCanvasDragStop(dataDrag);
+    handleDragStop(e, draggableData) {
+        this.props.onDragStop();
     }
 
     handleUndoClick() {
@@ -76,6 +57,9 @@ class Canvas extends Component {
                     y={shape.y}
                     id={shape.id}
                     key={shape.id}
+                    onDragStart={() => { console.log("drag start"); }}
+                    onDrag={() => { console.log("draggin"); }}
+                    onDragStop={() => { console.log("drag stop"); }}
                 />
             );
         });
@@ -86,13 +70,25 @@ class Canvas extends Component {
             <div>
                 <button onClick={this.handleUndoClick}>UNDO</button>
                 <button onClick={this.handleRedoClick}>REDO</button>
+<<<<<<< HEAD
                 <svg className="Canvas" height="900" width="1200">
                     {this.renderDrawing()}
                 </svg>
                 <span>Error message</span>
+=======
+                <DraggableCore
+                    onStart={this.handleDragStart}
+                    onDrag={this.handleDrag}
+                    onStop={this.handleDragStop}
+                >
+                    <svg className="Canvas" height="900" width="1200">
+                        {this.renderDrawing()}
+                    </svg>
+                </DraggableCore>
+>>>>>>> e2cf573e76d594a72cb5c7a27c6d05a7f5e36179
             </div>
         );
     }
 }
 
-export default clickdrag(Canvas);
+export default Canvas;
