@@ -9,12 +9,19 @@ import {
 } from './../../actions/actions';
 
 const mapStateToProps = (state) => {
+    const currentTool = state.toolState;
 
+    return currentTool;
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+      onCallAction: ({ userAction }) => {
+        dispatch(actionButtonClick({ userAction }));
+      },
+      onSelectTool: ({ toolType }) => {
+        dispatch(selectTool({ toolType}));
+      }
     };
 };
 

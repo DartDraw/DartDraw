@@ -6,6 +6,7 @@ import './menu.css';
 class ActionButton extends Component {
     static propTypes = {
       active: React.propTypes.bool,
+      imgSrc: React.PropTypes.string,
     };
 
     constructor(props) {

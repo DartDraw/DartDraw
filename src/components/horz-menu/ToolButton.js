@@ -6,6 +6,7 @@ import './menu.css';
 class ToolButton extends Component {
     static propTypes = {
       active: React.propTypes.bool,
+      imgSrc: React.PropTypes.string,
     };
 
     constructor(props) {
@@ -14,11 +15,8 @@ class ToolButton extends Component {
 
     render() {
         return (
-            <div id="top-bar">
-                <button><img src="./assets/001-cursor.svg" alt="cursor" id="button-icon"/></button>
-                <button><img src="./assets/002-frame.svg" alt="rect" id="button-icon"/></button>
-                <button><img src="./assets/004-undo.svg" alt="rect" id="button-icon"/></button>
-                <button><img src="./assets/003-redo.svg" alt="rect" id="button-icon"/></button>
+            <div id="button-container">
+                <button><img src={this.props.imgSrc} alt="cursor" id="button-icon"/></button>
             </div>
         );
     }
