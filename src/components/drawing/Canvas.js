@@ -70,12 +70,6 @@ class Canvas extends Component {
             <div>
                 <button onClick={this.handleUndoClick}>UNDO</button>
                 <button onClick={this.handleRedoClick}>REDO</button>
-<<<<<<< HEAD
-                <svg className="Canvas" height="900" width="1200">
-                    {this.renderDrawing()}
-                </svg>
-                <span>Error message</span>
-=======
                 <DraggableCore
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}
@@ -85,7 +79,6 @@ class Canvas extends Component {
                         {this.renderDrawing()}
                     </svg>
                 </DraggableCore>
->>>>>>> e2cf573e76d594a72cb5c7a27c6d05a7f5e36179
             </div>
         );
     }
