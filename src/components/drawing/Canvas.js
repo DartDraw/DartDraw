@@ -7,10 +7,11 @@ import Shape from './Shape';
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
-        dataDrag: PropTypes.object,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
+        onShapeDrag: PropTypes.func,
+        onShapeDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func
     };
@@ -24,6 +25,8 @@ class Canvas extends Component {
         this.handleDragStart = this.handleDragStart.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragStop = this.handleDragStop.bind(this);
+        this.handleShapeDrag = this.handleShapeDrag.bind(this);
+        this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
     }
 
     handleDragStart(e, draggableData) {
@@ -38,6 +41,14 @@ class Canvas extends Component {
         this.props.onDragStop();
     }
 
+    handleShapeDrag(shapeId, draggableData) {
+        this.props.onShapeDrag(shapeId, draggableData);
+    }
+
+    handleShapeDragStop(shapeId, draggableData) {
+        this.props.onShapeDragStop(shapeId);
+    }
+
     handleUndoClick() {
         this.props.onUndoClick();
     }
@@ -48,7 +59,7 @@ class Canvas extends Component {
 
     renderDrawing() {
         const { shapes } = this.props;
-        return shapes.map(function(shape) {
+        return shapes.map((shape) => {
             return (
                 <Shape
                     width={shape.width}
@@ -57,9 +68,8 @@ class Canvas extends Component {
                     y={shape.y}
                     id={shape.id}
                     key={shape.id}
-                    onDragStart={() => { console.log("drag start"); }}
-                    onDrag={() => { console.log("draggin"); }}
-                    onDragStop={() => { console.log("drag stop"); }}
+                    onDrag={this.handleShapeDrag}
+                    onDragStop={this.handleShapeDragStop}
                 />
             );
         });

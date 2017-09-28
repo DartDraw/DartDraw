@@ -41,6 +41,8 @@ function createSquare(shape) {
     newShape.originY = y;
     newShape.x = x;
     newShape.y = y;
+    newShape.tempSavedX = null;
+    newShape.tempSavedY = null;
     newShape.width = 0;
     newShape.height = 0;
     return newShape;
@@ -79,6 +81,43 @@ export function dragRelease(state) {
             oldState.zIndexedShapeIds.splice(index, 1);
         }
     });
+
+    const delta = jsondiffpatch.create().diff(oldState, updatedState);
+    updatedState.future = [];
+    updatedState.past = updatedState.past.slice();
+    updatedState.past.push(delta);
+
+    return updatedState;
+}
+
+export function moveShape(state, action) {
+    const { shapeId, draggableData } = action.payload;
+    const updatedState = Object.assign({}, state);
+
+    updatedState.drawing = Object.assign({}, state.drawing);
+
+    const shape = Object.assign({}, state.drawing[shapeId]);
+    shape.tempSavedX = shape.tempSavedX === null ? shape.x : shape.tempSavedX;
+    shape.tempSavedY = shape.tempSavedY === null ? shape.y : shape.tempSavedY;
+    shape.x = shape.x + draggableData.deltaX;
+    shape.y = shape.y + draggableData.deltaY;
+
+    updatedState.drawing[shapeId] = shape;
+
+    return updatedState;
+}
+
+export function saveShapeMove(state, action) {
+    const updatedState = JSON.parse(JSON.stringify(state));
+    updatedState.drawing[action.payload.shapeId].tempSavedX = null;
+    updatedState.drawing[action.payload.shapeId].tempSavedY = null;
+
+    const oldState = JSON.parse(JSON.stringify(state));
+
+    oldState.drawing[action.payload.shapeId].x = state.drawing[action.payload.shapeId].tempSavedX;
+    oldState.drawing[action.payload.shapeId].y = state.drawing[action.payload.shapeId].tempSavedY;
+    oldState.drawing[action.payload.shapeId].tempSavedX = null;
+    oldState.drawing[action.payload.shapeId].tempSavedY = null;
 
     const delta = jsondiffpatch.create().diff(oldState, updatedState);
     updatedState.future = [];
