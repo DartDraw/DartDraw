@@ -26,6 +26,6 @@ button img:hover {
   filter: grayscale(0%);
 }
 
-button:focus > #button-icon {
+/*button:focus > #button-icon {
   filter: grayscale(0%);
-}
+}*/

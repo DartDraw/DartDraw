@@ -3,29 +3,25 @@ import Menu from './Menu';
 import {
     undoClick,
     redoClick,
-    canvasDragStart,
-    canvasDrag,
-    canvasDragStop
+    // selectTool
 } from './../../actions/actions';
 
-const mapStateToProps = (state) => {
-    const currentTool = state.toolState;
-
-    return currentTool;
-};
 
 const mapDispatchToProps = (dispatch) => {
     return {
-      onCallUserAction: ({ userAction }) => {
-        dispatch(callUserAction({ userAction }));
+      onUndoClick: () => {
+          dispatch(undoClick());
       },
-      onSelectToolType: ({ toolType }) => {
-        dispatch(selectToolType({ toolType}));
+      onRedoClick: () => {
+          dispatch(redoClick());
+      },
+      onToolSelect: (toolType) => {
+          dispatch(undoClick()); // should be selectTool(toolType)
       }
     };
 };
 
 export default connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(Menu);
