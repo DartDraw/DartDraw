@@ -13,6 +13,9 @@ class Canvas extends Component {
         onShapeDragStart: PropTypes.func,
         onShapeDrag: PropTypes.func,
         onShapeDragStop: PropTypes.func,
+        onResizeHandleDragStart: PropTypes.func,
+        onResizeHandleDrag: PropTypes.func,
+        onResizeHandleDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func
     };
@@ -28,6 +31,9 @@ class Canvas extends Component {
         this.handleShapeDragStart = this.handleShapeDragStart.bind(this);
         this.handleShapeDrag = this.handleShapeDrag.bind(this);
         this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
+        this.handleResizeHandleDragStart = this.handleResizeHandleDragStart.bind(this);
+        this.handleResizeHandleDrag = this.handleResizeHandleDrag.bind(this);
+        this.handleResizeHandleDragStop = this.handleResizeHandleDragStop.bind(this);
     }
 
     handleDragStart(e, draggableData) {
@@ -39,7 +45,7 @@ class Canvas extends Component {
     }
 
     handleDragStop(e, draggableData) {
-        this.props.onDragStop();
+        this.props.onDragStop(draggableData);
     }
 
     handleShapeDragStart(shapeId, draggableData) {
@@ -54,12 +60,52 @@ class Canvas extends Component {
         this.props.onShapeDragStop(shapeId, draggableData);
     }
 
+    handleResizeHandleDragStart(shapeId, draggableData) {
+        this.props.onResizeHandleDragStart(shapeId, draggableData);
+    }
+
+    handleResizeHandleDrag(shapeId, draggableData) {
+        this.props.onResizeHandleDrag(shapeId, draggableData);
+    }
+
+    handleResizeHandleDragStop(shapeId, draggableData) {
+        this.props.onResizeHandleDragStop(shapeId, draggableData);
+    }
+
     handleUndoClick() {
         this.props.onUndoClick();
     }
 
     handleRedoClick() {
         this.props.onRedoClick();
+    }
+
+    renderResizeHandles(shape) {
+        return [1, 2, 3, 4].map((i) => {
+            let x = shape.x - 3;
+            let y = shape.y - 3;
+            if (i === 2 || i === 3) {
+                x = x + shape.width - 3;
+            }
+            if (i === 3 || i === 4) {
+                y = y + shape.height - 3;
+            }
+            return (
+                <Rectangle
+                    key={shape.id + i.toString()}
+                    id={shape.id}
+                    width={10}
+                    height={10}
+                    x={x}
+                    y={y}
+                    stroke='rgba(69, 63, 80, 0.9)'
+                    fill='rgba(255, 255, 255, 1)'
+                    onDragStart={this.handleResizeHandleDragStart}
+                    onDrag={this.handleResizeHandleDrag}
+                    onDragStop={this.handleResizeHandleDragStop}
+                />
+            );
+        });
     }
 
     renderDrawing() {
@@ -81,21 +127,22 @@ class Canvas extends Component {
                         />
                     );
                 case 'selectionBox':
+                    const start = 'M ' + (shape.x - 1) + ' ' + (shape.y - 1);
+                    const right = ' h ' + (shape.width + 2);
+                    const down = ' v ' + (shape.height + 2);
+                    const left = ' h ' + -(shape.width + 2);
+                    const close = ' Z';
+                    const pathData = start + right + down + left + close;
                     return (
-                        <Rectangle
-                            key={i}
-                            id={shape.id}
-                            onDragStart={() => { console.log("drag start"); }}
-                            onDrag={() => { console.log("draggin"); }}
-                            onDragStop={() => { console.log("drag stop"); }}
-                            width={shape.width}
-                            height={shape.height}
-                            x={shape.x}
-                            y={shape.y}
-                            stroke='rgba(102, 204, 255, 0.7)'
-                            strokeWidth={8}
-                            fill='rgba(0, 0, 0, 0)'
-                        />
+                        <g key={shape.id}>
+                            <path
+                                d={pathData}
+                                stroke='rgba(102, 204, 255, 0.7)'
+                                strokeWidth={3}
+                                fill='none'
+                            />
+                            {this.renderResizeHandles(shape)}
+                        </g>
                     );
                 default:
                     break;

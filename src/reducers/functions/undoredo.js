@@ -1,4 +1,5 @@
 import jsondiffpatch from 'jsondiffpatch';
+import * as selection from './selection';
 
 export function undo(state) {
     const updatedState = Object.assign({}, state);
@@ -13,6 +14,13 @@ export function undo(state) {
 
         updatedState.future = updatedState.future.slice();
         updatedState.future.push(delta);
+
+        updatedState.selected = [];
+        if ((updatedState.past.length) > 0) {
+            updatedState.selected = Object.keys(updatedState.past[updatedState.past.length - 1].drawing);
+        }
+
+        updatedState.selectionBoxes = selection.generateSelectionBoxes(updatedState);
     }
 
     return updatedState;
@@ -31,6 +39,9 @@ export function redo(state) {
 
         updatedState.past = updatedState.past.slice();
         updatedState.past.push(delta);
+
+        updatedState.selected = Object.keys(delta.drawing);
+        updatedState.selectionBoxes = selection.generateSelectionBoxes(updatedState);
     }
 
     return updatedState;

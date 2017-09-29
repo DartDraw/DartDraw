@@ -1,6 +1,8 @@
 import guid from 'guid';
 import jsondiffpatch from 'jsondiffpatch';
 
+import * as selection from './selection';
+
 export function resizeShape(state, action) {
     // Create a copy of the drawing and then add the new shape:
     const updatedState = Object.assign({}, state);
@@ -29,17 +31,7 @@ export function resizeShape(state, action) {
 
     updatedState.drawing[state.selected[0]] = shape;
 
-    const selectionBox = {
-        id: shape.id,
-        type: 'selectionBox',
-        x: shape.x,
-        y: shape.y,
-        width: shape.width,
-        height: shape.height
-    };
-    updatedState.selectionBoxes = {};
-    updatedState.selectionBoxes[selectionBox.id] = selectionBox;
-
+    updatedState.selectionBoxes = selection.generateSelectionBoxes(updatedState);
     return updatedState;
 }
 
@@ -53,8 +45,6 @@ function createRectangle(shape) {
     newShape.originY = y;
     newShape.x = x;
     newShape.y = y;
-    newShape.tempSavedX = null;
-    newShape.tempSavedY = null;
     newShape.width = 0;
     newShape.height = 0;
     return newShape;
@@ -97,11 +87,12 @@ export function saveNewShape(state) {
     updatedState.past = updatedState.past.slice();
     updatedState.past.push(delta);
 
+    updatedState.selectionBoxes = selection.generateSelectionBoxes(updatedState);
     return updatedState;
 }
 
 export function moveShape(state, action) {
-    if (typeof (action.payload) === 'undefined') { return state; }
+    if (typeof (action.payload) === 'undefined' || !action.payload.shapeId) { return state; }
 
     const { shapeId, draggableData } = action.payload;
 
@@ -115,12 +106,7 @@ export function moveShape(state, action) {
 
     updatedState.drawing[shapeId] = shape;
 
-    if (state.selectionBoxes[shapeId]) {
-        updatedState.selectionBoxes = Object.assign({}, state.selectionBoxes);
-        updatedState.selectionBoxes[shapeId].x = shape.x;
-        updatedState.selectionBoxes[shapeId].y = shape.y;
-    }
-
+    updatedState.selectionBoxes = selection.generateSelectionBoxes(updatedState);
     return updatedState;
 }
 
@@ -138,5 +124,6 @@ export function saveShapeMove(state, action) {
     updatedState.past = updatedState.past.slice();
     updatedState.past.push(delta);
 
+    updatedState.selectionBoxes = selection.generateSelectionBoxes(updatedState);
     return updatedState;
 }

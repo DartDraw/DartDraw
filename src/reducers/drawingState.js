@@ -17,8 +17,6 @@ const initialState = {
 
 function DartDraw(state = initialState, action) {
     switch (action.type) {
-        case canvas.SELECT_SHAPE:
-            return selection.selectShape(state, action);
         case canvas.CANVAS_DRAG_START:
         case canvas.SHAPE_DRAG_START:
             return drag.start(state, action);

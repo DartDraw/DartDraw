@@ -15,10 +15,7 @@ const mapStateToProps = ({drawingState}) => {
         return drawing[id];
     });
     Object.keys(selectionBoxes).map((id) => {
-        const selectionBox = selectionBoxes[id];
-        const correspondingShape = drawing[id];
-        const shapeZIndex = shapes.indexOf(correspondingShape);
-        shapes.splice(shapeZIndex - 1, 0, selectionBox);
+        shapes.push(selectionBoxes[id]);
     });
 
     return {
@@ -34,8 +31,8 @@ const mapDispatchToProps = (dispatch) => {
         onDrag: (draggableData) => {
             dispatch(canvasDrag(draggableData));
         },
-        onDragStop: () => {
-            dispatch(canvasDragStop());
+        onDragStop: (draggableData) => {
+            dispatch(canvasDragStop(draggableData));
         },
         onShapeDragStart: (shapeId, draggableData) => {
             dispatch(shapeDragStart(shapeId, draggableData));
@@ -45,6 +42,18 @@ const mapDispatchToProps = (dispatch) => {
         },
         onShapeDragStop: (shapeId, draggableData) => {
             dispatch(shapeDragStop(shapeId));
+        },
+        onResizeHandleDragStart: (shapeId, draggableData) => {
+            console.log(shapeId, draggableData);
+            console.log("start handle drag");
+        },
+        onResizeHandleDrag: (shapeId, draggableData) => {
+            console.log(shapeId, draggableData);
+            console.log("handle drag");
+        },
+        onResizeHandleDragStop: (shapeId, draggableData) => {
+            console.log(shapeId, draggableData);
+            console.log("stop handle drag");
         }
     };
 };
