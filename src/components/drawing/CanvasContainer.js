@@ -5,7 +5,9 @@ import {
     redoClick,
     canvasDragStart,
     canvasDrag,
-    canvasDragStop
+    canvasDragStop,
+    shapeDrag,
+    shapeDragStop
 } from './../../actions/actions';
 
 const mapStateToProps = (state) => {
@@ -20,14 +22,20 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onDragStart: ({x, y, node}) => {
-            dispatch(canvasDragStart({x, y, node}));
+        onDragStart: (draggableData) => {
+            dispatch(canvasDragStart(draggableData));
         },
-        onDrag: ({x, y, deltaX, deltaY, node}) => {
-            dispatch(canvasDrag({x, y, deltaX, deltaY, node}));
+        onDrag: (draggableData) => {
+            dispatch(canvasDrag(draggableData));
         },
         onDragStop: () => {
             dispatch(canvasDragStop());
+        },
+        onShapeDrag: (shapeId, draggableData) => {
+            dispatch(shapeDrag(shapeId, draggableData));
+        },
+        onShapeDragStop: (shapeId) => {
+            dispatch(shapeDragStop(shapeId));
         },
         onUndoClick: () => {
             dispatch(undoClick());
