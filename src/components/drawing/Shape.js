@@ -4,11 +4,8 @@ import { DraggableCore } from 'react-draggable';
 
 class Shape extends Component {
     static propTypes = {
-        id: PropTypes.object,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        x: PropTypes.number,
-        y: PropTypes.number,
+        id: PropTypes.string,
+        children: PropTypes.any,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func
@@ -23,9 +20,9 @@ class Shape extends Component {
     }
 
     handleDragStart(e, draggableData) {
-        const { onDragStart } = this.props;
+        const { id, onDragStart } = this.props;
         e.stopPropagation();
-        onDragStart && onDragStart(draggableData);
+        onDragStart && onDragStart(id, draggableData);
     }
 
     handleDrag(e, draggableData) {
@@ -37,24 +34,20 @@ class Shape extends Component {
     handleDragStop(e, draggableData) {
         const { id, onDragStop } = this.props;
         e.stopPropagation();
-        onDragStop && onDragStop(id);
+        onDragStop && onDragStop(id, draggableData);
     }
 
     render() {
-        const { width, height, x, y } = this.props;
+        const { children } = this.props;
 
         return (
             <DraggableCore
+                onClick={this.handeClick}
                 onStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onStop={this.handleDragStop}
             >
-                <rect
-                    width={width}
-                    height={height}
-                    x={x}
-                    y={y}
-                />
+                {children}
             </DraggableCore>
         );
     }

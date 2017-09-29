@@ -8,8 +8,8 @@ export function resizeShape(state, action) {
     updatedState.drawing = Object.assign({}, state.drawing);
 
     const shape = Object.assign({}, state.drawing[state.selected[0]]);
-    const mouseX = action.shape.x - action.shape.node.getBoundingClientRect().left;
-    const mouseY = action.shape.y - action.shape.node.getBoundingClientRect().top;
+    const mouseX = action.payload.draggableData.x - action.payload.draggableData.node.getBoundingClientRect().left;
+    const mouseY = action.payload.draggableData.y - action.payload.draggableData.node.getBoundingClientRect().top;
 
     if (mouseX > shape.originX) {
         shape.x = shape.originX;
@@ -29,14 +29,26 @@ export function resizeShape(state, action) {
 
     updatedState.drawing[state.selected[0]] = shape;
 
+    const selectionBox = {
+        id: shape.id,
+        type: 'selectionBox',
+        x: shape.x,
+        y: shape.y,
+        width: shape.width,
+        height: shape.height
+    };
+    updatedState.selectionBoxes = {};
+    updatedState.selectionBoxes[selectionBox.id] = selectionBox;
+
     return updatedState;
 }
 
-function createSquare(shape) {
+function createRectangle(shape) {
     const x = shape.x - shape.node.getBoundingClientRect().left;
     const y = shape.y - shape.node.getBoundingClientRect().top;
     const newShape = {};
-    newShape.id = guid.create();
+    newShape.type = 'rectangle';
+    newShape.id = guid.create().toString();
     newShape.originX = x;
     newShape.originY = y;
     newShape.x = x;
@@ -51,9 +63,7 @@ function createSquare(shape) {
 export function addShape(state, action) {
     // Create a copy of the drawing and then add the new shape:
     const updatedState = Object.assign({}, state);
-
-    const shape = createSquare(action.shape); // default to square for now
-
+    const shape = createRectangle(action.payload.draggableData); // default to square for now
     updatedState.drawing = Object.assign({}, state.drawing);
     updatedState.drawing[shape.id] = shape;
     updatedState.selected = [shape.id];
@@ -65,7 +75,7 @@ export function addShape(state, action) {
     return updatedState;
 }
 
-export function dragRelease(state) {
+export function saveNewShape(state) {
     const updatedState = Object.assign({}, state);
 
     const oldState = Object.assign({}, state);
@@ -91,33 +101,37 @@ export function dragRelease(state) {
 }
 
 export function moveShape(state, action) {
+    if (typeof (action.payload) === 'undefined') { return state; }
+
     const { shapeId, draggableData } = action.payload;
+
     const updatedState = Object.assign({}, state);
 
     updatedState.drawing = Object.assign({}, state.drawing);
 
     const shape = Object.assign({}, state.drawing[shapeId]);
-    shape.tempSavedX = shape.tempSavedX === null ? shape.x : shape.tempSavedX;
-    shape.tempSavedY = shape.tempSavedY === null ? shape.y : shape.tempSavedY;
     shape.x = shape.x + draggableData.deltaX;
     shape.y = shape.y + draggableData.deltaY;
 
     updatedState.drawing[shapeId] = shape;
 
+    if (state.selectionBoxes[shapeId]) {
+        updatedState.selectionBoxes = Object.assign({}, state.selectionBoxes);
+        updatedState.selectionBoxes[shapeId].x = shape.x;
+        updatedState.selectionBoxes[shapeId].y = shape.y;
+    }
+
     return updatedState;
 }
 
 export function saveShapeMove(state, action) {
-    const updatedState = JSON.parse(JSON.stringify(state));
-    updatedState.drawing[action.payload.shapeId].tempSavedX = null;
-    updatedState.drawing[action.payload.shapeId].tempSavedY = null;
+    if (typeof (action.payload) === 'undefined') { return state; }
 
+    const updatedState = JSON.parse(JSON.stringify(state));
     const oldState = JSON.parse(JSON.stringify(state));
 
-    oldState.drawing[action.payload.shapeId].x = state.drawing[action.payload.shapeId].tempSavedX;
-    oldState.drawing[action.payload.shapeId].y = state.drawing[action.payload.shapeId].tempSavedY;
-    oldState.drawing[action.payload.shapeId].tempSavedX = null;
-    oldState.drawing[action.payload.shapeId].tempSavedY = null;
+    oldState.drawing[action.payload.shapeId] = Object.assign({}, state.editing[action.payload.shapeId]);
+    updatedState.editing = {};
 
     const delta = jsondiffpatch.create().diff(oldState, updatedState);
     updatedState.future = [];

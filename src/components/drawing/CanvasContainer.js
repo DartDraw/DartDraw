@@ -1,18 +1,24 @@
 import { connect } from 'react-redux';
 import Canvas from './Canvas';
 import {
-    undoClick,
-    redoClick,
     canvasDragStart,
     canvasDrag,
     canvasDragStop,
+    shapeDragStart,
     shapeDrag,
     shapeDragStop
-} from './../../actions/actions';
+} from './../../actions/canvas';
 
-const mapStateToProps = (state) => {
-    const shapes = state.drawingState.zIndexedShapeIds.map(function(id) {
-        return state.drawingState.drawing[id];
+const mapStateToProps = ({drawingState}) => {
+    const { drawing, zIndexedShapeIds, selectionBoxes } = drawingState;
+    const shapes = zIndexedShapeIds.map((id) => {
+        return drawing[id];
+    });
+    Object.keys(selectionBoxes).map((id) => {
+        const selectionBox = selectionBoxes[id];
+        const correspondingShape = drawing[id];
+        const shapeZIndex = shapes.indexOf(correspondingShape);
+        shapes.splice(shapeZIndex - 1, 0, selectionBox);
     });
 
     return {
@@ -31,17 +37,14 @@ const mapDispatchToProps = (dispatch) => {
         onDragStop: () => {
             dispatch(canvasDragStop());
         },
+        onShapeDragStart: (shapeId, draggableData) => {
+            dispatch(shapeDragStart(shapeId, draggableData));
+        },
         onShapeDrag: (shapeId, draggableData) => {
             dispatch(shapeDrag(shapeId, draggableData));
         },
-        onShapeDragStop: (shapeId) => {
+        onShapeDragStop: (shapeId, draggableData) => {
             dispatch(shapeDragStop(shapeId));
-        },
-        onUndoClick: () => {
-            dispatch(undoClick());
-        },
-        onRedoClick: () => {
-            dispatch(redoClick());
         }
     };
 };

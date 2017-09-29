@@ -3,21 +3,20 @@ import Menu from './Menu';
 import {
     undoClick,
     redoClick,
-    // selectTool
-} from './../../actions/actions';
-
+    selectTool
+} from './../../actions/menu';
 
 const mapDispatchToProps = (dispatch) => {
     return {
-      onUndoClick: () => {
-          dispatch(undoClick());
-      },
-      onRedoClick: () => {
-          dispatch(redoClick());
-      },
-      onToolSelect: (toolType) => {
-          dispatch(undoClick()); // should be selectTool(toolType)
-      }
+        onUndoClick: () => {
+            dispatch(undoClick());
+        },
+        onRedoClick: () => {
+            dispatch(redoClick());
+        },
+        onToolSelect: (toolType) => {
+            dispatch(selectTool(toolType));
+        }
     };
 };
 

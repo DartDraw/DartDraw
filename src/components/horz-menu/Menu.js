@@ -4,9 +4,9 @@ import './menu.css';
 
 class Menu extends Component {
     static propTypes = {
-      onUndoClick: PropTypes.func,
-      onRedoClick: PropTypes.func,
-      onToolSelect: PropTypes.func
+        onUndoClick: PropTypes.func,
+        onRedoClick: PropTypes.func,
+        onToolSelect: PropTypes.func
     };
 
     constructor(props) {
@@ -32,17 +32,17 @@ class Menu extends Component {
     render() {
         return (
             <div id="top-bar">
-                <button onClick={this.handleToolSelect("select")}>
-                  <img src="./assets/001-cursor.svg" alt="select" id="button-icon"/>
+                <button onClick={() => this.handleToolSelect("selectTool")}>
+                    <img src="./assets/001-cursor.svg" alt="select" id="button-icon" />
                 </button>
-                <button onClick={this.handleToolSelect("rectangle")}>
-                  <img src="./assets/002-frame.svg" alt="rect" id="button-icon"/>
+                <button onClick={() => this.handleToolSelect("rectangleTool")}>
+                    <img src="./assets/002-frame.svg" alt="rect" id="button-icon" />
                 </button>
                 <button onClick={this.handleUndoClick}>
-                  <img src="./assets/004-undo.svg" alt="undo" id="button-icon"/>
+                    <img src="./assets/004-undo.svg" alt="undo" id="button-icon" />
                 </button>
                 <button onClick={this.handleRedoClick}>
-                  <img src="./assets/003-redo.svg" alt="redo" id="button-icon"/>
+                    <img src="./assets/003-redo.svg" alt="redo" id="button-icon" />
                 </button>
             </div>
         );

@@ -1,12 +1,15 @@
-import * as actions from './../actions/actions';
-import * as shape from './functions/shape';
+import * as canvas from './../actions/canvas';
+import * as menu from './../actions/menu';
+import * as drag from './functions/drag';
 import * as selection from './functions/selection';
 import * as undoredo from './functions/undoredo';
 
 const initialState = {
+    toolType: "",
     selected: [],
     editing: {},
     drawing: {},
+    selectionBoxes: {},
     zIndexedShapeIds: [],
     past: [],
     future: []
@@ -14,22 +17,23 @@ const initialState = {
 
 function DartDraw(state = initialState, action) {
     switch (action.type) {
-        case actions.CANVAS_DRAG_START:
-            return shape.addShape(state, action);
-        case actions.CANVAS_DRAG:
-            return shape.resizeShape(state, action);
-        case actions.CANVAS_DRAG_STOP:
-            return shape.dragRelease(state);
-        case actions.SHAPE_DRAG:
-            return shape.moveShape(state, action);
-        case actions.SHAPE_DRAG_STOP:
-            return shape.saveShapeMove(state, action);
-        case actions.UNDO_CLICK:
+        case canvas.SELECT_SHAPE:
+            return selection.selectShape(state, action);
+        case canvas.CANVAS_DRAG_START:
+        case canvas.SHAPE_DRAG_START:
+            return drag.start(state, action);
+        case canvas.CANVAS_DRAG:
+        case canvas.SHAPE_DRAG:
+            return drag.drag(state, action);
+        case canvas.CANVAS_DRAG_STOP:
+        case canvas.SHAPE_DRAG_STOP:
+            return drag.stop(state, action);
+        case menu.UNDO_CLICK:
             return undoredo.undo(state);
-        case actions.REDO_CLICK:
+        case menu.REDO_CLICK:
             return undoredo.redo(state);
-        case actions.SELECT:
-            return selection.select(state, action);
+        case menu.SELECT_TOOL:
+            return selection.selectTool(state, action);
         default:
             return state;
     }
