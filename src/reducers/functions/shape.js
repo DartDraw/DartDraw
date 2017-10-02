@@ -113,7 +113,6 @@ export function moveShape(state, action) {
 export function saveShapeMove(state, action) {
     if (typeof (action.payload) === 'undefined') { return state; }
     if (JSON.stringify(state.drawing[action.payload.shapeId]) === JSON.stringify((state.editing[action.payload.shapeId]))) {
-        console.log("hi");
         return state;
     }
 
