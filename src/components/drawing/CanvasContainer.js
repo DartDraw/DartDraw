@@ -19,6 +19,7 @@ const mapStateToProps = ({drawingState}) => {
     });
 
     return {
+        drawing,
         shapes
     };
 };
@@ -42,6 +43,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onShapeDragStop: (shapeId, draggableData) => {
             dispatch(shapeDragStop(shapeId));
+        },
+        onGroupDragStart: (groupId, draggableData) => {
+        },
+        onGroupDrag: (groupId, draggableData) => {
+        },
+        onGroupDragStop: (groupId, draggableData) => {
         },
         onResizeHandleDragStart: (shapeId, draggableData) => {
             console.log(shapeId, draggableData);

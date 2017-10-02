@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DraggableCore } from 'react-draggable';
 import './Canvas.css';
-import { Rectangle } from '.';
+import { Group, Rectangle } from '.';
 
 class Canvas extends Component {
     static propTypes = {
+        drawing: PropTypes.object,
         shapes: PropTypes.array,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -13,6 +14,9 @@ class Canvas extends Component {
         onShapeDragStart: PropTypes.func,
         onShapeDrag: PropTypes.func,
         onShapeDragStop: PropTypes.func,
+        onGroupDragStart: PropTypes.func,
+        onGroupDrag: PropTypes.func,
+        onGroupDragStop: PropTypes.func,
         onResizeHandleDragStart: PropTypes.func,
         onResizeHandleDrag: PropTypes.func,
         onResizeHandleDragStop: PropTypes.func,
@@ -31,6 +35,9 @@ class Canvas extends Component {
         this.handleShapeDragStart = this.handleShapeDragStart.bind(this);
         this.handleShapeDrag = this.handleShapeDrag.bind(this);
         this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
+        this.handleGroupDragStart = this.handleGroupDragStart.bind(this);
+        this.handleGroupDrag = this.handleGroupDrag.bind(this);
+        this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleResizeHandleDragStart = this.handleResizeHandleDragStart.bind(this);
         this.handleResizeHandleDrag = this.handleResizeHandleDrag.bind(this);
         this.handleResizeHandleDragStop = this.handleResizeHandleDragStop.bind(this);
@@ -58,6 +65,18 @@ class Canvas extends Component {
 
     handleShapeDragStop(shapeId, draggableData) {
         this.props.onShapeDragStop(shapeId, draggableData);
+    }
+
+    handleGroupDragStart(groupId, draggableData) {
+        this.props.onGroupDragStart(groupId, draggableData);
+    }
+
+    handleGroupDrag(groupId, draggableData) {
+        this.props.onGroupDrag(groupId, draggableData);
+    }
+
+    handleGroupDragStop(groupId, draggableData) {
+        this.props.onGroupDragStop(groupId, draggableData);
     }
 
     handleResizeHandleDragStart(shapeId, draggableData) {
@@ -108,45 +127,65 @@ class Canvas extends Component {
         });
     }
 
+    renderShape(shape) {
+        const { drawing } = this.props;
+        switch (shape.type) {
+            case 'group':
+                const group = shape.ids.map((id) => {
+                    return this.renderShape(drawing[id]);
+                });
+                return (
+                    <Group
+                        key={shape.id}
+                        id={shape.id}
+                        onDragStart={this.handleGroupDragStart}
+                        onDrag={this.handleGroupDrag}
+                        onDragStop={this.handleGroupDragStop}
+                    >
+                        {group}
+                    </Group>
+                );
+            case 'rectangle':
+                return (
+                    <Rectangle
+                        key={shape.id}
+                        id={shape.id}
+                        onDragStart={this.handleShapeDragStart}
+                        onDrag={this.handleShapeDrag}
+                        onDragStop={this.handleShapeDragStop}
+                        width={shape.width}
+                        height={shape.height}
+                        x={shape.x}
+                        y={shape.y}
+                    />
+                );
+            case 'selectionBox':
+                const start = 'M ' + (shape.x - 1) + ' ' + (shape.y - 1);
+                const right = ' h ' + (shape.width + 2);
+                const down = ' v ' + (shape.height + 2);
+                const left = ' h ' + -(shape.width + 2);
+                const close = ' Z';
+                const pathData = start + right + down + left + close;
+                return (
+                    <g key={shape.id}>
+                        <path
+                            d={pathData}
+                            stroke='rgba(102, 204, 255, 0.7)'
+                            strokeWidth={3}
+                            fill='none'
+                        />
+                        {this.renderResizeHandles(shape)}
+                    </g>
+                );
+            default:
+                break;
+        }
+    }
+
     renderDrawing() {
         const { shapes } = this.props;
-        return shapes.map((shape, i) => {
-            switch (shape.type) {
-                case 'rectangle':
-                    return (
-                        <Rectangle
-                            key={shape.id}
-                            id={shape.id}
-                            onDragStart={this.handleShapeDragStart}
-                            onDrag={this.handleShapeDrag}
-                            onDragStop={this.handleShapeDragStop}
-                            width={shape.width}
-                            height={shape.height}
-                            x={shape.x}
-                            y={shape.y}
-                        />
-                    );
-                case 'selectionBox':
-                    const start = 'M ' + (shape.x - 1) + ' ' + (shape.y - 1);
-                    const right = ' h ' + (shape.width + 2);
-                    const down = ' v ' + (shape.height + 2);
-                    const left = ' h ' + -(shape.width + 2);
-                    const close = ' Z';
-                    const pathData = start + right + down + left + close;
-                    return (
-                        <g key={shape.id}>
-                            <path
-                                d={pathData}
-                                stroke='rgba(102, 204, 255, 0.7)'
-                                strokeWidth={3}
-                                fill='none'
-                            />
-                            {this.renderResizeHandles(shape)}
-                        </g>
-                    );
-                default:
-                    break;
-            }
+        return shapes.map((shape) => {
+            return this.renderShape(shape);
         });
     }
 
