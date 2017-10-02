@@ -125,10 +125,7 @@ class Canvas extends Component {
                             onDrag={this.handleShapeDrag}
                             onDragStop={this.handleShapeDragStop}
                             onClick={this.handleShapeClick}
-                            width={shape.width}
-                            height={shape.height}
-                            x={shape.x}
-                            y={shape.y}
+                            {...shape}
                         />
                     );
                 case 'selectionBox':
@@ -160,7 +157,7 @@ class Canvas extends Component {
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height="900" width="1200">
+                    <svg className="Canvas" height="95vh" width="1200">
                         {this.renderDrawing()}
                     </svg>
                 </Draggable>

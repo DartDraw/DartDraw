@@ -1,26 +1,22 @@
 import guid from 'guid';
 
-export function createRectangle({ x, y, width, height }) {
+export function createRectangle(rectangle) {
     return {
         id: guid.create().toString(),
         type: 'rectangle',
-        originX: x,
-        originY: y,
-        x,
-        y,
-        width,
-        height
+        ...rectangle
     };
 }
 
-export function addShape(shapes, action) {
+export function addShape(shapes, action, fill) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const rectangle = {
         x: x - node.getBoundingClientRect().left,
         y: y - node.getBoundingClientRect().top,
         width: 0,
-        height: 0
+        height: 0,
+        fill: formatColor(fill)
     };
     const shape = createRectangle(rectangle);
     shapes.byId[shape.id] = shape;
@@ -76,4 +72,9 @@ export function moveShape(shapes, selected, action) {
         shape.y = shape.y + draggableData.deltaY;
     });
     return shapes;
+}
+
+export function formatColor(rgba) {
+    const { r, g, b, a } = rgba;
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }

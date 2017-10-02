@@ -6,7 +6,7 @@ export function dragStart(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = addShape(stateCopy.shapes, action);
+            stateCopy.shapes = addShape(stateCopy.shapes, action, root.menuState.color);
             const shapeIds = stateCopy.shapes.allIds;
             const addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);

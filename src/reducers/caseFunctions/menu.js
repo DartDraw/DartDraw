@@ -50,3 +50,8 @@ export function selectTool(stateCopy, action) {
     stateCopy.toolType = action.payload.toolType;
     return stateCopy;
 }
+
+export function selectColor(stateCopy, action) {
+    stateCopy.color = action.payload.color;
+    return stateCopy;
+}

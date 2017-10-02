@@ -1,0 +1,28 @@
+#left-bar {
+  background-color: #3d3d3d;
+  height: 100vh;
+  margin-top: -40px;
+  width: 45px;
+  display: flex;
+  justify-content: center;
+  padding-top: 50px;
+  align-items: top;
+  text-align: center;
+}
+
+button {
+  border: none;
+  background-color: rgba(0,0,0,0);
+  margin: 3px;
+  height: 28px;
+  width:28px;
+  text-align: left;
+}
+
+button:focus {
+  outline: 0;
+}
+
+button:hover {
+  background-color: rgba(10,10,10,0.5);
+}

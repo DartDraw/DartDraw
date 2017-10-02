@@ -1,6 +1,7 @@
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const SELECT_TOOL = 'SELECT_TOOL';
+export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 
@@ -14,6 +15,10 @@ export function keyUp(keyCode) {
 
 export function selectTool(toolType) {
     return { type: SELECT_TOOL, payload: { toolType } };
+}
+
+export function selectColor(color) {
+    return { type: SELECT_COLOR, payload: { color } };
 }
 
 export function undoClick() {

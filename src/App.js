@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { CanvasContainer } from './components/drawing';
-import { MenuContainer } from './components/horz-menu';
+import { TopMenuContainer } from './components/top-menu';
+import { LeftMenuContainer } from './components/left-menu';
 
 class App extends Component {
     static propTypes = {
@@ -38,8 +39,11 @@ class App extends Component {
                 onKeyUp={this.handleKeyUp}
                 tabIndex={-1}
             >
-                <MenuContainer />
-                <CanvasContainer />
+                <TopMenuContainer />
+                <div className="mainBody">
+                    <LeftMenuContainer />
+                    <CanvasContainer />
+                </div>
             </div>
         );
     }
