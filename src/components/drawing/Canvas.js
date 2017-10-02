@@ -160,18 +160,15 @@ class Canvas extends Component {
                     />
                 );
             case 'selectionBox':
-                const start = 'M ' + (shape.x - 1) + ' ' + (shape.y - 1);
-                const right = ' h ' + (shape.width + 2);
-                const down = ' v ' + (shape.height + 2);
-                const left = ' h ' + -(shape.width + 2);
-                const close = ' Z';
-                const pathData = start + right + down + left + close;
                 return (
                     <g key={shape.id}>
-                        <path
-                            d={pathData}
+                        <Rectangle
+                            x={shape.x - 1}
+                            y={shape.y - 1}
+                            width={shape.width + 2}
+                            height={shape.height + 2}
                             stroke='rgba(102, 204, 255, 0.7)'
-                            strokeWidth={3}
+                            strokeWidth={2}
                             fill='none'
                         />
                         {this.renderResizeHandles(shape)}
