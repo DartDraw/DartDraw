@@ -7,8 +7,14 @@ export function selectTool(state, action) {
 }
 
 export function selectShape(state, action) {
-    if (!action.payload.shapeId) { return state; }
     const updatedState = Object.assign({}, state);
+
+    if (!action.payload.shapeId) {
+        updatedState.selected = [];
+        updatedState.selectionBoxes = {};
+        return updatedState;
+    }
+
     updatedState.selected = [action.payload.shapeId]; // just one selection for now
     updatedState.editing = {};
     updatedState.editing[action.payload.shapeId] = Object.assign({}, state.drawing[action.payload.shapeId]);

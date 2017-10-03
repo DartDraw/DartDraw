@@ -67,6 +67,10 @@ export function addShape(state, action) {
 
 export function saveNewShape(state) {
     const updatedState = Object.assign({}, state);
+    if (state.drawing[state.selected[0]].width < 1 &&
+      state.drawing[state.selected[0]].height < 1) {
+        return state;
+    }
 
     const oldState = Object.assign({}, state);
     oldState.drawing = Object.assign({}, state.drawing);
