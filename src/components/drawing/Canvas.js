@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Canvas.css';
 import { Draggable } from '../shared';
-import { Rectangle } from '.';
+import { Rectangle, Handle } from '.';
 
 class Canvas extends Component {
     static propTypes = {
@@ -13,9 +13,9 @@ class Canvas extends Component {
         onShapeDragStart: PropTypes.func,
         onShapeDrag: PropTypes.func,
         onShapeDragStop: PropTypes.func,
-        onResizeHandleDragStart: PropTypes.func,
-        onResizeHandleDrag: PropTypes.func,
-        onResizeHandleDragStop: PropTypes.func,
+        onHandleDragStart: PropTypes.func,
+        onHandleDrag: PropTypes.func,
+        onHandleDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func
     };
@@ -31,9 +31,9 @@ class Canvas extends Component {
         this.handleShapeDragStart = this.handleShapeDragStart.bind(this);
         this.handleShapeDrag = this.handleShapeDrag.bind(this);
         this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
-        this.handleResizeHandleDragStart = this.handleResizeHandleDragStart.bind(this);
-        this.handleResizeHandleDrag = this.handleResizeHandleDrag.bind(this);
-        this.handleResizeHandleDragStop = this.handleResizeHandleDragStop.bind(this);
+        this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
+        this.handleHandleDrag = this.handleHandleDrag.bind(this);
+        this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
     }
 
     handleDragStart(draggableData) {
@@ -60,16 +60,16 @@ class Canvas extends Component {
         this.props.onShapeDragStop(shapeId, draggableData);
     }
 
-    handleResizeHandleDragStart(shapeId, draggableData) {
-        this.props.onResizeHandleDragStart(shapeId, draggableData);
+    handleHandleDragStart(shapeId, handleIndex, draggableData) {
+        this.props.onHandleDragStart(shapeId, handleIndex, draggableData);
     }
 
-    handleResizeHandleDrag(shapeId, draggableData) {
-        this.props.onResizeHandleDrag(shapeId, draggableData);
+    handleHandleDrag(shapeId, handleIndex, draggableData) {
+        this.props.onHandleDrag(shapeId, handleIndex, draggableData);
     }
 
-    handleResizeHandleDragStop(shapeId, draggableData) {
-        this.props.onResizeHandleDragStop(shapeId, draggableData);
+    handleHandleDragStop(shapeId, handleIndex, draggableData) {
+        this.props.onHandleDragStop(shapeId, handleIndex, draggableData);
     }
 
     handleUndoClick() {
@@ -80,29 +80,27 @@ class Canvas extends Component {
         this.props.onRedoClick();
     }
 
-    renderResizeHandles(shape) {
-        return [1, 2, 3, 4].map((i) => {
+    renderHandles(shape) {
+        return [0, 1, 2, 3].map((index) => {
             let x = shape.x - 3;
             let y = shape.y - 3;
-            if (i === 2 || i === 3) {
+            if (index === 0 || index === 1) {
                 x = x + shape.width - 3;
             }
-            if (i === 3 || i === 4) {
+            if (index === 1 || index === 2) {
                 y = y + shape.height - 3;
             }
             return (
-                <Rectangle
-                    key={shape.id + i.toString()}
+                <Handle
+                    key={index}
                     id={shape.id}
-                    width={10}
-                    height={10}
+                    shapeId={shape.shapeId}
+                    index={index}
                     x={x}
                     y={y}
-                    stroke='rgba(69, 63, 80, 0.9)'
-                    fill='rgba(255, 255, 255, 1)'
-                    onDragStart={this.handleResizeHandleDragStart}
-                    onDrag={this.handleResizeHandleDrag}
-                    onDragStop={this.handleResizeHandleDragStop}
+                    onDragStart={this.handleHandleDragStart}
+                    onDrag={this.handleHandleDrag}
+                    onDragStop={this.handleHandleDragStop}
                 />
             );
         });
@@ -127,21 +125,18 @@ class Canvas extends Component {
                         />
                     );
                 case 'selectionBox':
-                    const start = 'M ' + (shape.x - 1) + ' ' + (shape.y - 1);
-                    const right = ' h ' + (shape.width + 2);
-                    const down = ' v ' + (shape.height + 2);
-                    const left = ' h ' + -(shape.width + 2);
-                    const close = ' Z';
-                    const pathData = start + right + down + left + close;
                     return (
                         <g key={shape.id}>
-                            <path
-                                d={pathData}
+                            <Rectangle
+                                x={shape.x - 1}
+                                y={shape.y - 1}
+                                width={shape.width + 2}
+                                height={shape.height + 2}
                                 stroke='rgba(102, 204, 255, 0.7)'
-                                strokeWidth={3}
+                                strokeWidth={2}
                                 fill='none'
                             />
-                            {this.renderResizeHandles(shape)}
+                            {this.renderHandles(shape)}
                         </g>
                     );
                 default:

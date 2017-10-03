@@ -6,7 +6,10 @@ import {
     canvasDragStop,
     shapeDragStart,
     shapeDrag,
-    shapeDragStop
+    shapeDragStop,
+    handleDragStart,
+    handleDrag,
+    handleDragStop
 } from './../../actions/canvas';
 
 const mapStateToProps = ({ drawingState }) => {
@@ -43,17 +46,20 @@ const mapDispatchToProps = (dispatch) => {
         onShapeDragStop: (shapeId, draggableData) => {
             dispatch(shapeDragStop(shapeId));
         },
-        onResizeHandleDragStart: (shapeId, draggableData) => {
-            console.log(shapeId, draggableData);
+        onHandleDragStart: (shapeId, handleIndex, draggableData) => {
+            console.log(shapeId, handleIndex, draggableData);
             console.log("start handle drag");
+            dispatch(handleDragStart(shapeId, handleIndex, draggableData));
         },
-        onResizeHandleDrag: (shapeId, draggableData) => {
-            console.log(shapeId, draggableData);
+        onHandleDrag: (shapeId, handleIndex, draggableData) => {
+            console.log(shapeId, handleIndex, draggableData);
             console.log("handle drag");
+            dispatch(handleDrag(shapeId, handleIndex, draggableData));
         },
-        onResizeHandleDragStop: (shapeId, draggableData) => {
-            console.log(shapeId, draggableData);
+        onHandleDragStop: (shapeId, handleIndex, draggableData) => {
+            console.log(shapeId, handleIndex, draggableData);
             console.log("stop handle drag");
+            dispatch(handleDragStop(shapeId, handleIndex, draggableData));
         }
     };
 };
