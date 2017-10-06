@@ -9,10 +9,10 @@ import {
     shapeDragStop
 } from './../../actions/canvas';
 
-const mapStateToProps = ({drawingState}) => {
-    const { drawing, zIndexedShapeIds, selectionBoxes } = drawingState;
-    const shapes = zIndexedShapeIds.map((id) => {
-        return drawing[id];
+const mapStateToProps = ({ drawingState }) => {
+    const { selectionBoxes } = drawingState;
+    const shapes = drawingState.shapes.allIds.map((id) => {
+        return drawingState.shapes.byId[id];
     });
     Object.keys(selectionBoxes).map((id) => {
         shapes.push(selectionBoxes[id]);

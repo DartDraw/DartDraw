@@ -1,8 +1,9 @@
-import { combineReducers } from 'redux';
 import drawingState from './drawingState';
-import tempDrawingState from './tempDrawingState';
+import menuState from './menuState';
 
-export default combineReducers({
-    drawingState,
-    tempDrawingState
-});
+export default (state = {}, action) => {
+    return {
+        drawingState: drawingState(state.drawingState, action, state),
+        menuState: menuState(state.menuState, action, state)
+    };
+};
