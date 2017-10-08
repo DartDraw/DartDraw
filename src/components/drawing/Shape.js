@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DraggableCore } from 'react-draggable';
+import { Draggable } from '../shared';
 
 class Shape extends Component {
     static propTypes = {
@@ -19,21 +19,18 @@ class Shape extends Component {
         this.handleDragStop = this.handleDragStop.bind(this);
     }
 
-    handleDragStart(e, draggableData) {
+    handleDragStart(draggableData) {
         const { id, onDragStart } = this.props;
-        e.stopPropagation();
         onDragStart && onDragStart(id, draggableData);
     }
 
-    handleDrag(e, draggableData) {
+    handleDrag(draggableData) {
         const { id, onDrag } = this.props;
-        e.stopPropagation();
         onDrag && onDrag(id, draggableData);
     }
 
-    handleDragStop(e, draggableData) {
+    handleDragStop(draggableData) {
         const { id, onDragStop } = this.props;
-        e.stopPropagation();
         onDragStop && onDragStop(id, draggableData);
     }
 
@@ -41,14 +38,13 @@ class Shape extends Component {
         const { children } = this.props;
 
         return (
-            <DraggableCore
-                onClick={this.handeClick}
+            <Draggable
                 onStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onStop={this.handleDragStop}
             >
                 {children}
-            </DraggableCore>
+            </Draggable>
         );
     }
 }

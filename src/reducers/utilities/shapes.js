@@ -4,8 +4,6 @@ export function createRectangle({ x, y, width, height }) {
     return {
         id: guid.create().toString(),
         type: 'rectangle',
-        originX: x,
-        originY: y,
         x,
         y,
         width,
@@ -36,25 +34,28 @@ export function removeShape(shapes, shapeId) {
 }
 
 export function resizeShape(shapes, selected, action) {
+    const { draggableData } = action.payload;
     const shape = shapes.byId[selected[0]];
 
-    const mouseX = action.payload.draggableData.x - action.payload.draggableData.node.getBoundingClientRect().left;
-    const mouseY = action.payload.draggableData.y - action.payload.draggableData.node.getBoundingClientRect().top;
+    const mouseX = draggableData.x - draggableData.node.getBoundingClientRect().left;
+    const mouseY = draggableData.y - draggableData.node.getBoundingClientRect().top;
+    const originX = draggableData.originX - draggableData.node.getBoundingClientRect().left;
+    const originY = draggableData.originY - draggableData.node.getBoundingClientRect().top;
 
-    if (mouseX > shape.originX) {
-        shape.x = shape.originX;
+    if (mouseX > originX) {
+        shape.x = originX;
         shape.width = mouseX - shape.x;
-    } else if (mouseX < shape.originX) {
+    } else if (mouseX < originX) {
         shape.x = mouseX;
-        shape.width = shape.originX - mouseX;
+        shape.width = originX - mouseX;
     }
 
-    if (mouseY > shape.originY) {
-        shape.y = shape.originY;
+    if (mouseY > originY) {
+        shape.y = originY;
         shape.height = mouseY - shape.y;
-    } else if (mouseY < shape.originY) {
+    } else if (mouseY < originY) {
         shape.y = mouseY;
-        shape.height = shape.originY - mouseY;
+        shape.height = originY - mouseY;
     }
 
     return shapes;

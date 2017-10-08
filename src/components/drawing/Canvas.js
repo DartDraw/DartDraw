@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DraggableCore } from 'react-draggable';
 import './Canvas.css';
+import { Draggable } from '../shared';
 import { Rectangle } from '.';
 
 class Canvas extends Component {
@@ -36,15 +36,15 @@ class Canvas extends Component {
         this.handleResizeHandleDragStop = this.handleResizeHandleDragStop.bind(this);
     }
 
-    handleDragStart(e, draggableData) {
+    handleDragStart(draggableData) {
         this.props.onDragStart(draggableData);
     }
 
-    handleDrag(e, draggableData) {
+    handleDrag(draggableData) {
         this.props.onDrag(draggableData);
     }
 
-    handleDragStop(e, draggableData) {
+    handleDragStop(draggableData) {
         this.props.onDragStop(draggableData);
     }
 
@@ -153,7 +153,7 @@ class Canvas extends Component {
     render() {
         return (
             <div>
-                <DraggableCore
+                <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
@@ -161,7 +161,7 @@ class Canvas extends Component {
                     <svg className="Canvas" height="900" width="1200">
                         {this.renderDrawing()}
                     </svg>
-                </DraggableCore>
+                </Draggable>
             </div>
         );
     }
