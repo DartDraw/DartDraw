@@ -4,25 +4,25 @@
   "private": true,
   "main": "electron.js",
   "dependencies": {
-    "eslint": "^4.7.1",
-    "eslint-config-semistandard": "^11.0.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-config-standard-jsx": "^4.0.2",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-json": "^1.2.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-react": "^7.3.0",
-    "eslint-plugin-react-native": "^3.1.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "guid": "^0.0.12",
-    "jsondiffpatch": "^0.2.4",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-draggable": "^3.0.3",
-    "react-redux": "^5.0.6",
+    "eslint": "4.7.1",
+    "eslint-config-semistandard": "11.0.0",
+    "eslint-config-standard": "10.2.1",
+    "eslint-config-standard-jsx": "4.0.2",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-json": "1.2.0",
+    "eslint-plugin-node": "5.1.1",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-react": "7.3.0",
+    "eslint-plugin-react-native": "3.1.0",
+    "eslint-plugin-standard": "3.0.1",
+    "guid": "0.0.12",
+    "jsondiffpatch": "0.2.4",
+    "react": "15.6.1",
+    "react-dom": "15.6.1",
+    "react-draggable": "3.0.3",
+    "react-redux": "5.0.6",
     "react-scripts": "1.0.13",
-    "redux": "^3.7.2"
+    "redux": "3.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,6 +32,6 @@
     "electron": "electron ."
   },
   "devDependencies": {
-    "electron": "^1.7.6"
+    "electron": "1.7.8"
   }
 }
