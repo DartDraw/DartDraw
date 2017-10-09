@@ -8,7 +8,8 @@ class Shape extends Component {
         children: PropTypes.any,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
-        onDragStop: PropTypes.func
+        onDragStop: PropTypes.func,
+        onClick: PropTypes.func
     }
 
     constructor(props) {
@@ -17,6 +18,7 @@ class Shape extends Component {
         this.handleDragStart = this.handleDragStart.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragStop = this.handleDragStop.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     handleDragStart(draggableData) {
@@ -34,6 +36,12 @@ class Shape extends Component {
         onDragStop && onDragStop(id, draggableData);
     }
 
+    handleClick(e) {
+        const { id, onClick } = this.props;
+        e.stopPropagation();
+        onClick && onClick(id, e.nativeEvent);
+    }
+
     render() {
         const { children } = this.props;
 
@@ -42,8 +50,9 @@ class Shape extends Component {
                 onStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onStop={this.handleDragStop}
+                onMouseDown={this.handleClick}
             >
-                {children}
+                {React.cloneElement(children, { onClick: this.handleClick })}
             </Draggable>
         );
     }

@@ -2,6 +2,7 @@ export const CANVAS_DRAG = 'CANVAS_DRAG';
 export const CANVAS_DRAG_START = 'CANVAS_DRAG_START';
 export const CANVAS_DRAG_STOP = 'CANVAS_DRAG_STOP';
 export const SHAPE_DRAG_START = 'SHAPE_DRAG_START';
+export const SHAPE_CLICK = 'SHAPE_CLICK';
 export const SHAPE_DRAG = 'SHAPE_DRAG';
 export const SHAPE_DRAG_STOP = 'SHAPE_DRAG_STOP';
 export const HANDLE_DRAG_START = 'HANDLE_DRAG_START';
@@ -18,6 +19,10 @@ export function canvasDragStart(draggableData) {
 
 export function canvasDragStop() {
     return { type: CANVAS_DRAG_STOP };
+}
+
+export function shapeClick(shapeId) {
+    return { type: SHAPE_CLICK, payload: { shapeId } };
 }
 
 export function shapeDragStart(shapeId, draggableData) {

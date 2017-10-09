@@ -36,39 +36,44 @@ export function removeShape(shapes, shapeId) {
 }
 
 export function resizeShape(shapes, selected, draggableData, handleIndex) {
-    const shape = shapes.byId[selected[0]];
     const { deltaX, deltaY } = draggableData;
-    switch (handleIndex) {
-        case 0:
-            shape.width = shape.width + deltaX;
-            shape.y = shape.y + deltaY;
-            shape.height = shape.height - deltaY;
-            break;
-        case 1:
-            shape.width = shape.width + deltaX;
-            shape.height = shape.height + deltaY;
-            break;
-        case 2:
-            shape.x = shape.x + deltaX;
-            shape.width = shape.width - deltaX;
-            shape.height = shape.height + deltaY;
-            break;
-        case 3:
-            shape.x = shape.x + deltaX;
-            shape.width = shape.width - deltaX;
-            shape.y = shape.y + deltaY;
-            shape.height = shape.height - deltaY;
-            break;
-        default:
-            break;
-    }
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        switch (handleIndex) {
+            case 0:
+                shape.width = shape.width + deltaX;
+                shape.y = shape.y + deltaY;
+                shape.height = shape.height - deltaY;
+                break;
+            case 1:
+                shape.width = shape.width + deltaX;
+                shape.height = shape.height + deltaY;
+                break;
+            case 2:
+                shape.x = shape.x + deltaX;
+                shape.width = shape.width - deltaX;
+                shape.height = shape.height + deltaY;
+                break;
+            case 3:
+                shape.x = shape.x + deltaX;
+                shape.width = shape.width - deltaX;
+                shape.y = shape.y + deltaY;
+                shape.height = shape.height - deltaY;
+                break;
+            default:
+                break;
+        }
+    });
     return shapes;
 }
 
-export function moveShape(shapes, action) {
-    const { shapeId, draggableData } = action.payload;
-    const shape = shapes.byId[shapeId];
-    shape.x = shape.x + draggableData.deltaX;
-    shape.y = shape.y + draggableData.deltaY;
+export function moveShape(shapes, selected, action) {
+    const { draggableData } = action.payload;
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        shape.x = shape.x + draggableData.deltaX;
+        shape.y = shape.y + draggableData.deltaY;
+    });
     return shapes;
 }

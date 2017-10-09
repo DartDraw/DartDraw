@@ -4,6 +4,7 @@ import {
     canvasDragStart,
     canvasDrag,
     canvasDragStop,
+    shapeClick,
     shapeDragStart,
     shapeDrag,
     shapeDragStop,
@@ -45,6 +46,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onShapeDragStop: (shapeId, draggableData) => {
             dispatch(shapeDragStop(shapeId));
+        },
+        onShapeClick: (shapeId, event) => {
+            dispatch(shapeClick(shapeId));
         },
         onHandleDragStart: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStart(shapeId, handleIndex, draggableData));

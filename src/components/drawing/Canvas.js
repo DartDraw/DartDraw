@@ -13,6 +13,7 @@ class Canvas extends Component {
         onShapeDragStart: PropTypes.func,
         onShapeDrag: PropTypes.func,
         onShapeDragStop: PropTypes.func,
+        onShapeClick: PropTypes.func,
         onHandleDragStart: PropTypes.func,
         onHandleDrag: PropTypes.func,
         onHandleDragStop: PropTypes.func,
@@ -31,6 +32,7 @@ class Canvas extends Component {
         this.handleShapeDragStart = this.handleShapeDragStart.bind(this);
         this.handleShapeDrag = this.handleShapeDrag.bind(this);
         this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
+        this.handleShapeClick = this.handleShapeClick.bind(this);
         this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
         this.handleHandleDrag = this.handleHandleDrag.bind(this);
         this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
@@ -58,6 +60,10 @@ class Canvas extends Component {
 
     handleShapeDragStop(shapeId, draggableData) {
         this.props.onShapeDragStop(shapeId, draggableData);
+    }
+
+    handleShapeClick(shapeId, event) {
+        this.props.onShapeClick(shapeId, event);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -118,6 +124,7 @@ class Canvas extends Component {
                             onDragStart={this.handleShapeDragStart}
                             onDrag={this.handleShapeDrag}
                             onDragStop={this.handleShapeDragStop}
+                            onClick={this.handleShapeClick}
                             width={shape.width}
                             height={shape.height}
                             x={shape.x}

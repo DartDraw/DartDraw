@@ -8,6 +8,7 @@ class Rectangle extends Component {
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
+        onClick: PropTypes.func,
         width: PropTypes.number,
         height: PropTypes.number,
         x: PropTypes.number,
@@ -23,6 +24,7 @@ class Rectangle extends Component {
         this.handleDragStart = this.handleDragStart.bind(this);
         this.handleDrag = this.handleDrag.bind(this);
         this.handleDragStop = this.handleDragStop.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     handleDragStart(id, draggableData) {
@@ -38,6 +40,11 @@ class Rectangle extends Component {
     handleDragStop(id, draggableData) {
         const { onDragStop } = this.props;
         onDragStop && onDragStop(id, draggableData);
+    }
+
+    handleClick(id, event) {
+        const { onClick } = this.props;
+        onClick && onClick(id, event);
     }
 
     render() {
@@ -68,6 +75,7 @@ class Rectangle extends Component {
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
+                onClick={this.handleClick}
             >
                 <rect {...rectProps} />
             </Shape>

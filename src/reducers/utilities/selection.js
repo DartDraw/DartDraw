@@ -1,8 +1,24 @@
 import guid from 'guid';
 
-export function selectShape(selected, shapeId) {
+export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
     if (!shapeId) { return selected; }
-    selected = [shapeId];
+
+    if (!selectMultiple) {
+        return [shapeId];
+    }
+
+    if (selected === null || typeof (selected) === "undefined") {
+        selected = [];
+    }
+
+    if (shiftSelected) {
+        if (selected.indexOf(shapeId) > -1) {
+            selected.splice(selected.indexOf(shapeId), 1);
+        } else {
+            selected.push(shapeId);
+        }
+    }
+
     return selected;
 }
 

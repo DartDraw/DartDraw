@@ -36,6 +36,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.SHAPE_DRAG_START:
             updatedState = shape.dragStart(stateCopy, action, root);
             break;
+        case canvasActions.SHAPE_CLICK:
+            updatedState = shape.click(stateCopy, action, root);
+            break;
         case canvasActions.SHAPE_DRAG:
             updatedState = shape.drag(stateCopy, action, root);
             break;
