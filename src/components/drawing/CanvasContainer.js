@@ -47,18 +47,12 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(shapeDragStop(shapeId));
         },
         onHandleDragStart: (shapeId, handleIndex, draggableData) => {
-            console.log(shapeId, handleIndex, draggableData);
-            console.log("start handle drag");
             dispatch(handleDragStart(shapeId, handleIndex, draggableData));
         },
         onHandleDrag: (shapeId, handleIndex, draggableData) => {
-            console.log(shapeId, handleIndex, draggableData);
-            console.log("handle drag");
             dispatch(handleDrag(shapeId, handleIndex, draggableData));
         },
         onHandleDragStop: (shapeId, handleIndex, draggableData) => {
-            console.log(shapeId, handleIndex, draggableData);
-            console.log("stop handle drag");
             dispatch(handleDragStop(shapeId, handleIndex, draggableData));
         }
     };

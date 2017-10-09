@@ -1,6 +1,7 @@
-import { addShape, removeShape, resizeShape, moveShape } from '../utilities/shapes';
+import { addShape, removeShape, resizeShape, resizeShape2, moveShape } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
+// New Shape
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
     stateCopy.lastSavedShapes = root.drawingState.shapes;
@@ -50,6 +51,40 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             }
             break;
+        default:
+            break;
+    }
+    stateCopy.editInProgress = false;
+    return stateCopy;
+}
+
+// Edit Exisiting Shape
+export function handleDragStart(stateCopy, action, root) {
+    stateCopy.editInProgress = true;
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
+    switch (root.menuState.toolType) {
+        case "selectTool":
+            break;
+        default: break;
+    }
+    return stateCopy;
+}
+
+export function handleDrag(stateCopy, action, root) {
+    action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
+    switch (root.menuState.toolType) {
+        case "selectTool":
+            stateCopy.shapes = resizeShape2(stateCopy.shapes, stateCopy.lastSavedShapes, stateCopy.selected, action);
+            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+            break;
+        default: break;
+    }
+    return stateCopy;
+}
+
+export function handleDragStop(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
         default:
             break;
     }
