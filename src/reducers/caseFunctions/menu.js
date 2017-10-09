@@ -1,6 +1,22 @@
 import jsondiffpatch from 'jsondiffpatch';
 import { generateSelectionBoxes } from '../utilities/selection';
 
+export function keyDown(stateCopy, action) {
+    const { keyCode } = action.payload;
+    if (!stateCopy.currentKeys[keyCode]) {
+        stateCopy.currentKeys[keyCode] = true;
+    }
+    return stateCopy;
+}
+
+export function keyUp(stateCopy, action) {
+    const { keyCode } = action.payload;
+    if (stateCopy.currentKeys[keyCode]) {
+        delete stateCopy.currentKeys[keyCode];
+    }
+    return stateCopy;
+}
+
 export function undoClick(stateCopy, action) {
     const delta = stateCopy.past.pop();
 
