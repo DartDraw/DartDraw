@@ -1,4 +1,4 @@
-import { addShape, removeShape, resizeShape, resizeShape2, moveShape } from '../utilities/shapes';
+import { addShape, removeShape, resizeShape, moveShape } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 // New Shape
@@ -25,9 +25,10 @@ export function dragStart(stateCopy, action, root) {
 
 export function drag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
+    const { draggableData } = action.payload;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, action);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1);
             stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
             break;
         case "selectTool":
@@ -44,8 +45,8 @@ export function dragStop(stateCopy, action, root) {
         case "rectangleTool":
             const shapeIds = stateCopy.shapes.allIds;
             const addedShapeId = shapeIds[shapeIds.length - 1];
-            if (stateCopy.shapes.byId[addedShapeId].width < 1 ||
-              stateCopy.shapes.byId[addedShapeId].height < 1) {
+            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) < 1 ||
+              Math.abs(stateCopy.shapes.byId[addedShapeId].height) < 1) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
                 stateCopy.selected = selectShape([], null);
                 stateCopy.selectionBoxes = generateSelectionBoxes([], []);
@@ -73,9 +74,10 @@ export function handleDragStart(stateCopy, action, root) {
 
 export function handleDrag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
+    const { draggableData, handleIndex } = action.payload;
     switch (root.menuState.toolType) {
         case "selectTool":
-            stateCopy.shapes = resizeShape2(stateCopy.shapes, stateCopy.lastSavedShapes, stateCopy.selected, action);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex);
             stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
             break;
         default: break;

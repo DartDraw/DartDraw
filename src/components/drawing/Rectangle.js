@@ -42,7 +42,25 @@ class Rectangle extends Component {
 
     render() {
         const { id, width, height, x, y, stroke, strokeWidth, fill } = this.props;
-        const rectProps = { width, height, x, y, stroke, strokeWidth, fill };
+        let renderX = x;
+        let renderWidth = Math.abs(width);
+        if (width < 0) {
+            renderX = x - renderWidth;
+        }
+        let renderY = y;
+        let renderHeight = Math.abs(height);
+        if (height < 0) {
+            renderY = y - renderHeight;
+        }
+        const rectProps = {
+            x: renderX,
+            y: renderY,
+            width: renderWidth,
+            height: renderHeight,
+            stroke,
+            strokeWidth,
+            fill
+        };
 
         return (
             <Shape
