@@ -74,6 +74,14 @@ export function moveShape(shapes, selected, action) {
     return shapes;
 }
 
+export function fillShape(shapes, selected, action) {
+    const { color } = action.payload;
+    selected.map((id) => {
+        shapes.byId[id].fill = formatColor(color);
+    });
+    return shapes;
+}
+
 export function formatColor(rgba) {
     const { r, g, b, a } = rgba;
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
