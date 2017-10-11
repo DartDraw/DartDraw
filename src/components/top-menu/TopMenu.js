@@ -7,6 +7,7 @@ class TopMenu extends Component {
     static propTypes = {
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
+        onGroupClick: PropTypes.func,
         onColorSelect: PropTypes.func
     };
 
@@ -26,6 +27,10 @@ class TopMenu extends Component {
         this.props.onRedoClick();
     }
 
+    handleGroupClick() {
+        this.props.onGroupClick();
+    }
+
     handleChangeComplete(color, event) {
         this.props.onColorSelect(color.rgb);
     }
@@ -38,6 +43,9 @@ class TopMenu extends Component {
                 </button>
                 <button onClick={this.handleRedoClick}>
                     <img src="./assets/003-redo.svg" alt="redo" id="button-icon" />
+                </button>
+                <button onClick={this.handleGroupClick}>
+                  <img src="./assets/005-group.svg" alt="group" id="button-icon" />
                 </button>
                 <div id="color-palette">
                     <CirclePicker onChangeComplete={this.handleChangeComplete} circleSize={20} circleSpacing={5} width='450px' />
