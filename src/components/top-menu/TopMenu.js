@@ -7,7 +7,10 @@ class TopMenu extends Component {
     static propTypes = {
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
-        onColorSelect: PropTypes.func
+        onGroupClick: PropTypes.func,
+        onColorSelect: PropTypes.func,
+        onSendToBack: PropTypes.func,
+        onBringToFront: PropTypes.func
     };
 
     constructor(props) {
@@ -16,6 +19,9 @@ class TopMenu extends Component {
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleChangeComplete = this.handleChangeComplete.bind(this);
+        this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.handleSendToBack = this.handleSendToBack.bind(this);
+        this.handleBringToFront = this.handleBringToFront.bind(this);
     }
 
     handleUndoClick() {
@@ -24,6 +30,18 @@ class TopMenu extends Component {
 
     handleRedoClick() {
         this.props.onRedoClick();
+    }
+
+    handleGroupClick() {
+        this.props.onGroupClick();
+    }
+
+    handleBringToFront() {
+        this.props.onBringToFront();
+    }
+
+    handleSendToBack() {
+        this.props.onSendToBack();
     }
 
     handleChangeComplete(color, event) {
@@ -39,9 +57,19 @@ class TopMenu extends Component {
                 <button onClick={this.handleRedoClick}>
                     <img src="./assets/003-redo.svg" alt="redo" id="button-icon" />
                 </button>
+                <button onClick={this.handleGroupClick}>
+                  <img src="./assets/005-group.svg" alt="group" id="button-icon" />
+                </button>
+                <button onClick={this.handleSendToBack}>
+                  <img src="./assets/007-SendToBack.svg" alt="backall" id="button-icon" />
+                </button>
+                <button onClick={this.handleBringToFront}>
+                  <img src="./assets/006-BringToFront.svg" alt="frontall" id="button-icon" />
+                </button>
                 <div id="color-palette">
                     <CirclePicker onChangeComplete={this.handleChangeComplete} circleSize={20} circleSpacing={5} width='450px' />
                 </div>
+
             </div>
         );
     }

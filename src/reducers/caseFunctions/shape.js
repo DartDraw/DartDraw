@@ -1,4 +1,4 @@
-import { addShape, removeShape, resizeShape, moveShape, fillShape } from '../utilities/shapes';
+import { addShape, removeShape, resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -125,5 +125,17 @@ export function handleDragStop(stateCopy, action, root) {
 export function setColor(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     stateCopy.shapes = fillShape(stateCopy.shapes, stateCopy.selected, action);
+    return stateCopy;
+}
+
+export function bringFront(stateCopy, action, root) {
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    stateCopy.shapes = changeZIndex(stateCopy.shapes, stateCopy.selected, 1);
+    return stateCopy;
+}
+
+export function sendBack(stateCopy, action, root) {
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    stateCopy.shapes = changeZIndex(stateCopy.shapes, stateCopy.selected, -1);
     return stateCopy;
 }

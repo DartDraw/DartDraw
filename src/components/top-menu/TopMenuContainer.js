@@ -3,7 +3,10 @@ import TopMenu from './TopMenu';
 import {
     undoClick,
     redoClick,
-    selectColor
+    selectColor,
+    groupClick,
+    sendToBack,
+    bringToFront
 } from './../../actions/menu';
 
 const mapDispatchToProps = (dispatch) => {
@@ -13,6 +16,15 @@ const mapDispatchToProps = (dispatch) => {
         },
         onRedoClick: () => {
             dispatch(redoClick());
+        },
+        onGroupClick: () => {
+            dispatch(groupClick());
+        },
+        onSendToBack: () => {
+            dispatch(sendToBack());
+        },
+        onBringToFront: () => {
+            dispatch(bringToFront());
         },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
