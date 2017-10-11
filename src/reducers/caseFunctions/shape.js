@@ -1,4 +1,4 @@
-import { addShape, resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
+import { resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -29,8 +29,7 @@ export function dragStart(stateCopy, action, root) {
 }
 
 export function drag(stateCopy, action, root) {
-    action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
-    const { draggableData } = action.payload;
+    action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
 
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
@@ -48,7 +47,7 @@ export function drag(stateCopy, action, root) {
     } else {
         switch (root.menuState.toolType) {
             case "selectTool":
-                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action);
+                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.canvasTransformationMatrix);
                 stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
                 break;
             default: break;
@@ -83,7 +82,7 @@ export function handleDrag(stateCopy, action, root) {
         const { draggableData, handleIndex } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
-                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex);
+                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.canvasTransformationMatrix);
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
                 break;
             default: break;

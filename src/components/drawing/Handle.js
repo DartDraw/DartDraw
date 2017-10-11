@@ -12,6 +12,9 @@ class Handle extends Component {
         onDragStop: PropTypes.func,
         x: PropTypes.number,
         y: PropTypes.number,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        strokeWidth: PropTypes.number,
         propagateEvents: PropTypes.bool
     }
 
@@ -39,15 +42,16 @@ class Handle extends Component {
     }
 
     render() {
-        const { id, x, y, propagateEvents } = this.props;
+        const { id, x, y, width, height, strokeWidth, propagateEvents } = this.props;
         const rectProps = { x, y };
 
         return (
             <Rectangle
                 id={id}
                 {...rectProps}
-                width={10}
-                height={10}
+                width={width}
+                height={height}
+                strokeWidth={strokeWidth}
                 stroke='rgba(69, 63, 80, 0.9)'
                 fill='rgba(255, 255, 255, 1)'
                 onDragStart={this.handleDragStart}

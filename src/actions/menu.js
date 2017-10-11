@@ -4,6 +4,8 @@ export const SELECT_TOOL = 'SELECT_TOOL';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
+export const ZOOM_IN = 'ZOOM_IN';
+export const ZOOM_OUT = 'ZOOM_OUT';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
@@ -30,6 +32,14 @@ export function undoClick() {
 
 export function redoClick() {
     return { type: REDO_CLICK };
+}
+
+export function zoomIn() {
+    return { type: ZOOM_IN };
+}
+
+export function zoomOut() {
+    return { type: ZOOM_OUT };
 }
 
 export function groupButtonClick() {

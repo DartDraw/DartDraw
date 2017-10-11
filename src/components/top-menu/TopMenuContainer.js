@@ -4,10 +4,18 @@ import {
     undoClick,
     redoClick,
     selectColor,
+    zoomIn,
+    zoomOut,
     groupButtonClick,
     sendToBack,
     bringToFront
 } from './../../actions/menu';
+
+const mapStateToProps = ({ drawingState }) => {
+    return {
+        scale: drawingState.canvasTransformationMatrix[0]
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -28,11 +36,17 @@ const mapDispatchToProps = (dispatch) => {
         },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
+        },
+        onZoomIn: () => {
+            dispatch(zoomIn());
+        },
+        onZoomOut: () => {
+            dispatch(zoomOut());
         }
     };
 };
 
 export default connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(TopMenu);

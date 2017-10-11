@@ -7,6 +7,10 @@ import { Group, Rectangle, Handle } from '.';
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
+        canvasHeight: PropTypes.number,
+        canvasWidth: PropTypes.number,
+        canvasTransformationMatrix: PropTypes.array,
+        propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
@@ -22,8 +26,7 @@ class Canvas extends Component {
         onHandleDrag: PropTypes.func,
         onHandleDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
-        onRedoClick: PropTypes.func,
-        propagateEvents: PropTypes.bool
+        onRedoClick: PropTypes.func
     };
 
     constructor(props) {
@@ -112,15 +115,16 @@ class Canvas extends Component {
     }
 
     renderHandles(shape) {
-        const { propagateEvents } = this.props;
+        const { propagateEvents, canvasTransformationMatrix } = this.props;
+        const scale = canvasTransformationMatrix[0];
         return [0, 1, 2, 3].map((index) => {
-            let x = shape.x - 3;
-            let y = shape.y - 3;
+            let x = shape.x - (3 / scale);
+            let y = shape.y - (3 / scale);
             if (index === 0 || index === 1) {
-                x = x + shape.width - 3;
+                x = x + shape.width - (3 / scale);
             }
             if (index === 1 || index === 2) {
-                y = y + shape.height - 3;
+                y = y + shape.height - (3 / scale);
             }
             return (
                 <Handle
@@ -130,6 +134,9 @@ class Canvas extends Component {
                     index={index}
                     x={x}
                     y={y}
+                    width={10 / scale}
+                    height={10 / scale}
+                    strokeWidth={2 / scale}
                     onDragStart={this.handleHandleDragStart}
                     onDrag={this.handleHandleDrag}
                     onDragStop={this.handleHandleDragStop}
@@ -140,7 +147,8 @@ class Canvas extends Component {
     }
 
     renderShape(shape) {
-        const { propagateEvents } = this.props;
+        const { propagateEvents, canvasTransformationMatrix } = this.props;
+        const scale = canvasTransformationMatrix[0];
         switch (shape.type) {
             case 'group':
                 const groupMembers = shape.members.map((shape) => {
@@ -175,12 +183,12 @@ class Canvas extends Component {
                 return (
                     <g key={shape.id}>
                         <Rectangle
-                            x={shape.x - 1}
-                            y={shape.y - 1}
-                            width={shape.width + 2}
-                            height={shape.height + 2}
+                            x={shape.x - (1 / scale)}
+                            y={shape.y - (1 / scale)}
+                            width={shape.width + (2 / scale)}
+                            height={shape.height + (2 / scale)}
                             stroke='rgba(102, 204, 255, 0.7)'
-                            strokeWidth={2}
+                            strokeWidth={2 / scale}
                             fill='none'
                             propagateEvents={propagateEvents}
                         />
@@ -200,6 +208,7 @@ class Canvas extends Component {
     }
 
     render() {
+        const { canvasTransformationMatrix, canvasHeight, canvasWidth } = this.props;
         return (
             <div>
                 <Draggable
@@ -207,8 +216,10 @@ class Canvas extends Component {
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height="95vh" width="1200">
-                        {this.renderDrawing()}
+                    <svg className="Canvas" height={canvasHeight} width={canvasWidth}>
+                        <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
+                            {this.renderDrawing()}
+                        </g>
                     </svg>
                 </Draggable>
             </div>

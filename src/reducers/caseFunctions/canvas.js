@@ -1,12 +1,13 @@
 import { addShape, removeShape, resizeShape } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
+import { pan } from '../caseFunctions/menu';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = addShape(stateCopy.shapes, action, root.menuState.color);
+            stateCopy.shapes = addShape(stateCopy.shapes, action, root.menuState.color, stateCopy.canvasTransformationMatrix);
             const shapeIds = stateCopy.shapes.allIds;
             const addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -25,8 +26,11 @@ export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.canvasTransformationMatrix);
             stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+            break;
+        case "panTool":
+            stateCopy.canvasTransformationMatrix = pan(stateCopy.canvasTransformationMatrix, draggableData);
             break;
         default: break;
     }

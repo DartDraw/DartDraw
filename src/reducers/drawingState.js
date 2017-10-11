@@ -15,6 +15,9 @@ const initialState = {
     selectionBoxes: {},
     lastSavedShapes: {},
     editInProgress: false,
+    canvasTransformationMatrix: [1, 0, 0, 1, 0, 0],
+    canvasHeight: 840,
+    canvasWidth: 1400,
     past: [],
     future: []
 };
@@ -71,6 +74,12 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.REDO_CLICK:
             updatedState = menu.redoClick(stateCopy, action, root);
+            break;
+        case menuActions.ZOOM_IN:
+            updatedState = menu.zoomIn(stateCopy, action, root);
+            break;
+        case menuActions.ZOOM_OUT:
+            updatedState = menu.zoomOut(stateCopy, action, root);
             break;
         default: break;
     }

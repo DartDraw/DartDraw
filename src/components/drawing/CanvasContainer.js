@@ -39,7 +39,10 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         shapes: formattedShapes,
-        propagateEvents: toolType === 'rectangleTool'
+        canvasHeight: drawingState.canvasHeight,
+        canvasWidth: drawingState.canvasWidth,
+        canvasTransformationMatrix: drawingState.canvasTransformationMatrix,
+        propagateEvents: toolType === 'rectangleTool' || toolType === 'panTool'
     };
 };
 

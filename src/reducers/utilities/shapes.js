@@ -8,12 +8,13 @@ export function createRectangle(rectangle) {
     };
 }
 
-export function addShape(shapes, action, fill) {
+export function addShape(shapes, action, fill, matrix) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
+
     const rectangle = {
-        x: x - node.getBoundingClientRect().left,
-        y: y - node.getBoundingClientRect().top,
+        x: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
+        y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
         width: 0,
         height: 0,
         fill: formatColor(fill)
@@ -31,31 +32,33 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function resizeShape(shapes, selected, draggableData, handleIndex) {
+export function resizeShape(shapes, selected, draggableData, handleIndex, matrix) {
     const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / matrix[0];
+    const scaledDeltaY = deltaY / matrix[3];
 
     selected.map((id) => {
         const shape = shapes.byId[id];
         switch (handleIndex) {
             case 0:
-                shape.width = shape.width + deltaX;
-                shape.y = shape.y + deltaY;
-                shape.height = shape.height - deltaY;
+                shape.width = shape.width + scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+                shape.height = shape.height - scaledDeltaY;
                 break;
             case 1:
-                shape.width = shape.width + deltaX;
-                shape.height = shape.height + deltaY;
+                shape.width = shape.width + scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
                 break;
             case 2:
-                shape.x = shape.x + deltaX;
-                shape.width = shape.width - deltaX;
-                shape.height = shape.height + deltaY;
+                shape.x = shape.x + scaledDeltaX;
+                shape.width = shape.width - scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
                 break;
             case 3:
-                shape.x = shape.x + deltaX;
-                shape.width = shape.width - deltaX;
-                shape.y = shape.y + deltaY;
-                shape.height = shape.height - deltaY;
+                shape.x = shape.x + scaledDeltaX;
+                shape.width = shape.width - scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+                shape.height = shape.height - scaledDeltaY;
                 break;
             default:
                 break;
@@ -64,13 +67,18 @@ export function resizeShape(shapes, selected, draggableData, handleIndex) {
     return shapes;
 }
 
-export function moveShape(shapes, selected, action) {
+export function moveShape(shapes, selected, action, matrix) {
     const { draggableData } = action.payload;
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / matrix[0];
+    const scaledDeltaY = deltaY / matrix[3];
+
     selected.map((id) => {
         const shape = shapes.byId[id];
-        shape.x = shape.x + draggableData.deltaX;
-        shape.y = shape.y + draggableData.deltaY;
+        shape.x = shape.x + scaledDeltaX;
+        shape.y = shape.y + scaledDeltaY;
     });
+
     return shapes;
 }
 

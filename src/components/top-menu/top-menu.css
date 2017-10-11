@@ -26,3 +26,8 @@ button img:hover {
 #color-palette {
   margin-left: 40px;
 }
+
+#temp {
+  font-size: 20px;
+  color: #9e9ca3;
+}
