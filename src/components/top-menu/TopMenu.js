@@ -17,6 +17,7 @@ class TopMenu extends Component {
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleChangeComplete = this.handleChangeComplete.bind(this);
+        this.handleGroupClick = this.handleGroupClick.bind(this);
     }
 
     handleUndoClick() {
