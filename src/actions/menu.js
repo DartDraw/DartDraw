@@ -5,6 +5,8 @@ export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const GROUP_CLICK = 'GROUP_CLICK';
+export const SEND_BACK = 'SEND_BACK';
+export const BRING_FRONT = 'BRING_FRONT';
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
@@ -32,4 +34,12 @@ export function redoClick() {
 
 export function groupClick() {
     return { type: GROUP_CLICK };
+}
+
+export function sendToBack() {
+    return { type: SEND_BACK };
+}
+
+export function bringToFront() {
+    return { type: BRING_FRONT };
 }

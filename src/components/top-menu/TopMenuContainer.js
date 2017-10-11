@@ -4,7 +4,9 @@ import {
     undoClick,
     redoClick,
     selectColor,
-    groupClick
+    groupClick,
+    sendToBack,
+    bringToFront
 } from './../../actions/menu';
 
 const mapDispatchToProps = (dispatch) => {
@@ -17,6 +19,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onGroupClick: () => {
             dispatch(groupClick());
+        },
+        onSendToBack: () => {
+            dispatch(sendToBack());
+        },
+        onBringToFront: () => {
+            dispatch(bringToFront());
         },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));

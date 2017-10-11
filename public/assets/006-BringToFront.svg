@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="17px" viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>BringToFront</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="3.69230769" y="3.69230769" width="12.3076923" height="12.3076923" rx="1"></rect>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-2" transform="translate(-245.000000, -134.000000)">
+            <g id="BringToFront" transform="translate(246.000000, 135.000000)">
+                <rect id="Rectangle-17-Copy" stroke="#979797" x="2.34615385" y="2.34615385" width="11.3076923" height="11.3076923" rx="1"></rect>
+                <g id="Rectangle-17-Copy-2">
+                    <use fill="#979797" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <rect stroke="#979797" stroke-width="1" x="4.19230769" y="4.19230769" width="11.3076923" height="11.3076923" rx="1"></rect>
+                </g>
+                <path d="M12,2.15384615 L12,1.30769231 L12,1.30769231 C12,0.755407558 11.5522847,0.307692308 11,0.307692308 L1.30769231,0.307692308 L1.30769231,0.307692308 C0.755407558,0.307692308 0.307692308,0.755407558 0.307692308,1.30769231 L0.307692308,11 L0.307692308,11 C0.307692308,11.5522847 0.755407558,12 1.30769231,12 L2.15384615,12" id="Path-7" stroke="#979797"></path>
+            </g>
+        </g>
+    </g>
+</svg>
