@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import './top-menu.css';
 import { CirclePicker } from 'react-color';
 
+const currentPalette = ["#ffffff","#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548"];
+
 class TopMenu extends Component {
     static propTypes = {
         onUndoClick: PropTypes.func,
@@ -67,7 +69,7 @@ class TopMenu extends Component {
                   <img src="./assets/006-BringToFront.svg" alt="frontall" id="button-icon" />
                 </button>
                 <div id="color-palette">
-                    <CirclePicker onChangeComplete={this.handleChangeComplete} circleSize={20} circleSpacing={5} width='450px' />
+                    <CirclePicker onChangeComplete={this.handleChangeComplete} colors={currentPalette} circleSize={20} circleSpacing={5} width='450px' />
                 </div>
 
             </div>
