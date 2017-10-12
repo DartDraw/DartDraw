@@ -86,3 +86,28 @@ export function formatColor(rgba) {
     const { r, g, b, a } = rgba;
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
+
+export function changeZIndex(shapes, selected, change) {
+    if (change > 0) {
+        for (let i = shapes.allIds.length - 1; i >= 0; i--) {
+            if (selected.indexOf(shapes.allIds[i]) > -1) {
+                if (i + 1 < shapes.allIds.length && selected.indexOf(shapes.allIds[i + 1]) < 0) {
+                    let temp = shapes.allIds[i + 1];
+                    shapes.allIds[i + 1] = shapes.allIds[i];
+                    shapes.allIds[i] = temp;
+                }
+            }
+        }
+    } else {
+        for (let i = 0; i < shapes.allIds.length; i++) {
+            if (selected.indexOf(shapes.allIds[i]) > -1) {
+                if (i - 1 >= 0 && selected.indexOf(shapes.allIds[i - 1]) < 0) {
+                    let temp = shapes.allIds[i - 1];
+                    shapes.allIds[i - 1] = shapes.allIds[i];
+                    shapes.allIds[i] = temp;
+                }
+            }
+        }
+    }
+    return shapes;
+}

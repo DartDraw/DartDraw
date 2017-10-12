@@ -57,6 +57,12 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
+        case menuActions.BRING_FRONT:
+            updatedState = shape.bringFront(stateCopy, action, root);
+            break;
+        case menuActions.SEND_BACK:
+            updatedState = shape.sendBack(stateCopy, action, root);
+            break;
         case menuActions.UNDO_CLICK:
             updatedState = menu.undoClick(stateCopy, action, root);
             break;
