@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Canvas.css';
 import { Draggable } from '../shared';
-import { Rectangle, Handle } from '.';
+import { Group, Rectangle, Handle } from '.';
 
 class Canvas extends Component {
     static propTypes = {
@@ -14,6 +14,10 @@ class Canvas extends Component {
         onShapeDrag: PropTypes.func,
         onShapeDragStop: PropTypes.func,
         onShapeClick: PropTypes.func,
+        onGroupDragStart: PropTypes.func,
+        onGroupDrag: PropTypes.func,
+        onGroupDragStop: PropTypes.func,
+        onGroupClick: PropTypes.func,
         onHandleDragStart: PropTypes.func,
         onHandleDrag: PropTypes.func,
         onHandleDragStop: PropTypes.func,
@@ -33,6 +37,10 @@ class Canvas extends Component {
         this.handleShapeDrag = this.handleShapeDrag.bind(this);
         this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
         this.handleShapeClick = this.handleShapeClick.bind(this);
+        this.handleGroupDragStart = this.handleGroupDragStart.bind(this);
+        this.handleGroupDrag = this.handleGroupDrag.bind(this);
+        this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
+        this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
         this.handleHandleDrag = this.handleHandleDrag.bind(this);
         this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
@@ -64,6 +72,22 @@ class Canvas extends Component {
 
     handleShapeClick(shapeId, event) {
         this.props.onShapeClick(shapeId, event);
+    }
+
+    handleGroupDragStart(groupId, draggableData) {
+        this.props.onGroupDragStart(groupId, draggableData);
+    }
+
+    handleGroupDrag(groupId, draggableData) {
+        this.props.onGroupDrag(groupId, draggableData);
+    }
+
+    handleGroupDragStop(groupId, draggableData) {
+        this.props.onGroupDragStop(groupId, draggableData);
+    }
+
+    handleGroupClick(groupId, event) {
+        this.props.onGroupClick(groupId, event);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -98,7 +122,7 @@ class Canvas extends Component {
             }
             return (
                 <Handle
-                    key={index}
+                    key={shape.id + index}
                     id={shape.id}
                     shapeId={shape.shapeId}
                     index={index}
@@ -112,40 +136,60 @@ class Canvas extends Component {
         });
     }
 
+    renderShape(shape) {
+        switch (shape.type) {
+            case 'group':
+                const groupMembers = shape.members.map((shape) => {
+                    return this.renderShape(shape);
+                });
+                return (
+                    <Group
+                        key={shape.id}
+                        id={shape.id}
+                        onDragStart={this.handleGroupDragStart}
+                        onDrag={this.handleGroupDrag}
+                        onDragStop={this.handleGroupDragStop}
+                        onClick={this.handleGroupClick}
+                    >
+                        {groupMembers}
+                    </Group>
+                );
+            case 'rectangle':
+                return (
+                    <Rectangle
+                        key={shape.id}
+                        id={shape.id}
+                        onDragStart={this.handleShapeDragStart}
+                        onDrag={this.handleShapeDrag}
+                        onDragStop={this.handleShapeDragStop}
+                        onClick={this.handleShapeClick}
+                        {...shape}
+                    />
+                );
+            case 'selectionBox':
+                return (
+                    <g key={shape.id}>
+                        <Rectangle
+                            x={shape.x - 1}
+                            y={shape.y - 1}
+                            width={shape.width + 2}
+                            height={shape.height + 2}
+                            stroke='rgba(102, 204, 255, 0.7)'
+                            strokeWidth={2}
+                            fill='none'
+                        />
+                        {this.renderHandles(shape)}
+                    </g>
+                );
+            default:
+                break;
+        }
+    }
+
     renderDrawing() {
         const { shapes } = this.props;
-        return shapes.map((shape, i) => {
-            switch (shape.type) {
-                case 'rectangle':
-                    return (
-                        <Rectangle
-                            key={shape.id}
-                            id={shape.id}
-                            onDragStart={this.handleShapeDragStart}
-                            onDrag={this.handleShapeDrag}
-                            onDragStop={this.handleShapeDragStop}
-                            onClick={this.handleShapeClick}
-                            {...shape}
-                        />
-                    );
-                case 'selectionBox':
-                    return (
-                        <g key={shape.id}>
-                            <Rectangle
-                                x={shape.x - 1}
-                                y={shape.y - 1}
-                                width={shape.width + 2}
-                                height={shape.height + 2}
-                                stroke='rgba(102, 204, 255, 0.7)'
-                                strokeWidth={2}
-                                fill='none'
-                            />
-                            {this.renderHandles(shape)}
-                        </g>
-                    );
-                default:
-                    break;
-            }
+        return shapes.map((shape) => {
+            return this.renderShape(shape);
         });
     }
 

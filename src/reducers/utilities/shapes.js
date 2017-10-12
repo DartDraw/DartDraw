@@ -111,3 +111,18 @@ export function changeZIndex(shapes, selected, change) {
     }
     return shapes;
 }
+
+export function groupShapes(selected, shapes) {
+    let group = {
+        id: guid.create().toString(),
+        type: "group",
+        members: []
+    };
+    Object.keys(shapes.byId).map((id) => {
+        if (selected.indexOf(id) > -1) {
+            shapes.byId[id].groupID = group.id;
+            group.members.push(id);
+        }
+    });
+    return group;
+}

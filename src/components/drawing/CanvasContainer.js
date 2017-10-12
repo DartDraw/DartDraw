@@ -8,22 +8,36 @@ import {
     shapeDragStart,
     shapeDrag,
     shapeDragStop,
+    groupDragStart,
+    groupDrag,
+    groupDragStop,
+    groupClick,
     handleDragStart,
     handleDrag,
     handleDragStop
 } from './../../actions/canvas';
 
+function formatShape(shape, shapes) {
+    const formattedShape = Object.assign({}, shape);
+    if (formattedShape.type === 'group') {
+        formattedShape.members = formattedShape.members.map((shapeId, i) => {
+            return formatShape(shapes.byId[shapeId], shapes);
+        });
+    }
+    return formattedShape;
+}
+
 const mapStateToProps = ({ drawingState }) => {
-    const { selectionBoxes } = drawingState;
-    const shapes = drawingState.shapes.allIds.map((id) => {
-        return drawingState.shapes.byId[id];
+    const { shapes, selectionBoxes } = drawingState;
+    const formattedShapes = shapes.allIds.map((id) => {
+        return formatShape(shapes.byId[id], shapes);
     });
     Object.keys(selectionBoxes).map((id) => {
-        shapes.push(selectionBoxes[id]);
+        formattedShapes.push(selectionBoxes[id]);
     });
 
     return {
-        shapes
+        shapes: formattedShapes
     };
 };
 
@@ -49,6 +63,18 @@ const mapDispatchToProps = (dispatch) => {
         },
         onShapeClick: (shapeId, event) => {
             dispatch(shapeClick(shapeId));
+        },
+        onGroupDragStart: (groupId, draggableData) => {
+            dispatch(groupDragStart(groupId, draggableData));
+        },
+        onGroupDrag: (groupId, draggableData) => {
+            dispatch(groupDrag(groupId, draggableData));
+        },
+        onGroupDragStop: (groupId, draggableData) => {
+            dispatch(groupDragStop(groupId, draggableData));
+        },
+        onGroupClick: (groupId, event) => {
+            dispatch(groupClick(groupId, event));
         },
         onHandleDragStart: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStart(shapeId, handleIndex, draggableData));

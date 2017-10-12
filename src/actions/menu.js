@@ -4,7 +4,7 @@ export const SELECT_TOOL = 'SELECT_TOOL';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
-export const GROUP_CLICK = 'GROUP_CLICK';
+export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 
@@ -32,8 +32,8 @@ export function redoClick() {
     return { type: REDO_CLICK };
 }
 
-export function groupClick() {
-    return { type: GROUP_CLICK };
+export function groupButtonClick() {
+    return { type: GROUP_BUTTON_CLICK };
 }
 
 export function sendToBack() {

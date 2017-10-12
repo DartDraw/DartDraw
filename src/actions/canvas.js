@@ -2,9 +2,13 @@ export const CANVAS_DRAG = 'CANVAS_DRAG';
 export const CANVAS_DRAG_START = 'CANVAS_DRAG_START';
 export const CANVAS_DRAG_STOP = 'CANVAS_DRAG_STOP';
 export const SHAPE_DRAG_START = 'SHAPE_DRAG_START';
-export const SHAPE_CLICK = 'SHAPE_CLICK';
 export const SHAPE_DRAG = 'SHAPE_DRAG';
 export const SHAPE_DRAG_STOP = 'SHAPE_DRAG_STOP';
+export const SHAPE_CLICK = 'SHAPE_CLICK';
+export const GROUP_DRAG_START = 'GROUP_DRAG_START';
+export const GROUP_DRAG = 'GROUP_DRAG';
+export const GROUP_DRAG_STOP = 'GROUP_DRAG_STOP';
+export const GROUP_CLICK = 'GROUP_CLICK';
 export const HANDLE_DRAG_START = 'HANDLE_DRAG_START';
 export const HANDLE_DRAG = 'HANDLE_DRAG';
 export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
@@ -21,10 +25,6 @@ export function canvasDragStop() {
     return { type: CANVAS_DRAG_STOP };
 }
 
-export function shapeClick(shapeId) {
-    return { type: SHAPE_CLICK, payload: { shapeId } };
-}
-
 export function shapeDragStart(shapeId, draggableData) {
     return { type: SHAPE_DRAG_START, payload: { shapeId, draggableData } };
 }
@@ -35,6 +35,30 @@ export function shapeDrag(shapeId, draggableData) {
 
 export function shapeDragStop(shapeId) {
     return { type: SHAPE_DRAG_STOP, payload: { shapeId } };
+}
+
+export function shapeClick(shapeId) {
+    return { type: SHAPE_CLICK, payload: { shapeId } };
+}
+
+export function groupDragStart(groupId, draggableData) {
+    console.log("start");
+    return { type: GROUP_DRAG_START, payload: { groupId, draggableData } };
+}
+
+export function groupDrag(groupId, draggableData) {
+    console.log("drag");
+    return { type: GROUP_DRAG, payload: { groupId, draggableData } };
+}
+
+export function groupDragStop(groupId, draggableData) {
+    console.log("stop");
+    return { type: GROUP_DRAG_STOP, payload: { groupId, draggableData } };
+}
+
+export function groupClick(groupId, event) {
+    console.log("click");
+    return { type: GROUP_CLICK, payload: { groupId } };
 }
 
 export function handleDragStart(shapeId, handleIndex, draggableData) {

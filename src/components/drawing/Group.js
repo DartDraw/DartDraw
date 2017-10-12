@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Draggable } from '../shared';
 
-class Shape extends Component {
+class Group extends Component {
     static propTypes = {
         id: PropTypes.string,
         children: PropTypes.any,
@@ -21,40 +20,41 @@ class Shape extends Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    handleDragStart(draggableData) {
+    handleDragStart(shapeId, draggableData) {
         const { id, onDragStart } = this.props;
         onDragStart && onDragStart(id, draggableData);
     }
 
-    handleDrag(draggableData) {
+    handleDrag(shapeId, draggableData) {
         const { id, onDrag } = this.props;
         onDrag && onDrag(id, draggableData);
     }
 
-    handleDragStop(draggableData) {
+    handleDragStop(shapeId, draggableData) {
         const { id, onDragStop } = this.props;
         onDragStop && onDragStop(id, draggableData);
     }
 
-    handleClick(e) {
+    handleClick(shapeId, event) {
         const { id, onClick } = this.props;
-        e.stopPropagation();
-        onClick && onClick(id, e.nativeEvent);
+        onClick && onClick(id, event);
     }
 
     render() {
         const { children } = this.props;
-
         return (
-            <Draggable
-                onStart={this.handleDragStart}
-                onDrag={this.handleDrag}
-                onStop={this.handleDragStop}
-            >
-                {React.cloneElement(children, { onClick: this.handleClick })}
-            </Draggable>
+            <g>
+                {React.Children.map(children, (child) => {
+                    return React.cloneElement(child, {
+                        onDragStart: this.handleDragStart,
+                        onDrag: this.handleDrag,
+                        onDragStop: this.handleDragStop,
+                        onClick: this.handleClick
+                    });
+                })}
+            </g>
         );
     }
 }
 
-export default Shape;
+export default Group;
