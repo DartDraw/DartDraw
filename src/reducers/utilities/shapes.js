@@ -75,8 +75,12 @@ export function moveShape(shapes, selected, action, matrix) {
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-        shape.x = shape.x + scaledDeltaX;
-        shape.y = shape.y + scaledDeltaY;
+        if (shape.type === "group") {
+            shapes = moveShape(shapes, shape.members, action);
+        } else {
+            shape.x = shape.x + scaledDeltaX;
+            shape.y = shape.y + scaledDeltaY;
+        }
     });
 
     return shapes;

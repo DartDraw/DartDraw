@@ -99,5 +99,6 @@ export function groupButtonClick(stateCopy, action) {
     stateCopy.shapes.allIds.push(group.id);
     stateCopy.shapes.byId[group.id] = group;
     stateCopy.selected = [group.id];
+    stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     return stateCopy;
 }

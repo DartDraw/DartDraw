@@ -37,15 +37,19 @@ function drawingState(state = initialState, action, root) {
             updatedState = canvas.dragStop(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_DRAG_START:
+        case canvasActions.GROUP_DRAG_START:
             updatedState = shape.dragStart(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_CLICK:
+        case canvasActions.GROUP_CLICK:
             updatedState = shape.click(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_DRAG:
+        case canvasActions.GROUP_DRAG:
             updatedState = shape.drag(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_DRAG_STOP:
+        case canvasActions.GROUP_DRAG_STOP:
             updatedState = shape.dragStop(stateCopy, action, root);
             break;
         case canvasActions.HANDLE_DRAG_START:
