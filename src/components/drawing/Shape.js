@@ -9,7 +9,12 @@ class Shape extends Component {
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
-        onClick: PropTypes.func
+        onClick: PropTypes.func,
+        propagateEvents: PropTypes.bool
+    }
+
+    static defaultProps = {
+        propagateEvents: false
     }
 
     constructor(props) {
@@ -43,13 +48,14 @@ class Shape extends Component {
     }
 
     render() {
-        const { children } = this.props;
+        const { children, propagateEvents } = this.props;
 
         return (
             <Draggable
                 onStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onStop={this.handleDragStop}
+                propagateEvents={propagateEvents}
             >
                 {React.cloneElement(children, { onClick: this.handleClick })}
             </Draggable>

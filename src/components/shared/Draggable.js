@@ -7,7 +7,12 @@ class Draggable extends Component {
         children: PropTypes.any,
         onStart: PropTypes.func,
         onDrag: PropTypes.func,
-        onStop: PropTypes.func
+        onStop: PropTypes.func,
+        propagateEvents: PropTypes.bool
+    }
+
+    static defaultProps = {
+        propagateEvents: false
     }
 
     constructor(props) {
@@ -24,8 +29,10 @@ class Draggable extends Component {
     }
 
     handleDragStart(e, draggableData) {
-        e.stopPropagation();
-        const { onStart } = this.props;
+        const { onStart, propagateEvents } = this.props;
+        if (!propagateEvents) {
+            e.stopPropagation();
+        }
         this.setState({
             originX: draggableData.x,
             originY: draggableData.y
@@ -34,17 +41,21 @@ class Draggable extends Component {
     }
 
     handleDrag(e, draggableData) {
-        e.stopPropagation();
-        const { onDrag } = this.props;
+        const { onDrag, propagateEvents } = this.props;
         const { originX, originY } = this.state;
+        if (!propagateEvents) {
+            e.stopPropagation();
+        }
         draggableData.originX = originX;
         draggableData.originY = originY;
         onDrag && onDrag(draggableData);
     }
 
     handleDragStop(e, draggableData) {
-        e.stopPropagation();
-        const { onStop } = this.props;
+        const { onStop, propagateEvents } = this.props;
+        if (!propagateEvents) {
+            e.stopPropagation();
+        }
         this.setState({
             originX: null,
             originY: null

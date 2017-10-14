@@ -22,7 +22,8 @@ class Canvas extends Component {
         onHandleDrag: PropTypes.func,
         onHandleDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
-        onRedoClick: PropTypes.func
+        onRedoClick: PropTypes.func,
+        propagateEvents: PropTypes.bool
     };
 
     constructor(props) {
@@ -111,6 +112,7 @@ class Canvas extends Component {
     }
 
     renderHandles(shape) {
+        const { propagateEvents } = this.props;
         return [0, 1, 2, 3].map((index) => {
             let x = shape.x - 3;
             let y = shape.y - 3;
@@ -131,12 +133,14 @@ class Canvas extends Component {
                     onDragStart={this.handleHandleDragStart}
                     onDrag={this.handleHandleDrag}
                     onDragStop={this.handleHandleDragStop}
+                    propagateEvents={propagateEvents}
                 />
             );
         });
     }
 
     renderShape(shape) {
+        const { propagateEvents } = this.props;
         switch (shape.type) {
             case 'group':
                 const groupMembers = shape.members.map((shape) => {
@@ -164,6 +168,7 @@ class Canvas extends Component {
                         onDragStop={this.handleShapeDragStop}
                         onClick={this.handleShapeClick}
                         {...shape}
+                        propagateEvents={propagateEvents}
                     />
                 );
             case 'selectionBox':
@@ -177,6 +182,7 @@ class Canvas extends Component {
                             stroke='rgba(102, 204, 255, 0.7)'
                             strokeWidth={2}
                             fill='none'
+                            propagateEvents={propagateEvents}
                         />
                         {this.renderHandles(shape)}
                     </g>

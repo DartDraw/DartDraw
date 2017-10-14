@@ -30,7 +30,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "electron": "electron ."
+    "electron": "electron .",
+    "eslint": "./node_modules/.bin/eslint"
   },
   "devDependencies": {
     "electron": "1.7.8"

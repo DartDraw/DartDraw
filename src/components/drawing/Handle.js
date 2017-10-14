@@ -11,7 +11,8 @@ class Handle extends Component {
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         x: PropTypes.number,
-        y: PropTypes.number
+        y: PropTypes.number,
+        propagateEvents: PropTypes.bool
     }
 
     constructor(props) {
@@ -38,7 +39,7 @@ class Handle extends Component {
     }
 
     render() {
-        const { id, x, y } = this.props;
+        const { id, x, y, propagateEvents } = this.props;
         const rectProps = { x, y };
 
         return (
@@ -52,6 +53,7 @@ class Handle extends Component {
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
+                propagateEvents={propagateEvents}
             />
         );
     }

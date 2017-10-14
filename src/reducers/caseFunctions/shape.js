@@ -1,4 +1,4 @@
-import { addShape, removeShape, resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
+import { addShape, resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -13,16 +13,6 @@ export function click(stateCopy, action, root) {
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
                 stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
-            }
-            break;
-        case "rectangleTool":
-            const shapeIds = stateCopy.shapes.allIds;
-            const addedShapeId = shapeIds[shapeIds.length - 1];
-            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) < 1 ||
-                  Math.abs(stateCopy.shapes.byId[addedShapeId].height) < 1) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
-                stateCopy.selected = selectShape([], null);
-                stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             }
             break;
         default: break;
@@ -46,13 +36,6 @@ export function drag(stateCopy, action, root) {
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
         switch (root.menuState.toolType) {
-            case "rectangleTool":
-                stateCopy.shapes = addShape(stateCopy.shapes, action, root.menuState.color);
-                const shapeIds = stateCopy.shapes.allIds;
-                const addedShapeId = shapeIds[shapeIds.length - 1];
-                stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
-                stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
-                break;
             case "selectTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
@@ -64,10 +47,6 @@ export function drag(stateCopy, action, root) {
         }
     } else {
         switch (root.menuState.toolType) {
-            case "rectangleTool":
-                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1);
-                stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
-                break;
             case "selectTool":
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action);
                 stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);

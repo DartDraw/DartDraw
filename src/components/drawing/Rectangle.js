@@ -15,7 +15,12 @@ class Rectangle extends Component {
         y: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
-        fill: PropTypes.string
+        fill: PropTypes.string,
+        propagateEvents: PropTypes.bool
+    }
+
+    defaultProps = {
+        propagateEvents: false
     }
 
     constructor(props) {
@@ -48,7 +53,7 @@ class Rectangle extends Component {
     }
 
     render() {
-        const { id, width, height, x, y, stroke, strokeWidth, fill } = this.props;
+        const { id, width, height, x, y, stroke, strokeWidth, fill, propagateEvents } = this.props;
         let renderX = x;
         let renderWidth = Math.abs(width);
         if (width < 0) {
@@ -60,6 +65,7 @@ class Rectangle extends Component {
             renderY = y - renderHeight;
         }
         const rectProps = {
+            id,
             x: renderX,
             y: renderY,
             width: renderWidth,
@@ -76,6 +82,7 @@ class Rectangle extends Component {
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
                 onClick={this.handleClick}
+                propagateEvents={propagateEvents}
             >
                 <rect {...rectProps} />
             </Shape>

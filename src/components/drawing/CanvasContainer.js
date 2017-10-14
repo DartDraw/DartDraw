@@ -27,8 +27,9 @@ function formatShape(shape, shapes) {
     return formattedShape;
 }
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selectionBoxes } = drawingState;
+    const { toolType } = menuState;
     const formattedShapes = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes);
     });
@@ -37,7 +38,8 @@ const mapStateToProps = ({ drawingState }) => {
     });
 
     return {
-        shapes: formattedShapes
+        shapes: formattedShapes,
+        propagateEvents: toolType === 'rectangleTool'
     };
 };
 
