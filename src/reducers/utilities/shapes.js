@@ -52,8 +52,6 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
             if (isMember) {
                 group.width = group.x2 - group.x;
                 group.height = group.y2 - group.y;
-                if (group.width < 1) group.width = 1;
-                if (group.height < 1) group.height = 1;
                 switch (handleIndex) {
                     case 0:
                         shape.x += (shape.x - group.x) / group.width * deltaX;
@@ -82,6 +80,8 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                     default:
                         break;
                 }
+                if (isNaN(group.width)) { group.width = 1; }
+                if (isNaN(group.height)) { group.height = 1; }
             } else {
                 switch (handleIndex) {
                     case 0:
