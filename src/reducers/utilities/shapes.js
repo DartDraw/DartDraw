@@ -55,7 +55,7 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 switch (handleIndex) {
                     case 0:
                         shape.x += (shape.x - group.x) / group.width * deltaX;
-                        shape.y += deltaY;
+                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
                         shape.width += shape.width / group.width * deltaX;
                         shape.height -= shape.height / group.height * deltaY;
                         break;
@@ -73,7 +73,7 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                         break;
                     case 3:
                         shape.x += (group.x2 - shape.x) / group.width * deltaX;
-                        shape.y += deltaY;
+                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
                         shape.width -= shape.width / group.width * deltaX;
                         shape.height -= shape.height / group.height * deltaY;
                         break;
