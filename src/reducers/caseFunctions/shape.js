@@ -29,7 +29,7 @@ export function dragStart(stateCopy, action, root) {
 }
 
 export function drag(stateCopy, action, root) {
-    action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
+    action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
 
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
