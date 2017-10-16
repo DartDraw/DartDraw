@@ -1,9 +1,9 @@
-import guid from 'guid';
+import uuidv1 from 'uuid';
 import { calculateBoundingBox } from './groups';
 
 export function createRectangle(rectangle) {
     return {
-        id: guid.create().toString(),
+        id: uuidv1(),
         type: 'rectangle',
         ...rectangle
     };
@@ -52,6 +52,8 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
             if (isMember) {
                 group.width = group.x2 - group.x;
                 group.height = group.y2 - group.y;
+                if (group.width < 1) group.width = 1;
+                if (group.height < 1) group.height = 1;
                 switch (handleIndex) {
                     case 0:
                         shape.x += (shape.x - group.x) / group.width * deltaX;
@@ -175,7 +177,7 @@ export function changeZIndex(shapes, selected, change) {
 
 export function groupShapes(selected, shapes) {
     let group = {
-        id: guid.create().toString(),
+        id: uuidv1(),
         type: "group",
         members: []
     };
