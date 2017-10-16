@@ -1,4 +1,4 @@
-import guid from 'guid';
+import uuidv1 from 'uuid';
 import { calculateBoundingBox } from './groups';
 
 export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
@@ -38,7 +38,7 @@ export function generateSelectionBoxes(selected, shapes) {
 
 function generateShapeSelectionBox(id, shape) {
     return {
-        id: guid.create().toString(),
+        id: uuidv1(),
         shapeId: id,
         type: 'selectionBox',
         x: shape.x,
@@ -59,7 +59,7 @@ function generateGroupSelectionBox(id, shape, shapes) {
     group = calculateBoundingBox(shape, shapes, group);
 
     return {
-        id: guid.create().toString(),
+        id: uuidv1(),
         shapeId: id,
         type: 'selectionBox',
         x: group.x,

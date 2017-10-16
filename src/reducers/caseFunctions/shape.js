@@ -84,6 +84,7 @@ export function handleDrag(stateCopy, action, root) {
             case "selectTool":
                 stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex);
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+                console.log(stateCopy.shapes);
                 break;
             default: break;
         }
