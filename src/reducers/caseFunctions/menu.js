@@ -21,12 +21,12 @@ export function keyUp(stateCopy, action) {
 export function undoClick(stateCopy, action) {
     const delta = stateCopy.past.pop();
 
-    if (delta) {
-        stateCopy.shapes = jsondiffpatch.create().unpatch(stateCopy.shapes, delta);
+    if (delta.delta) {
+        stateCopy.shapes = jsondiffpatch.create().unpatch(stateCopy.shapes, delta.delta);
         stateCopy.future.push(delta);
         stateCopy.selected = [];
         if (stateCopy.past.length > 0) {
-            stateCopy.selected = Object.keys(stateCopy.past[stateCopy.past.length - 1].byId);
+            stateCopy.selected = stateCopy.past[stateCopy.past.length - 1].selected;
         }
         stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     }
@@ -37,10 +37,10 @@ export function undoClick(stateCopy, action) {
 export function redoClick(stateCopy, action) {
     const delta = stateCopy.future.pop();
 
-    if (delta) {
-        stateCopy.shapes = jsondiffpatch.create().patch(stateCopy.shapes, delta);
+    if (delta.delta) {
+        stateCopy.shapes = jsondiffpatch.create().patch(stateCopy.shapes, delta.delta);
         stateCopy.past.push(delta);
-        stateCopy.selected = Object.keys(delta.byId);
+        stateCopy.selected = delta.selected;
         stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     }
 

@@ -90,7 +90,8 @@ function drawingState(state = initialState, action, root) {
             }
             if (delta !== undefined) {
                 updatedState.future = [];
-                updatedState.past.push(delta);
+                let selected = deepCopy(updatedState.selected);
+                updatedState.past.push({ delta, selected });
             }
         }
     }
