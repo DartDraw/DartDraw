@@ -1,4 +1,5 @@
 import guid from 'guid';
+import { calculateBoundingBox } from './groups';
 
 export function createRectangle(rectangle) {
     return {
@@ -31,34 +32,76 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function resizeShape(shapes, selected, draggableData, handleIndex) {
+export function resizeShape(shapes, selected, draggableData, handleIndex, group, offSetX, offSetY, isMember) {
     const { deltaX, deltaY } = draggableData;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-        switch (handleIndex) {
-            case 0:
-                shape.width = shape.width + deltaX;
-                shape.y = shape.y + deltaY;
-                shape.height = shape.height - deltaY;
-                break;
-            case 1:
-                shape.width = shape.width + deltaX;
-                shape.height = shape.height + deltaY;
-                break;
-            case 2:
-                shape.x = shape.x + deltaX;
-                shape.width = shape.width - deltaX;
-                shape.height = shape.height + deltaY;
-                break;
-            case 3:
-                shape.x = shape.x + deltaX;
-                shape.width = shape.width - deltaX;
-                shape.y = shape.y + deltaY;
-                shape.height = shape.height - deltaY;
-                break;
-            default:
-                break;
+        if (shape.type === "group") {
+            if (typeof (group) === "undefined") {
+                group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: 0, y: Infinity, y2: 0 });
+            } else {
+                group = calculateBoundingBox(shape, shapes, group);
+            }
+            shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, group, deltaX, deltaY, true);
+        } else {
+            if (isMember) {
+                group.width = group.x2 - group.x;
+                group.height = group.y2 - group.y;
+                switch (handleIndex) {
+                    case 0:
+                        shape.x += (shape.x - group.x) / group.width * deltaX;
+                        shape.y += deltaY;
+                        shape.width += shape.width / group.width * deltaX;
+                        shape.height -= shape.height / group.height * deltaY;
+                        break;
+                    case 1:
+                        shape.x += (shape.x - group.x) / group.width * deltaX;
+                        shape.y += (shape.y - group.y) / group.height * deltaY;
+                        shape.width += shape.width / group.width * deltaX;
+                        shape.height += shape.height / group.height * deltaY;
+                        break;
+                    case 2:
+                        shape.x += (group.x2 - shape.x) / group.width * deltaX;
+                        shape.y += (shape.y - group.y) / group.height * deltaY;
+                        shape.width -= shape.width / group.width * deltaX;
+                        shape.height += shape.height / group.height * deltaY;
+                        break;
+                    case 3:
+                        shape.x += (group.x2 - shape.x) / group.width * deltaX;
+                        shape.y += deltaY;
+                        shape.width -= shape.width / group.width * deltaX;
+                        shape.height -= shape.height / group.height * deltaY;
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch (handleIndex) {
+                    case 0:
+                        shape.width += deltaX;
+                        shape.y += deltaY;
+                        shape.height -= deltaY;
+                        break;
+                    case 1:
+                        shape.width += deltaX;
+                        shape.height += deltaY;
+                        break;
+                    case 2:
+                        shape.x += deltaX;
+                        shape.width -= deltaX;
+                        shape.height += deltaY;
+                        break;
+                    case 3:
+                        shape.x += deltaX;
+                        shape.width -= deltaX;
+                        shape.y += deltaY;
+                        shape.height -= deltaY;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     });
     return shapes;
@@ -81,7 +124,12 @@ export function moveShape(shapes, selected, action) {
 export function fillShape(shapes, selected, action) {
     const { color } = action.payload;
     selected.map((id) => {
-        shapes.byId[id].fill = formatColor(color);
+        const shape = shapes.byId[id];
+        if (shape.type === "group") {
+            shapes = fillShape(shapes, shape.members, action);
+        } else {
+            shape.fill = formatColor(color);
+        }
     });
     return shapes;
 }

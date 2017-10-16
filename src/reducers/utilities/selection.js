@@ -72,10 +72,14 @@ function generateGroupSelectionBox(id, shape, shapes) {
 export function updateSelectionBoxes(shapes, selectionBoxes) {
     Object.keys(selectionBoxes).map((shapeId) => {
         const shape = shapes.byId[shapeId];
-        selectionBoxes[shapeId].x = shape.x;
-        selectionBoxes[shapeId].y = shape.y;
-        selectionBoxes[shapeId].width = shape.width;
-        selectionBoxes[shapeId].height = shape.height;
+        let id = selectionBoxes[shapeId].id;
+        if (shape.type === "group") {
+            selectionBoxes[shapeId] = generateGroupSelectionBox(shapeId, shape, shapes);
+            selectionBoxes[shapeId].id = id;
+        } else {
+            selectionBoxes[shapeId] = generateShapeSelectionBox(shapeId, shape);
+            selectionBoxes[shapeId].id = id;
+        }
     });
     return selectionBoxes;
 }

@@ -58,6 +58,11 @@ export function selectColor(stateCopy, action) {
 }
 
 export function groupButtonClick(stateCopy, action) {
+    if (stateCopy.selected.length < 2) {
+        // need at least 2 shapes
+        return stateCopy;
+    }
+
     const group = groupShapes(stateCopy.selected, stateCopy.shapes);
     stateCopy.selected.map((id) => {
         const i = stateCopy.shapes.allIds.indexOf(id);

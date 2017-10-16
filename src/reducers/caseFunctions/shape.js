@@ -1,4 +1,4 @@
-import { addShape, resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
+import { resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -30,7 +30,6 @@ export function dragStart(stateCopy, action, root) {
 
 export function drag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
-    const { draggableData } = action.payload;
 
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
