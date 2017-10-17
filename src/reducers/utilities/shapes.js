@@ -1,9 +1,9 @@
-import uuidv1 from 'uuid';
+import guid from 'guid';
 import { calculateBoundingBox } from './groups';
 
 export function createRectangle(rectangle) {
     return {
-        id: uuidv1(),
+        id: guid.create().toString(),
         type: 'rectangle',
         ...rectangle
     };
@@ -47,7 +47,7 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
             } else {
                 group = calculateBoundingBox(shape, shapes, group);
             }
-            shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, group, deltaX, deltaY, true);
+            shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, matrix, group, deltaX, deltaY, true);
         } else {
             if (isMember) {
                 group.width = group.x2 - group.x;
@@ -55,7 +55,7 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 switch (handleIndex) {
                     case 0:
                         shape.x += (shape.x - group.x) / group.width * deltaX;
-                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
+                        shape.y += deltaY;
                         shape.width += shape.width / group.width * deltaX;
                         shape.height -= shape.height / group.height * deltaY;
                         break;
@@ -73,15 +73,13 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                         break;
                     case 3:
                         shape.x += (group.x2 - shape.x) / group.width * deltaX;
-                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
+                        shape.y += deltaY;
                         shape.width -= shape.width / group.width * deltaX;
                         shape.height -= shape.height / group.height * deltaY;
                         break;
                     default:
                         break;
                 }
-                if (isNaN(group.width)) { group.width = 1; }
-                if (isNaN(group.height)) { group.height = 1; }
             } else {
                 switch (handleIndex) {
                     case 0:
@@ -122,7 +120,7 @@ export function moveShape(shapes, selected, action, matrix) {
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
-            shapes = moveShape(shapes, shape.members, action);
+            shapes = moveShape(shapes, shape.members, action, matrix);
         } else {
             shape.x = shape.x + scaledDeltaX;
             shape.y = shape.y + scaledDeltaY;
@@ -177,7 +175,7 @@ export function changeZIndex(shapes, selected, change) {
 
 export function groupShapes(selected, shapes) {
     let group = {
-        id: uuidv1(),
+        id: guid.create().toString(),
         type: "group",
         members: []
     };
@@ -188,8 +186,4 @@ export function groupShapes(selected, shapes) {
         }
     });
     return group;
-}
-
-export function removeNegatives(selected, shapes) {
-    return shapes;
 }
