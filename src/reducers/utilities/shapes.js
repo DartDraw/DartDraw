@@ -189,3 +189,7 @@ export function groupShapes(selected, shapes) {
     });
     return group;
 }
+
+export function removeNegatives(selected, shapes) {
+    return shapes;
+}
