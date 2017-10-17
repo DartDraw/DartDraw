@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import guid from 'guid';
+=======
+import uuidv1 from 'uuid';
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
 import { calculateBoundingBox } from './groups';
 
 export function createRectangle(rectangle) {
     return {
-        id: guid.create().toString(),
+        id: uuidv1(),
         type: 'rectangle',
         ...rectangle
     };
@@ -33,21 +37,32 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
+<<<<<<< HEAD
 export function resizeShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+=======
+export function resizeShape(shapes, selected, draggableData, handleIndex, group, offSetX, offSetY, isMember) {
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / matrix[0];
     const scaledDeltaY = deltaY / matrix[3];
 
     selected.map((id) => {
         const shape = shapes.byId[id];
+<<<<<<< HEAD
 
+=======
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
         if (shape.type === "group") {
             if (typeof (group) === "undefined") {
                 group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: 0, y: Infinity, y2: 0 });
             } else {
                 group = calculateBoundingBox(shape, shapes, group);
             }
+<<<<<<< HEAD
             shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, matrix, group, deltaX, deltaY, true);
+=======
+            shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, group, deltaX, deltaY, true);
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
         } else {
             if (isMember) {
                 group.width = group.x2 - group.x;
@@ -55,7 +70,11 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 switch (handleIndex) {
                     case 0:
                         shape.x += (shape.x - group.x) / group.width * deltaX;
+<<<<<<< HEAD
                         shape.y += deltaY;
+=======
+                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
                         shape.width += shape.width / group.width * deltaX;
                         shape.height -= shape.height / group.height * deltaY;
                         break;
@@ -73,13 +92,18 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                         break;
                     case 3:
                         shape.x += (group.x2 - shape.x) / group.width * deltaX;
+<<<<<<< HEAD
                         shape.y += deltaY;
+=======
+                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
                         shape.width -= shape.width / group.width * deltaX;
                         shape.height -= shape.height / group.height * deltaY;
                         break;
                     default:
                         break;
                 }
+<<<<<<< HEAD
             } else {
                 switch (handleIndex) {
                     case 0:
@@ -101,6 +125,31 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                         shape.width = shape.width - scaledDeltaX;
                         shape.y = shape.y + scaledDeltaY;
                         shape.height = shape.height - scaledDeltaY;
+=======
+                if (isNaN(group.width)) { group.width = 1; }
+                if (isNaN(group.height)) { group.height = 1; }
+            } else {
+                switch (handleIndex) {
+                    case 0:
+                        shape.width += deltaX;
+                        shape.y += deltaY;
+                        shape.height -= deltaY;
+                        break;
+                    case 1:
+                        shape.width += deltaX;
+                        shape.height += deltaY;
+                        break;
+                    case 2:
+                        shape.x += deltaX;
+                        shape.width -= deltaX;
+                        shape.height += deltaY;
+                        break;
+                    case 3:
+                        shape.x += deltaX;
+                        shape.width -= deltaX;
+                        shape.y += deltaY;
+                        shape.height -= deltaY;
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
                         break;
                     default:
                         break;
@@ -120,10 +169,17 @@ export function moveShape(shapes, selected, action, matrix) {
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
+<<<<<<< HEAD
             shapes = moveShape(shapes, shape.members, action, matrix);
         } else {
             shape.x = shape.x + scaledDeltaX;
             shape.y = shape.y + scaledDeltaY;
+=======
+            shapes = moveShape(shapes, shape.members, action);
+        } else {
+            shape.x = shape.x + draggableData.deltaX;
+            shape.y = shape.y + draggableData.deltaY;
+>>>>>>> 39997ba64ef2a1a20864897c47eb3ae5c11a8def
         }
     });
 
@@ -175,7 +231,7 @@ export function changeZIndex(shapes, selected, change) {
 
 export function groupShapes(selected, shapes) {
     let group = {
-        id: guid.create().toString(),
+        id: uuidv1(),
         type: "group",
         members: []
     };
@@ -186,4 +242,8 @@ export function groupShapes(selected, shapes) {
         }
     });
     return group;
+}
+
+export function removeNegatives(selected, shapes) {
+    return shapes;
 }
