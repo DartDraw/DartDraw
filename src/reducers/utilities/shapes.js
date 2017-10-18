@@ -38,15 +38,13 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
     const scaledDeltaX = deltaX / matrix[0];
     const scaledDeltaY = deltaY / matrix[3];
 
-    console.log("resize");
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
+            console.log(shape.members);
             if (typeof (group) === "undefined" || group === null) {
-                console.log("new group");
                 group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity });
             } else {
-                console.log("group in group");
                 group = calculateBoundingBox(shape, shapes, group);
             }
             shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, matrix, group, deltaX, deltaY, true);

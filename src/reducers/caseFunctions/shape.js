@@ -82,6 +82,7 @@ export function handleDrag(stateCopy, action, root) {
         const { draggableData, handleIndex } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
+                console.log(stateCopy.shapes);
                 stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.canvasTransformationMatrix);
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
                 break;
