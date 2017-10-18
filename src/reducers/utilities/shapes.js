@@ -51,37 +51,63 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
             if (isMember) {
                 group.width = group.x2 - group.x;
                 group.height = group.y2 - group.y;
-                if (isNaN(group.width)) { group.width = 1; }
-                if (isNaN(group.height)) { group.height = 1; }
+                if (group.width === 0) group.width = 1;
+                if (group.height === 0) group.height = 1;
+
+                let oldShape = { x: shape.x, y: shape.y, height: shape.height, width: shape.width };
+
+                let x1Diff = shape.x - group.x;
+                if (shape.width < 0) {
+                    x1Diff = group.x2 - shape.x;
+                }
+
+                let x2Diff = group.x2 - shape.x;
+                if (shape.width < 0) {
+                    x2Diff = shape.x - group.x;
+                }
+
+                let y1Diff = shape.y - group.y;
+                if (shape.height < 0) {
+                    y1Diff = group.y2 - shape.y;
+                }
+
+                let y2Diff = group.y2 - shape.y;
+                if (shape.height < 0) {
+                    y2Diff = shape.y - group.y;
+                }
 
                 switch (handleIndex) {
                     case 0:
-                        shape.x += (shape.x - group.x) / group.width * scaledDeltaX;
-                        shape.y += (group.y2 - shape.y) / group.height * scaledDeltaY;
-                        shape.width += shape.width / group.width * scaledDeltaX;
-                        shape.height -= shape.height / group.height * scaledDeltaY;
+                        shape.width += Math.abs(shape.width) / group.width * scaledDeltaX;
+                        shape.height -= Math.abs(shape.height) / group.height * scaledDeltaY;
+                        shape.x += x1Diff / group.width * scaledDeltaX;
+                        shape.y += y2Diff / group.height * scaledDeltaY;
                         break;
                     case 1:
-                        shape.x += (shape.x - group.x) / group.width * scaledDeltaX;
-                        shape.y += (shape.y - group.y) / group.height * scaledDeltaY;
-                        shape.width += shape.width / group.width * scaledDeltaX;
-                        shape.height += shape.height / group.height * scaledDeltaY;
+                        shape.width += Math.abs(shape.width) / group.width * scaledDeltaX;
+                        shape.height += Math.abs(shape.height) / group.height * scaledDeltaY;
+                        shape.x += x1Diff / group.width * scaledDeltaX;
+                        shape.y += y1Diff / group.height * scaledDeltaY;
                         break;
                     case 2:
-                        shape.x += (group.x2 - shape.x) / group.width * scaledDeltaX;
-                        shape.y += (shape.y - group.y) / group.height * scaledDeltaY;
-                        shape.width -= shape.width / group.width * scaledDeltaX;
-                        shape.height += shape.height / group.height * scaledDeltaY;
+                        shape.width -= Math.abs(shape.width) / group.width * scaledDeltaX;
+                        shape.height += Math.abs(shape.height) / group.height * scaledDeltaY;
+                        shape.x += x2Diff / group.width * scaledDeltaX;
+                        shape.y += y1Diff / group.height * scaledDeltaY;
                         break;
                     case 3:
-                        shape.x += (group.x2 - shape.x) / group.width * scaledDeltaX;
-                        shape.y += (group.y2 - shape.y) / group.height * scaledDeltaY;
-                        shape.width -= shape.width / group.width * scaledDeltaX;
-                        shape.height -= shape.height / group.height * scaledDeltaY;
+                        shape.width -= Math.abs(shape.width) / group.width * scaledDeltaX;
+                        shape.height -= Math.abs(shape.height) / group.height * scaledDeltaY;
+                        shape.x += x2Diff / group.width * scaledDeltaX;
+                        shape.y += y2Diff / group.height * scaledDeltaY;
                         break;
                     default:
                         break;
                 }
+                if (isNaN(shape.x) || shape.x === -Infinity) { shape.x = oldShape.x; }
+                if (isNaN(shape.y) || shape.y === -Infinity) { shape.y = oldShape.y; }
+                if (isNaN(shape.width) || shape.width === -Infinity) { shape.width = 0; }
+                if (isNaN(shape.height) || shape.height === -Infinity) { shape.height = 0; }
             } else {
                 switch (handleIndex) {
                     case 0:
@@ -190,6 +216,23 @@ export function groupShapes(selected, shapes) {
     return group;
 }
 
-export function removeNegatives(selected, shapes) {
+export function removeNegatives(shapes, selected) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+
+        if (shape.type === "group") {
+            shapes = removeNegatives(shapes, shape.members);
+        } else {
+            if (shape.width < 0) {
+                shape.x += shape.width;
+                shape.width *= -1;
+            }
+
+            if (shape.height < 0) {
+                shape.y += shape.height;
+                shape.height *= -1;
+            }
+        }
+    });
     return shapes;
 }

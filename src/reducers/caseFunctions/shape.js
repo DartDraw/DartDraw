@@ -1,4 +1,4 @@
-import { resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
+import { resizeShape, moveShape, fillShape, changeZIndex, removeNegatives } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -84,7 +84,6 @@ export function handleDrag(stateCopy, action, root) {
             case "selectTool":
                 stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.canvasTransformationMatrix);
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
-                console.log(stateCopy.shapes);
                 break;
             default: break;
         }
@@ -94,6 +93,10 @@ export function handleDrag(stateCopy, action, root) {
 
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
+        case "selectTool":
+            stateCopy.shapes = removeNegatives(stateCopy.shapes, stateCopy.selected);
+            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+            break;
         default:
             break;
     }
