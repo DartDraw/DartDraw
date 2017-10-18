@@ -1,4 +1,4 @@
-import { addShape, removeShape, resizeShape } from '../utilities/shapes';
+import { addShape, removeShape, resizeShape, removeNegatives } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 import { pan } from '../caseFunctions/menu';
 
@@ -48,6 +48,9 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.selected = selectShape([], null);
                 stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             }
+            stateCopy.shapes = removeNegatives(stateCopy.shapes, stateCopy.selected);
+            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+
             break;
         default:
             break;

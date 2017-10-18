@@ -38,17 +38,45 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
     const scaledDeltaX = deltaX / matrix[0];
     const scaledDeltaY = deltaY / matrix[3];
 
+    console.log("resize");
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
-            if (typeof (group) === "undefined") {
+            if (typeof (group) === "undefined" || group === null) {
+                console.log("new group");
                 group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity });
             } else {
+                console.log("group in group");
                 group = calculateBoundingBox(shape, shapes, group);
             }
             shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, matrix, group, deltaX, deltaY, true);
         } else {
-            if (isMember) {
+            if (!isMember) {
+                switch (handleIndex) {
+                    case 0:
+                        shape.width = shape.width + scaledDeltaX;
+                        shape.y = shape.y + scaledDeltaY;
+                        shape.height = shape.height - scaledDeltaY;
+                        break;
+                    case 1:
+                        shape.width = shape.width + scaledDeltaX;
+                        shape.height = shape.height + scaledDeltaY;
+                        break;
+                    case 2:
+                        shape.x = shape.x + scaledDeltaX;
+                        shape.width = shape.width - scaledDeltaX;
+                        shape.height = shape.height + scaledDeltaY;
+                        break;
+                    case 3:
+                        shape.x = shape.x + scaledDeltaX;
+                        shape.width = shape.width - scaledDeltaX;
+                        shape.y = shape.y + scaledDeltaY;
+                        shape.height = shape.height - scaledDeltaY;
+                        break;
+                    default:
+                        break;
+                }
+            } else {
                 group.width = group.x2 - group.x;
                 group.height = group.y2 - group.y;
                 if (group.width === 0) group.width = 1;
@@ -108,31 +136,6 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 if (isNaN(shape.y) || shape.y === -Infinity) { shape.y = oldShape.y; }
                 if (isNaN(shape.width) || shape.width === -Infinity) { shape.width = 0; }
                 if (isNaN(shape.height) || shape.height === -Infinity) { shape.height = 0; }
-            } else {
-                switch (handleIndex) {
-                    case 0:
-                        shape.width = shape.width + scaledDeltaX;
-                        shape.y = shape.y + scaledDeltaY;
-                        shape.height = shape.height - scaledDeltaY;
-                        break;
-                    case 1:
-                        shape.width = shape.width + scaledDeltaX;
-                        shape.height = shape.height + scaledDeltaY;
-                        break;
-                    case 2:
-                        shape.x = shape.x + scaledDeltaX;
-                        shape.width = shape.width - scaledDeltaX;
-                        shape.height = shape.height + scaledDeltaY;
-                        break;
-                    case 3:
-                        shape.x = shape.x + scaledDeltaX;
-                        shape.width = shape.width - scaledDeltaX;
-                        shape.y = shape.y + scaledDeltaY;
-                        shape.height = shape.height - scaledDeltaY;
-                        break;
-                    default:
-                        break;
-                }
             }
         }
     });

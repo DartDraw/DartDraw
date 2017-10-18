@@ -20,6 +20,5 @@ export function calculateBoundingBox(shape, shapes, group) {
             }
         }
     });
-    console.log(group);
     return group;
 }
