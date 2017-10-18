@@ -51,9 +51,9 @@ function generateShapeSelectionBox(id, shape) {
 function generateGroupSelectionBox(id, shape, shapes) {
     let group = {
         x: Infinity,
-        x2: 0,
+        x2: -Infinity,
         y: Infinity,
-        y2: 0
+        y2: -Infinity
     };
 
     group = calculateBoundingBox(shape, shapes, group);

@@ -42,7 +42,7 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
         const shape = shapes.byId[id];
         if (shape.type === "group") {
             if (typeof (group) === "undefined") {
-                group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: 0, y: Infinity, y2: 0 });
+                group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity });
             } else {
                 group = calculateBoundingBox(shape, shapes, group);
             }
@@ -56,28 +56,28 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
 
                 switch (handleIndex) {
                     case 0:
-                        shape.x += (shape.x - group.x) / group.width * deltaX;
-                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
-                        shape.width += shape.width / group.width * deltaX;
-                        shape.height -= shape.height / group.height * deltaY;
+                        shape.x += (shape.x - group.x) / group.width * scaledDeltaX;
+                        shape.y += (group.y2 - shape.y) / group.height * scaledDeltaY;
+                        shape.width += shape.width / group.width * scaledDeltaX;
+                        shape.height -= shape.height / group.height * scaledDeltaY;
                         break;
                     case 1:
-                        shape.x += (shape.x - group.x) / group.width * deltaX;
-                        shape.y += (shape.y - group.y) / group.height * deltaY;
-                        shape.width += shape.width / group.width * deltaX;
-                        shape.height += shape.height / group.height * deltaY;
+                        shape.x += (shape.x - group.x) / group.width * scaledDeltaX;
+                        shape.y += (shape.y - group.y) / group.height * scaledDeltaY;
+                        shape.width += shape.width / group.width * scaledDeltaX;
+                        shape.height += shape.height / group.height * scaledDeltaY;
                         break;
                     case 2:
-                        shape.x += (group.x2 - shape.x) / group.width * deltaX;
-                        shape.y += (shape.y - group.y) / group.height * deltaY;
-                        shape.width -= shape.width / group.width * deltaX;
-                        shape.height += shape.height / group.height * deltaY;
+                        shape.x += (group.x2 - shape.x) / group.width * scaledDeltaX;
+                        shape.y += (shape.y - group.y) / group.height * scaledDeltaY;
+                        shape.width -= shape.width / group.width * scaledDeltaX;
+                        shape.height += shape.height / group.height * scaledDeltaY;
                         break;
                     case 3:
-                        shape.x += (group.x2 - shape.x) / group.width * deltaX;
-                        shape.y += (group.y2 - shape.y) / group.height * deltaY;
-                        shape.width -= shape.width / group.width * deltaX;
-                        shape.height -= shape.height / group.height * deltaY;
+                        shape.x += (group.x2 - shape.x) / group.width * scaledDeltaX;
+                        shape.y += (group.y2 - shape.y) / group.height * scaledDeltaY;
+                        shape.width -= shape.width / group.width * scaledDeltaX;
+                        shape.height -= shape.height / group.height * scaledDeltaY;
                         break;
                     default:
                         break;
