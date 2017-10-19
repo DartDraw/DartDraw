@@ -8,12 +8,12 @@ const initialState = {
     currentKeys: {}
 };
 
-function menuState(state = initialState, action) {
+function menuState(state = initialState, action, root) {
     const stateCopy = deepCopy(state);
 
     switch (action.type) {
         case menuActions.KEY_DOWN:
-            return menu.keyDown(stateCopy, action);
+            return menu.keyDown(stateCopy, action, root);
         case menuActions.KEY_UP:
             return menu.keyUp(stateCopy, action);
         case menuActions.SELECT_TOOL:

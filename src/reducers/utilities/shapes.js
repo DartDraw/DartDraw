@@ -255,3 +255,14 @@ export function removeNegatives(shapes, selected) {
     });
     return shapes;
 }
+
+export function deleteShapes(shapes, selected) {
+    selected.map((id) => {
+        if (shapes.byId[id].type === "group") {
+            shapes = deleteShapes(shapes, shapes.byId[id].members);
+        }
+        delete shapes.byId[id];
+        shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
+    });
+    return shapes;
+}
