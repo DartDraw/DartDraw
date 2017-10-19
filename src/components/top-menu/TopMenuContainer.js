@@ -7,6 +7,7 @@ import {
     zoomIn,
     zoomOut,
     groupButtonClick,
+    ungroupButtonClick,
     sendToBack,
     bringToFront
 } from './../../actions/menu';
@@ -27,6 +28,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());
+        },
+        onUngroupClick: () => {
+            dispatch(ungroupButtonClick());
         },
         onSendToBack: () => {
             dispatch(sendToBack());

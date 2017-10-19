@@ -41,24 +41,20 @@ export function shapeClick(shapeId) {
     return { type: SHAPE_CLICK, payload: { shapeId } };
 }
 
-export function groupDragStart(groupId, draggableData) {
-    console.log("start");
-    return { type: GROUP_DRAG_START, payload: { groupId, draggableData } };
+export function groupDragStart(shapeId, draggableData) {
+    return { type: GROUP_DRAG_START, payload: { shapeId, draggableData } };
 }
 
-export function groupDrag(groupId, draggableData) {
-    console.log("drag");
-    return { type: GROUP_DRAG, payload: { groupId, draggableData } };
+export function groupDrag(shapeId, draggableData) {
+    return { type: GROUP_DRAG, payload: { shapeId, draggableData } };
 }
 
-export function groupDragStop(groupId, draggableData) {
-    console.log("stop");
-    return { type: GROUP_DRAG_STOP, payload: { groupId, draggableData } };
+export function groupDragStop(shapeId, draggableData) {
+    return { type: GROUP_DRAG_STOP, payload: { shapeId, draggableData } };
 }
 
-export function groupClick(groupId, event) {
-    console.log("click");
-    return { type: GROUP_CLICK, payload: { groupId } };
+export function groupClick(shapeId, event) {
+    return { type: GROUP_CLICK, payload: { shapeId } };
 }
 
 export function handleDragStart(shapeId, handleIndex, draggableData) {
