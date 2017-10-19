@@ -12,6 +12,7 @@ class TopMenu extends Component {
         onZoomIn: PropTypes.func,
         onZoomOut: PropTypes.func,
         onGroupClick: PropTypes.func,
+        onUngroupClick: PropTypes.func,
         onColorSelect: PropTypes.func,
         onSendToBack: PropTypes.func,
         onBringToFront: PropTypes.func,
@@ -27,6 +28,7 @@ class TopMenu extends Component {
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.handleUngroupClick = this.handleUngroupClick.bind(this);
         this.handleSendToBack = this.handleSendToBack.bind(this);
         this.handleBringToFront = this.handleBringToFront.bind(this);
     }
@@ -41,6 +43,10 @@ class TopMenu extends Component {
 
     handleGroupClick() {
         this.props.onGroupClick();
+    }
+
+    handleUngroupClick() {
+        this.props.onUngroupClick();
     }
 
     handleBringToFront() {
@@ -74,6 +80,9 @@ class TopMenu extends Component {
                     <img src="./assets/003-redo.svg" alt="redo" id="button-icon" />
                 </button>
                 <button onClick={this.handleGroupClick}>
+                    <img src="./assets/005-group.svg" alt="group" id="button-icon" />
+                </button>
+                <button onClick={this.handleUngroupClick}>
                     <img src="./assets/005-group.svg" alt="group" id="button-icon" />
                 </button>
                 <button onClick={this.handleSendToBack}>

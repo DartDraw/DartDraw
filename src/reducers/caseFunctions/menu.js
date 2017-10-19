@@ -1,6 +1,6 @@
 import jsondiffpatch from 'jsondiffpatch';
 import { generateSelectionBoxes } from '../utilities/selection';
-import { groupShapes } from '../utilities/shapes';
+import { groupShapes, ungroupShapes } from '../utilities/shapes';
 
 export function keyDown(stateCopy, action) {
     const { keyCode } = action.payload;
@@ -54,7 +54,7 @@ export function zoomIn(stateCopy, action) {
 }
 
 export function zoomOut(stateCopy, action) {
-    const scale = 0.5;  // zoom out by factor of 2
+    const scale = 0.5; // zoom out by factor of 2
     stateCopy.canvasTransformationMatrix = zoom(stateCopy, scale);
     return stateCopy;
 }
@@ -63,7 +63,7 @@ export function zoom(stateCopy, scale) {
     const m = stateCopy.canvasTransformationMatrix;
     const len = m.length;
     for (let i = 0; i < len; i++) {
-      m[i] *= scale;
+        m[i] *= scale;
     }
     m[4] += (1 - scale) * stateCopy.canvasWidth / 2;
     m[5] += (1 - scale) * stateCopy.canvasHeight / 2;
@@ -104,6 +104,12 @@ export function groupButtonClick(stateCopy, action) {
     stateCopy.shapes.allIds.push(group.id);
     stateCopy.shapes.byId[group.id] = group;
     stateCopy.selected = [group.id];
+    stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
+    return stateCopy;
+}
+
+export function ungroupButtonClick(stateCopy, action) {
+    stateCopy.selected = ungroupShapes(stateCopy.selected, stateCopy.shapes);
     stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     return stateCopy;
 }

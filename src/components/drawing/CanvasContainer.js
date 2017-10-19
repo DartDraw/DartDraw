@@ -12,6 +12,7 @@ import {
     groupDrag,
     groupDragStop,
     groupClick,
+    ungroupClick,
     handleDragStart,
     handleDrag,
     handleDragStop

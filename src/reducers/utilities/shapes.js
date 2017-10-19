@@ -41,7 +41,6 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
-            console.log(shape.members);
             if (typeof (group) === "undefined" || group === null) {
                 group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity });
             } else {
@@ -208,13 +207,32 @@ export function groupShapes(selected, shapes) {
         type: "group",
         members: []
     };
-    Object.keys(shapes.byId).map((id) => {
+    shapes.allIds.map((id) => {
         if (selected.indexOf(id) > -1) {
             shapes.byId[id].groupID = group.id;
             group.members.push(id);
         }
     });
     return group;
+}
+
+export function ungroupShapes(selected, shapes) {
+    let members = [];
+    selected.map((id) => {
+        if (shapes.byId[id].type === "group") {
+            let i = shapes.allIds.indexOf(id);
+            shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
+            shapes.byId[id].members.map((memberId) => {
+                members.push(memberId);
+                shapes.allIds.splice(i, 0, memberId);
+                i += 1;
+            });
+            delete shapes.byId[id];
+        } else {
+            members.push(id);
+        }
+    });
+    return members;
 }
 
 export function removeNegatives(shapes, selected) {

@@ -7,6 +7,7 @@ export const REDO_CLICK = 'REDO_CLICK';
 export const ZOOM_IN = 'ZOOM_IN';
 export const ZOOM_OUT = 'ZOOM_OUT';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
+export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 
@@ -44,6 +45,10 @@ export function zoomOut() {
 
 export function groupButtonClick() {
     return { type: GROUP_BUTTON_CLICK };
+}
+
+export function ungroupButtonClick() {
+    return { type: UNGROUP_BUTTON_CLICK };
 }
 
 export function sendToBack() {

@@ -73,6 +73,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
             break;
+        case menuActions.UNGROUP_BUTTON_CLICK:
+            updatedState = menu.ungroupButtonClick(stateCopy, action, root);
+            break;
         case menuActions.UNDO_CLICK:
             updatedState = menu.undoClick(stateCopy, action, root);
             break;
