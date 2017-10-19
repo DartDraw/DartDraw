@@ -21,7 +21,7 @@ export function keyUp(stateCopy, action) {
 export function undoClick(stateCopy, action) {
     const delta = stateCopy.past.pop();
 
-    if (delta.delta) {
+    if (delta && delta.delta) {
         stateCopy.shapes = jsondiffpatch.create().unpatch(stateCopy.shapes, delta.delta);
         stateCopy.future.push(delta);
         stateCopy.selected = [];
@@ -37,7 +37,7 @@ export function undoClick(stateCopy, action) {
 export function redoClick(stateCopy, action) {
     const delta = stateCopy.future.pop();
 
-    if (delta.delta) {
+    if (delta && delta.delta) {
         stateCopy.shapes = jsondiffpatch.create().patch(stateCopy.shapes, delta.delta);
         stateCopy.past.push(delta);
         stateCopy.selected = delta.selected;
