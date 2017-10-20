@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatTransform } from '../../utilities/shapes';
+import { formatPath, formatTransform } from '../../utilities/shapes';
 
-class Rectangle extends Component {
+class Path extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        x: PropTypes.number,
-        y: PropTypes.number,
+        d: PropTypes.arrayOf(PropTypes.shape({
+            command: PropTypes.string,
+            parameters: PropTypes.arrayOf(PropTypes.number)
+        })),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -58,26 +58,13 @@ class Rectangle extends Component {
     }
 
     render() {
-        const { id, width, height, x, y, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
-        let renderX = x;
-        let renderWidth = Math.abs(width);
-        if (width < 0) {
-            renderX = x - renderWidth;
-        }
-        let renderY = y;
-        let renderHeight = Math.abs(height);
-        if (height < 0) {
-            renderY = y - renderHeight;
-        }
-        const rectProps = {
+        const { id, d, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
+        const pathProps = {
             id,
-            x: renderX,
-            y: renderY,
-            width: renderWidth,
-            height: renderHeight,
+            d: formatPath(d),
             stroke,
             strokeWidth,
-            fill,
+            fill: fill || 'none',
             transform: formatTransform(transform)
         };
 
@@ -90,10 +77,10 @@ class Rectangle extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <rect {...rectProps} />
+                <path {...pathProps} />
             </Shape>
         );
     }
 }
 
-export default Rectangle;
+export default Path;

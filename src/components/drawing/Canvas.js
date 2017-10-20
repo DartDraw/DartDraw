@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Canvas.css';
 import { Draggable } from '../shared';
-import { Group, Rectangle, Handle } from '.';
+import { Group, Rectangle, Path, Line, Handle } from '.';
 
 class Canvas extends Component {
     static propTypes = {
@@ -170,12 +170,35 @@ class Canvas extends Component {
                 return (
                     <Rectangle
                         key={shape.id}
-                        id={shape.id}
+                        {...shape}
                         onDragStart={this.handleShapeDragStart}
                         onDrag={this.handleShapeDrag}
                         onDragStop={this.handleShapeDragStop}
                         onClick={this.handleShapeClick}
+                        propagateEvents={propagateEvents}
+                    />
+                );
+            case 'path':
+                return (
+                    <Path
+                        key={shape.id}
                         {...shape}
+                        onDragStart={this.handleShapeDragStart}
+                        onDrag={this.handleShapeDrag}
+                        onDragStop={this.handleShapeDragStop}
+                        onClick={this.handleShapeClick}
+                        propagateEvents={propagateEvents}
+                    />
+                );
+            case 'line':
+                return (
+                    <Line
+                        key={shape.id}
+                        {...shape}
+                        onDragStart={this.handleShapeDragStart}
+                        onDrag={this.handleShapeDrag}
+                        onDragStop={this.handleShapeDragStop}
+                        onClick={this.handleShapeClick}
                         propagateEvents={propagateEvents}
                     />
                 );

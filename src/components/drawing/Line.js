@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Shape } from '.';
-import { formatTransform } from '../../utilities/shapes';
+import { Path } from '.';
 
-class Rectangle extends Component {
+class Line extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        x: PropTypes.number,
-        y: PropTypes.number,
+        x1: PropTypes.number,
+        y1: PropTypes.number,
+        x2: PropTypes.number,
+        y2: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -58,42 +57,26 @@ class Rectangle extends Component {
     }
 
     render() {
-        const { id, width, height, x, y, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
-        let renderX = x;
-        let renderWidth = Math.abs(width);
-        if (width < 0) {
-            renderX = x - renderWidth;
-        }
-        let renderY = y;
-        let renderHeight = Math.abs(height);
-        if (height < 0) {
-            renderY = y - renderHeight;
-        }
-        const rectProps = {
-            id,
-            x: renderX,
-            y: renderY,
-            width: renderWidth,
-            height: renderHeight,
+        const { id, x1, y1, x2, y2, stroke, strokeWidth, transform, propagateEvents } = this.props;
+        const lineProps = {
+            d: [{command: 'M', parameters: [x1, y1]}, {command: 'L', parameters: [x2, y2]}],
             stroke,
             strokeWidth,
-            fill,
-            transform: formatTransform(transform)
+            transform
         };
 
         return (
-            <Shape
+            <Path
                 id={id}
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
                 onClick={this.handleClick}
+                {...lineProps}
                 propagateEvents={propagateEvents}
-            >
-                <rect {...rectProps} />
-            </Shape>
+            />
         );
     }
 }
 
-export default Rectangle;
+export default Line;
