@@ -29,7 +29,7 @@ export function generateSelectionBoxes(selected, shapes) {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
             selectionBoxes[id] = generateGroupSelectionBox(id, shape, shapes);
-        } else {
+        } else if (shape.type === "rectangle") {
             selectionBoxes[id] = generateShapeSelectionBox(id, shape);
         }
     });
