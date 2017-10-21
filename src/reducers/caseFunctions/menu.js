@@ -1,6 +1,7 @@
 import jsondiffpatch from 'jsondiffpatch';
 import { generateSelectionBoxes } from '../utilities/selection';
 import { groupShapes, ungroupShapes } from '../utilities/shapes';
+import { generateEps } from '../../eps/eps';
 
 export function keyDown(stateCopy, action) {
     const { keyCode } = action.payload;
@@ -111,5 +112,10 @@ export function groupButtonClick(stateCopy, action) {
 export function ungroupButtonClick(stateCopy, action) {
     stateCopy.selected = ungroupShapes(stateCopy.selected, stateCopy.shapes);
     stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
+    return stateCopy;
+}
+
+export function exportClick(stateCopy, action) {
+    generateEps(stateCopy);
     return stateCopy;
 }
