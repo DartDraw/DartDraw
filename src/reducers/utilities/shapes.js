@@ -1,28 +1,55 @@
 import uuidv1 from 'uuid';
 import { calculateBoundingBox } from './groups';
 
-export function createRectangle(rectangle) {
-    return {
-        id: uuidv1(),
-        type: 'rectangle',
-        ...rectangle
-    };
-}
-
-export function addShape(shapes, action, fill, matrix) {
+export function addRectangle(shapes, action, fill, matrix) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
     const rectangle = {
+        id: uuidv1(),
+        type: 'rectangle',
         x: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
         width: 0,
         height: 0,
         fill: formatColor(fill)
     };
-    const shape = createRectangle(rectangle);
-    shapes.byId[shape.id] = shape;
-    shapes.allIds.push(shape.id);
+
+    shapes.byId[rectangle.id] = rectangle;
+    shapes.allIds.push(rectangle.id);
+    return shapes;
+}
+
+export function addLine(shapes, action, fill, matrix) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const line = {
+        id: uuidv1(),
+        type: "line",
+        x1: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
+        y1: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
+        x2: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
+        y2: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
+        stroke: formatColor(fill)
+    };
+
+    shapes.byId[line.id] = line;
+    shapes.allIds.push(line.id);
+    return shapes;
+}
+
+export function moveLineAnchor(shapes, selected, draggableData, matrix) {
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / matrix[0];
+    const scaledDeltaY = deltaY / matrix[3];
+
+    selected.map((id) => {
+        const line = shapes.byId[id];
+        line.x2 += scaledDeltaX;
+        line.y2 += scaledDeltaY;
+    });
+
     return shapes;
 }
 
