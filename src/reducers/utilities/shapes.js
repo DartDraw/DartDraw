@@ -246,7 +246,7 @@ export function groupShapes(selected, shapes) {
     group.width = boundingBox.x2 - boundingBox.x;
     group.height = boundingBox.y2 - boundingBox.y;
 
-    // group.transform = [{command: 'matrix', parameters: [0, 0, 20, 0, 0, 20]}];
+    group.transform = [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}];
     return group;
 }
 
@@ -311,7 +311,8 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
         const shape = shapes.byId[id];
 
         if (shape.type === "group") {
-            console.log("group");
+            shape.transform[0].parameters[0] += scaledDeltaX / shape.width;
+            shape.transform[0].parameters[3] += scaledDeltaY / shape.height;
         }
 
         switch (handleIndex) {
