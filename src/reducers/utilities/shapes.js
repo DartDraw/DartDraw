@@ -203,32 +203,61 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
 
     selected.map((id) => {
         const shape = shapes.byId[id];
+        let cx = shape.x;
+        let cy = shape.y;
+
+        if (shape.type === "group") {
+            // transform="matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)"
+            shape.transform[0].parameters[0] += scaledDeltaX / shape.width;
+            shape.transform[0].parameters[3] += scaledDeltaY / shape.height;
+            shape.transform[0].parameters[4] = cx - cx * shape.transform[0].parameters[0];
+            shape.transform[0].parameters[5] = cy - cy * shape.transform[0].parameters[3];
+        }
 
         switch (handleIndex) {
             case 0:
+                if (shape.type === "group") {
+                    shape.transform = updateTransform(shape.transform,
+                        scaledDeltaX / shape.width,
+                        scaledDeltaY / shape.height,
+                        shape.x,
+                        shape.y + shape.height);
+                }
                 shape.width = shape.width + scaledDeltaX;
                 shape.y = shape.y + scaledDeltaY;
                 shape.height = shape.height - scaledDeltaY;
                 break;
             case 1:
+                if (shape.type === "group") {
+                    shape.transform = updateTransform(shape.transform,
+                        scaledDeltaX / shape.width,
+                        scaledDeltaY / shape.height,
+                        shape.x,
+                        shape.y);
+                }
                 shape.width = shape.width + scaledDeltaX;
                 shape.height = shape.height + scaledDeltaY;
-
-                if (shape.type === "group") {
-                    // transform="matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)"
-                    shape.transform[0].parameters[0] += scaledDeltaX / shape.width;
-                    shape.transform[0].parameters[3] += scaledDeltaY / shape.height;
-                    shape.transform[0].parameters[4] = shape.x - shape.x * shape.transform[0].parameters[0];
-                    shape.transform[0].parameters[5] = shape.y - shape.y * shape.transform[0].parameters[3];
-                }
-
                 break;
             case 2:
+                if (shape.type === "group") {
+                    shape.transform = updateTransform(shape.transform,
+                        scaledDeltaX / shape.width,
+                        scaledDeltaY / shape.height,
+                        shape.x + shape.width,
+                        shape.y);
+                }
                 shape.x = shape.x + scaledDeltaX;
                 shape.width = shape.width - scaledDeltaX;
                 shape.height = shape.height + scaledDeltaY;
                 break;
             case 3:
+                if (shape.type === "group") {
+                    shape.transform = updateTransform(shape.transform,
+                        scaledDeltaX / shape.width,
+                        scaledDeltaY / shape.height,
+                        shape.x + shape.width,
+                        shape.y + shape.height);
+                }
                 shape.x = shape.x + scaledDeltaX;
                 shape.width = shape.width - scaledDeltaX;
                 shape.y = shape.y + scaledDeltaY;
@@ -239,4 +268,12 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
         }
     });
     return shapes;
+}
+
+function updateTransform(transform, sx, sy, cx, cy) {
+    transform[0].parameters[0] += sx;
+    transform[0].parameters[3] += sy;
+    transform[0].parameters[4] = cx - cx * transform[0].parameters[0];
+    transform[0].parameters[5] = cy - cy * transform[0].parameters[3];
+    return transform;
 }
