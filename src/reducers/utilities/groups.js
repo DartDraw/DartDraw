@@ -1,4 +1,4 @@
-export function calculateBoundingBox(shape, shapes, group) {
+export function calculateBoundingBox(shape, shapes, group = { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity }) {
     shape.members.map((id) => {
         let member = shapes.byId[id];
         if (member.type === "group") {

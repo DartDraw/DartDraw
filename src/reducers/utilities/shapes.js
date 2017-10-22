@@ -60,7 +60,7 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function resizeShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+export function resizeShape2(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / matrix[0];
     const scaledDeltaY = deltaY / matrix[3];
@@ -176,10 +176,9 @@ export function moveShape(shapes, selected, action, matrix) {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
             shapes = moveShape(shapes, shape.members, action, matrix);
-        } else {
-            shape.x = shape.x + scaledDeltaX;
-            shape.y = shape.y + scaledDeltaY;
         }
+        shape.x = shape.x + scaledDeltaX;
+        shape.y = shape.y + scaledDeltaY;
     });
 
     return shapes;
@@ -240,6 +239,14 @@ export function groupShapes(selected, shapes) {
             group.members.push(id);
         }
     });
+
+    let boundingBox = calculateBoundingBox(group, shapes);
+    group.x = boundingBox.x;
+    group.y = boundingBox.y;
+    group.width = boundingBox.x2 - boundingBox.x;
+    group.height = boundingBox.y2 - boundingBox.y;
+
+    // group.transform = [{command: 'matrix', parameters: [0, 0, 20, 0, 0, 20]}];
     return group;
 }
 
@@ -253,6 +260,7 @@ export function ungroupShapes(selected, shapes) {
                 members.push(memberId);
                 shapes.allIds.splice(i, 0, memberId);
                 i += 1;
+                // APPLY TRANSOFRMATIONS HERE
             });
             delete shapes.byId[id];
         } else {
@@ -290,6 +298,46 @@ export function deleteShapes(shapes, selected) {
         }
         delete shapes.byId[id];
         shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
+    });
+    return shapes;
+}
+
+export function resizeShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / matrix[0];
+    const scaledDeltaY = deltaY / matrix[3];
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+
+        if (shape.type === "group") {
+            console.log("group");
+        }
+
+        switch (handleIndex) {
+            case 0:
+                shape.width = shape.width + scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+                shape.height = shape.height - scaledDeltaY;
+                break;
+            case 1:
+                shape.width = shape.width + scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
+                break;
+            case 2:
+                shape.x = shape.x + scaledDeltaX;
+                shape.width = shape.width - scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
+                break;
+            case 3:
+                shape.x = shape.x + scaledDeltaX;
+                shape.width = shape.width - scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+                shape.height = shape.height - scaledDeltaY;
+                break;
+            default:
+                break;
+        }
     });
     return shapes;
 }
