@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { formatTransform } from '../../utilities/shapes';
 
 class Group extends Component {
     static propTypes = {
@@ -8,7 +9,11 @@ class Group extends Component {
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
-        onClick: PropTypes.func
+        onClick: PropTypes.func,
+        transform: PropTypes.arrayOf(PropTypes.shape({
+            command: PropTypes.string,
+            parameters: PropTypes.arrayOf(PropTypes.number)
+        }))
     }
 
     constructor(props) {
@@ -22,16 +27,19 @@ class Group extends Component {
 
     handleDragStart(shapeId, draggableData) {
         const { id, onDragStart } = this.props;
+        draggableData.node = draggableData.node.parentNode;
         onDragStart && onDragStart(id, draggableData);
     }
 
     handleDrag(shapeId, draggableData) {
         const { id, onDrag } = this.props;
+        draggableData.node = draggableData.node.parentNode;
         onDrag && onDrag(id, draggableData);
     }
 
     handleDragStop(shapeId, draggableData) {
         const { id, onDragStop } = this.props;
+        draggableData.node = draggableData.node.parentNode;
         onDragStop && onDragStop(id, draggableData);
     }
 
@@ -41,9 +49,9 @@ class Group extends Component {
     }
 
     render() {
-        const { children } = this.props;
+        const { children, transform } = this.props;
         return (
-            <g>
+            <g transform={formatTransform(transform)}>
                 {React.Children.map(children, (child) => {
                     return React.cloneElement(child, {
                         onDragStart: this.handleDragStart,

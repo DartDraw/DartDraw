@@ -31,6 +31,7 @@ class Canvas extends Component {
 
     constructor(props) {
         super(props);
+
         this.renderDrawing = this.renderDrawing.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
@@ -158,6 +159,7 @@ class Canvas extends Component {
                     <Group
                         key={shape.id}
                         id={shape.id}
+                        transform={shape.transform}
                         onDragStart={this.handleGroupDragStart}
                         onDrag={this.handleGroupDrag}
                         onDragStop={this.handleGroupDragStop}
