@@ -204,11 +204,6 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
     selected.map((id) => {
         const shape = shapes.byId[id];
 
-        if (shape.type === "group") {
-            shape.transform[0].parameters[0] += scaledDeltaX / shape.width;
-            shape.transform[0].parameters[3] += scaledDeltaY / shape.height;
-        }
-
         switch (handleIndex) {
             case 0:
                 shape.width = shape.width + scaledDeltaX;
@@ -218,6 +213,15 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
             case 1:
                 shape.width = shape.width + scaledDeltaX;
                 shape.height = shape.height + scaledDeltaY;
+
+                if (shape.type === "group") {
+                    // transform="matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)"
+                    shape.transform[0].parameters[0] += scaledDeltaX / shape.width;
+                    shape.transform[0].parameters[3] += scaledDeltaY / shape.height;
+                    shape.transform[0].parameters[4] = shape.x - shape.x * shape.transform[0].parameters[0];
+                    shape.transform[0].parameters[5] = shape.y - shape.y * shape.transform[0].parameters[3];
+                }
+
                 break;
             case 2:
                 shape.x = shape.x + scaledDeltaX;
