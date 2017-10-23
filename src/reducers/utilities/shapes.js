@@ -177,10 +177,17 @@ function applyTransformation(shape, group) {
     const transformedCoordinates = transformPoint(shape.x, shape.y, group.transform[0].parameters);
     const transformedDimensions = transformPoint(shape.x + shape.width, shape.y + shape.height, group.transform[0].parameters);
 
-    shape.x = transformedCoordinates.x;
-    shape.y = transformedCoordinates.y;
-    shape.width = transformedDimensions.x - shape.x;
-    shape.height = transformedDimensions.y - shape.y;
+    if (shape.type === "line") {
+        shape.x1 = transformedCoordinates.x;
+        shape.y1 = transformedCoordinates.y;
+        shape.x2 = transformedDimensions.x;
+        shape.y2 = transformedDimensions.y;
+    } else {
+        shape.x = transformedCoordinates.x;
+        shape.y = transformedCoordinates.y;
+        shape.width = transformedDimensions.x - shape.x;
+        shape.height = transformedDimensions.y - shape.y;
+    }
 
     if (shape.type === "group") {
         shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);

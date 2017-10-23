@@ -2,6 +2,15 @@ export function calculateBoundingBox(shape, shapes) {
     const group = { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity };
     shape.members.map((id) => {
         let member = shapes.byId[id];
+
+        if (member.type === "line") {
+            // give recangle parameters
+            member.width = member.x2 - member.x1;
+            member.height = member.y2 - member.y1;
+            member.x = member.x1;
+            member.y = member.y1;
+        }
+
         if (member.width >= 0) {
             if (member.x < group.x) { group.x = member.x; }
             if (member.x + member.width > group.x2) { group.x2 = member.x + member.width; }
