@@ -16,8 +16,11 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     canvasTransformationMatrix: [1, 0, 0, 1, 0, 0],
-    canvasHeight: 840,
-    canvasWidth: 1400,
+    canvasHeight: 400,
+    canvasWidth: 700,
+    // canvasHeight: 840,
+    // canvasWidth: 1400,
+    zoomShape: null,
     past: [],
     future: []
 };

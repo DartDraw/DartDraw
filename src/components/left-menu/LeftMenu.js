@@ -25,6 +25,7 @@ class LeftMenu extends Component {
                         <img src="./assets/001-cursor.svg" alt="select" id="button-icon" />
                     </button>
                     <button onClick={() => this.handleToolSelect("panTool")} id="temp">p</button>
+                    <button onClick={() => this.handleToolSelect("zoomTool")} id="temp">s</button>
                     <button onClick={() => this.handleToolSelect("rectangleTool")}>
                         <img src="./assets/002-frame.svg" alt="rect" id="button-icon" />
                     </button>

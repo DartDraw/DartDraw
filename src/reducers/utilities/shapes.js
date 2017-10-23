@@ -12,6 +12,8 @@ export function addShape(shapes, action, fill, matrix) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
+    console.log(x, y);
+
     const rectangle = {
         x: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
