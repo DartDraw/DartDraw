@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>Group Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="16" height="16" rx="2"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="16" height="16" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-2" transform="translate(-193.000000, -169.000000)">
+            <g id="Group-Copy" transform="translate(193.000000, 169.000000)">
+                <use id="Rectangle-16" stroke="#9A9A9A" mask="url(#mask-2)" stroke-width="2" stroke-dasharray="1,1" xlink:href="#path-1"></use>
+                <circle id="Oval-4" fill="#9A9A9A" cx="5.81683168" cy="10" r="3"></circle>
+                <circle id="Oval-5" fill="#9A9A9A" cx="11.6633663" cy="4.50340136" r="2"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

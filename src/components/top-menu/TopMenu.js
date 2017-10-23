@@ -83,7 +83,13 @@ class TopMenu extends Component {
                     <img src="./assets/005-group.svg" alt="group" id="button-icon" />
                 </button>
                 <button onClick={this.handleUngroupClick}>
-                    <img src="" alt="ungroup" id="button-icon" />
+                    <img src="./assets/009-ungroup.svg" alt="ungroup" id="button-icon" />
+                </button>
+                <button onClick={this.handleSendToBack}>
+                    <img src="./assets/012-upone.svg" alt="upone" id="button-icon" />
+                </button>
+                <button onClick={this.handleBringToFront}>
+                    <img src="./assets/013-backone.svg" alt="downone" id="button-icon" />
                 </button>
                 <button onClick={this.handleSendToBack}>
                     <img src="./assets/007-SendToBack.svg" alt="backall" id="button-icon" />
