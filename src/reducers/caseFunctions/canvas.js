@@ -1,6 +1,6 @@
 import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor, removeNegatives } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
-import { pan, addZoomShape, resizeZoomShape, zoomTo } from '../caseFunctions/zoom';
+import { pan, addZoomShape, resizeZoomShape, zoomTo } from '../utilities/zoom';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;

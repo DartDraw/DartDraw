@@ -5,8 +5,6 @@ export function addRectangle(shapes, action, fill, matrix) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
-    console.log(x, y);
-
     const rectangle = {
         id: uuidv1(),
         type: 'rectangle',

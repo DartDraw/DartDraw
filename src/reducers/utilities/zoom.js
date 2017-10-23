@@ -1,4 +1,4 @@
-import guid from 'guid';
+import uuidv1 from 'uuid';
 
 export function zoomIn(stateCopy, action) {
     const scale = 2; // zoom in by factor of 2
@@ -51,7 +51,7 @@ export function addZoomShape(zoomShape, action, matrix) {
     const { x, y, node } = draggableData;
 
     const rectangle = {
-        id: guid.create().toString(),
+        id: uuidv1(),
         type: 'zoomShape',
         x: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],

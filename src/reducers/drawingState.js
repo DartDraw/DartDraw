@@ -4,7 +4,7 @@ import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
-import * as zoom from './caseFunctions/zoom';
+import * as zoom from './utilities/zoom';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
