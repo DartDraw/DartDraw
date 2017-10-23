@@ -4,17 +4,23 @@ import './left-menu.css';
 
 class LeftMenu extends Component {
     static propTypes = {
-        onToolSelect: PropTypes.func
+        onToolSelect: PropTypes.func,
+        onExportSelect: PropTypes.func
     };
 
     constructor(props) {
         super(props);
 
         this.handleToolSelect = this.handleToolSelect.bind(this);
+        this.handleExportSelect = this.handleExportSelect.bind(this);
     }
 
     handleToolSelect(toolType) {
         this.props.onToolSelect(toolType);
+    }
+
+    handleExportSelect() {
+        this.props.onExportSelect();
     }
 
     render() {
@@ -28,6 +34,12 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("zoomTool")} id="temp">s</button>
                     <button onClick={() => this.handleToolSelect("rectangleTool")}>
                         <img src="./assets/002-frame.svg" alt="rect" id="button-icon" />
+                    </button>
+                    <button onClick={() => this.handleToolSelect("lineTool")}>
+                        <img src="./assets/002-frame.svg" alt="line" id="button-icon" />
+                    </button>
+                    <button onClick={this.handleExportSelect}>
+                        <img src="./assets/008-PDF.svg" alt="rect" id="button-icon" />
                     </button>
                 </div>
             </div>

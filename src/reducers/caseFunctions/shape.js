@@ -1,4 +1,4 @@
-import { resizeShape, moveShape, fillShape, changeZIndex } from '../utilities/shapes';
+import { resizeShape, moveShape, fillShape, changeZIndex, removeNegatives, deleteShapes } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -29,7 +29,7 @@ export function dragStart(stateCopy, action, root) {
 }
 
 export function drag(stateCopy, action, root) {
-    action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
+    action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
 
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
@@ -93,6 +93,10 @@ export function handleDrag(stateCopy, action, root) {
 
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
+        case "selectTool":
+            stateCopy.shapes = removeNegatives(stateCopy.shapes, stateCopy.selected);
+            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+            break;
         default:
             break;
     }
@@ -115,5 +119,21 @@ export function bringFront(stateCopy, action, root) {
 export function sendBack(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     stateCopy.shapes = changeZIndex(stateCopy.shapes, stateCopy.selected, -1);
+    return stateCopy;
+}
+
+export function keyDown(stateCopy, action, root) {
+    const { keyCode } = action.payload;
+
+    switch (keyCode) {
+        case 8:
+            stateCopy.lastSavedShapes = root.drawingState.shapes;
+            stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+            stateCopy.selected = [];
+            stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
+            break;
+        default: break;
+    }
+
     return stateCopy;
 }

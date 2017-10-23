@@ -1,12 +1,14 @@
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const SELECT_TOOL = 'SELECT_TOOL';
+export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const ZOOM_IN = 'ZOOM_IN';
 export const ZOOM_OUT = 'ZOOM_OUT';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
+export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 
@@ -20,6 +22,10 @@ export function keyUp(keyCode) {
 
 export function selectTool(toolType) {
     return { type: SELECT_TOOL, payload: { toolType } };
+}
+
+export function exportClick() {
+    return { type: EXPORT_CLICK };
 }
 
 export function selectColor(color) {
@@ -44,6 +50,10 @@ export function zoomOut() {
 
 export function groupButtonClick() {
     return { type: GROUP_BUTTON_CLICK };
+}
+
+export function ungroupButtonClick() {
+    return { type: UNGROUP_BUTTON_CLICK };
 }
 
 export function sendToBack() {

@@ -39,15 +39,19 @@ function drawingState(state = initialState, action, root) {
             updatedState = canvas.dragStop(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_DRAG_START:
+        case canvasActions.GROUP_DRAG_START:
             updatedState = shape.dragStart(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_CLICK:
+        case canvasActions.GROUP_CLICK:
             updatedState = shape.click(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_DRAG:
+        case canvasActions.GROUP_DRAG:
             updatedState = shape.drag(stateCopy, action, root);
             break;
         case canvasActions.SHAPE_DRAG_STOP:
+        case canvasActions.GROUP_DRAG_STOP:
             updatedState = shape.dragStop(stateCopy, action, root);
             break;
         case canvasActions.HANDLE_DRAG_START:
@@ -68,8 +72,14 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SEND_BACK:
             updatedState = shape.sendBack(stateCopy, action, root);
             break;
+        case menuActions.KEY_DOWN:
+            updatedState = shape.keyDown(stateCopy, action, root);
+            break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
+            break;
+        case menuActions.UNGROUP_BUTTON_CLICK:
+            updatedState = menu.ungroupButtonClick(stateCopy, action, root);
             break;
         case menuActions.UNDO_CLICK:
             updatedState = menu.undoClick(stateCopy, action, root);
@@ -83,6 +93,8 @@ function drawingState(state = initialState, action, root) {
         case menuActions.ZOOM_OUT:
             updatedState = zoom.zoomOut(stateCopy, action, root);
             break;
+        case menuActions.EXPORT_CLICK:
+            return menu.exportClick(stateCopy);
         default: break;
     }
 
@@ -97,7 +109,8 @@ function drawingState(state = initialState, action, root) {
             }
             if (delta !== undefined) {
                 updatedState.future = [];
-                updatedState.past.push(delta);
+                let selected = deepCopy(updatedState.selected);
+                updatedState.past.push({ delta, selected });
             }
         }
     }
