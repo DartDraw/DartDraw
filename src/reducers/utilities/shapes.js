@@ -1,4 +1,5 @@
 import uuidv1 from 'uuid';
+import multiplyMatrices from 'transformation-matrix-js';
 import { calculateBoundingBox } from './groups';
 
 export function addRectangle(shapes, action, fill, matrix) {
@@ -139,6 +140,8 @@ export function groupShapes(selected, shapes) {
     group.y = boundingBox.y;
     group.width = boundingBox.x2 - boundingBox.x;
     group.height = boundingBox.y2 - boundingBox.y;
+    group.originalWidth = group.width;
+    group.originalHeight = group.height;
 
     group.transform = [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}];
     return group;
@@ -203,65 +206,58 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-        let cx = shape.x;
-        let cy = shape.y;
-
-        if (shape.type === "group") {
-            // transform="matrix(sx, 0, 0, sy, cx-sx*cx, cy-sy*cy)"
-            shape.transform[0].parameters[0] += scaledDeltaX / shape.width;
-            shape.transform[0].parameters[3] += scaledDeltaY / shape.height;
-            shape.transform[0].parameters[4] = cx - cx * shape.transform[0].parameters[0];
-            shape.transform[0].parameters[5] = cy - cy * shape.transform[0].parameters[3];
-        }
-
         switch (handleIndex) {
             case 0:
-                if (shape.type === "group") {
-                    shape.transform = updateTransform(shape.transform,
-                        scaledDeltaX / shape.width,
-                        scaledDeltaY / shape.height,
-                        shape.x,
-                        shape.y + shape.height);
-                }
                 shape.width = shape.width + scaledDeltaX;
                 shape.y = shape.y + scaledDeltaY;
                 shape.height = shape.height - scaledDeltaY;
+
+                if (shape.type === "group") {
+                    shape.transform = updateTransform(shape.transform,
+                        (scaledDeltaX + shape.width) / shape.originalWidth,
+                        (scaledDeltaY + shape.height) / shape.originalHeight,
+                        shape.x,
+                        shape.y + shape.height);
+                }
                 break;
             case 1:
+                shape.width = shape.width + scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
+
                 if (shape.type === "group") {
                     shape.transform = updateTransform(shape.transform,
-                        scaledDeltaX / shape.width,
-                        scaledDeltaY / shape.height,
+                        (scaledDeltaX + shape.width) / shape.originalWidth,
+                        (scaledDeltaY + shape.height) / shape.originalHeight,
                         shape.x,
                         shape.y);
                 }
-                shape.width = shape.width + scaledDeltaX;
-                shape.height = shape.height + scaledDeltaY;
                 break;
             case 2:
-                if (shape.type === "group") {
-                    shape.transform = updateTransform(shape.transform,
-                        scaledDeltaX / shape.width,
-                        scaledDeltaY / shape.height,
-                        shape.x + shape.width,
-                        shape.y);
-                }
                 shape.x = shape.x + scaledDeltaX;
                 shape.width = shape.width - scaledDeltaX;
                 shape.height = shape.height + scaledDeltaY;
-                break;
-            case 3:
+
                 if (shape.type === "group") {
                     shape.transform = updateTransform(shape.transform,
-                        scaledDeltaX / shape.width,
-                        scaledDeltaY / shape.height,
+                        (scaledDeltaX + shape.width) / shape.originalWidth,
+                        (scaledDeltaY + shape.height) / shape.originalHeight,
                         shape.x + shape.width,
-                        shape.y + shape.height);
+                        shape.y);
                 }
+                break;
+            case 3:
                 shape.x = shape.x + scaledDeltaX;
                 shape.width = shape.width - scaledDeltaX;
                 shape.y = shape.y + scaledDeltaY;
                 shape.height = shape.height - scaledDeltaY;
+
+                if (shape.type === "group") {
+                    shape.transform = updateTransform(shape.transform,
+                        (scaledDeltaX + shape.width) / shape.originalWidth,
+                        (scaledDeltaY + shape.height) / shape.originalHeight,
+                        shape.x + shape.width,
+                        shape.y + shape.height);
+                }
                 break;
             default:
                 break;
@@ -271,9 +267,10 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
 }
 
 function updateTransform(transform, sx, sy, cx, cy) {
-    transform[0].parameters[0] += sx;
-    transform[0].parameters[3] += sy;
-    transform[0].parameters[4] = cx - cx * transform[0].parameters[0];
-    transform[0].parameters[5] = cy - cy * transform[0].parameters[3];
+    let i = 0;
+    transform[i].parameters[0] = sx;
+    transform[i].parameters[3] = sy;
+    transform[i].parameters[4] = cx - cx * transform[i].parameters[0];
+    transform[i].parameters[5] = cy - cy * transform[i].parameters[3];
     return transform;
 }
