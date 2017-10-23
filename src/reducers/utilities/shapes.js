@@ -73,8 +73,16 @@ export function moveShape(shapes, selected, action, matrix) {
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
-        shape.x = shape.x + scaledDeltaX;
-        shape.y = shape.y + scaledDeltaY;
+
+        if (shape.type === "line") {
+            shape.x1 += scaledDeltaX;
+            shape.y1 += scaledDeltaY;
+            shape.x2 += scaledDeltaX;
+            shape.y2 += scaledDeltaY;
+        } else {
+            shape.x = shape.x + scaledDeltaX;
+            shape.y = shape.y + scaledDeltaY;
+        }
     });
 
     return shapes;
@@ -162,7 +170,6 @@ export function ungroupShapes(selected, shapes) {
                 members.push(memberId);
                 shapes.allIds.splice(i, 0, memberId);
                 i += 1;
-                // APPLY TRANSOFRMATIONS HERE
             });
 
             delete shapes.byId[id];
