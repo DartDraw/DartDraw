@@ -67,6 +67,14 @@ export function dragStop(stateCopy, action, root) {
 
 export function handleDragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
+        case "selectTool":
+            stateCopy.selected.map((id) => {
+                let shape = stateCopy.shapes.byId[id];
+                if (shape.type === "group") {
+                    shape.transform.unshift({command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]});
+                }
+            });
+            break;
         default: break;
     }
     return stateCopy;

@@ -162,6 +162,7 @@ export function ungroupShapes(selected, shapes) {
                 members.push(memberId);
                 shapes.allIds.splice(i, 0, memberId);
                 i += 1;
+                // APPLY TRANSOFRMATIONS HERE
             });
 
             delete shapes.byId[id];
