@@ -116,28 +116,13 @@ class Canvas extends Component {
     }
 
     renderHandles(shape) {
-        const { propagateEvents, canvasTransformationMatrix } = this.props;
-        const scale = canvasTransformationMatrix[0];
-        return [0, 1, 2, 3].map((index) => {
-            let x = shape.x - (3 / scale);
-            let y = shape.y - (3 / scale);
-            if (index === 0 || index === 1) {
-                x = x + shape.width - (3 / scale);
-            }
-            if (index === 1 || index === 2) {
-                y = y + shape.height - (3 / scale);
-            }
+        const { propagateEvents } = this.props;
+        return shape.handles.map(handle => {
             return (
                 <Handle
-                    key={shape.id + index}
-                    id={shape.id}
+                    {...handle}
+                    key={handle.id}
                     shapeId={shape.shapeId}
-                    index={index}
-                    x={x}
-                    y={y}
-                    width={10 / scale}
-                    height={10 / scale}
-                    strokeWidth={2 / scale}
                     onDragStart={this.handleHandleDragStart}
                     onDrag={this.handleHandleDrag}
                     onDragStop={this.handleHandleDragStop}
@@ -148,8 +133,7 @@ class Canvas extends Component {
     }
 
     renderShape(shape) {
-        const { propagateEvents, canvasTransformationMatrix } = this.props;
-        const scale = canvasTransformationMatrix[0];
+        const { propagateEvents } = this.props;
         switch (shape.type) {
             case 'group':
                 const groupMembers = shape.members.map((shape) => {
@@ -208,12 +192,12 @@ class Canvas extends Component {
                 return (
                     <g key={shape.id}>
                         <Rectangle
-                            x={shape.x - (1 / scale)}
-                            y={shape.y - (1 / scale)}
-                            width={shape.width + (2 / scale)}
-                            height={shape.height + (2 / scale)}
+                            x={shape.x}
+                            y={shape.y}
+                            width={shape.width}
+                            height={shape.height}
                             stroke='rgba(102, 204, 255, 0.7)'
-                            strokeWidth={2 / scale}
+                            strokeWidth={2}
                             fill='none'
                             propagateEvents={propagateEvents}
                         />
