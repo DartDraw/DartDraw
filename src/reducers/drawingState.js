@@ -4,6 +4,7 @@ import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
+import * as zoom from './caseFunctions/zoom';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -16,10 +17,8 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     canvasTransformationMatrix: [1, 0, 0, 1, 0, 0],
-    canvasHeight: 400,
-    canvasWidth: 700,
-    // canvasHeight: 840,
-    // canvasWidth: 1400,
+    canvasHeight: 840,
+    canvasWidth: 1400,
     zoomShape: null,
     past: [],
     future: []
@@ -79,10 +78,10 @@ function drawingState(state = initialState, action, root) {
             updatedState = menu.redoClick(stateCopy, action, root);
             break;
         case menuActions.ZOOM_IN:
-            updatedState = menu.zoomIn(stateCopy, action, root);
+            updatedState = zoom.zoomIn(stateCopy, action, root);
             break;
         case menuActions.ZOOM_OUT:
-            updatedState = menu.zoomOut(stateCopy, action, root);
+            updatedState = zoom.zoomOut(stateCopy, action, root);
             break;
         default: break;
     }

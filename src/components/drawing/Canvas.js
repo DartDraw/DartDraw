@@ -209,9 +209,9 @@ class Canvas extends Component {
         });
     }
 
-    renderZoomWindow() {
+    renderZoomShape() {
         const { propagateEvents, canvasTransformationMatrix, zoomShape } = this.props;
-        const scale = canvasTransformationMatrix[0];  
+        const scale = canvasTransformationMatrix[0];
         if (zoomShape != null) {
             return (
                 <g key={zoomShape.id}>
@@ -221,12 +221,13 @@ class Canvas extends Component {
                         width={zoomShape.width + (2 / scale)}
                         height={zoomShape.height + (2 / scale)}
                         strokeWidth={2 / scale}
+                        strokeDasharray={5 / scale}
                         {...zoomShape}
                         propagateEvents={propagateEvents}
                     />
                 </g>
             );
-        }      
+        }
     }
 
     render() {
@@ -238,10 +239,10 @@ class Canvas extends Component {
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height={canvasHeight} width={canvasWidth} fill='#ffffff'>
+                    <svg className="Canvas" height={canvasHeight} width={canvasWidth}>
                         <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
                             {this.renderDrawing()}
-                            {this.renderZoomWindow()}
+                            {this.renderZoomShape()}
                         </g>
                     </svg>
                 </Draggable>

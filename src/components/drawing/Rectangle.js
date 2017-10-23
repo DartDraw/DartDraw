@@ -15,6 +15,7 @@ class Rectangle extends Component {
         y: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeDasharray: PropTypes.string,
         fill: PropTypes.string,
         propagateEvents: PropTypes.bool
     }
@@ -53,7 +54,7 @@ class Rectangle extends Component {
     }
 
     render() {
-        const { id, width, height, x, y, stroke, strokeWidth, fill, propagateEvents } = this.props;
+        const { id, width, height, x, y, stroke, strokeWidth, strokeDasharray, fill, propagateEvents } = this.props;
         let renderX = x;
         let renderWidth = Math.abs(width);
         if (width < 0) {
@@ -72,6 +73,7 @@ class Rectangle extends Component {
             height: renderHeight,
             stroke,
             strokeWidth,
+            strokeDasharray,
             fill
         };
 

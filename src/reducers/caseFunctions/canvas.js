@@ -1,6 +1,6 @@
 import { addShape, removeShape, resizeShape } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
-import { pan, addZoomShape, resizeZoomShape, zoomTo } from '../caseFunctions/menu';
+import { pan, addZoomShape, resizeZoomShape, zoomTo } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
@@ -18,7 +18,6 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             break;
         case "zoomTool":
-            console.log("--DRAGSTART--")
             stateCopy.zoomShape = addZoomShape(stateCopy.zoomShape, action, stateCopy.canvasTransformationMatrix);
             break;
         default: break;
@@ -35,10 +34,8 @@ export function drag(stateCopy, action, root) {
             break;
         case "panTool":
             stateCopy.canvasTransformationMatrix = pan(stateCopy.canvasTransformationMatrix, draggableData);
-            console.log(stateCopy.canvasTransformationMatrix)
             break;
         case "zoomTool":
-            console.log("--DRAG--");
             stateCopy.zoomShape = resizeZoomShape(stateCopy.zoomShape, draggableData, stateCopy.canvasTransformationMatrix);
             break;
         default: break;
@@ -51,17 +48,17 @@ export function dragStop(stateCopy, action, root) {
         case "rectangleTool":
             const shapeIds = stateCopy.shapes.allIds;
             const addedShapeId = shapeIds[shapeIds.length - 1];
-            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) < 1 ||
-                Math.abs(stateCopy.shapes.byId[addedShapeId].height) < 1) {
+            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) === 0 ||
+                Math.abs(stateCopy.shapes.byId[addedShapeId].height) === 0) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
                 stateCopy.selected = selectShape([], null);
                 stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             }
             break;
         case "zoomTool":
-            console.log("--DRAGSTOP--");
-            console.log(stateCopy.zoomShape);
-            stateCopy.canvasTransformationMatrix = zoomTo(stateCopy);
+            if (stateCopy.zoomShape.width !== 0 || stateCopy.zoomShape.height !== 0) {
+                stateCopy.canvasTransformationMatrix = zoomTo(stateCopy.zoomShape, stateCopy.canvasWidth, stateCopy.canvasHeight);
+            }
             stateCopy.zoomShape = null;
             break;
         default:
