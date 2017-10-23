@@ -40,7 +40,7 @@ class LeftMenu extends Component {
                         <img src="./assets/011-drawline.svg" alt="line" id="button-icon" />
                     </button>
                     <button onClick={this.handleExportSelect}>
-                        <img src="./assets/008-PDF.svg" alt="rect" id="button-icon" />
+                        <img src="./assets/008-export.svg" alt="rect" id="button-icon" />
                     </button>
                 </div>
             </div>
