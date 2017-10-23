@@ -20,7 +20,6 @@ import {
 function formatShape(shape, shapes) {
     const formattedShape = Object.assign({}, shape);
     if (formattedShape.type === 'group') {
-        console.log(formattedShape);
         formattedShape.members = formattedShape.members.map((shapeId, i) => {
             return formatShape(shapes.byId[shapeId], shapes);
         });
