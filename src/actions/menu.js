@@ -1,6 +1,7 @@
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const SELECT_TOOL = 'SELECT_TOOL';
+export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
@@ -21,6 +22,10 @@ export function keyUp(keyCode) {
 
 export function selectTool(toolType) {
     return { type: SELECT_TOOL, payload: { toolType } };
+}
+
+export function exportClick() {
+    return { type: EXPORT_CLICK };
 }
 
 export function selectColor(color) {
