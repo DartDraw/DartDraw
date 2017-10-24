@@ -11,8 +11,8 @@ export function addRectangle(shapes, action, fill, matrix) {
         type: 'rectangle',
         x: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
-        width: 0,
-        height: 0,
+        width: 1,
+        height: 1,
         fill: formatColor(fill),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
@@ -82,8 +82,8 @@ export function moveShape(shapes, selected, action, matrix) {
             shape.x2 += scaledDeltaX;
             shape.y2 += scaledDeltaY;
         } else {
-            shape.x = shape.x + scaledDeltaX;
-            shape.y = shape.y + scaledDeltaY;
+            shape.transform[0].parameters[4] += scaledDeltaX;
+            shape.transform[0].parameters[5] += scaledDeltaY;
         }
     });
 
@@ -247,49 +247,53 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
     selected.map((id) => {
         const shape = shapes.byId[id];
 
-        let originalWidth = shape.width;
-        let originalHeight = shape.height;
-        let cx = shape.x;
-        let cy = shape.y;
+        let transformedShape = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+        transformedShape.width = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x - transformedShape.x;
+        transformedShape.height = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y - transformedShape.y;
+
+        console.log(transformedShape);
+        let originalWidth = transformedShape.width;
+        let originalHeight = transformedShape.height;
+        let cx = transformedShape.x;
+        let cy = transformedShape.y;
 
         switch (handleIndex) {
             case 0:
-                shape.width = shape.width + scaledDeltaX;
-                shape.y = shape.y + scaledDeltaY;
-                shape.height = shape.height - scaledDeltaY;
+                transformedShape.width += scaledDeltaX;
+                transformedShape.y += scaledDeltaY;
+                transformedShape.height -= scaledDeltaY;
 
-                cy = shape.y + shape.height;
+                cy = transformedShape.y + transformedShape.height;
                 break;
             case 1:
-                shape.width = shape.width + scaledDeltaX;
-                shape.height = shape.height + scaledDeltaY;
+                transformedShape.width += scaledDeltaX;
+                transformedShape.height += scaledDeltaY;
                 break;
             case 2:
-                shape.x = shape.x + scaledDeltaX;
-                shape.width = shape.width - scaledDeltaX;
-                shape.height = shape.height + scaledDeltaY;
+                transformedShape.x += scaledDeltaX;
+                transformedShape.width -= scaledDeltaX;
+                transformedShape.height += scaledDeltaY;
 
-                cx = shape.x + shape.width;
+                cx = transformedShape.x + transformedShape.width;
                 break;
             case 3:
-                shape.x = shape.x + scaledDeltaX;
-                shape.width = shape.width - scaledDeltaX;
-                shape.y = shape.y + scaledDeltaY;
-                shape.height = shape.height - scaledDeltaY;
+                transformedShape.x += scaledDeltaX;
+                transformedShape.width -= scaledDeltaX;
+                transformedShape.y += scaledDeltaY;
+                transformedShape.height -= scaledDeltaY;
 
-                cx = shape.x + shape.width;
-                cy = shape.y + shape.height;
+                cx = transformedShape.x + transformedShape.width;
+                cy = transformedShape.y + transformedShape.height;
                 break;
             default:
                 break;
         }
 
-        let sx = originalWidth !== 0 ? shape.width / originalWidth : 0;
-        let sy = originalHeight !== 0 ? shape.height / originalHeight : 0;
+        let sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
+        let sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
 
-        if (shape.type === "group") {
-            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-        }
+        console.log(sx, sy, cx, cy);
+        shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
     });
     return shapes;
 }
@@ -316,7 +320,6 @@ export function rotateShape(shapes, selected, draggableData, handleIndex, matrix
         let cy = 0;
         let origCoords = {};
         let newCoords = {};
-        let degreeSign = 1;
 
         switch (handleIndex) {
             case 0:
@@ -359,9 +362,13 @@ export function rotateShape(shapes, selected, draggableData, handleIndex, matrix
         let b = Math.sqrt((cx - newCoords.x) ** 2 + (cy - newCoords.y) ** 2);
         let c = Math.sqrt((origCoords.x - newCoords.x) ** 2 + (origCoords.y - newCoords.y) ** 2);
 
-        // console.log(a, b, c);
-        degree = Math.acos((c ** 2 - a ** 2 - b ** 2) / (-2 * a * b));
-        degree *= degreeSign;
+        let v1x = origCoords.x - cx;
+        let v1y = origCoords.y - cy;
+        let v2x = newCoords.x - cx;
+        let v2y = newCoords.y - cy;
+
+        degree = Math.atan2(v1x, v1y) - Math.atan2(v2x, v2y);
+        // degree = Math.acos((c ** 2 - a ** 2 - b ** 2) / (-2 * a * b));
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
     });
     return shapes;

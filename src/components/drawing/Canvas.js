@@ -118,6 +118,8 @@ class Canvas extends Component {
     renderHandles(shape) {
         const { propagateEvents, canvasTransformationMatrix } = this.props;
         const scale = canvasTransformationMatrix[0];
+        shape.width = 100;
+        shape.height = 100;
         return [0, 1, 2, 3].map((index) => {
             let x = shape.x - (3 / scale);
             let y = shape.y - (3 / scale);
@@ -142,6 +144,7 @@ class Canvas extends Component {
                     onDrag={this.handleHandleDrag}
                     onDragStop={this.handleHandleDragStop}
                     propagateEvents={propagateEvents}
+                    transform={shape.transform}
                 />
             );
         });
@@ -241,7 +244,7 @@ class Canvas extends Component {
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height={canvasHeight} width={canvasWidth}>
+                    <svg className="Canvas" height={canvasHeight + "pt"} width={canvasWidth + "pt"}>
                         <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
                             {this.renderDrawing()}
                         </g>
