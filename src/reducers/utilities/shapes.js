@@ -32,7 +32,8 @@ export function addLine(shapes, action, fill, matrix) {
         y1: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
         x2: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y2: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
-        stroke: formatColor(fill)
+        stroke: formatColor(fill),
+        strokeWidth: 10
     };
 
     shapes.byId[line.id] = line;
@@ -181,15 +182,16 @@ export function ungroupShapes(selected, shapes) {
 }
 
 function applyTransformation(shape, group) {
-    const transformedCoordinates = transformPoint(shape.x, shape.y, group.transform[0].parameters);
-    const transformedDimensions = transformPoint(shape.x + shape.width, shape.y + shape.height, group.transform[0].parameters);
-
     if (shape.type === "line") {
+        const transformedCoordinates = transformPoint(shape.x1, shape.y1, group.transform[0].parameters);
+        const transformedDimensions = transformPoint(shape.x2, shape.y2, group.transform[0].parameters);
         shape.x1 = transformedCoordinates.x;
         shape.y1 = transformedCoordinates.y;
         shape.x2 = transformedDimensions.x;
         shape.y2 = transformedDimensions.y;
     } else {
+        const transformedCoordinates = transformPoint(shape.x, shape.y, group.transform[0].parameters);
+        const transformedDimensions = transformPoint(shape.x + shape.width, shape.y + shape.height, group.transform[0].parameters);
         shape.x = transformedCoordinates.x;
         shape.y = transformedCoordinates.y;
         shape.width = transformedDimensions.x - shape.x;
