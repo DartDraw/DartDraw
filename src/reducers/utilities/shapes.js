@@ -13,7 +13,8 @@ export function addRectangle(shapes, action, fill, matrix) {
         y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
         width: 0,
         height: 0,
-        fill: formatColor(fill)
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
     shapes.byId[rectangle.id] = rectangle;
@@ -299,5 +300,80 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
     transform2[3] = sy;
     transform2[4] = cx - cx * sx;
     transform2[5] = cy - cy * sy;
+    return multiplyMatrices(transform2, transform1);
+}
+
+export function rotateShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / matrix[0];
+    const scaledDeltaY = deltaY / matrix[3];
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+
+        let degree = 1 * (Math.PI / 180);
+        let cx = 0;
+        let cy = 0;
+        let origCoords = {};
+        let newCoords = {};
+        let degreeSign = 1;
+
+        switch (handleIndex) {
+            case 0:
+                let cxCoords = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters);
+                origCoords = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
+
+                newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
+                break;
+            case 1:
+                cxCoords = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+                origCoords = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
+
+                newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
+                break;
+            case 2:
+                cxCoords = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters);
+                origCoords = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
+
+                newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
+                break;
+            case 3:
+                cxCoords = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters);
+                origCoords = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
+
+                newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
+                break;
+            default:
+                break;
+        }
+
+        let a = Math.sqrt((cx - origCoords.x) ** 2 + (cy - origCoords.y) ** 2);
+        let b = Math.sqrt((cx - newCoords.x) ** 2 + (cy - newCoords.y) ** 2);
+        let c = Math.sqrt((origCoords.x - newCoords.x) ** 2 + (origCoords.y - newCoords.y) ** 2);
+
+        // console.log(a, b, c);
+        degree = Math.acos((c ** 2 - a ** 2 - b ** 2) / (-2 * a * b));
+        degree *= degreeSign;
+        shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
+    });
+    return shapes;
+}
+
+function rotateTransform(transform1, a, cx, cy) {
+    // https://stackoverflow.com/questions/15133977/how-to-calculate-svg-transform-matrix-from-rotate-translate-scale-values
+    let transform2 = [Math.cos(a),
+        Math.sin(a),
+        -Math.sin(a),
+        Math.cos(a),
+        -cx * Math.cos(a) + cy * Math.sin(a) + cx,
+        -cx * Math.sin(a) - cy * Math.cos(a) + cy];
     return multiplyMatrices(transform2, transform1);
 }
