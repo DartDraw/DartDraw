@@ -97,6 +97,7 @@ export function fillShape(shapes, selected, action) {
             shapes = fillShape(shapes, shape.members, action);
         } else {
             shape.fill = formatColor(color);
+            shape.stroke = formatColor(color);
         }
     });
     return shapes;
