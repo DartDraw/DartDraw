@@ -1,5 +1,4 @@
 import jsondiffpatch from 'jsondiffpatch';
-import { generateSelectionBoxes } from '../utilities/selection';
 import { groupShapes, ungroupShapes, removeNegatives } from '../utilities/shapes';
 import { generateEps } from '../../eps/eps';
 
@@ -19,7 +18,7 @@ export function keyUp(stateCopy, action) {
     return stateCopy;
 }
 
-export function undoClick(stateCopy, action) {
+export function undoClick(stateCopy, action, root) {
     const delta = stateCopy.past.pop();
 
     if (delta && delta.delta) {
@@ -29,20 +28,18 @@ export function undoClick(stateCopy, action) {
         if (stateCopy.past.length > 0) {
             stateCopy.selected = stateCopy.past[stateCopy.past.length - 1].selected;
         }
-        stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     }
 
     return stateCopy;
 }
 
-export function redoClick(stateCopy, action) {
+export function redoClick(stateCopy, action, root) {
     const delta = stateCopy.future.pop();
 
     if (delta && delta.delta) {
         stateCopy.shapes = jsondiffpatch.create().patch(stateCopy.shapes, delta.delta);
         stateCopy.past.push(delta);
         stateCopy.selected = delta.selected;
-        stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     }
 
     return stateCopy;
@@ -91,7 +88,7 @@ export function selectColor(stateCopy, action) {
     return stateCopy;
 }
 
-export function groupButtonClick(stateCopy, action) {
+export function groupButtonClick(stateCopy, action, root) {
     if (stateCopy.selected.length < 2) {
         // need at least 2 shapes
         return stateCopy;
@@ -105,14 +102,12 @@ export function groupButtonClick(stateCopy, action) {
     stateCopy.shapes.allIds.push(group.id);
     stateCopy.shapes.byId[group.id] = group;
     stateCopy.selected = [group.id];
-    stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     return stateCopy;
 }
 
-export function ungroupButtonClick(stateCopy, action) {
+export function ungroupButtonClick(stateCopy, action, root) {
     stateCopy.selected = ungroupShapes(stateCopy.selected, stateCopy.shapes);
     stateCopy.shapes = removeNegatives(stateCopy.shapes, stateCopy.selected);
-    stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
     return stateCopy;
 }
 

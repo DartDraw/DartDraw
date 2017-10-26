@@ -12,6 +12,7 @@ const initialState = {
         allIds: []
     },
     selected: [],
+    boundingBoxes: {},
     selectionBoxes: {},
     lastSavedShapes: {},
     editInProgress: false,
@@ -60,6 +61,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case canvasActions.HANDLE_DRAG_STOP:
             updatedState = shape.handleDragStop(stateCopy, action, root);
+            break;
+        case canvasActions.UPDATE_BOUNDING_BOXES:
+            updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);

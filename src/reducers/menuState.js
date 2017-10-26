@@ -15,11 +15,11 @@ function menuState(state = initialState, action, root) {
         case menuActions.KEY_DOWN:
             return menu.keyDown(stateCopy, action, root);
         case menuActions.KEY_UP:
-            return menu.keyUp(stateCopy, action);
+            return menu.keyUp(stateCopy, action, root);
         case menuActions.SELECT_TOOL:
-            return menu.selectTool(stateCopy, action);
+            return menu.selectTool(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
-            return menu.selectColor(stateCopy, action);
+            return menu.selectColor(stateCopy, action, root);
         default:
             return stateCopy;
     }

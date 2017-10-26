@@ -7,6 +7,8 @@ import { Group, Rectangle, Path, Line, Handle } from '.';
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
+        shapesWithoutSelectionBoxes: PropTypes.array,
+        selected: PropTypes.array,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
         canvasTransformationMatrix: PropTypes.array,
@@ -26,7 +28,8 @@ class Canvas extends Component {
         onHandleDrag: PropTypes.func,
         onHandleDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
-        onRedoClick: PropTypes.func
+        onRedoClick: PropTypes.func,
+        onBoundingBoxUpdate: PropTypes.func
     };
 
     constructor(props) {
@@ -49,6 +52,22 @@ class Canvas extends Component {
         this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
         this.handleHandleDrag = this.handleHandleDrag.bind(this);
         this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
+    }
+
+    componentDidUpdate(prevProps) {
+        const { onBoundingBoxUpdate, shapesWithoutSelectionBoxes, selected } = this.props;
+        const selectedHasChanged = JSON.stringify(selected) !== JSON.stringify(prevProps.selected);
+        const shapesHaveChanged = JSON.stringify(shapesWithoutSelectionBoxes) !== JSON.stringify(prevProps.shapesWithoutSelectionBoxes);
+        if (shapesHaveChanged || selectedHasChanged) {
+            const boundingBoxes = {};
+            const svgElements = [...(this.svgRef.childNodes[0].childNodes)];
+            svgElements.map((element) => {
+                if (element.id) {
+                    boundingBoxes[element.id] = element.getBBox();
+                }
+            });
+            onBoundingBoxUpdate && onBoundingBoxUpdate(boundingBoxes);
+        }
     }
 
     handleDragStart(draggableData) {
@@ -118,21 +137,14 @@ class Canvas extends Component {
     renderHandles(shape) {
         const { propagateEvents, canvasTransformationMatrix } = this.props;
         const scale = canvasTransformationMatrix[0];
-        shape.width = 100;
-        shape.height = 100;
-        return [0, 1, 2, 3].map((index) => {
-            let x = shape.x - (3 / scale);
-            let y = shape.y - (3 / scale);
-            if (index === 0 || index === 1) {
-                x = x + shape.width - (3 / scale);
-            }
-            if (index === 1 || index === 2) {
-                y = y + shape.height - (3 / scale);
-            }
+        return shape.handles.map((handle) => {
+            const { id, index } = handle;
+            let x = handle.x - ((Math.sqrt(2) * 10 / 2) / scale);
+            let y = handle.y - ((Math.sqrt(2) * 10 / 2) / scale);
             return (
                 <Handle
-                    key={shape.id + index}
-                    id={shape.id}
+                    key={id}
+                    id={id}
                     shapeId={shape.shapeId}
                     index={index}
                     x={x}
@@ -211,12 +223,13 @@ class Canvas extends Component {
                 return (
                     <g key={shape.id}>
                         <Rectangle
-                            x={shape.x - (1 / scale)}
-                            y={shape.y - (1 / scale)}
-                            width={shape.width + (2 / scale)}
-                            height={shape.height + (2 / scale)}
+                            x={shape.x}
+                            y={shape.y}
+                            width={shape.width}
+                            height={shape.height}
+                            transform={shape.transform}
                             stroke='rgba(102, 204, 255, 0.7)'
-                            strokeWidth={2 / scale}
+                            strokeWidth={4 / scale}
                             fill='none'
                             propagateEvents={propagateEvents}
                         />
@@ -244,7 +257,7 @@ class Canvas extends Component {
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height={canvasHeight + "pt"} width={canvasWidth + "pt"}>
+                    <svg className="Canvas" height={canvasHeight} width={canvasWidth} ref={(ref) => { this.svgRef = ref; }}>
                         <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
                             {this.renderDrawing()}
                         </g>
