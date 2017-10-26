@@ -1,4 +1,4 @@
-const Matrix = require("transformation-matrix-js").Matrix;
+import { Matrix } from 'transformation-matrix-js';
 
 export function multiplyMatrices(m1, m2) {
     if (m1.length !== 6 || m2.length !== 6) {

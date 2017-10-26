@@ -1,4 +1,5 @@
 import uuidv1 from 'uuid';
+import { multiplyMatrices, transformPoint } from './matrix';
 import { calculateBoundingBox } from './groups';
 
 export function addRectangle(shapes, action, fill, matrix) {
@@ -31,7 +32,8 @@ export function addLine(shapes, action, fill, matrix) {
         y1: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
         x2: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y2: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
-        stroke: formatColor(fill)
+        stroke: formatColor(fill),
+        strokeWidth: 10
     };
 
     shapes.byId[line.id] = line;
@@ -60,112 +62,6 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function resizeShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
-    const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / matrix[0];
-    const scaledDeltaY = deltaY / matrix[3];
-
-    selected.map((id) => {
-        const shape = shapes.byId[id];
-        if (shape.type === "group") {
-            if (typeof (group) === "undefined" || group === null) {
-                group = calculateBoundingBox(shape, shapes, { x: Infinity, x2: -Infinity, y: Infinity, y2: -Infinity });
-            } else {
-                group = calculateBoundingBox(shape, shapes, group);
-            }
-            shapes = resizeShape(shapes, shape.members, draggableData, handleIndex, matrix, group, deltaX, deltaY, true);
-        } else {
-            if (!isMember) {
-                switch (handleIndex) {
-                    case 0:
-                        shape.width = shape.width + scaledDeltaX;
-                        shape.y = shape.y + scaledDeltaY;
-                        shape.height = shape.height - scaledDeltaY;
-                        break;
-                    case 1:
-                        shape.width = shape.width + scaledDeltaX;
-                        shape.height = shape.height + scaledDeltaY;
-                        break;
-                    case 2:
-                        shape.x = shape.x + scaledDeltaX;
-                        shape.width = shape.width - scaledDeltaX;
-                        shape.height = shape.height + scaledDeltaY;
-                        break;
-                    case 3:
-                        shape.x = shape.x + scaledDeltaX;
-                        shape.width = shape.width - scaledDeltaX;
-                        shape.y = shape.y + scaledDeltaY;
-                        shape.height = shape.height - scaledDeltaY;
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                group.width = group.x2 - group.x;
-                group.height = group.y2 - group.y;
-                if (group.width === 0) group.width = 1;
-                if (group.height === 0) group.height = 1;
-
-                let oldShape = { x: shape.x, y: shape.y, height: shape.height, width: shape.width };
-
-                let x1Diff = shape.x - group.x;
-                if (shape.width < 0) {
-                    x1Diff = group.x2 - shape.x;
-                }
-
-                let x2Diff = group.x2 - shape.x;
-                if (shape.width < 0) {
-                    x2Diff = shape.x - group.x;
-                }
-
-                let y1Diff = shape.y - group.y;
-                if (shape.height < 0) {
-                    y1Diff = group.y2 - shape.y;
-                }
-
-                let y2Diff = group.y2 - shape.y;
-                if (shape.height < 0) {
-                    y2Diff = shape.y - group.y;
-                }
-
-                switch (handleIndex) {
-                    case 0:
-                        shape.width += Math.abs(shape.width) / group.width * scaledDeltaX;
-                        shape.height -= Math.abs(shape.height) / group.height * scaledDeltaY;
-                        shape.x += x1Diff / group.width * scaledDeltaX;
-                        shape.y += y2Diff / group.height * scaledDeltaY;
-                        break;
-                    case 1:
-                        shape.width += Math.abs(shape.width) / group.width * scaledDeltaX;
-                        shape.height += Math.abs(shape.height) / group.height * scaledDeltaY;
-                        shape.x += x1Diff / group.width * scaledDeltaX;
-                        shape.y += y1Diff / group.height * scaledDeltaY;
-                        break;
-                    case 2:
-                        shape.width -= Math.abs(shape.width) / group.width * scaledDeltaX;
-                        shape.height += Math.abs(shape.height) / group.height * scaledDeltaY;
-                        shape.x += x2Diff / group.width * scaledDeltaX;
-                        shape.y += y1Diff / group.height * scaledDeltaY;
-                        break;
-                    case 3:
-                        shape.width -= Math.abs(shape.width) / group.width * scaledDeltaX;
-                        shape.height -= Math.abs(shape.height) / group.height * scaledDeltaY;
-                        shape.x += x2Diff / group.width * scaledDeltaX;
-                        shape.y += y2Diff / group.height * scaledDeltaY;
-                        break;
-                    default:
-                        break;
-                }
-                if (isNaN(shape.x) || shape.x === -Infinity) { shape.x = oldShape.x; }
-                if (isNaN(shape.y) || shape.y === -Infinity) { shape.y = oldShape.y; }
-                if (isNaN(shape.width) || shape.width === -Infinity) { shape.width = 0; }
-                if (isNaN(shape.height) || shape.height === -Infinity) { shape.height = 0; }
-            }
-        }
-    });
-    return shapes;
-}
-
 export function moveShape(shapes, selected, action, matrix) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
@@ -175,7 +71,15 @@ export function moveShape(shapes, selected, action, matrix) {
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === "group") {
-            shapes = moveShape(shapes, shape.members, action, matrix);
+            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        }
+
+        if (shape.type === "line") {
+            shape.x1 += scaledDeltaX;
+            shape.y1 += scaledDeltaY;
+            shape.x2 += scaledDeltaX;
+            shape.y2 += scaledDeltaY;
         } else {
             shape.x = shape.x + scaledDeltaX;
             shape.y = shape.y + scaledDeltaY;
@@ -193,6 +97,7 @@ export function fillShape(shapes, selected, action) {
             shapes = fillShape(shapes, shape.members, action);
         } else {
             shape.fill = formatColor(color);
+            shape.stroke = formatColor(color);
         }
     });
     return shapes;
@@ -240,6 +145,16 @@ export function groupShapes(selected, shapes) {
             group.members.push(id);
         }
     });
+
+    // set new x, y, height, width of group shape
+    let boundingBox = calculateBoundingBox(group, shapes);
+    group.x = boundingBox.x;
+    group.y = boundingBox.y;
+    group.width = boundingBox.x2 - boundingBox.x;
+    group.height = boundingBox.y2 - boundingBox.y;
+
+    // initialize transofrm
+    group.transform = [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}];
     return group;
 }
 
@@ -247,19 +162,48 @@ export function ungroupShapes(selected, shapes) {
     let members = [];
     selected.map((id) => {
         if (shapes.byId[id].type === "group") {
+            const group = shapes.byId[id];
+
             let i = shapes.allIds.indexOf(id);
             shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
+
             shapes.byId[id].members.map((memberId) => {
+                shapes.byId[memberId] = applyTransformation(shapes.byId[memberId], group);
                 members.push(memberId);
                 shapes.allIds.splice(i, 0, memberId);
                 i += 1;
             });
+
             delete shapes.byId[id];
         } else {
             members.push(id);
         }
     });
     return members;
+}
+
+function applyTransformation(shape, group) {
+    if (shape.type === "line") {
+        const transformedCoordinates = transformPoint(shape.x1, shape.y1, group.transform[0].parameters);
+        const transformedDimensions = transformPoint(shape.x2, shape.y2, group.transform[0].parameters);
+        shape.x1 = transformedCoordinates.x;
+        shape.y1 = transformedCoordinates.y;
+        shape.x2 = transformedDimensions.x;
+        shape.y2 = transformedDimensions.y;
+    } else {
+        const transformedCoordinates = transformPoint(shape.x, shape.y, group.transform[0].parameters);
+        const transformedDimensions = transformPoint(shape.x + shape.width, shape.y + shape.height, group.transform[0].parameters);
+        shape.x = transformedCoordinates.x;
+        shape.y = transformedCoordinates.y;
+        shape.width = transformedDimensions.x - shape.x;
+        shape.height = transformedDimensions.y - shape.y;
+    }
+
+    if (shape.type === "group") {
+        shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
+    }
+
+    return shape;
 }
 
 export function removeNegatives(shapes, selected) {
@@ -292,4 +236,68 @@ export function deleteShapes(shapes, selected) {
         shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
     });
     return shapes;
+}
+
+export function resizeShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / matrix[0];
+    const scaledDeltaY = deltaY / matrix[3];
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+
+        let originalWidth = shape.width;
+        let originalHeight = shape.height;
+        let cx = shape.x;
+        let cy = shape.y;
+
+        switch (handleIndex) {
+            case 0:
+                shape.width = shape.width + scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+                shape.height = shape.height - scaledDeltaY;
+
+                cy = shape.y + shape.height;
+                break;
+            case 1:
+                shape.width = shape.width + scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
+                break;
+            case 2:
+                shape.x = shape.x + scaledDeltaX;
+                shape.width = shape.width - scaledDeltaX;
+                shape.height = shape.height + scaledDeltaY;
+
+                cx = shape.x + shape.width;
+                break;
+            case 3:
+                shape.x = shape.x + scaledDeltaX;
+                shape.width = shape.width - scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+                shape.height = shape.height - scaledDeltaY;
+
+                cx = shape.x + shape.width;
+                cy = shape.y + shape.height;
+                break;
+            default:
+                break;
+        }
+
+        let sx = originalWidth !== 0 ? shape.width / originalWidth : 0;
+        let sy = originalHeight !== 0 ? shape.height / originalHeight : 0;
+
+        if (shape.type === "group") {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+        }
+    });
+    return shapes;
+}
+
+function resizeTransform(transform1, sx, sy, cx, cy) {
+    let transform2 = [1, 0, 0, 1, 0, 0];
+    transform2[0] = sx;
+    transform2[3] = sy;
+    transform2[4] = cx - cx * sx;
+    transform2[5] = cy - cy * sy;
+    return multiplyMatrices(transform2, transform1);
 }
