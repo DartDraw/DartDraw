@@ -1,5 +1,5 @@
 import { resizeShape, moveShape, fillShape, changeZIndex, removeNegatives, deleteShapes } from '../utilities/shapes';
-import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
+import { selectShape, generateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
     switch (root.menuState.toolType) {
@@ -12,7 +12,6 @@ export function click(stateCopy, action, root) {
                     selectMultiple = true;
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
-                stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
             }
             break;
         default: break;
@@ -39,7 +38,6 @@ export function drag(stateCopy, action, root) {
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
-                    stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
                 }
                 break;
             default: break;
@@ -48,7 +46,6 @@ export function drag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.canvasTransformationMatrix);
-                stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
                 break;
             default: break;
         }
@@ -83,7 +80,6 @@ export function handleDrag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.canvasTransformationMatrix);
-                stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
                 break;
             default: break;
         }
@@ -95,7 +91,6 @@ export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "selectTool":
             stateCopy.shapes = removeNegatives(stateCopy.shapes, stateCopy.selected);
-            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
             break;
         default:
             break;
@@ -130,7 +125,6 @@ export function keyDown(stateCopy, action, root) {
             stateCopy.lastSavedShapes = root.drawingState.shapes;
             stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
             stateCopy.selected = [];
-            stateCopy.selectionBoxes = generateSelectionBoxes(stateCopy.selected, stateCopy.shapes);
             break;
         default: break;
     }

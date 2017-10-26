@@ -49,9 +49,9 @@ class Group extends Component {
     }
 
     render() {
-        const { children, transform } = this.props;
+        const { children, id, transform } = this.props;
         return (
-            <g transform={formatTransform(transform)}>
+            <g id={id} transform={formatTransform(transform)}>
                 {React.Children.map(children, (child) => {
                     return React.cloneElement(child, {
                         onDragStart: this.handleDragStart,
