@@ -241,7 +241,7 @@ class Canvas extends Component {
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height={canvasHeight + "pt"} width={canvasWidth + "pt"}>
+                    <svg className="Canvas" height={canvasHeight} width={canvasWidth}>
                         <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
                             {this.renderDrawing()}
                         </g>
