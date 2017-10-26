@@ -251,7 +251,6 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
         transformedShape.width = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x - transformedShape.x;
         transformedShape.height = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y - transformedShape.y;
 
-        console.log(transformedShape);
         let originalWidth = transformedShape.width;
         let originalHeight = transformedShape.height;
         let cx = transformedShape.x;
@@ -292,7 +291,6 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
         let sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
         let sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
 
-        console.log(sx, sy, cx, cy);
         shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
     });
     return shapes;
