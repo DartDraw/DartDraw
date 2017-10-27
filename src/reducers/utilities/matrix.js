@@ -16,3 +16,11 @@ export function transformPoint(x, y, m) {
     m = Matrix.from(...m);
     return m.applyToPoint(x, y);
 }
+
+export function inverseTransform(m) {
+    if (m.length !== 6) {
+        console.log("inverseTransform expects m to be an SVG transform matrix represented as an array of length 6");
+    }
+    m = Matrix.from(...m);
+    return m.inverse().toArray();
+}
