@@ -71,10 +71,6 @@ export function moveShape(shapes, selected, action, matrix) {
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-        if (shape.type === "group") {
-            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
-            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
-        }
 
         if (shape.type === "line") {
             shape.x1 += scaledDeltaX;
@@ -82,8 +78,8 @@ export function moveShape(shapes, selected, action, matrix) {
             shape.x2 += scaledDeltaX;
             shape.y2 += scaledDeltaY;
         } else {
-            shape.transform[0].parameters[4] += scaledDeltaX;
-            shape.transform[0].parameters[5] += scaledDeltaY;
+            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
     });
 
@@ -262,7 +258,8 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 transformedShape.y += scaledDeltaY;
                 transformedShape.height -= scaledDeltaY;
 
-                cy = transformedShape.y + transformedShape.height;
+                cx = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).x;
+                cy = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y;
                 break;
             case 1:
                 transformedShape.width += scaledDeltaX;
@@ -273,7 +270,8 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 transformedShape.width -= scaledDeltaX;
                 transformedShape.height += scaledDeltaY;
 
-                cx = transformedShape.x + transformedShape.width;
+                cx = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x;
+                cy = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).y;
                 break;
             case 3:
                 transformedShape.x += scaledDeltaX;
@@ -281,8 +279,8 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 transformedShape.y += scaledDeltaY;
                 transformedShape.height -= scaledDeltaY;
 
-                cx = transformedShape.x + transformedShape.width;
-                cy = transformedShape.y + transformedShape.height;
+                cx = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters).x;
+                cy = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters).y;
                 break;
             default:
                 break;
@@ -312,6 +310,7 @@ export function rotateShape(shapes, selected, draggableData, handleIndex, matrix
 
     selected.map((id) => {
         const shape = shapes.byId[id];
+        console.log(shape);
 
         let degree = 1 * (Math.PI / 180);
         let cx = 0;
@@ -356,17 +355,12 @@ export function rotateShape(shapes, selected, draggableData, handleIndex, matrix
                 break;
         }
 
-        let a = Math.sqrt((cx - origCoords.x) ** 2 + (cy - origCoords.y) ** 2);
-        let b = Math.sqrt((cx - newCoords.x) ** 2 + (cy - newCoords.y) ** 2);
-        let c = Math.sqrt((origCoords.x - newCoords.x) ** 2 + (origCoords.y - newCoords.y) ** 2);
-
         let v1x = origCoords.x - cx;
         let v1y = origCoords.y - cy;
         let v2x = newCoords.x - cx;
         let v2y = newCoords.y - cy;
 
         degree = Math.atan2(v1x, v1y) - Math.atan2(v2x, v2y);
-        // degree = Math.acos((c ** 2 - a ** 2 - b ** 2) / (-2 * a * b));
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
     });
     return shapes;
