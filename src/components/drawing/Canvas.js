@@ -7,6 +7,7 @@ import { Group, Rectangle, Path, Line, Handle } from '.';
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
+        zoomShape: PropTypes.any,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
         canvasTransformationMatrix: PropTypes.array,
@@ -215,6 +216,7 @@ class Canvas extends Component {
                             stroke='rgba(102, 204, 255, 0.7)'
                             strokeWidth={2 / scale}
                             fill='none'
+                            {...shape}
                             propagateEvents={propagateEvents}
                         />
                         {this.renderHandles(shape)}
@@ -232,6 +234,27 @@ class Canvas extends Component {
         });
     }
 
+    renderZoomShape() {
+        const { propagateEvents, canvasTransformationMatrix, zoomShape } = this.props;
+        const scale = canvasTransformationMatrix[0];
+        if (zoomShape != null) {
+            return (
+                <g key={zoomShape.id}>
+                    <Rectangle
+                        x={zoomShape.x - (1 / scale)}
+                        y={zoomShape.y - (1 / scale)}
+                        width={zoomShape.width + (2 / scale)}
+                        height={zoomShape.height + (2 / scale)}
+                        strokeWidth={2 / scale}
+                        strokeDasharray={5 / scale}
+                        {...zoomShape}
+                        propagateEvents={propagateEvents}
+                    />
+                </g>
+            );
+        }
+    }
+
     render() {
         const { canvasTransformationMatrix, canvasHeight, canvasWidth } = this.props;
         return (
@@ -244,6 +267,7 @@ class Canvas extends Component {
                     <svg className="Canvas" height={canvasHeight} width={canvasWidth}>
                         <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
                             {this.renderDrawing()}
+                            {this.renderZoomShape()}
                         </g>
                     </svg>
                 </Draggable>

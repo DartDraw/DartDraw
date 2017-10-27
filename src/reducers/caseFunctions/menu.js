@@ -48,39 +48,6 @@ export function redoClick(stateCopy, action) {
     return stateCopy;
 }
 
-export function zoomIn(stateCopy, action) {
-    const scale = 2; // zoom in by factor of 2
-    stateCopy.canvasTransformationMatrix = zoom(stateCopy, scale);
-    return stateCopy;
-}
-
-export function zoomOut(stateCopy, action) {
-    const scale = 0.5; // zoom out by factor of 2
-    stateCopy.canvasTransformationMatrix = zoom(stateCopy, scale);
-    return stateCopy;
-}
-
-export function zoom(stateCopy, scale) {
-    const m = stateCopy.canvasTransformationMatrix;
-    const len = m.length;
-    for (let i = 0; i < len; i++) {
-        m[i] *= scale;
-    }
-    m[4] += (1 - scale) * stateCopy.canvasWidth / 2;
-    m[5] += (1 - scale) * stateCopy.canvasHeight / 2;
-    return m;
-}
-
-export function pan(matrix, draggableData) {
-    const { deltaX, deltaY } = draggableData;
-    const m = matrix;
-
-    m[4] += deltaX;
-    m[5] += deltaY;
-
-    return m;
-}
-
 export function selectTool(stateCopy, action) {
     stateCopy.toolType = action.payload.toolType;
     return stateCopy;

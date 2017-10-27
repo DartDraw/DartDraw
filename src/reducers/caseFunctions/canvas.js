@@ -1,6 +1,6 @@
 import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor, removeNegatives } from '../utilities/shapes';
 import { selectShape, generateSelectionBoxes, updateSelectionBoxes } from '../utilities/selection';
-import { pan } from '../caseFunctions/menu';
+import { pan, addZoomShape, resizeZoomShape, zoomTo } from '../utilities/zoom';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
@@ -24,6 +24,9 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape([], null);
             stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             break;
+        case "zoomTool":
+            stateCopy.zoomShape = addZoomShape(stateCopy.zoomShape, action, stateCopy.canvasTransformationMatrix);
+            break;
         default: break;
     }
     return stateCopy;
@@ -43,6 +46,9 @@ export function drag(stateCopy, action, root) {
         case "panTool":
             stateCopy.canvasTransformationMatrix = pan(stateCopy.canvasTransformationMatrix, draggableData);
             break;
+        case "zoomTool":
+            stateCopy.zoomShape = resizeZoomShape(stateCopy.zoomShape, draggableData, stateCopy.canvasTransformationMatrix);
+            break;
         default: break;
     }
     return stateCopy;
@@ -53,8 +59,8 @@ export function dragStop(stateCopy, action, root) {
         case "rectangleTool":
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
-            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) < 1 ||
-                Math.abs(stateCopy.shapes.byId[addedShapeId].height) < 1) {
+            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) === 0 ||
+                Math.abs(stateCopy.shapes.byId[addedShapeId].height) === 0) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
                 stateCopy.selected = selectShape([], null);
                 stateCopy.selectionBoxes = generateSelectionBoxes([], []);
@@ -73,6 +79,12 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.selectionBoxes = generateSelectionBoxes([], []);
             }
             stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.shapes, stateCopy.selectionBoxes);
+            break;
+        case "zoomTool":
+            if (stateCopy.zoomShape.width !== 0 || stateCopy.zoomShape.height !== 0) {
+                stateCopy.canvasTransformationMatrix = zoomTo(stateCopy.zoomShape, stateCopy.canvasWidth, stateCopy.canvasHeight);
+            }
+            stateCopy.zoomShape = null;
             break;
         default:
             break;

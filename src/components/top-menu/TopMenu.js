@@ -102,7 +102,7 @@ class TopMenu extends Component {
                 </div>
                 <button onClick={this.handleZoomIn} id="temp">+</button>
                 <button onClick={this.handleZoomOut} id="temp">-</button>
-                <p id="temp">{scale * 100}%</p>
+                <p id="temp">{(scale * 100).toFixed(2)}%</p>
 
             </div>
         );

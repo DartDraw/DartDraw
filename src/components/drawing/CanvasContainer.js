@@ -39,10 +39,11 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         shapes: formattedShapes,
+        zoomShape: drawingState.zoomShape,
         canvasHeight: drawingState.canvasHeight,
         canvasWidth: drawingState.canvasWidth,
         canvasTransformationMatrix: drawingState.canvasTransformationMatrix,
-        propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool'
+        propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool' || toolType === 'zoomTool'
     };
 };
 
