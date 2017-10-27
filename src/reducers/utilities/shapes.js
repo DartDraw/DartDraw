@@ -190,6 +190,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         const shape = shapes.byId[id];
         const shapeMatrix = shape.transform[0].parameters;
         const boundingBox = boundingBoxes[id];
+        console.log(decomposeMatrix(shapeMatrix));
 
         let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
         transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
@@ -203,9 +204,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         switch (handleIndex) {
             case 0:
                 transformedShape.width += scaledDeltaX;
-                transformedShape.y += scaledDeltaY;
                 transformedShape.height -= scaledDeltaY;
-
                 let cxCoords = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
@@ -215,20 +214,15 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 transformedShape.height += scaledDeltaY;
                 break;
             case 2:
-                transformedShape.x += scaledDeltaX;
                 transformedShape.width -= scaledDeltaX;
                 transformedShape.height += scaledDeltaY;
-
                 cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
                 break;
             case 3:
-                transformedShape.x += scaledDeltaX;
                 transformedShape.width -= scaledDeltaX;
-                transformedShape.y += scaledDeltaY;
                 transformedShape.height -= scaledDeltaY;
-
                 cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
@@ -326,4 +320,31 @@ function rotateTransform(transform1, a, cx, cy) {
         -cx * Math.cos(a) + cy * Math.sin(a) + cx,
         -cx * Math.sin(a) - cy * Math.cos(a) + cy];
     return multiplyMatrices(transform2, transform1);
+}
+
+function distance(p1, p2) {
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+}
+
+function deltaTransformPoint(matrix, point) {
+    var dx = point.x * matrix[0] + point.y * matrix[2] + 0;
+    var dy = point.x * matrix[1] + point.y * matrix[3] + 0;
+    return { x: dx, y: dy };
+}
+
+function decomposeMatrix(matrix) {
+    // @see https://gist.github.com/2052247
+
+    // calculate delta transform point
+    var px = deltaTransformPoint(matrix, { x: 0, y: 1 });
+    var py = deltaTransformPoint(matrix, { x: 1, y: 0 });
+
+    // calculate skew
+    var skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
+    var skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+
+    return {
+        skewX: skewX,
+        skewY: skewY
+    };
 }
