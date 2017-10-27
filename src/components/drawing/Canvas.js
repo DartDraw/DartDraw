@@ -139,8 +139,8 @@ class Canvas extends Component {
         const scale = canvasTransformationMatrix[0];
         return shape.handles.map((handle) => {
             const { id, index } = handle;
-            let x = handle.x - ((Math.sqrt(2) * 10 / 2) / scale);
-            let y = handle.y - ((Math.sqrt(2) * 10 / 2) / scale);
+            const x = handle.x - 5 / scale;
+            const y = handle.y - 5 / scale;
             return (
                 <Handle
                     key={id}

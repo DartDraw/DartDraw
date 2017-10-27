@@ -40,11 +40,21 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
 
 function updateSelectionBox(selectionBox, transform, boundingBox) {
     const { x, y, height, width } = boundingBox;
-    const matrix = transform[0].parameters;
-    const handle0 = transformPoint(x + width, y, matrix);
-    const handle1 = transformPoint(x + width, y + height, matrix);
-    const handle2 = transformPoint(x, y + height, matrix);
-    const handle3 = transformPoint(x, y, matrix);
+
+    let handle0, handle1, handle2, handle3;
+    if (transform && transform[0] && transform[0].parameters) {
+        const matrix = transform[0].parameters;
+        handle0 = transformPoint(x + width, y, matrix);
+        handle1 = transformPoint(x + width, y + height, matrix);
+        handle2 = transformPoint(x, y + height, matrix);
+        handle3 = transformPoint(x, y, matrix);
+    } else {
+        handle0 = { x: x + width, y };
+        handle1 = { x: x + width, y: y + height };
+        handle2 = { x, y: y + height };
+        handle3 = { x, y };
+    }
+
     selectionBox.x = x;
     selectionBox.y = y;
     selectionBox.height = height;
@@ -64,11 +74,21 @@ function updateSelectionBox(selectionBox, transform, boundingBox) {
 function generateSelectionBox(shapeId, transform, boundingBox) {
     // Still have to apply transform to x, y, height, width here:
     const { x, y, height, width } = boundingBox;
-    const matrix = transform[0].parameters;
-    const handle0 = transformPoint(x + width, y, matrix);
-    const handle1 = transformPoint(x + width, y + height, matrix);
-    const handle2 = transformPoint(x, y + height, matrix);
-    const handle3 = transformPoint(x, y, matrix);
+
+    let handle0, handle1, handle2, handle3;
+    if (transform && transform[0] && transform[0].parameters) {
+        const matrix = transform[0].parameters;
+        handle0 = transformPoint(x + width, y, matrix);
+        handle1 = transformPoint(x + width, y + height, matrix);
+        handle2 = transformPoint(x, y + height, matrix);
+        handle3 = transformPoint(x, y, matrix);
+    } else {
+        handle0 = { x: x + width, y };
+        handle1 = { x: x + width, y: y + height };
+        handle2 = { x, y: y + height };
+        handle3 = { x, y };
+    }
+
     return {
         id: uuidv1(),
         shapeId,

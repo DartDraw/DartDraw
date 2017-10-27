@@ -1,5 +1,5 @@
 import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, removeNegatives, deleteShapes } from '../utilities/shapes';
-import { selectShape } from '../utilities/selection';
+import { selectShape, generateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
     switch (root.menuState.toolType) {
