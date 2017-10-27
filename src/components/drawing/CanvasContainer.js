@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { deepCopy } from '../../reducers/utilities/object';
 import Canvas from './Canvas';
 import {
     canvasDragStart,
@@ -14,7 +15,8 @@ import {
     groupClick,
     handleDragStart,
     handleDrag,
-    handleDragStop
+    handleDragStop,
+    updateBoundingBoxes
 } from './../../actions/canvas';
 
 function formatShape(shape, shapes) {
@@ -28,17 +30,20 @@ function formatShape(shape, shapes) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selectionBoxes } = drawingState;
+    const { shapes, selected, selectionBoxes } = drawingState;
     const { toolType } = menuState;
     const formattedShapes = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes);
     });
+    const shapesWithoutSelectionBoxes = deepCopy(formattedShapes);
     Object.keys(selectionBoxes).map((id) => {
         formattedShapes.push(selectionBoxes[id]);
     });
 
     return {
         shapes: formattedShapes,
+        shapesWithoutSelectionBoxes,
+        selected,
         canvasHeight: drawingState.canvasHeight,
         canvasWidth: drawingState.canvasWidth,
         canvasTransformationMatrix: drawingState.canvasTransformationMatrix,
@@ -89,6 +94,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onHandleDragStop: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStop(shapeId, handleIndex, draggableData));
+        },
+        onBoundingBoxUpdate: (boundingBoxes) => {
+            dispatch(updateBoundingBoxes(boundingBoxes));
         }
     };
 };
