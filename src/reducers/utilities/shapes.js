@@ -1,6 +1,5 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
-import { calculateBoundingBox } from './groups';
 
 export function addRectangle(shapes, action, fill, matrix) {
     const { draggableData } = action.payload;
@@ -34,7 +33,8 @@ export function addLine(shapes, action, fill, matrix) {
         x2: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
         y2: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
         stroke: formatColor(fill),
-        strokeWidth: 10
+        strokeWidth: 10,
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
     shapes.byId[line.id] = line;
@@ -71,16 +71,8 @@ export function moveShape(shapes, selected, action, matrix) {
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-
-        if (shape.type === "line") {
-            shape.x1 += scaledDeltaX;
-            shape.y1 += scaledDeltaY;
-            shape.x2 += scaledDeltaX;
-            shape.y2 += scaledDeltaY;
-        } else {
-            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
-            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
-        }
+        let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+        shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
     });
 
     return shapes;
@@ -143,13 +135,6 @@ export function groupShapes(selected, shapes) {
         }
     });
 
-    // set new x, y, height, width of group shape
-    let boundingBox = calculateBoundingBox(group, shapes);
-    group.x = boundingBox.x;
-    group.y = boundingBox.y;
-    group.width = boundingBox.x2 - boundingBox.x;
-    group.height = boundingBox.y2 - boundingBox.y;
-
     // initialize transofrm
     group.transform = [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}];
     return group;
@@ -180,48 +165,9 @@ export function ungroupShapes(selected, shapes) {
 }
 
 function applyTransformation(shape, group) {
-    if (shape.type === "line") {
-        const transformedCoordinates = transformPoint(shape.x1, shape.y1, group.transform[0].parameters);
-        const transformedDimensions = transformPoint(shape.x2, shape.y2, group.transform[0].parameters);
-        shape.x1 = transformedCoordinates.x;
-        shape.y1 = transformedCoordinates.y;
-        shape.x2 = transformedDimensions.x;
-        shape.y2 = transformedDimensions.y;
-    } else {
-        const transformedCoordinates = transformPoint(shape.x, shape.y, group.transform[0].parameters);
-        const transformedDimensions = transformPoint(shape.x + shape.width, shape.y + shape.height, group.transform[0].parameters);
-        shape.x = transformedCoordinates.x;
-        shape.y = transformedCoordinates.y;
-        shape.width = transformedDimensions.x - shape.x;
-        shape.height = transformedDimensions.y - shape.y;
-    }
-
-    if (shape.type === "group") {
-        shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
-    }
+    shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
 
     return shape;
-}
-
-export function removeNegatives(shapes, selected) {
-    selected.map((id) => {
-        const shape = shapes.byId[id];
-
-        if (shape.type === "group") {
-            shapes = removeNegatives(shapes, shape.members);
-        } else {
-            if (shape.width < 0) {
-                shape.x += shape.width;
-                shape.width *= -1;
-            }
-
-            if (shape.height < 0) {
-                shape.y += shape.height;
-                shape.height *= -1;
-            }
-        }
-    });
-    return shapes;
 }
 
 export function deleteShapes(shapes, selected) {
@@ -235,17 +181,19 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, matrix, selectionBoxes) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / matrix[0];
     const scaledDeltaY = deltaY / matrix[3];
 
     selected.map((id) => {
         const shape = shapes.byId[id];
+        const shapeMatrix = shape.transform[0].parameters;
+        const boundingBox = boundingBoxes[id];
 
-        let transformedShape = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
-        transformedShape.width = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x - transformedShape.x;
-        transformedShape.height = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y - transformedShape.y;
+        let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+        transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
+        transformedShape.height = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix).y - transformedShape.y;
 
         let originalWidth = transformedShape.width;
         let originalHeight = transformedShape.height;
@@ -258,8 +206,9 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 transformedShape.y += scaledDeltaY;
                 transformedShape.height -= scaledDeltaY;
 
-                cx = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).x;
-                cy = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y;
+                let cxCoords = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
                 break;
             case 1:
                 transformedShape.width += scaledDeltaX;
@@ -270,8 +219,9 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 transformedShape.width -= scaledDeltaX;
                 transformedShape.height += scaledDeltaY;
 
-                cx = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x;
-                cy = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).y;
+                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
                 break;
             case 3:
                 transformedShape.x += scaledDeltaX;
@@ -279,8 +229,9 @@ export function resizeShape(shapes, selected, draggableData, handleIndex, matrix
                 transformedShape.y += scaledDeltaY;
                 transformedShape.height -= scaledDeltaY;
 
-                cx = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters).x;
-                cy = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters).y;
+                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+                cx = cxCoords.x;
+                cy = cxCoords.y;
                 break;
             default:
                 break;
@@ -303,16 +254,16 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
     return multiplyMatrices(transform2, transform1);
 }
 
-export function rotateShape(shapes, selected, draggableData, handleIndex, matrix, group, offSetX, offSetY, isMember) {
+export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, matrix) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / matrix[0];
     const scaledDeltaY = deltaY / matrix[3];
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-        console.log(shape);
+        const shapeMatrix = shape.transform[0].parameters;
+        const boundingBox = boundingBoxes[id];
 
-        let degree = 1 * (Math.PI / 180);
         let cx = 0;
         let cy = 0;
         let origCoords = {};
@@ -320,32 +271,32 @@ export function rotateShape(shapes, selected, draggableData, handleIndex, matrix
 
         switch (handleIndex) {
             case 0:
-                let cxCoords = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters);
-                origCoords = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters);
+                let cxCoords = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+                origCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
 
                 newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
                 break;
             case 1:
-                cxCoords = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
-                origCoords = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters);
+                cxCoords = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+                origCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
 
                 newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
                 break;
             case 2:
-                cxCoords = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters);
-                origCoords = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters);
+                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+                origCoords = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
 
                 newCoords = { x: origCoords.x + scaledDeltaX, y: origCoords.y + scaledDeltaY };
                 break;
             case 3:
-                cxCoords = transformPoint(shape.x + shape.width, shape.y + shape.height, shape.transform[0].parameters);
-                origCoords = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+                origCoords = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
                 cx = cxCoords.x;
                 cy = cxCoords.y;
 
@@ -360,7 +311,7 @@ export function rotateShape(shapes, selected, draggableData, handleIndex, matrix
         let v2x = newCoords.x - cx;
         let v2y = newCoords.y - cy;
 
-        degree = Math.atan2(v1x, v1y) - Math.atan2(v2x, v2y);
+        let degree = Math.atan2(v1x, v1y) - Math.atan2(v2x, v2y);
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
     });
     return shapes;

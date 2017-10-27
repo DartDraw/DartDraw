@@ -1,4 +1,4 @@
-import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor, removeNegatives } from '../utilities/shapes';
+import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor } from '../utilities/shapes';
 import { selectShape, updateSelectionBoxes } from '../utilities/selection';
 import { pan } from '../caseFunctions/menu';
 
@@ -30,7 +30,7 @@ export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.canvasTransformationMatrix);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.canvasTransformationMatrix);
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.canvasTransformationMatrix);
@@ -53,8 +53,6 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
                 stateCopy.selected = selectShape([], null);
             }
-            stateCopy.shapes = removeNegatives(stateCopy.shapes, stateCopy.selected);
-
             break;
         case "lineTool":
             shapeIds = stateCopy.shapes.allIds;
