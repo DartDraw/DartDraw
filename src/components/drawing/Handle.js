@@ -54,6 +54,7 @@ class Handle extends Component {
                 strokeWidth={strokeWidth}
                 stroke='rgba(69, 63, 80, 0.9)'
                 fill='rgba(255, 255, 255, 1)'
+                vectorEffect="non-scaling-stroke"
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}

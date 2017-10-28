@@ -11,7 +11,7 @@ class Canvas extends Component {
         selected: PropTypes.array,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
-        canvasTransformationMatrix: PropTypes.array,
+        viewBox: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -185,17 +185,20 @@ class Canvas extends Component {
     }
 
     render() {
-        const { canvasHeight, canvasWidth, canvasTransformationMatrix } = this.props;
+        const { canvasHeight, canvasWidth, viewBox } = this.props;
         return (
             <div>
-                <svg className="Canvas" height={canvasHeight} width={canvasWidth}>
+                <svg className="Canvas" height={canvasHeight} width={canvasWidth}
+                    viewBox={viewBox.join(' ')}
+                    // preserveAspectRatio="xMinYMin meet"
+                >
                     <Draggable
                         onStart={this.handleDragStart}
                         onDrag={this.handleDrag}
                         onStop={this.handleDragStop}
                     >
-                        <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`} ref={(ref) => { this.svgRef = ref; }}>
-                            <BackgroundLayer width={canvasWidth} height={canvasHeight} fill='white' />
+                        <g transform={`matrix(1 0 0 1 0 0)`} ref={(ref) => { this.svgRef = ref; }}>
+                            <BackgroundLayer width={canvasWidth} height={canvasHeight} fill='black' />
                             {this.renderDrawing()}
                             <GridLayer />
                             <SelectionLayerContainer />

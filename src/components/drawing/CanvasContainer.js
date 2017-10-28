@@ -44,7 +44,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         selected,
         canvasHeight: drawingState.canvasHeight,
         canvasWidth: drawingState.canvasWidth,
-        canvasTransformationMatrix: drawingState.canvasTransformationMatrix,
+        viewBox: drawingState.viewBox,
         propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool'
     };
 };

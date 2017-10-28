@@ -11,7 +11,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         selectionBoxes: selectionBoxesArray,
-        canvasTransformationMatrix: drawingState.canvasTransformationMatrix,
+        scale: drawingState.canvasWidth / drawingState.viewBox[2],
         propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool'
     };
 };

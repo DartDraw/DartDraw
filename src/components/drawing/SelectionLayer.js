@@ -5,7 +5,7 @@ import { Rectangle, Handle } from '.';
 class SelectionLayer extends Component {
     static propTypes = {
         selectionBoxes: PropTypes.array,
-        canvasTransformationMatrix: PropTypes.array,
+        scale: PropTypes.number,
         propagateEvents: PropTypes.bool,
         onHandleDragStart: PropTypes.func,
         onHandleDrag: PropTypes.func,
@@ -33,8 +33,7 @@ class SelectionLayer extends Component {
     }
 
     renderHandles(selectionBox) {
-        const { propagateEvents, canvasTransformationMatrix } = this.props;
-        const scale = canvasTransformationMatrix[0];
+        const { propagateEvents, scale } = this.props;
         return selectionBox.handles.map((handle) => {
             const { id, index } = handle;
             const x = handle.x - 5 / scale;
@@ -49,7 +48,7 @@ class SelectionLayer extends Component {
                     y={y}
                     width={10 / scale}
                     height={10 / scale}
-                    strokeWidth={2 / scale}
+                    strokeWidth={2}
                     onDragStart={this.handleHandleDragStart}
                     onDrag={this.handleHandleDrag}
                     onDragStop={this.handleHandleDragStop}
@@ -60,8 +59,7 @@ class SelectionLayer extends Component {
     }
 
     renderSelectionBoxes() {
-        const { selectionBoxes, propagateEvents, canvasTransformationMatrix } = this.props;
-        const scale = canvasTransformationMatrix[0];
+        const { selectionBoxes, propagateEvents } = this.props;
         return selectionBoxes.map(selectionBox => {
             return (
                 <g key={selectionBox.id}>
@@ -72,7 +70,8 @@ class SelectionLayer extends Component {
                         height={selectionBox.height}
                         transform={selectionBox.transform}
                         stroke='rgba(102, 204, 255, 0.7)'
-                        strokeWidth={4 / scale}
+                        vectorEffect="non-scaling-stroke"
+                        strokeWidth={4}
                         fill='none'
                         propagateEvents={propagateEvents}
                     />
