@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { deepCopy } from '../../reducers/utilities/object';
 import Canvas from './Canvas';
 import {
     canvasDragStart,
@@ -32,17 +31,16 @@ function formatShape(shape, shapes) {
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selected, selectionBoxes } = drawingState;
     const { toolType } = menuState;
-    const formattedShapes = shapes.allIds.map((id) => {
+    const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes);
     });
-    const shapesWithoutSelectionBoxes = deepCopy(formattedShapes);
-    Object.keys(selectionBoxes).map((id) => {
-        formattedShapes.push(selectionBoxes[id]);
+    const selectionBoxesArray = Object.keys(selectionBoxes).map((id) => {
+        return selectionBoxes[id];
     });
 
     return {
-        shapes: formattedShapes,
-        shapesWithoutSelectionBoxes,
+        shapes: shapesArray,
+        selectionBoxes: selectionBoxesArray,
         selected,
         canvasHeight: drawingState.canvasHeight,
         canvasWidth: drawingState.canvasWidth,

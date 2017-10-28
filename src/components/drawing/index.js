@@ -1,4 +1,7 @@
 export {default as CanvasContainer} from './CanvasContainer';
+export {default as GridLayer} from './GridLayer';
+export {default as BackgroundLayer} from './BackgroundLayer';
+export {default as SelectionLayerContainer} from './SelectionLayerContainer';
 export {default as Shape} from './Shape';
 export {default as Group} from './Group';
 export {default as Rectangle} from './Rectangle';
