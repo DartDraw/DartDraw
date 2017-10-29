@@ -1,19 +1,19 @@
 import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor, removeNegatives } from '../utilities/shapes';
 import { selectShape, updateSelectionBoxes } from '../utilities/selection';
-import { pan } from '../caseFunctions/menu';
+import { pan } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color, stateCopy.canvasTransformationMatrix);
+            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.canvasTransformationMatrix);
+            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -30,13 +30,15 @@ export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.canvasTransformationMatrix);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);
             break;
         case "lineTool":
-            stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.canvasTransformationMatrix);
+            stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.scale);
             break;
         case "panTool":
-            stateCopy.canvasTransformationMatrix = pan(stateCopy.canvasTransformationMatrix, draggableData);
+            const { panX, panY } = pan(stateCopy, draggableData);
+            stateCopy.panX = panX;
+            stateCopy.panY = panY;
             break;
         default: break;
     }

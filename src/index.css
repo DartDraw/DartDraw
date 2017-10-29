@@ -1,11 +1,24 @@
+#root > [data-reactroot] {
+    height: 100%
+}
+
+html, body, #root, #root > div {
+    height: 100%;
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  /*height: 100%;
-  width: 100%;*/
+    margin: 0;
+    padding: 0;
+}
+
+.App {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /*including menu and canvas*/
 .mainBody {
-  display: flex;
+    display: flex;
+    height: 100%;
 }

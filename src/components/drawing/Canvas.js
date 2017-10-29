@@ -2,16 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Canvas.css';
 import { Draggable } from '../shared';
-import { Group, Rectangle, Path, Line, Handle } from '.';
+import { BackgroundLayerContainer, GridLayerContainer, SelectionLayerContainer, Group, Rectangle, Path, Line } from '.';
 
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
-        shapesWithoutSelectionBoxes: PropTypes.array,
         selected: PropTypes.array,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
-        canvasTransformationMatrix: PropTypes.array,
+        viewBox: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -24,9 +23,6 @@ class Canvas extends Component {
         onGroupDrag: PropTypes.func,
         onGroupDragStop: PropTypes.func,
         onGroupClick: PropTypes.func,
-        onHandleDragStart: PropTypes.func,
-        onHandleDrag: PropTypes.func,
-        onHandleDragStop: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
         onBoundingBoxUpdate: PropTypes.func
@@ -49,18 +45,15 @@ class Canvas extends Component {
         this.handleGroupDrag = this.handleGroupDrag.bind(this);
         this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
-        this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
-        this.handleHandleDrag = this.handleHandleDrag.bind(this);
-        this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
     }
 
     componentDidUpdate(prevProps) {
-        const { onBoundingBoxUpdate, shapesWithoutSelectionBoxes, selected } = this.props;
+        const { onBoundingBoxUpdate, shapes, selected } = this.props;
         const selectedHasChanged = JSON.stringify(selected) !== JSON.stringify(prevProps.selected);
-        const shapesHaveChanged = JSON.stringify(shapesWithoutSelectionBoxes) !== JSON.stringify(prevProps.shapesWithoutSelectionBoxes);
+        const shapesHaveChanged = JSON.stringify(shapes) !== JSON.stringify(prevProps.shapes);
         if (shapesHaveChanged || selectedHasChanged) {
             const boundingBoxes = {};
-            const svgElements = [...(this.svgRef.childNodes[0].childNodes)];
+            const svgElements = [...(this.svgRef.childNodes)];
             svgElements.map((element) => {
                 if (element.id) {
                     boundingBoxes[element.id] = element.getBBox();
@@ -114,18 +107,6 @@ class Canvas extends Component {
         this.props.onGroupClick(groupId, event);
     }
 
-    handleHandleDragStart(shapeId, handleIndex, draggableData) {
-        this.props.onHandleDragStart(shapeId, handleIndex, draggableData);
-    }
-
-    handleHandleDrag(shapeId, handleIndex, draggableData) {
-        this.props.onHandleDrag(shapeId, handleIndex, draggableData);
-    }
-
-    handleHandleDragStop(shapeId, handleIndex, draggableData) {
-        this.props.onHandleDragStop(shapeId, handleIndex, draggableData);
-    }
-
     handleUndoClick() {
         this.props.onUndoClick();
     }
@@ -134,36 +115,8 @@ class Canvas extends Component {
         this.props.onRedoClick();
     }
 
-    renderHandles(shape) {
-        const { propagateEvents, canvasTransformationMatrix } = this.props;
-        const scale = canvasTransformationMatrix[0];
-        return shape.handles.map((handle) => {
-            const { id, index } = handle;
-            const x = handle.x - 5 / scale;
-            const y = handle.y - 5 / scale;
-            return (
-                <Handle
-                    key={id}
-                    id={id}
-                    shapeId={shape.shapeId}
-                    index={index}
-                    x={x}
-                    y={y}
-                    width={10 / scale}
-                    height={10 / scale}
-                    strokeWidth={2 / scale}
-                    onDragStart={this.handleHandleDragStart}
-                    onDrag={this.handleHandleDrag}
-                    onDragStop={this.handleHandleDragStop}
-                    propagateEvents={propagateEvents}
-                />
-            );
-        });
-    }
-
     renderShape(shape) {
-        const { propagateEvents, canvasTransformationMatrix } = this.props;
-        const scale = canvasTransformationMatrix[0];
+        const { propagateEvents } = this.props;
         switch (shape.type) {
             case 'group':
                 const groupMembers = shape.members.map((shape) => {
@@ -218,23 +171,6 @@ class Canvas extends Component {
                         propagateEvents={propagateEvents}
                     />
                 );
-            case 'selectionBox':
-                return (
-                    <g key={shape.id}>
-                        <Rectangle
-                            x={shape.x}
-                            y={shape.y}
-                            width={shape.width}
-                            height={shape.height}
-                            transform={shape.transform}
-                            stroke='rgba(102, 204, 255, 0.7)'
-                            strokeWidth={4 / scale}
-                            fill='none'
-                            propagateEvents={propagateEvents}
-                        />
-                        {this.renderHandles(shape)}
-                    </g>
-                );
             default:
                 break;
         }
@@ -248,18 +184,25 @@ class Canvas extends Component {
     }
 
     render() {
-        const { canvasTransformationMatrix, canvasHeight, canvasWidth } = this.props;
+        const { canvasHeight, canvasWidth, viewBox } = this.props;
+
         return (
-            <div>
+            <div style={{flex: 1, overflow: 'hidden'}}>
                 <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
-                    <svg className="Canvas" height={canvasHeight} width={canvasWidth} ref={(ref) => { this.svgRef = ref; }}>
-                        <g transform={`matrix(${canvasTransformationMatrix.join(' ')})`}>
-                            {this.renderDrawing()}
-                        </g>
+                    <svg className="Canvas"
+                        width={canvasWidth}
+                        height={canvasHeight}
+                        viewBox={viewBox.join(' ')}
+                        ref={(ref) => { this.svgRef = ref; }}
+                    >
+                        <BackgroundLayerContainer />
+                        {this.renderDrawing()}
+                        <GridLayerContainer />
+                        <SelectionLayerContainer />
                     </svg>
                 </Draggable>
             </div>
