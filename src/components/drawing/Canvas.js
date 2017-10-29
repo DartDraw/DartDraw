@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Canvas.css';
 import { Draggable } from '../shared';
-import { BackgroundLayer, GridLayer, SelectionLayerContainer, Group, Rectangle, Path, Line } from '.';
+import { BackgroundLayerContainer, GridLayerContainer, SelectionLayerContainer, Group, Rectangle, Path, Line } from '.';
 
 class Canvas extends Component {
     static propTypes = {
@@ -186,25 +186,28 @@ class Canvas extends Component {
 
     render() {
         const { canvasHeight, canvasWidth, viewBox } = this.props;
+        const widthScale = viewBox[2] / canvasWidth;
+        const heightScale = viewBox[3] / canvasHeight;
+
         return (
-            <div>
-                <svg className="Canvas" height={canvasHeight} width={canvasWidth}
-                    viewBox={viewBox.join(' ')}
-                    // preserveAspectRatio="xMinYMin meet"
+            <div style={{flex: 1, overflow: 'hidden'}}>
+                <Draggable
+                    onStart={this.handleDragStart}
+                    onDrag={this.handleDrag}
+                    onStop={this.handleDragStop}
                 >
-                    <Draggable
-                        onStart={this.handleDragStart}
-                        onDrag={this.handleDrag}
-                        onStop={this.handleDragStop}
+                    <svg className="Canvas"
+                        width={canvasWidth / widthScale}
+                        height={canvasHeight / heightScale}
+                        viewBox={viewBox.join(' ')}
+                        ref={(ref) => { this.svgRef = ref; }}
                     >
-                        <g transform={`matrix(1 0 0 1 0 0)`} ref={(ref) => { this.svgRef = ref; }}>
-                            <BackgroundLayer width={canvasWidth} height={canvasHeight} fill='black' />
-                            {this.renderDrawing()}
-                            <GridLayer />
-                            <SelectionLayerContainer />
-                        </g>
-                    </Draggable>
-                </svg>
+                        <BackgroundLayerContainer />
+                        {this.renderDrawing()}
+                        <GridLayerContainer />
+                        <SelectionLayerContainer />
+                    </svg>
+                </Draggable>
             </div>
         );
     }

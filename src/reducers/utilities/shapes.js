@@ -5,8 +5,6 @@ import { calculateBoundingBox } from './groups';
 export function addRectangle(shapes, action, fill, viewBox, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
-    console.log(x, node.getBoundingClientRect().left, viewBox[0], scale);
-    console.log(draggableData);
 
     const rectangle = {
         id: uuidv1(),

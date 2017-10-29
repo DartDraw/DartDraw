@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-class Grid extends Component {
+class GridLayer extends Component {
+    static propTypes = {
+        width: PropTypes.number,
+        height: PropTypes.number
+    };
+
     render() {
+        const { width, height } = this.props;
         return (
             <g>
                 <defs>
@@ -13,10 +20,10 @@ class Grid extends Component {
                         <path d="M 100 0 L 0 0 0 100" fill="none" stroke="gray" strokeWidth="1" />
                     </pattern>
                 </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" pointerEvents="none" />
+                <rect width={width} height={height} fill="url(#grid)" pointerEvents="none" />
             </g>
         );
     }
 }
 
-export default Grid;
+export default GridLayer;

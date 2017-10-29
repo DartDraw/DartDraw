@@ -13,27 +13,34 @@ export function zoomOut(stateCopy, action) {
 export function zoom(stateCopy, scale) {
     var { viewBox, canvasWidth, canvasHeight } = stateCopy;
 
-    viewBox[2] *= scale;
-    viewBox[3] *= scale;
+    viewBox[2] *= Math.sqrt(scale);
+    viewBox[3] *= Math.sqrt(scale);
+    const scaledWidth = scale < 0 ? canvasWidth / scale : canvasWidth * scale;
+    const scaledHeight = scale < 0 ? canvasHeight / scale : canvasHeight * scale;
 
-    var newX = (viewBox[0] * scale) + ((1 - scale) * canvasWidth / 2);
-    var newY = (viewBox[1] * scale) + ((1 - scale) * canvasHeight / 2);
+    var newX = (viewBox[0] * scale) + ((1 - scale) * scaledWidth / 2);
+    var newY = (viewBox[1] * scale) + ((1 - scale) * scaledHeight / 2);
 
-    viewBox[0] = clamp(newX, 0, canvasWidth - viewBox[2]);
-    viewBox[1] = clamp(newY, 0, canvasHeight - viewBox[3]);
+    viewBox[0] = clamp(newX, 0, scaledWidth - viewBox[2]);
+    viewBox[1] = clamp(newY, 0, scaledHeight - viewBox[3]);
 
     return viewBox;
 }
 
 export function pan(stateCopy, viewBox, draggableData, scale) {
+    const { canvasWidth, canvasHeight } = stateCopy;
     const { deltaX, deltaY } = draggableData;
 
     if (scale > 1) {
         var newX = viewBox[0] - deltaX / scale;
         var newY = viewBox[1] - deltaY / scale;
 
-        viewBox[0] = clamp(newX, 0, stateCopy.canvasWidth - viewBox[2]);
-        viewBox[1] = clamp(newY, 0, stateCopy.canvasHeight - viewBox[3]);
+        const widthScale = canvasWidth / viewBox[2];
+        const heightScale = canvasHeight / viewBox[3];
+        const width = widthScale < 0 ? canvasWidth / widthScale : canvasWidth * widthScale;
+        const height = heightScale < 0 ? canvasHeight / heightScale : canvasHeight * heightScale;
+        viewBox[0] = clamp(newX, 0, width - viewBox[2]);
+        viewBox[1] = clamp(newY, 0, height - viewBox[3]);
     }
 
     return viewBox;
