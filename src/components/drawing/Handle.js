@@ -15,6 +15,10 @@ class Handle extends Component {
         width: PropTypes.number,
         height: PropTypes.number,
         strokeWidth: PropTypes.number,
+        transform: PropTypes.arrayOf(PropTypes.shape({
+            command: PropTypes.string,
+            parameters: PropTypes.arrayOf(PropTypes.number)
+        })),
         propagateEvents: PropTypes.bool
     }
 
@@ -42,9 +46,8 @@ class Handle extends Component {
     }
 
     render() {
-        const { id, x, y, width, height, strokeWidth, propagateEvents } = this.props;
+        const { id, x, y, width, height, strokeWidth, propagateEvents, transform } = this.props;
         const rectProps = { x, y };
-
         return (
             <Rectangle
                 id={id}

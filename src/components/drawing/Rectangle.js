@@ -80,7 +80,8 @@ class Rectangle extends Component {
             strokeWidth,
             vectorEffect,
             fill,
-            transform: formatTransform(transform)
+            transform: formatTransform(transform),
+            vectorEffect: "non-scaling-stroke"
         };
 
         return (
