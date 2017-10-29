@@ -11,7 +11,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(selectTool(toolType));
         },
         onExportSelect: () => {
-        	dispatch(exportClick());
+            dispatch(exportClick());
         }
     };
 };

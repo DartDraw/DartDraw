@@ -189,7 +189,6 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         const shape = shapes.byId[id];
         const shapeMatrix = shape.transform[0].parameters;
         const boundingBox = boundingBoxes[id];
-        console.log(decomposeMatrix(shapeMatrix));
 
         let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
         transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
@@ -247,10 +246,10 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
     return multiplyMatrices(transform2, transform1);
 }
 
-export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, matrix) {
+export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / matrix[0];
-    const scaledDeltaY = deltaY / matrix[3];
+    const scaledDeltaX = deltaX / scale;
+    const scaledDeltaY = deltaY / scale;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
@@ -319,10 +318,6 @@ function rotateTransform(transform1, a, cx, cy) {
         -cx * Math.cos(a) + cy * Math.sin(a) + cx,
         -cx * Math.sin(a) - cy * Math.cos(a) + cy];
     return multiplyMatrices(transform2, transform1);
-}
-
-function distance(p1, p2) {
-    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 }
 
 function deltaTransformPoint(matrix, point) {
