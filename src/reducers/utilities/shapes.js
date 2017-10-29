@@ -232,6 +232,9 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
         let sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
 
+        if (sx === 0) sx = 0.001; // never zero out
+        if (sy === 0) sy = 0.001; // never zero out
+
         shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
     });
     return shapes;
