@@ -2,15 +2,14 @@ import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { calculateBoundingBox } from './groups';
 
-export function addRectangle(shapes, action, fill, viewBox, scale) {
+export function addRectangle(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
-
     const rectangle = {
         id: uuidv1(),
         type: 'rectangle',
-        x: (x - node.getBoundingClientRect().left) / scale,
-        y: (y - node.getBoundingClientRect().top) / scale,
+        x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         width: 0,
         height: 0,
         fill: formatColor(fill)
@@ -21,17 +20,17 @@ export function addRectangle(shapes, action, fill, viewBox, scale) {
     return shapes;
 }
 
-export function addLine(shapes, action, fill, viewBox, scale) {
+export function addLine(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
     const line = {
         id: uuidv1(),
         type: "line",
-        x1: (x - node.getBoundingClientRect().left) / scale,
-        y1: (y - node.getBoundingClientRect().top) / scale,
-        x2: (x - node.getBoundingClientRect().left) / scale,
-        y2: (y - node.getBoundingClientRect().top) / scale,
+        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        x2: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y2: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         stroke: formatColor(fill),
         strokeWidth: 10
     };

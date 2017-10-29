@@ -29,7 +29,7 @@ function formatShape(shape, shapes) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, selectionBoxes } = drawingState;
+    const { shapes, selected, selectionBoxes, canvasHeight, canvasWidth, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes);
@@ -42,9 +42,9 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         shapes: shapesArray,
         selectionBoxes: selectionBoxesArray,
         selected,
-        canvasHeight: drawingState.canvasHeight,
-        canvasWidth: drawingState.canvasWidth,
-        viewBox: drawingState.viewBox,
+        canvasHeight: canvasHeight * scale,
+        canvasWidth: canvasWidth * scale,
+        viewBox: [drawingState.panX, drawingState.panY, canvasWidth, canvasHeight],
         propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool'
     };
 };

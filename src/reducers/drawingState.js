@@ -17,9 +17,11 @@ const initialState = {
     selectionBoxes: {},
     lastSavedShapes: {},
     editInProgress: false,
-    viewBox: [0, 0, 800, 800],
     canvasHeight: 800,
     canvasWidth: 800,
+    scale: 1,
+    panX: 0,
+    panY: 0,
     past: [],
     future: []
 };

@@ -45,8 +45,7 @@ export function drag(stateCopy, action, root) {
     } else {
         switch (root.menuState.toolType) {
             case "selectTool":
-                const scale = stateCopy.canvasWidth / stateCopy.viewBox[2];
-                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, scale);
+                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale);
                 break;
             default: break;
         }
@@ -80,8 +79,7 @@ export function handleDrag(stateCopy, action, root) {
         const { draggableData, handleIndex } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
-                const scale = stateCopy.canvasWidth / stateCopy.viewBox[2];
-                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, scale);
+                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
                 break;
             default: break;
         }

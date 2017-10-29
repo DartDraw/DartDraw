@@ -14,7 +14,7 @@ import {
 
 const mapStateToProps = ({ drawingState }) => {
     return {
-        scale: drawingState.canvasWidth / drawingState.viewBox[2]
+        scale: drawingState.scale
     };
 };
 

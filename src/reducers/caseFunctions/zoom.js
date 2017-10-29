@@ -1,49 +1,50 @@
 export function zoomIn(stateCopy, action) {
-    const scale = 0.5;
-    stateCopy.viewBox = zoom(stateCopy, scale);
+    const scale = 2;
+    const { panX, panY } = zoom(stateCopy, scale);
+    stateCopy.panX = panX;
+    stateCopy.panY = panY;
+    stateCopy.scale *= scale;
     return stateCopy;
 }
 
 export function zoomOut(stateCopy, action) {
-    const scale = 2;
-    stateCopy.viewBox = zoom(stateCopy, scale);
+    const scale = 0.5;
+    const { panX, panY } = zoom(stateCopy, scale);
+    stateCopy.panX = panX;
+    stateCopy.panY = panY;
+    stateCopy.scale *= scale;
     return stateCopy;
 }
 
 export function zoom(stateCopy, scale) {
-    var { viewBox, canvasWidth, canvasHeight } = stateCopy;
-
-    viewBox[2] *= Math.sqrt(scale);
-    viewBox[3] *= Math.sqrt(scale);
-    const scaledWidth = scale < 0 ? canvasWidth / scale : canvasWidth * scale;
-    const scaledHeight = scale < 0 ? canvasHeight / scale : canvasHeight * scale;
-
-    var newX = (viewBox[0] * scale) + ((1 - scale) * scaledWidth / 2);
-    var newY = (viewBox[1] * scale) + ((1 - scale) * scaledHeight / 2);
-
-    viewBox[0] = clamp(newX, 0, scaledWidth - viewBox[2]);
-    viewBox[1] = clamp(newY, 0, scaledHeight - viewBox[3]);
-
-    return viewBox;
-}
-
-export function pan(stateCopy, viewBox, draggableData, scale) {
     const { canvasWidth, canvasHeight } = stateCopy;
-    const { deltaX, deltaY } = draggableData;
+    let panX, panY;
 
     if (scale > 1) {
-        var newX = viewBox[0] - deltaX / scale;
-        var newY = viewBox[1] - deltaY / scale;
-
-        const widthScale = canvasWidth / viewBox[2];
-        const heightScale = canvasHeight / viewBox[3];
-        const width = widthScale < 0 ? canvasWidth / widthScale : canvasWidth * widthScale;
-        const height = heightScale < 0 ? canvasHeight / heightScale : canvasHeight * heightScale;
-        viewBox[0] = clamp(newX, 0, width - viewBox[2]);
-        viewBox[1] = clamp(newY, 0, height - viewBox[3]);
+        var newX = canvasWidth / 2 - canvasWidth / 4;
+        var newY = canvasHeight / 2 - canvasHeight / 4;
+        panX = newX;
+        panY = newY;
+    } else {
+        panX = 0;
+        panY = 0;
     }
 
-    return viewBox;
+    return { panX, panY };
+}
+
+export function pan(stateCopy, draggableData) {
+    const { canvasWidth, canvasHeight, scale } = stateCopy;
+    const { deltaX, deltaY } = draggableData;
+
+    if (true) {
+        var panX = stateCopy.panX - deltaX / scale;
+        var panY = stateCopy.panY - deltaY / scale;
+
+        return { panX, panY };
+    } else {
+        return { panX: stateCopy.panX, panY: stateCopy.panY };
+    }
 }
 
 function clamp(num, min, max) {

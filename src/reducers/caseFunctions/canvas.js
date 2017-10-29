@@ -5,16 +5,15 @@ import { pan } from '../caseFunctions/zoom';
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
     stateCopy.lastSavedShapes = root.drawingState.shapes;
-    const scale = stateCopy.canvasWidth / stateCopy.viewBox[2];
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color, stateCopy.viewBox, scale);
+            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.viewBox, scale);
+            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -29,16 +28,17 @@ export function dragStart(stateCopy, action, root) {
 
 export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
-    const scale = stateCopy.canvasWidth / stateCopy.viewBox[2];
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1, scale);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);
             break;
         case "lineTool":
-            stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, scale);
+            stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.scale);
             break;
         case "panTool":
-            stateCopy.viewBox = pan(stateCopy, stateCopy.viewBox, draggableData, scale);
+            const { panX, panY } = pan(stateCopy, draggableData);
+            stateCopy.panX = panX;
+            stateCopy.panY = panY;
             break;
         default: break;
     }

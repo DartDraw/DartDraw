@@ -186,8 +186,6 @@ class Canvas extends Component {
 
     render() {
         const { canvasHeight, canvasWidth, viewBox } = this.props;
-        const widthScale = viewBox[2] / canvasWidth;
-        const heightScale = viewBox[3] / canvasHeight;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
@@ -197,8 +195,8 @@ class Canvas extends Component {
                     onStop={this.handleDragStop}
                 >
                     <svg className="Canvas"
-                        width={canvasWidth / widthScale}
-                        height={canvasHeight / heightScale}
+                        width={canvasWidth}
+                        height={canvasHeight}
                         viewBox={viewBox.join(' ')}
                         ref={(ref) => { this.svgRef = ref; }}
                     >
