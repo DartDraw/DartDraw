@@ -66,7 +66,6 @@ class Path extends Component {
             strokeWidth,
             fill: fill || 'none',
             transform: formatTransform(transform)
-            // vectorEffect: "non-scaling-stroke"
         };
 
         return (

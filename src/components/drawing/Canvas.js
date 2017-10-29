@@ -7,7 +7,6 @@ import { BackgroundLayerContainer, GridLayerContainer, SelectionLayerContainer, 
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
-        selectionBoxes: PropTypes.array,
         selected: PropTypes.array,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,

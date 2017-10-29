@@ -17,12 +17,11 @@ export function zoomOut(stateCopy, action) {
 }
 
 export function zoom(stateCopy, scale) {
-    const { canvasWidth, canvasHeight } = stateCopy;
     let panX, panY;
 
     if (scale > 1) {
-        var newX = canvasWidth / 2 - canvasWidth / 4;
-        var newY = canvasHeight / 2 - canvasHeight / 4;
+        var newX = 0;
+        var newY = 0;
         panX = newX;
         panY = newY;
     } else {
@@ -37,11 +36,16 @@ export function pan(stateCopy, draggableData) {
     const { canvasWidth, canvasHeight, scale } = stateCopy;
     const { deltaX, deltaY } = draggableData;
 
-    if (true) {
+    if (scale > 1) {
         var panX = stateCopy.panX - deltaX / scale;
         var panY = stateCopy.panY - deltaY / scale;
 
-        return { panX, panY };
+        // The values 38 and 43 are the widths and heights of the menus.
+        // Needs to change if menu changes.
+        return {
+            panX: clamp(panX, 0, canvasWidth - (window.innerWidth - 38) / scale),
+            panY: clamp(panY, 0, canvasHeight - (window.innerHeight - 43) / scale)
+        };
     } else {
         return { panX: stateCopy.panX, panY: stateCopy.panY };
     }

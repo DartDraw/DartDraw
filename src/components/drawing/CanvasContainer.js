@@ -29,18 +29,14 @@ function formatShape(shape, shapes) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, selectionBoxes, canvasHeight, canvasWidth, scale } = drawingState;
+    const { shapes, selected, canvasHeight, canvasWidth, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes);
     });
-    const selectionBoxesArray = Object.keys(selectionBoxes).map((id) => {
-        return selectionBoxes[id];
-    });
 
     return {
         shapes: shapesArray,
-        selectionBoxes: selectionBoxesArray,
         selected,
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,
