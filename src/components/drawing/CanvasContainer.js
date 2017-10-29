@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { deepCopy } from '../../reducers/utilities/object';
 import Canvas from './Canvas';
 import {
     canvasDragStart,
@@ -30,23 +29,18 @@ function formatShape(shape, shapes) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, selectionBoxes } = drawingState;
+    const { shapes, selected, canvasHeight, canvasWidth, scale } = drawingState;
     const { toolType } = menuState;
-    const formattedShapes = shapes.allIds.map((id) => {
+    const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes);
-    });
-    const shapesWithoutSelectionBoxes = deepCopy(formattedShapes);
-    Object.keys(selectionBoxes).map((id) => {
-        formattedShapes.push(selectionBoxes[id]);
     });
 
     return {
-        shapes: formattedShapes,
-        shapesWithoutSelectionBoxes,
+        shapes: shapesArray,
         selected,
-        canvasHeight: drawingState.canvasHeight,
-        canvasWidth: drawingState.canvasWidth,
-        canvasTransformationMatrix: drawingState.canvasTransformationMatrix,
+        canvasHeight: canvasHeight * scale,
+        canvasWidth: canvasWidth * scale,
+        viewBox: [drawingState.panX, drawingState.panY, canvasWidth, canvasHeight],
         propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool'
     };
 };

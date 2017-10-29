@@ -1,11 +1,9 @@
 #left-bar {
   background-color: #3d3d3d;
-  height: 100vh;
-  margin-top: -40px;
   width: 45px;
   display: flex;
   justify-content: center;
-  padding-top: 50px;
+  padding-top: 10px;
   align-items: top;
   text-align: center;
 }

@@ -14,7 +14,7 @@ import {
 
 const mapStateToProps = ({ drawingState }) => {
     return {
-        scale: drawingState.canvasTransformationMatrix[0]
+        scale: drawingState.scale
     };
 };
 

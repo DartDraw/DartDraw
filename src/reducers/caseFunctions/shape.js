@@ -45,7 +45,7 @@ export function drag(stateCopy, action, root) {
     } else {
         switch (root.menuState.toolType) {
             case "selectTool":
-                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.canvasTransformationMatrix);
+                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale);
                 break;
             default: break;
         }
@@ -81,9 +81,9 @@ export function handleDrag(stateCopy, action, root) {
             case "selectTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (shiftSelected) {
-                    stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.canvasTransformationMatrix, stateCopy.selectionBoxes);
+                    stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, stateCopy.selectionBoxes);
                 } else {
-                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.canvasTransformationMatrix);
+                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
                 }
                 break;
             default: break;

@@ -1,15 +1,14 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 
-export function addRectangle(shapes, action, fill, matrix) {
+export function addRectangle(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
-
     const rectangle = {
         id: uuidv1(),
         type: 'rectangle',
-        x: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
-        y: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
+        x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         width: 1,
         height: 1,
         fill: formatColor(fill),
@@ -21,17 +20,17 @@ export function addRectangle(shapes, action, fill, matrix) {
     return shapes;
 }
 
-export function addLine(shapes, action, fill, matrix) {
+export function addLine(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
     const line = {
         id: uuidv1(),
         type: "line",
-        x1: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
-        y1: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
-        x2: (x - node.getBoundingClientRect().left - matrix[4]) / matrix[0],
-        y2: (y - node.getBoundingClientRect().top - matrix[5]) / matrix[3],
+        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        x2: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y2: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         stroke: formatColor(fill),
         strokeWidth: 10,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
@@ -42,10 +41,10 @@ export function addLine(shapes, action, fill, matrix) {
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, matrix) {
+export function moveLineAnchor(shapes, selected, draggableData, scale) {
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / matrix[0];
-    const scaledDeltaY = deltaY / matrix[3];
+    const scaledDeltaX = deltaX / scale;
+    const scaledDeltaY = deltaY / scale;
 
     selected.map((id) => {
         const line = shapes.byId[id];
@@ -63,11 +62,11 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function moveShape(shapes, selected, action, matrix) {
+export function moveShape(shapes, selected, action, scale) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / matrix[0];
-    const scaledDeltaY = deltaY / matrix[3];
+    const scaledDeltaX = deltaX / scale;
+    const scaledDeltaY = deltaY / scale;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
@@ -181,10 +180,10 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, matrix, selectionBoxes) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / matrix[0];
-    const scaledDeltaY = deltaY / matrix[3];
+    const scaledDeltaX = deltaX / scale;
+    const scaledDeltaY = deltaY / scale;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
