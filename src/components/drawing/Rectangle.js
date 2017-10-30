@@ -16,6 +16,7 @@ class Rectangle extends Component {
         y: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeDasharray: PropTypes.number,
         vectorEffect: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
@@ -59,7 +60,7 @@ class Rectangle extends Component {
     }
 
     render() {
-        const { id, width, height, x, y, stroke, strokeWidth, vectorEffect, fill, transform, propagateEvents } = this.props;
+        const { id, width, height, x, y, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
         let renderX = x;
         let renderWidth = Math.abs(width);
         if (width < 0) {
@@ -78,7 +79,7 @@ class Rectangle extends Component {
             height: renderHeight,
             stroke,
             strokeWidth,
-            vectorEffect,
+            strokeDasharray,
             fill,
             transform: formatTransform(transform),
             vectorEffect: "non-scaling-stroke"

@@ -1,6 +1,7 @@
 import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor } from '../utilities/shapes';
 import { selectShape, updateSelectionBoxes } from '../utilities/selection';
-import { pan } from '../caseFunctions/zoom';
+import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
+import { pan, zoomTo } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
@@ -21,6 +22,9 @@ export function dragStart(stateCopy, action, root) {
         case "selectTool":
             stateCopy.selected = selectShape([], null);
             break;
+        case "zoomTool":
+            stateCopy.marqueeBox = addMarqueeBox(action, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            break;
         default: break;
     }
     return stateCopy;
@@ -39,6 +43,9 @@ export function drag(stateCopy, action, root) {
             const { panX, panY } = pan(stateCopy, draggableData);
             stateCopy.panX = panX;
             stateCopy.panY = panY;
+            break;
+        case "zoomTool":
+            stateCopy.marqueeBox = resizeMarqueeBox(stateCopy.marqueeBox, draggableData, stateCopy.scale);
             break;
         default: break;
     }
@@ -64,6 +71,15 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
                 stateCopy.selected = selectShape([], null);
             }
+            break;
+        case "zoomTool":
+            if (stateCopy.marqueeBox.width !== 0 || stateCopy.marqueeBox.height !== 0) {
+                const { panX, panY, scale } = zoomTo(stateCopy.marqueeBox, stateCopy.canvasWidth, stateCopy.canvasHeight);
+                stateCopy.panX = panX;
+                stateCopy.panY = panY;
+                stateCopy.scale = scale;
+            }
+            stateCopy.marqueeBox = null;
             break;
         default:
             break;
