@@ -66,19 +66,15 @@ export function pan(stateCopy, draggableData) {
     const { canvasWidth, canvasHeight, scale } = stateCopy;
     const { deltaX, deltaY } = draggableData;
 
-    if (scale > 1) {
-        var panX = stateCopy.panX - deltaX / scale;
-        var panY = stateCopy.panY - deltaY / scale;
+    // The values 38 and 43 are the widths and heights of the menus.
+    // Needs to change if menu changes.
+    var panX = stateCopy.panX - deltaX / scale;
+    var panY = stateCopy.panY - deltaY / scale;
 
-        // The values 38 and 43 are the widths and heights of the menus.
-        // Needs to change if menu changes.
-        return {
-            panX: clamp(panX, 0, canvasWidth - (window.innerWidth - 38) / scale),
-            panY: clamp(panY, 0, canvasHeight - (window.innerHeight - 43) / scale)
-        };
-    } else {
-        return { panX: stateCopy.panX, panY: stateCopy.panY };
-    }
+    return {
+        panX: clamp(panX, 0, canvasWidth - (window.innerWidth - 38) / scale),
+        panY: clamp(panY, 0, canvasHeight - (window.innerHeight - 43) / scale)
+    };
 }
 
 function clamp(num, min, max) {

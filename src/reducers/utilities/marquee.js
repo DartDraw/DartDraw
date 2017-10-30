@@ -10,7 +10,6 @@ export function addMarqueeBox(action, panX, panY, scale) {
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         width: 0,
         height: 0,
-        // vectorEffect: 'non-scaling-stroke',
         stroke: 'rgba(102, 204, 255, 0.7)',
         strokeWidth: '2',
         strokeDasharray: '5',

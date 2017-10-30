@@ -18,7 +18,7 @@ const initialState = {
     marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
-    canvasHeight: 750,
+    canvasHeight: 850,
     canvasWidth: 1000,
     scale: 1,
     panX: 0,
