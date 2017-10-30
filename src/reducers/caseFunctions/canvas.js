@@ -1,6 +1,7 @@
 import { addRectangle, addLine, removeShape, resizeShape, moveLineAnchor } from '../utilities/shapes';
 import { selectShape, updateSelectionBoxes } from '../utilities/selection';
 import { pan } from '../caseFunctions/zoom';
+import { transformPoint } from '../utilities/matrix';
 
 export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
@@ -50,8 +51,16 @@ export function dragStop(stateCopy, action, root) {
         case "rectangleTool":
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
-            if (Math.abs(stateCopy.shapes.byId[addedShapeId].width) < 1 ||
-                Math.abs(stateCopy.shapes.byId[addedShapeId].height) < 1) {
+
+            // determine new shape width + height
+            let shape = stateCopy.shapes.byId[addedShapeId];
+            let transformedShape = {};
+            transformedShape.width = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x - shape.x;
+            transformedShape.height = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y - shape.y;
+
+            // remove if <= 1
+            if (Math.abs(transformedShape.width) <= 1 ||
+                Math.abs(transformedShape.height) <= 1) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
                 stateCopy.selected = selectShape([], null);
             }
