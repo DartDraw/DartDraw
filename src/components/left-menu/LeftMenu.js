@@ -48,6 +48,7 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("rotateTool")}>
                         <img src="./assets/rotate.svg" alt="rotate" id="button-icon" />
                     </button>
+                    <button onClick={() => this.handleToolSelect("zoomTool")} id="button-icon">z</button>
                 </div>
             </div>
         );

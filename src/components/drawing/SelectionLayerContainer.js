@@ -11,8 +11,9 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         selectionBoxes: selectionBoxesArray,
+        marqueeBox: drawingState.marqueeBox,
         scale: drawingState.scale,
-        propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool'
+        propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool' || toolType === 'zoomTool'
     };
 };
 

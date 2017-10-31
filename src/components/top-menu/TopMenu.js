@@ -100,9 +100,9 @@ class TopMenu extends Component {
                 <div id="color-palette">
                     <CirclePicker onChangeComplete={this.handleChangeComplete} colors={currentPalette} circleSize={20} circleSpacing={5} width='450px' />
                 </div>
-                <button onClick={this.handleZoomIn} id="temp">+</button>
-                <button onClick={this.handleZoomOut} id="temp">-</button>
-                <p id="temp">{scale * 100}%</p>
+                <button onClick={this.handleZoomIn} id="button-icon">+</button>
+                <button onClick={this.handleZoomOut} id="button-icon">-</button>
+                <p id="button-icon">{scale * 100}%</p>
 
             </div>
         );
