@@ -1,110 +1,9 @@
 const electron = require('electron');
 
 // Module to control application life.
-// const app = require('app');
-const { app, Menu, dialog } = require('electron');
+const app = require('app');
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
-
-const template = [
-    {
-        label: 'File',
-        submenu: [
-            {type: 'separator'},
-            {role: 'cut'},
-            {role: 'copy'},
-            {role: 'paste'},
-            {role: 'pasteandmatchstyle'},
-            {role: 'delete'},
-            {role: 'selectall'}
-        ]
-    },
-    {
-        label: 'Edit',
-        submenu: [
-            {role: 'undo'},
-            {role: 'redo'},
-            {type: 'separator'},
-            {role: 'cut'},
-            {role: 'copy'},
-            {role: 'paste'},
-            {role: 'pasteandmatchstyle'},
-            {role: 'delete'},
-            {role: 'selectall'}
-        ]
-    },
-    {
-        label: 'View',
-        submenu: [
-            {role: 'reload'},
-            {role: 'forcereload'},
-            {role: 'toggledevtools'},
-            {type: 'separator'},
-            {role: 'resetzoom'},
-            {role: 'zoomin'},
-            {role: 'zoomout'},
-            {type: 'separator'},
-            {role: 'togglefullscreen'}
-        ]
-    },
-    {
-        role: 'window',
-        submenu: [
-            {role: 'minimize'},
-            {role: 'close'}
-        ]
-    },
-    {
-        role: 'help',
-        submenu: [
-            {
-                label: 'Learn More',
-                click() { require('electron').shell.openExternal('https://electron.atom.io'); }
-            }
-        ]
-    }
-];
-
-if (process.platform === 'darwin') {
-    console.log("TEST");
-    console.log(template);
-    template.unshift({
-        label: app.getName(),
-        submenu: [
-            {role: 'about'},
-            {type: 'separator'},
-            {role: 'services', submenu: []},
-            {type: 'separator'},
-            {role: 'hide'},
-            {role: 'hideothers'},
-            {role: 'unhide'},
-            {type: 'separator'},
-            {role: 'quit'}
-        ]
-    });
-
-    // Edit menu
-    template[1].submenu.push(
-        {type: 'separator'},
-        {
-            label: 'Speech',
-            submenu: [
-                {role: 'startspeaking'},
-                {role: 'stopspeaking'},
-                {role: 'stopspeaking'}
-            ]
-        }
-    );
-
-    // Window menu
-    template[3].submenu = [
-        {role: 'close'},
-        {role: 'minimize'},
-        {role: 'zoom'},
-        {type: 'separator'},
-        {role: 'front'}
-    ];
-}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -128,10 +27,6 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
-
-    const menu = Menu.buildFromTemplate(template);
-    console.log({menu});
-    Menu.setApplicationMenu(menu);
 }
 
 // This method will be called when Electron has finished
