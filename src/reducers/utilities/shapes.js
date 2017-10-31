@@ -180,7 +180,7 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
+export function resizeShape2(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
     const scaledDeltaY = deltaY / scale;
@@ -230,6 +230,110 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             default:
                 break;
         }
+
+        sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
+        sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
+
+        if (sx === 0) sx = 0.001; // never zero out
+        if (sy === 0) sy = 0.001; // never zero out
+
+        let decomposed = decomposeMatrix(shapeMatrix);
+        if (decomposed.skewX !== 0) {
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewX * Math.PI / 180, cx, cy);
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewX * Math.PI / 180, cx, cy);
+        } else {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+        }
+    });
+    return shapes;
+}
+
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / scale;
+    const scaledDeltaY = deltaY / scale;
+
+    const mouseX = draggableData.x - 45; // hard coded - how calculate offset
+    const mouseY = draggableData.y - 42.28125; // hard coded - how calculate offset
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        const shapeMatrix = shape.transform[0].parameters;
+        const boundingBox = boundingBoxes[id];
+
+        const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+        const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+        const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+        const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+        let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+        transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
+        transformedShape.height = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix).y - transformedShape.y;
+
+        let originalWidth = transformedShape.width;
+        let originalHeight = transformedShape.height;
+        let sx = 0;
+        let sy = 0;
+
+        let cxCoords = {};
+
+        switch (handleIndex) {
+            case 0:
+                let scaleX = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: mouseX, y: mouseY});
+                let scaleY = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: mouseX, y: mouseY});
+
+                if (scaledDeltaX < 0) scaleX *= -1;
+                if (scaledDeltaY < 0) scaleY *= -1;
+
+                transformedShape.width += scaleX;
+                transformedShape.height -= scaleY;
+
+                cxCoords = coords2;
+                break;
+            case 1:
+                scaleX = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: mouseX, y: mouseY});
+                scaleY = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: mouseX, y: mouseY});
+
+                if (scaledDeltaX < 0) scaleX *= -1;
+                if (scaledDeltaY < 0) scaleY *= -1;
+
+                transformedShape.width += scaleX;
+                transformedShape.height += scaleY;
+
+                cxCoords = coords3;
+                break;
+            case 2:
+                scaleX = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: mouseX, y: mouseY});
+                scaleY = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: mouseX, y: mouseY});
+
+                if (scaledDeltaX < 0) scaleX *= -1;
+                if (scaledDeltaY < 0) scaleY *= -1;
+
+                transformedShape.width -= scaleX;
+                transformedShape.height += scaleY;
+
+                cxCoords = coords0;
+                break;
+            case 3:
+
+                scaleX = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: mouseX, y: mouseY});
+                scaleY = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: mouseX, y: mouseY});
+
+                if (scaledDeltaX < 0) scaleX *= -1;
+                if (scaledDeltaY < 0) scaleY *= -1;
+
+                transformedShape.width -= scaleX;
+                transformedShape.height -= scaleY;
+
+                cxCoords = coords1;
+                break;
+            default:
+                break;
+        }
+
+        let cx = cxCoords.x;
+        let cy = cxCoords.y;
 
         sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
         sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
@@ -355,4 +459,10 @@ function decomposeMatrix(matrix) {
         skewX: skewX,
         skewY: skewY
     };
+}
+
+function calculateDistance(line, point) {
+    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    if ((line.y2 - line.y1) ** 2 + (line.x2 - line.x1) ** 2 === 0) return 0;
+    return (Math.abs((line.y2 - line.y1) * point.x - (line.x2 - line.x1) * point.y + line.x2 * line.y1 - line.y2 * line.x1) / Math.sqrt((line.y2 - line.y1) ** 2 + (line.x2 - line.x1) ** 2));
 }
