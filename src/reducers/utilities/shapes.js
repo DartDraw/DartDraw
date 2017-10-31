@@ -249,13 +249,10 @@ export function resizeShape2(shapes, boundingBoxes, selected, draggableData, han
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
-    const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
-
-    const mouseX = draggableData.x - 45; // hard coded - how calculate offset
-    const mouseY = draggableData.y - 42.28125; // hard coded - how calculate offset
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId) {
+    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, scale);
+    let scaledDeltaX = scaleXY.x;
+    let scaledDeltaY = scaleXY.y;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
@@ -280,8 +277,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         switch (handleIndex) {
             case 0:
-                let scaleX = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: mouseX, y: mouseY});
-                let scaleY = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: mouseX, y: mouseY});
+                let scaleX = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
+                let scaleY = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
 
                 if (scaledDeltaX < 0) scaleX *= -1;
                 if (scaledDeltaY < 0) scaleY *= -1;
@@ -292,8 +289,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 cxCoords = coords2;
                 break;
             case 1:
-                scaleX = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: mouseX, y: mouseY});
-                scaleY = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: mouseX, y: mouseY});
+                scaleX = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
+                scaleY = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
 
                 if (scaledDeltaX < 0) scaleX *= -1;
                 if (scaledDeltaY < 0) scaleY *= -1;
@@ -304,8 +301,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 cxCoords = coords3;
                 break;
             case 2:
-                scaleX = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: mouseX, y: mouseY});
-                scaleY = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: mouseX, y: mouseY});
+                scaleX = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
+                scaleY = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
 
                 if (scaledDeltaX < 0) scaleX *= -1;
                 if (scaledDeltaY < 0) scaleY *= -1;
@@ -317,8 +314,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 break;
             case 3:
 
-                scaleX = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: mouseX, y: mouseY});
-                scaleY = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: mouseX, y: mouseY});
+                scaleX = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
+                scaleY = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
 
                 if (scaledDeltaX < 0) scaleX *= -1;
                 if (scaledDeltaY < 0) scaleY *= -1;
@@ -351,6 +348,58 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         }
     });
     return shapes;
+}
+
+function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale) {
+    let scaleXY = {};
+
+    if (typeof (shape) === "undefined") {
+        scaleXY = {
+            x: draggableData.deltaX / scale,
+            y: draggableData.deltaY / scale
+        };
+        return (scaleXY);
+    }
+    const mouseX = draggableData.x - 45; // hard coded - how calculate offset?
+    const mouseY = draggableData.y - 42.28125; // hard coded - how calculate offset?
+
+    const shapeMatrix = shape.transform[0].parameters;
+    const boundingBox = boundingBoxes[shape.id];
+
+    const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+    const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+    const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+    const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    switch (handleIndex) {
+        case 0:
+            scaleXY = {
+                x: mouseX - coords0.x / scale,
+                y: mouseY - coords0.y / scale
+            };
+            break;
+        case 1:
+            scaleXY = {
+                x: mouseX - coords1.x / scale,
+                y: mouseY - coords1.y / scale
+            };
+            break;
+        case 2:
+            scaleXY = {
+                x: mouseX - coords2.x / scale,
+                y: mouseY - coords2.y / scale
+            };
+            break;
+        case 3:
+            scaleXY = {
+                x: mouseX - coords3.x / scale,
+                y: mouseY - coords3.y / scale
+            };
+            break;
+        default:
+            break;
+    }
+    return scaleXY;
 }
 
 function resizeTransform(transform1, sx, sy, cx, cy) {
