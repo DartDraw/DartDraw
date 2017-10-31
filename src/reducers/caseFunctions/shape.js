@@ -1,4 +1,4 @@
-import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, deleteShapes } from '../utilities/shapes';
+import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, deleteShapes, removeRotation } from '../utilities/shapes';
 import { selectShape } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -94,6 +94,12 @@ export function handleDrag(stateCopy, action, root) {
 
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
+        case "selectTool":
+            let shiftSelected = 16 in root.menuState.currentKeys;
+            if (shiftSelected) {
+                // removeRotation(stateCopy.selected[0], stateCopy.shapes, stateCopy.boundingBoxes);
+            }
+            break;
         default:
             break;
     }

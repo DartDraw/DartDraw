@@ -198,6 +198,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let originalHeight = transformedShape.height;
         let cx = transformedShape.x;
         let cy = transformedShape.y;
+        let sx = 0;
+        let sy = 0;
 
         switch (handleIndex) {
             case 0:
@@ -229,13 +231,20 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 break;
         }
 
-        let sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
-        let sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
+        sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
+        sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
 
         if (sx === 0) sx = 0.001; // never zero out
         if (sy === 0) sy = 0.001; // never zero out
 
-        shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+        let decomposed = decomposeMatrix(shapeMatrix);
+        if (decomposed.skewX !== 0) {
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewX * Math.PI / 180, cx, cy);
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewX * Math.PI / 180, cx, cy);
+        } else {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+        }
     });
     return shapes;
 }
@@ -341,6 +350,8 @@ function decomposeMatrix(matrix) {
     var skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
 
     return {
+        px: px,
+        py: py,
         skewX: skewX,
         skewY: skewY
     };
