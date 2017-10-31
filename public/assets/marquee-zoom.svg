@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="18px" viewBox="0 0 17 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>marquee-zoom</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard-2" transform="translate(-369.000000, -197.000000)" stroke="#979797">
+            <g id="marquee-zoom" transform="translate(370.000000, 198.000000)">
+                <g id="marque-copy" transform="translate(1.000000, 2.000000)" stroke-dasharray="1">
+                    <polyline id="Path-11" points="7 0 14 0 14 14 0 14 0 6"></polyline>
+                </g>
+                <path d="M6.5,6.5 L10.5,10.5" id="Line-2" stroke-linecap="square"></path>
+                <circle id="Oval-7" cx="3.5" cy="3.5" r="3.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
