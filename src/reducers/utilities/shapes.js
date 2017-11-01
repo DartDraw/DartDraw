@@ -353,8 +353,6 @@ function decomposeMatrix(matrix) {
     var skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
 
     return {
-        px: px,
-        py: py,
         skewX: skewX,
         skewY: skewY
     };
