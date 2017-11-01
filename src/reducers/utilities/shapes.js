@@ -1,5 +1,5 @@
 import uuidv1 from 'uuid';
-import { multiplyMatrices, transformPoint, inverseTransform } from './matrix';
+import { multiplyMatrices, transformPoint } from './matrix';
 
 export function addRectangle(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;

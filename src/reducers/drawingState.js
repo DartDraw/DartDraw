@@ -15,6 +15,7 @@ const initialState = {
     selected: [],
     boundingBoxes: {},
     selectionBoxes: {},
+    marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
     canvasHeight: 850,
