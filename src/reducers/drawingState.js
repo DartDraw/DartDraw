@@ -99,6 +99,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.ZOOM_OUT:
             updatedState = zoom.zoomOut(stateCopy, action, root);
             break;
+        case menuActions.CUSTOM_ZOOM:
+            updatedState = zoom.zoomToCustom(stateCopy, action, root);
+            break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         default: break;
