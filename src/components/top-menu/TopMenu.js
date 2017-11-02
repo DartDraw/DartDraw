@@ -74,28 +74,28 @@ class TopMenu extends Component {
         return (
             <div id="top-bar">
                 <button onClick={this.handleUndoClick}>
-                    <img src="./assets/004-undo.svg" alt="undo" id="button-icon" />
+                    <img src="./assets/undo.svg" alt="undo" id="button-icon" />
                 </button>
                 <button onClick={this.handleRedoClick}>
-                    <img src="./assets/003-redo.svg" alt="redo" id="button-icon" />
+                    <img src="./assets/redo.svg" alt="redo" id="button-icon" />
                 </button>
                 <button onClick={this.handleGroupClick}>
-                    <img src="./assets/005-group.svg" alt="group" id="button-icon" />
+                    <img src="./assets/group.svg" alt="group" id="button-icon" />
                 </button>
                 <button onClick={this.handleUngroupClick}>
-                    <img src="./assets/009-ungroup.svg" alt="ungroup" id="button-icon" />
+                    <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
                 </button>
                 <button onClick={this.handleSendToBack}>
-                    <img src="./assets/012-upone.svg" alt="upone" id="button-icon" />
+                    <img src="./assets/upone.svg" alt="upone" id="button-icon" />
                 </button>
                 <button onClick={this.handleBringToFront}>
-                    <img src="./assets/013-backone.svg" alt="downone" id="button-icon" />
+                    <img src="./assets/backone.svg" alt="downone" id="button-icon" />
                 </button>
                 <button onClick={this.handleSendToBack}>
-                    <img src="./assets/007-SendToBack.svg" alt="backall" id="button-icon" />
+                    <img src="./assets/SendToBack.svg" alt="backall" id="button-icon" />
                 </button>
                 <button onClick={this.handleBringToFront}>
-                    <img src="./assets/006-BringToFront.svg" alt="frontall" id="button-icon" />
+                    <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
                 </button>
                 <div id="color-palette">
                     <CirclePicker onChangeComplete={this.handleChangeComplete} colors={currentPalette} circleSize={20} circleSpacing={5} width='450px' />
