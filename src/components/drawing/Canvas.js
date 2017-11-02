@@ -2,7 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Canvas.css';
 import { Draggable } from '../shared';
-import { BackgroundLayerContainer, GridLayerContainer, SelectionLayerContainer, Group, Rectangle, Path, Line } from '.';
+import {
+    BackgroundLayerContainer,
+    GridLayerContainer,
+    SelectionLayerContainer,
+    Group,
+    Rectangle,
+    Ellipse,
+    Path,
+    Line
+} from '.';
 
 class Canvas extends Component {
     static propTypes = {
@@ -138,6 +147,18 @@ class Canvas extends Component {
             case 'rectangle':
                 return (
                     <Rectangle
+                        key={shape.id}
+                        {...shape}
+                        onDragStart={this.handleShapeDragStart}
+                        onDrag={this.handleShapeDrag}
+                        onDragStop={this.handleShapeDragStop}
+                        onClick={this.handleShapeClick}
+                        propagateEvents={propagateEvents}
+                    />
+                );
+            case 'ellipse':
+                return (
+                    <Ellipse
                         key={shape.id}
                         {...shape}
                         onDragStart={this.handleShapeDragStart}

@@ -28,21 +28,29 @@ class LeftMenu extends Component {
             <div id="left-bar">
                 <div id="basic-buttons">
                     <button onClick={() => this.handleToolSelect("selectTool")}>
-                        <img src="./assets/001-cursor.svg" alt="select" id="button-icon" />
+                        <img src="./assets/cursor.svg" alt="select" id="button-icon" />
                     </button>
                     <button onClick={() => this.handleToolSelect("rectangleTool")}>
-                        <img src="./assets/002-frame.svg" alt="rect" id="button-icon" />
+                        <img src="./assets/frame.svg" alt="rect" id="button-icon" />
                     </button>
                     <button onClick={() => this.handleToolSelect("lineTool")}>
-                        <img src="./assets/011-drawline.svg" alt="line" id="button-icon" />
+                        <img src="./assets/drawline.svg" alt="line" id="button-icon" />
+                    </button>
+                    <button onClick={() => this.handleToolSelect("ellipseTool")}>
+                        <img src="./assets/ellipse.svg" alt="ellipse" id="button-icon" />
                     </button>
                     <button onClick={this.handleExportSelect}>
-                        <img src="./assets/008-export.svg" alt="rect" id="button-icon" />
+                        <img src="./assets/export.svg" alt="export" id="button-icon" />
                     </button>
-                    <button onClick={() => this.handleToolSelect("panTool")} id="button-icon">
-                        <img src="./assets/010-scrollarrows.svg" alt="pan" id="button-icon" />
+                    <button onClick={() => this.handleToolSelect("panTool")} >
+                        <img src="./assets/scrollarrows.svg" alt="pan" id="button-icon" />
                     </button>
-                    <button onClick={() => this.handleToolSelect("zoomTool")} id="button-icon">z</button>
+                    <button onClick={() => this.handleToolSelect("rotateTool")}>
+                        <img src="./assets/rotate.svg" alt="rotate" id="button-icon" />
+                    </button>
+                    <button onClick={() => this.handleToolSelect("zoomTool")}>
+                        <img src="./assets/marquee-zoom.svg" alt="marquee zoom" id="button-icon" />
+                    </button>
                 </div>
             </div>
         );

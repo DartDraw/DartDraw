@@ -60,29 +60,32 @@ class Rectangle extends Component {
     }
 
     render() {
-        const { id, width, height, x, y, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
-        let renderX = x;
-        let renderWidth = Math.abs(width);
-        if (width < 0) {
-            renderX = x - renderWidth;
-        }
-        let renderY = y;
-        let renderHeight = Math.abs(height);
-        if (height < 0) {
-            renderY = y - renderHeight;
-        }
-        const rectProps = {
+        const {
             id,
-            x: renderX,
-            y: renderY,
-            width: renderWidth,
-            height: renderHeight,
+            width,
+            height,
+            x,
+            y,
+            stroke,
+            strokeWidth,
+            strokeDasharray,
+            fill,
+            transform,
+            propagateEvents
+        } = this.props;
+
+        const svgProps = {
+            id,
+            x,
+            y,
+            width,
+            height,
             stroke,
             strokeWidth,
             strokeDasharray,
             fill,
             transform: formatTransform(transform),
-            vectorEffect: "non-scaling-stroke"
+            vectorEffect: 'non-scaling-stroke'
         };
 
         return (
@@ -94,7 +97,7 @@ class Rectangle extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <rect {...rectProps} />
+                <rect {...svgProps} />
             </Shape>
         );
     }
