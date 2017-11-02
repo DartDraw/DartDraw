@@ -2,7 +2,7 @@ const electron = require('electron');
 
 // Module to control application life.
 // const app = require('app');
-const { app, Menu, dialog } = require('electron');
+const { app, Menu, MenuItem } = require('electron');
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
 
@@ -105,7 +105,19 @@ if (process.platform === 'darwin') {
         {role: 'front'}
     ];
 }
-
+const canvasItem = new MenuItem(
+    {label: 'Canvas',
+        submenu: [
+            {label: 'Background Color',
+                submenu: [
+                    {label: 'Black'},
+                    {label: 'White'},
+                    {type: 'separator'},
+                    {label: 'Custom...'}
+                ]},
+            {label: 'Resize Canvas'}
+        ]}
+);
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -130,6 +142,7 @@ function createWindow() {
     });
 
     const menu = Menu.buildFromTemplate(template);
+    menu.insert(3, canvasItem);
     console.log({menu});
     Menu.setApplicationMenu(menu);
 }
