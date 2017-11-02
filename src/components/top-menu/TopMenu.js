@@ -14,6 +14,8 @@ class TopMenu extends Component {
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onColorSelect: PropTypes.func,
+        onMoveBackward: PropTypes.func,
+        onMoveForward: PropTypes.func,
         onSendToBack: PropTypes.func,
         onBringToFront: PropTypes.func,
         scale: PropTypes.number
@@ -29,6 +31,8 @@ class TopMenu extends Component {
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleUngroupClick = this.handleUngroupClick.bind(this);
+        this.handleMoveBackward = this.handleMoveBackward.bind(this);
+        this.handleMoveForward = this.handleMoveForward.bind(this);
         this.handleSendToBack = this.handleSendToBack.bind(this);
         this.handleBringToFront = this.handleBringToFront.bind(this);
     }
@@ -47,6 +51,14 @@ class TopMenu extends Component {
 
     handleUngroupClick() {
         this.props.onUngroupClick();
+    }
+
+    handleMoveForward() {
+        this.props.onMoveForward();
+    }
+
+    handleMoveBackward() {
+        this.props.onMoveBackward();
     }
 
     handleBringToFront() {
@@ -85,10 +97,10 @@ class TopMenu extends Component {
                 <button onClick={this.handleUngroupClick}>
                     <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
                 </button>
-                <button onClick={this.handleSendToBack}>
+                <button onClick={this.handleMoveForward}>
                     <img src="./assets/upone.svg" alt="upone" id="button-icon" />
                 </button>
-                <button onClick={this.handleBringToFront}>
+                <button onClick={this.handleMoveBackward}>
                     <img src="./assets/backone.svg" alt="downone" id="button-icon" />
                 </button>
                 <button onClick={this.handleSendToBack}>

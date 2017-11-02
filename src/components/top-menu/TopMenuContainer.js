@@ -8,6 +8,8 @@ import {
     zoomOut,
     groupButtonClick,
     ungroupButtonClick,
+    moveBackward,
+    moveForward,
     sendToBack,
     bringToFront
 } from './../../actions/menu';
@@ -31,6 +33,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onUngroupClick: () => {
             dispatch(ungroupButtonClick());
+        },
+        onMoveBackward: () => {
+            dispatch(moveBackward());
+        },
+        onMoveForward: () => {
+            dispatch(moveForward());
         },
         onSendToBack: () => {
             dispatch(sendToBack());

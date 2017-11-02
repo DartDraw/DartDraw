@@ -20,6 +20,25 @@ export function addRectangle(shapes, action, fill, panX, panY, scale) {
     return shapes;
 }
 
+export function addEllipse(shapes, action, fill, panX, panY, scale) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+    const ellipse = {
+        id: uuidv1(),
+        type: 'ellipse',
+        cx: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        cy: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        rx: 0.5,
+        ry: 0.5,
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+    };
+
+    shapes.byId[ellipse.id] = ellipse;
+    shapes.allIds.push(ellipse.id);
+    return shapes;
+}
+
 export function addLine(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
@@ -94,6 +113,22 @@ export function fillShape(shapes, selected, action) {
 export function formatColor(rgba) {
     const { r, g, b, a } = rgba;
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
+
+export function bringToFront(shapes, selected) {
+    for (let i = 0; i < selected.length; i++) {
+        shapes.allIds.splice(shapes.allIds.indexOf(selected[i]), 1);
+        shapes.allIds.push(selected[i]);
+    }
+    return shapes;
+}
+
+export function sendToBack(shapes, selected) {
+    for (let i = 0; i < selected.length; i++) {
+        shapes.allIds.splice(shapes.allIds.indexOf(selected[i]), 1);
+        shapes.allIds = [selected[i]].concat(shapes.allIds);
+    }
+    return shapes;
 }
 
 export function changeZIndex(shapes, selected, change) {

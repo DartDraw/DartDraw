@@ -59,7 +59,7 @@ class Path extends Component {
 
     render() {
         const { id, d, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
-        const pathProps = {
+        const svgProps = {
             id,
             d: formatPath(d),
             stroke,
@@ -77,7 +77,7 @@ class Path extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <path {...pathProps} />
+                <path {...svgProps} />
             </Shape>
         );
     }
