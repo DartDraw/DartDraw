@@ -165,7 +165,6 @@ export function ungroupShapes(selected, shapes) {
 
 function applyTransformation(shape, group) {
     shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
-
     return shape;
 }
 
@@ -182,13 +181,19 @@ export function deleteShapes(shapes, selected) {
 
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
+    let scaledDeltaX = deltaX / scale;
+    let scaledDeltaY = deltaY / scale;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
         const shapeMatrix = shape.transform[0].parameters;
+        const decomposed = decomposeMatrix(shapeMatrix);
         const boundingBox = boundingBoxes[id];
+
+        const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+        const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+        const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+        const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
         let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
         transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
@@ -196,57 +201,63 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let originalWidth = transformedShape.width;
         let originalHeight = transformedShape.height;
-        let cx = transformedShape.x;
-        let cy = transformedShape.y;
+        let cxCoords = {};
+        let sx = 0;
+        let sy = 0;
 
         switch (handleIndex) {
             case 0:
+                cxCoords = coords2;
                 transformedShape.width += scaledDeltaX;
                 transformedShape.height -= scaledDeltaY;
-                let cxCoords = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
-                cx = cxCoords.x;
-                cy = cxCoords.y;
                 break;
             case 1:
+                cxCoords = coords3;
                 transformedShape.width += scaledDeltaX;
                 transformedShape.height += scaledDeltaY;
                 break;
             case 2:
+                cxCoords = coords0;
                 transformedShape.width -= scaledDeltaX;
                 transformedShape.height += scaledDeltaY;
-                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
-                cx = cxCoords.x;
-                cy = cxCoords.y;
                 break;
             case 3:
+                cxCoords = coords1;
                 transformedShape.width -= scaledDeltaX;
                 transformedShape.height -= scaledDeltaY;
-                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
-                cx = cxCoords.x;
-                cy = cxCoords.y;
                 break;
             default:
                 break;
         }
 
-        let sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
-        let sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
+        sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
+        sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
 
         if (sx === 0) sx = 0.001; // never zero out
         if (sy === 0) sy = 0.001; // never zero out
 
-        shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+        shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewX * Math.PI / 180, cxCoords.x, cxCoords.y);
+        shape.transform[0].parameters = multiplyMatrices(resizeTransform(sx, sy, cxCoords.x, cxCoords.y), shape.transform[0].parameters);
+        shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewX * Math.PI / 180, cxCoords.x, cxCoords.y);
     });
     return shapes;
 }
 
-function resizeTransform(transform1, sx, sy, cx, cy) {
-    let transform2 = [1, 0, 0, 1, 0, 0];
-    transform2[0] = sx;
-    transform2[3] = sy;
-    transform2[4] = cx - cx * sx;
-    transform2[5] = cy - cy * sy;
-    return multiplyMatrices(transform2, transform1);
+export function setTransform(shapes, selected) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        shape.origMatrix = shape.transform[0].parameters;
+    });
+    return shapes;
+}
+
+function resizeTransform(sx, sy, cx, cy) {
+    let transform = [1, 0, 0, 1, 0, 0];
+    transform[0] = sx;
+    transform[3] = sy;
+    transform[4] = cx - cx * sx;
+    transform[5] = cy - cy * sy;
+    return transform;
 }
 
 export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {

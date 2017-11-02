@@ -76,14 +76,14 @@ export function handleDrag(stateCopy, action, root) {
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     } else {
-        const { draggableData, handleIndex } = action.payload;
+        const { draggableData, handleIndex, shapeId } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (shiftSelected) {
                     stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, stateCopy.selectionBoxes);
                 } else {
-                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
+                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId);
                 }
                 break;
             default: break;
