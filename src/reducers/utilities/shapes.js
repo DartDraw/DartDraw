@@ -230,7 +230,6 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 break;
         }
 
-        console.log(transformedShape);
         sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
         sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
 
