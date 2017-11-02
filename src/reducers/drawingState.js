@@ -15,6 +15,7 @@ const initialState = {
     selected: [],
     boundingBoxes: {},
     selectionBoxes: {},
+    marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
     canvasHeight: 850,
@@ -70,6 +71,12 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
+            break;
+        case menuActions.MOVE_FORWARD:
+            updatedState = shape.moveForward(stateCopy, action, root);
+            break;
+        case menuActions.MOVE_BACKWARD:
+            updatedState = shape.moveBackward(stateCopy, action, root);
             break;
         case menuActions.BRING_FRONT:
             updatedState = shape.bringFront(stateCopy, action, root);

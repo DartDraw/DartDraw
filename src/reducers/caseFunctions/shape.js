@@ -1,4 +1,4 @@
-import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, deleteShapes } from '../utilities/shapes';
+import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
 import { selectShape } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
@@ -76,15 +76,13 @@ export function handleDrag(stateCopy, action, root) {
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     } else {
-        const { draggableData, handleIndex } = action.payload;
+        const { draggableData, handleIndex, shapeId } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
-                let shiftSelected = 16 in root.menuState.currentKeys;
-                if (shiftSelected) {
-                    stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, stateCopy.selectionBoxes);
-                } else {
-                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
-                }
+                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId);
+                break;
+            case "rotateTool":
+                stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, stateCopy.selectionBoxes);
                 break;
             default: break;
         }
@@ -107,15 +105,27 @@ export function setColor(stateCopy, action, root) {
     return stateCopy;
 }
 
-export function bringFront(stateCopy, action, root) {
+export function moveForward(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     stateCopy.shapes = changeZIndex(stateCopy.shapes, stateCopy.selected, 1);
     return stateCopy;
 }
 
-export function sendBack(stateCopy, action, root) {
+export function moveBackward(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     stateCopy.shapes = changeZIndex(stateCopy.shapes, stateCopy.selected, -1);
+    return stateCopy;
+}
+
+export function bringFront(stateCopy, action, root) {
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    stateCopy.shapes = bringToFront(stateCopy.shapes, stateCopy.selected);
+    return stateCopy;
+}
+
+export function sendBack(stateCopy, action, root) {
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    stateCopy.shapes = sendToBack(stateCopy.shapes, stateCopy.selected);
     return stateCopy;
 }
 
