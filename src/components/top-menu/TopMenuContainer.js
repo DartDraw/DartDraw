@@ -4,6 +4,7 @@ import {
     undoClick,
     redoClick,
     selectColor,
+    selectColorPalette,
     zoomIn,
     zoomOut,
     customZoom,
@@ -15,9 +16,10 @@ import {
     bringToFront
 } from './../../actions/menu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     return {
-        scale: drawingState.scale
+        scale: drawingState.scale,
+        currentPalette: menuState.colorPalettes[menuState.currentPalette].colors
     };
 };
 
@@ -49,6 +51,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
+        },
+        onColorPaletteSelect: (colorPalette) => {
+            dispatch(selectColorPalette(colorPalette));
         },
         onZoomIn: () => {
             dispatch(zoomIn());

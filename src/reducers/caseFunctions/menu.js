@@ -55,6 +55,11 @@ export function selectColor(stateCopy, action) {
     return stateCopy;
 }
 
+export function selectColorPalette(stateCopy, action) {
+    stateCopy.colorPalette = action.payload.colorPalette;
+    return stateCopy;
+}
+
 export function groupButtonClick(stateCopy, action, root) {
     if (stateCopy.selected.length < 2) {
         // need at least 2 shapes

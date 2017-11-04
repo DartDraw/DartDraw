@@ -1,6 +1,6 @@
 export function zoomIn(stateCopy) {
     const scaleFactor = 2;
-    const newScale = stateCopy.scale * scaleFactor;
+    const newScale = Math.min(stateCopy.scale * scaleFactor, 64);
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
@@ -13,7 +13,7 @@ export function zoomIn(stateCopy) {
 
 export function zoomOut(stateCopy) {
     const scaleFactor = 0.5;
-    const newScale = stateCopy.scale * scaleFactor;
+    const newScale = Math.max(stateCopy.scale * scaleFactor, 0.125);
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
@@ -25,7 +25,9 @@ export function zoomOut(stateCopy) {
 }
 
 export function zoomToCustom(stateCopy, action) {
-    const { customScale } = action.payload;
+    var { customScale } = action.payload;
+
+    customScale = clamp(customScale, 0.125, 64);
 
     const { panX, panY } = setPan(stateCopy, customScale);
 
@@ -44,7 +46,7 @@ export function zoomToMarqueeBox(marqueeBox, canvasWidth, canvasHeight) {
 
     const zoomRatioX = Math.abs(windowWidth / marqueeBox.width);
     const zoomRatioY = Math.abs(windowHeight / marqueeBox.height);
-    const scale = Math.min(zoomRatioX, zoomRatioY);
+    const scale = clamp(Math.min(zoomRatioX, zoomRatioY), 0.125, 64);
 
     let panX, panY;
 
