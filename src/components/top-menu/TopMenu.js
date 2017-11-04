@@ -18,11 +18,14 @@ class TopMenu extends Component {
         onMoveForward: PropTypes.func,
         onSendToBack: PropTypes.func,
         onBringToFront: PropTypes.func,
+        onCustomZoom: PropTypes.func,
         scale: PropTypes.number
     };
 
     constructor(props) {
         super(props);
+
+        this.tempScale = this.props.scale;
 
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
@@ -35,6 +38,8 @@ class TopMenu extends Component {
         this.handleMoveForward = this.handleMoveForward.bind(this);
         this.handleSendToBack = this.handleSendToBack.bind(this);
         this.handleBringToFront = this.handleBringToFront.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleUndoClick() {
@@ -81,6 +86,15 @@ class TopMenu extends Component {
         this.props.onZoomOut();
     }
 
+    handleChange(event) {
+        this.tempScale = event.target.value / 100.0;
+    }
+
+    handleSubmit(event) {
+        this.props.onCustomZoom(this.tempScale);
+        event.preventDefault();
+    }
+
     render() {
         const { scale } = this.props;
         return (
@@ -114,8 +128,9 @@ class TopMenu extends Component {
                 </div>
                 <button onClick={this.handleZoomIn} id="button-icon">+</button>
                 <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                <p id="button-icon">{scale * 100}%</p>
-
+                <form id="button-icon" onSubmit={this.handleSubmit}>
+                    {Math.round(scale * 100) + "%"} <input type="text" onChange={this.handleChange} />
+                </form>
             </div>
         );
     }

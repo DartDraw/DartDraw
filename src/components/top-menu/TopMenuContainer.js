@@ -6,6 +6,7 @@ import {
     selectColor,
     zoomIn,
     zoomOut,
+    customZoom,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
@@ -54,6 +55,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onZoomOut: () => {
             dispatch(zoomOut());
+        },
+        onCustomZoom: (customScale) => {
+            dispatch(customZoom(customScale));
         }
     };
 };
