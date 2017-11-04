@@ -129,7 +129,7 @@ class TopMenu extends Component {
                 <button onClick={this.handleZoomIn} id="button-icon">+</button>
                 <button onClick={this.handleZoomOut} id="button-icon">-</button>
                 <form id="button-icon" onSubmit={this.handleSubmit}>
-                    {scale * 100.00 + "%"} <input type="text" onChange={this.handleChange} />
+                    {Math.round(scale * 100) + "%"} <input type="text" onChange={this.handleChange} />
                 </form>
             </div>
         );
