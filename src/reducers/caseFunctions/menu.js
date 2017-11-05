@@ -52,11 +52,50 @@ export function selectTool(stateCopy, action) {
 
 export function selectColor(stateCopy, action) {
     stateCopy.color = action.payload.color;
+
     return stateCopy;
 }
 
-export function selectColorPalette(stateCopy, action) {
-    stateCopy.colorPalette = action.payload.colorPalette;
+export function selectPalette(stateCopy, action) {
+    if (action.payload.paletteName in stateCopy.palettes) {
+        stateCopy.currentPalette = action.payload.paletteName;
+    }
+    return stateCopy;
+}
+
+export function addColor(stateCopy, action) {
+    stateCopy.palettes[stateCopy.currentPalette].colors.push(colorToString(action.payload.color));
+    return stateCopy;
+}
+
+export function removeColor(stateCopy, action) {
+    const palette = stateCopy.palettes[stateCopy.currentPalette].colors;
+    const i = palette.indexOf(colorToString(action.payload.color));
+
+    if (i >= 0) {
+        palette.splice(i, 1);
+    }
+
+    return stateCopy;
+}
+
+export function addPalette(stateCopy, action) {
+    stateCopy.palettes[action.payload.paletteName] = {
+        'type': "HEX", // should change this once we figure out the interface
+        'colors': action.payload.paletteColors
+    };
+    return stateCopy;
+}
+
+export function removePalette(stateCopy, action) {
+    const palette = action.payload.paletteName;
+    // can't delete the default palette
+    if (palette in stateCopy.palettes && palette !== "Default") {
+        if (stateCopy.currentPalette === palette) {
+            stateCopy.currentPalette = "Default";
+        }
+        delete stateCopy.palettes[palette];
+    }
     return stateCopy;
 }
 
@@ -85,4 +124,8 @@ export function ungroupButtonClick(stateCopy, action, root) {
 export function exportClick(stateCopy, action) {
     generateEps(stateCopy);
     return stateCopy;
+}
+
+function colorToString(colorObj) {
+    return "rgba(" + colorObj['r'] + "," + colorObj['g'] + "," + colorObj['b'] + "," + colorObj['a'] + ")";
 }

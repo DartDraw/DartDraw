@@ -4,7 +4,11 @@ import {
     undoClick,
     redoClick,
     selectColor,
-    selectColorPalette,
+    selectPalette,
+    addColor,
+    removeColor,
+    addPalette,
+    removePalette,
     zoomIn,
     zoomOut,
     customZoom,
@@ -19,7 +23,7 @@ import {
 const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         scale: drawingState.scale,
-        currentPalette: menuState.colorPalettes[menuState.currentPalette].colors
+        currentPalette: menuState.palettes[menuState.currentPalette].colors
     };
 };
 
@@ -52,8 +56,20 @@ const mapDispatchToProps = (dispatch) => {
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
         },
-        onColorPaletteSelect: (colorPalette) => {
-            dispatch(selectColorPalette(colorPalette));
+        onPaletteSelect: (paletteName) => {
+            dispatch(selectPalette(paletteName));
+        },
+        onAddColor: (color) => {
+            dispatch(addColor(color));
+        },
+        onRemoveColor: (color) => {
+            dispatch(removeColor(color));
+        },
+        onAddPalette: (paletteName, paletteColors) => {
+            dispatch(addPalette(paletteName, paletteColors));
+        },
+        onRemovePalette: (paletteName) => {
+            dispatch(removePalette(paletteName));
         },
         onZoomIn: () => {
             dispatch(zoomIn());
