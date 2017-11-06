@@ -6,6 +6,7 @@ import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import { deepCopy } from './utilities/object';
+import { SET_BACKGROUND_COLOR, OPEN_FILE } from '../index';
 
 const initialState = {
     shapes: {
@@ -20,12 +21,43 @@ const initialState = {
     editInProgress: false,
     canvasHeight: 850,
     canvasWidth: 1000,
+    canvasFill: 'white',
     scale: 1,
     panX: 0,
     panY: 0,
     past: [],
     future: []
 };
+
+function setBackgroundColor(stateCopy, action) {
+    const { color } = action.payload;
+    stateCopy.canvasFill = color;
+    return stateCopy;
+
+}
+
+function openFile(stateCopy, action) {
+    var newState = JSON.parse(action.payload.data);
+    console.log(newState);
+    var newDrawingState = newState.drawingState;
+    stateCopy.shapes = newDrawingState.shapes;
+    stateCopy.selected = newDrawingState.selected;
+    stateCopy.boundingBoxes = newDrawingState.boundingBoxes;
+    stateCopy.selectionBoxes = newDrawingState.selectionBoxes;
+    stateCopy.marqueeBox = newDrawingState.marqueeBox;
+    stateCopy.lastSavedShapes = newDrawingState.lastSavedShapes;
+    stateCopy.editInProgress = newDrawingState.editInProgress;
+    stateCopy.canvasHeight = newDrawingState.canvasHeight;
+    stateCopy.canvasWidth = newDrawingState.canvasWidth;
+    stateCopy.canvasFill = newDrawingState.canvasFill;
+    stateCopy.scale = newDrawingState.scale;
+    stateCopy.panX = newDrawingState.panX;
+    stateCopy.panY = newDrawingState.panY;
+    stateCopy.past = newDrawingState.past;
+    stateCopy.future = newDrawingState.future;
+
+    return stateCopy;
+}
 
 function drawingState(state = initialState, action, root) {
     const stateCopy = deepCopy(state);
@@ -110,6 +142,10 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
+        case SET_BACKGROUND_COLOR:
+            return setBackgroundColor(stateCopy, action);
+        case OPEN_FILE:
+            return openFile(stateCopy, action);
         default: break;
     }
 

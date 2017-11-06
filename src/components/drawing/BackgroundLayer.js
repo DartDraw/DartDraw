@@ -23,9 +23,9 @@ class BackgroundLayer extends Component {
         });
     }
 
-    componentWillUpdate() {
-        this.props.fill = this.handleCanvasColorChange();
-    }
+    // componentWillUpdate() {
+    //     this.props.fill = this.handleCanvasColorChange();
+    // }
 
     render() {
         const { width, height, fill } = this.props;

@@ -24,11 +24,11 @@ window.require('electron').remote.globalShortcut.register('CommandOrControl+Y', 
 // const backgroundColor = '#ffffff';
 
 const mapStateToProps = ({ drawingState }) => {
-    const { canvasWidth, canvasHeight } = drawingState;
+    const { canvasWidth, canvasHeight, canvasFill } = drawingState;
     return {
         width: canvasWidth,
         height: canvasHeight,
-        fill: 'white'
+        fill: canvasFill
     };
 };
 
