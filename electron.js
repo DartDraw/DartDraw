@@ -105,13 +105,23 @@ if (process.platform === 'darwin') {
         {role: 'front'}
     ];
 }
+
+let canvasColor = '#ffffff';
 const canvasItem = new MenuItem(
     {label: 'Canvas',
         submenu: [
             {label: 'Background Color',
                 submenu: [
-                    {label: 'Black'},
-                    {label: 'White'},
+                    {label: 'Black',
+                        click() {
+                            canvasColor = '#000000';
+                            console.log('black');
+                        }},
+                    {label: 'White',
+                        click() {
+                            canvasColor = '#ffffff';
+                            console.log('white');
+                        }},
                     {type: 'separator'},
                     {label: 'Custom...'}
                 ]},
@@ -131,7 +141,7 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:3000');
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
@@ -142,9 +152,12 @@ function createWindow() {
     });
 
     const menu = Menu.buildFromTemplate(template);
-    menu.insert(3, canvasItem);
+    menu.insert(2, canvasItem);
     console.log({menu});
     Menu.setApplicationMenu(menu);
+    mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.send('canvasColorChange', canvasColor);
+    });
 }
 
 // This method will be called when Electron has finished
