@@ -5,6 +5,7 @@ import { Rectangle, Handle } from '.';
 class SelectionLayer extends Component {
     static propTypes = {
         selectionBoxes: PropTypes.array,
+        marqueeBox: PropTypes.object,
         scale: PropTypes.number,
         propagateEvents: PropTypes.bool,
         onHandleDragStart: PropTypes.func,
@@ -81,10 +82,29 @@ class SelectionLayer extends Component {
         });
     }
 
+    renderMarqueeBox() {
+        const { propagateEvents, marqueeBox } = this.props;
+        if (marqueeBox != null) {
+            return (
+                <g key={marqueeBox.id}>
+                    <Rectangle
+                        x={marqueeBox.x}
+                        y={marqueeBox.y}
+                        width={marqueeBox.width}
+                        height={marqueeBox.height}
+                        {...marqueeBox}
+                        propagateEvents={propagateEvents}
+                    />
+                </g>
+            );
+        }
+    }
+
     render() {
         return (
             <g>
                 {this.renderSelectionBoxes()}
+                {this.renderMarqueeBox()}
             </g>
         );
     }

@@ -20,6 +20,25 @@ export function addRectangle(shapes, action, fill, panX, panY, scale) {
     return shapes;
 }
 
+export function addEllipse(shapes, action, fill, panX, panY, scale) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+    const ellipse = {
+        id: uuidv1(),
+        type: 'ellipse',
+        cx: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        cy: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        rx: 0.5,
+        ry: 0.5,
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+    };
+
+    shapes.byId[ellipse.id] = ellipse;
+    shapes.allIds.push(ellipse.id);
+    return shapes;
+}
+
 export function addLine(shapes, action, fill, panX, panY, scale) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
@@ -96,6 +115,22 @@ export function formatColor(rgba) {
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
 
+export function bringToFront(shapes, selected) {
+    for (let i = 0; i < selected.length; i++) {
+        shapes.allIds.splice(shapes.allIds.indexOf(selected[i]), 1);
+        shapes.allIds.push(selected[i]);
+    }
+    return shapes;
+}
+
+export function sendToBack(shapes, selected) {
+    for (let i = 0; i < selected.length; i++) {
+        shapes.allIds.splice(shapes.allIds.indexOf(selected[i]), 1);
+        shapes.allIds = [selected[i]].concat(shapes.allIds);
+    }
+    return shapes;
+}
+
 export function changeZIndex(shapes, selected, change) {
     if (change > 0) {
         for (let i = shapes.allIds.length - 1; i >= 0; i--) {
@@ -165,7 +200,6 @@ export function ungroupShapes(selected, shapes) {
 
 function applyTransformation(shape, group) {
     shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
-
     return shape;
 }
 
@@ -176,75 +210,6 @@ export function deleteShapes(shapes, selected) {
         }
         delete shapes.byId[id];
         shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
-    });
-    return shapes;
-}
-
-export function resizeShape2(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
-    const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
-
-    selected.map((id) => {
-        const shape = shapes.byId[id];
-        const shapeMatrix = shape.transform[0].parameters;
-        const boundingBox = boundingBoxes[id];
-
-        let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
-        transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
-        transformedShape.height = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix).y - transformedShape.y;
-
-        let originalWidth = transformedShape.width;
-        let originalHeight = transformedShape.height;
-        let cx = transformedShape.x;
-        let cy = transformedShape.y;
-        let sx = 0;
-        let sy = 0;
-
-        switch (handleIndex) {
-            case 0:
-                transformedShape.width += scaledDeltaX;
-                transformedShape.height -= scaledDeltaY;
-                let cxCoords = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
-                cx = cxCoords.x;
-                cy = cxCoords.y;
-                break;
-            case 1:
-                transformedShape.width += scaledDeltaX;
-                transformedShape.height += scaledDeltaY;
-                break;
-            case 2:
-                transformedShape.width -= scaledDeltaX;
-                transformedShape.height += scaledDeltaY;
-                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
-                cx = cxCoords.x;
-                cy = cxCoords.y;
-                break;
-            case 3:
-                transformedShape.width -= scaledDeltaX;
-                transformedShape.height -= scaledDeltaY;
-                cxCoords = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
-                cx = cxCoords.x;
-                cy = cxCoords.y;
-                break;
-            default:
-                break;
-        }
-
-        sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
-        sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
-
-        if (sx === 0) sx = 0.001; // never zero out
-        if (sy === 0) sy = 0.001; // never zero out
-
-        let decomposed = decomposeMatrix(shapeMatrix);
-        if (decomposed.skewX !== 0) {
-            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewX * Math.PI / 180, cx, cy);
-            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewX * Math.PI / 180, cx, cy);
-        } else {
-            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-        }
     });
     return shapes;
 }
@@ -347,6 +312,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
     });
+
     return shapes;
 }
 

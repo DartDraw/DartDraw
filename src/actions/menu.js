@@ -7,8 +7,11 @@ export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const ZOOM_IN = 'ZOOM_IN';
 export const ZOOM_OUT = 'ZOOM_OUT';
+export const CUSTOM_ZOOM = 'CUSTOM_ZOOM';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
+export const MOVE_BACKWARD = 'MOVE_BACKWARD';
+export const MOVE_FORWARD = 'MOVE_FORWARD';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 
@@ -48,12 +51,24 @@ export function zoomOut() {
     return { type: ZOOM_OUT };
 }
 
+export function customZoom(customScale) {
+    return { type: CUSTOM_ZOOM, payload: { customScale } };
+}
+
 export function groupButtonClick() {
     return { type: GROUP_BUTTON_CLICK };
 }
 
 export function ungroupButtonClick() {
     return { type: UNGROUP_BUTTON_CLICK };
+}
+
+export function moveBackward() {
+    return { type: MOVE_BACKWARD };
+}
+
+export function moveForward() {
+    return { type: MOVE_FORWARD };
 }
 
 export function sendToBack() {

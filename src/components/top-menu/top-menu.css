@@ -21,13 +21,12 @@ button img:hover {
 
 #button-icon {
   filter: grayscale(100%);
+  
+  /*just temporary!*/
+  font-size: 20px;
+  color: #9e9ca3;
 }
 
 #color-palette {
   margin-left: 40px;
-}
-
-#temp {
-  font-size: 20px;
-  color: #9e9ca3;
 }

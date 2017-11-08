@@ -6,8 +6,11 @@ import {
     selectColor,
     zoomIn,
     zoomOut,
+    customZoom,
     groupButtonClick,
     ungroupButtonClick,
+    moveBackward,
+    moveForward,
     sendToBack,
     bringToFront
 } from './../../actions/menu';
@@ -32,6 +35,12 @@ const mapDispatchToProps = (dispatch) => {
         onUngroupClick: () => {
             dispatch(ungroupButtonClick());
         },
+        onMoveBackward: () => {
+            dispatch(moveBackward());
+        },
+        onMoveForward: () => {
+            dispatch(moveForward());
+        },
         onSendToBack: () => {
             dispatch(sendToBack());
         },
@@ -46,6 +55,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onZoomOut: () => {
             dispatch(zoomOut());
+        },
+        onCustomZoom: (customScale) => {
+            dispatch(customZoom(customScale));
         }
     };
 };
