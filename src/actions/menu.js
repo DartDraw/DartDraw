@@ -14,6 +14,8 @@ export const MOVE_BACKWARD = 'MOVE_BACKWARD';
 export const MOVE_FORWARD = 'MOVE_FORWARD';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
+export const SET_GRID = 'SET_GRID';
+export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
@@ -77,4 +79,12 @@ export function sendToBack() {
 
 export function bringToFront() {
     return { type: BRING_FRONT };
+}
+
+export function setGrid(unitType, majorGrid, minorGrid) {
+    return { type: SET_GRID, payload: { unitType, majorGrid, minorGrid } };
+}
+
+export function toggleGridSnapping() {
+    return { type: TOGGLE_GRID_SNAPPING };
 }
