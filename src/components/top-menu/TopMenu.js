@@ -19,6 +19,7 @@ class TopMenu extends Component {
         onSendToBack: PropTypes.func,
         onBringToFront: PropTypes.func,
         onCustomZoom: PropTypes.func,
+        onToggleGridSnapping: PropTypes.func,
         scale: PropTypes.number
     };
 
@@ -40,6 +41,7 @@ class TopMenu extends Component {
         this.handleBringToFront = this.handleBringToFront.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
     }
 
     handleUndoClick() {
@@ -95,6 +97,10 @@ class TopMenu extends Component {
         event.preventDefault();
     }
 
+    handleToggleGridSnapping(event) {
+        this.props.onToggleGridSnapping();
+    }
+
     render() {
         const { scale } = this.props;
         return (
@@ -123,6 +129,7 @@ class TopMenu extends Component {
                 <button onClick={this.handleBringToFront}>
                     <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
                 </button>
+                <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
                 <div id="color-palette">
                     <CirclePicker onChangeComplete={this.handleChangeComplete} colors={currentPalette} circleSize={20} circleSpacing={5} width='450px' />
                 </div>
