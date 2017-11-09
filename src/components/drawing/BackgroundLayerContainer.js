@@ -6,7 +6,7 @@ const mapStateToProps = ({ drawingState }) => {
     return {
         width: canvasWidth,
         height: canvasHeight,
-        fill: 'black'
+        fill: 'white'
     };
 };
 

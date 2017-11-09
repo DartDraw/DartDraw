@@ -99,6 +99,13 @@ export function handleDragStop(stateCopy, action, root) {
     return stateCopy;
 }
 
+export function textInputChange(stateCopy, action, root) {
+    const { shapeId, value } = action.payload;
+    stateCopy.textInputs[shapeId].value = value;
+    stateCopy.shapes.byId[shapeId].text = value;
+    return stateCopy;
+}
+
 export function setColor(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     stateCopy.shapes = fillShape(stateCopy.shapes, stateCopy.selected, action);

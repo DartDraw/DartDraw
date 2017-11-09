@@ -1,5 +1,5 @@
-import { addRectangle, addEllipse, addLine, removeShape, resizeShape, moveLineAnchor } from '../utilities/shapes';
-import { selectShape, updateSelectionBoxes } from '../utilities/selection';
+import { addRectangle, addEllipse, addLine, addText, removeShape, resizeShape, moveLineAnchor } from '../utilities/shapes';
+import { selectShape, updateSelectionBoxes, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
@@ -23,6 +23,12 @@ export function dragStart(stateCopy, action, root) {
 
         case "lineTool":
             stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
+            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            break;
+        case "textTool":
+            stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -101,5 +107,6 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     const { boundingBoxes } = action.payload;
     stateCopy.boundingBoxes = boundingBoxes;
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes);
+    stateCopy.textInputs = updateTextInputs(stateCopy.selected, stateCopy.shapes, stateCopy.textInputs);
     return stateCopy;
 }

@@ -6,11 +6,13 @@ import {
     BackgroundLayerContainer,
     GridLayerContainer,
     SelectionLayerContainer,
+    TextInputLayerContainer,
     Group,
     Rectangle,
     Ellipse,
     Path,
-    Line
+    Line,
+    Text
 } from '.';
 
 class Canvas extends Component {
@@ -126,6 +128,16 @@ class Canvas extends Component {
 
     renderShape(shape) {
         const { propagateEvents } = this.props;
+        const shapeProps = {
+            ...shape,
+            key: shape.id,
+            onDragStart: this.handleShapeDragStart,
+            onDrag: this.handleShapeDrag,
+            onDragStop: this.handleShapeDragStop,
+            onClick: this.handleShapeClick,
+            propagateEvents: propagateEvents
+        };
+
         switch (shape.type) {
             case 'group':
                 const groupMembers = shape.members.map((shape) => {
@@ -145,53 +157,15 @@ class Canvas extends Component {
                     </Group>
                 );
             case 'rectangle':
-                return (
-                    <Rectangle
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Rectangle {...shapeProps} />;
             case 'ellipse':
-                return (
-                    <Ellipse
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Ellipse {...shapeProps} />;
             case 'path':
-                return (
-                    <Path
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Path {...shapeProps} />;
             case 'line':
-                return (
-                    <Line
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Line {...shapeProps} />;
+            case 'text':
+                return <Text {...shapeProps} />;
             default:
                 break;
         }
@@ -226,6 +200,7 @@ class Canvas extends Component {
                         <SelectionLayerContainer />
                     </svg>
                 </Draggable>
+                <TextInputLayerContainer />
             </div>
         );
     }

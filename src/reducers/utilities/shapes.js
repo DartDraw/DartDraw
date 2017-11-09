@@ -60,6 +60,24 @@ export function addLine(shapes, action, fill, panX, panY, scale) {
     return shapes;
 }
 
+export function addText(shapes, action, fill, panX, panY, scale) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const text = {
+        id: uuidv1(),
+        type: 'text',
+        text: '',
+        x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+    };
+
+    shapes.byId[text.id] = text;
+    shapes.allIds.push(text.id);
+    return shapes;
+}
+
 export function moveLineAnchor(shapes, selected, draggableData, scale) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
