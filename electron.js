@@ -27,27 +27,20 @@ const template = [
             {role: 'delete'},
             {role: 'selectall'},
             {
-                label: 'save', 
+                label: 'Save', 
                 click() {
                     dialog.showSaveDialog(function (filename) {
                         mainWindow.send('file-save', 'writing to file');
                         ipcMain.on('file-save', (event, stateString) => {
                             console.log(stateString)
-                            fs.writeFile(filename, stateString, (err) => {
-                                if(err){
-                                    mainWindow.send('alert', 'An error ocurred creating the file '+ err.message);
-                                }
-                                            
-                                mainWindow.send('alert', 'The file has been succesfully saved');
-                            });
+                            fs.writeFile(filename, stateString);
                         });
                     });
                 }
             },
             {
-                label: 'open', 
+                label: 'Open', 
                 click() {
-                    console.log('opening file');
                     dialog.showOpenDialog(function (filenames) {
                         mainWindow.send('file-open', filenames[0]);
                     });
