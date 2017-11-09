@@ -23,6 +23,32 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
     return selected;
 }
 
+export function updateTextInputs(selected, shapes, textInputs) {
+    const updatedTextInputs = {};
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        if (shape.type === 'text') {
+            const textInput = textInputs[id];
+            if (textInput) {
+                textInput.x = shape.x;
+                textInput.y = shape.y;
+                textInput.value = shape.text;
+                updatedTextInputs[id] = textInput;
+            } else {
+                updatedTextInputs[id] = {
+                    id: uuidv1(),
+                    shapeId: id,
+                    x: shape.x,
+                    y: shape.y,
+                    value: shape.text
+                };
+            }
+        }
+    });
+
+    return updatedTextInputs;
+}
+
 export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingBoxes) {
     const updatedSelectionBoxes = {};
     selected.map((id) => {

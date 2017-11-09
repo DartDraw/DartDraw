@@ -6,6 +6,7 @@ import {
     BackgroundLayerContainer,
     GridLayerContainer,
     SelectionLayerContainer,
+    TextInputLayerContainer,
     Group,
     Rectangle,
     Ellipse,
@@ -199,6 +200,7 @@ class Canvas extends Component {
                         <SelectionLayerContainer />
                     </svg>
                 </Draggable>
+                <TextInputLayerContainer />
             </div>
         );
     }
