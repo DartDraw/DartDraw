@@ -103,3 +103,9 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes);
     return stateCopy;
 }
+
+export function canvasColorChange(stateCopy, action, root) {
+    const { color } = action.payload;
+    stateCopy.canvasFill = color;
+    return stateCopy;
+}

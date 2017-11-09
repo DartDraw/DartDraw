@@ -151,8 +151,7 @@ const canvasItem = new MenuItem(
                     {label: 'Black',
                         click() {
                             canvasColor = '#000000';
-                            console.log('black');
-                            mainWindow.send('async', 'black');
+                            mainWindow.send('canvasColorChange', 'black');
                             
                             // testWin = new BrowserWindow({width: 800, height: 600});
                             // testWin.focus();
@@ -181,8 +180,7 @@ const canvasItem = new MenuItem(
                     {label: 'White',
                         click() {
                             canvasColor = '#ffffff';
-                            console.log('white');
-                            mainWindow.send('async', 'white');
+                            mainWindow.send('canvasColorChange', 'white');
                             // console.log('white');
                             // var secondaryWindow = new BrowserWindow({width: 800, height: 600});
                             // secondaryWindow.focus();
@@ -211,44 +209,10 @@ const canvasItem = new MenuItem(
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-let secondaryWindow;
-
-function createSecondaryWindow() {
-    // Create the browser window.
-    secondaryWindow = new BrowserWindow({width: 800, height: 600});
-    secondaryWindow.focus();
-
-    // and load the index.html of the app.
-    secondaryWindow.loadURL('http://localhost:3000');
-
-    // Open the DevTools.
-    // secondaryWindow.webContents.openDevTools();
-
-    // Emitted when the window is closed.
-    secondaryWindow.on('closed', function() {
-        // Dereference the window object, usually you would store windows
-        // in an array if your app supports multi windows, this is the time
-        // when you should delete the corresponding element.
-        secondaryWindow = null;
-    });
-
-    // const menu = Menu.buildFromTemplate(template);
-    // menu.insert(2, canvasItem);
-    // console.log({menu});
-    // Menu.setApplicationMenu(menu);
-    // mainWindow.webContents.on('did-finish-load', () => {
-    //     mainWindow.webContents.send('canvasColorChange', canvasColor);
-    // });
-    secondaryWindow.once('ready-to-show', () => {
-        mainWindow.webContents.send('loaded-from-file', 'wahoo!');
-    });
-}
-
 function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({width: 800, height: 600});
     mainWindow.focus();
-    console.log('Entered createWindow');
 
     // and load the index.html of the app.
     mainWindow.loadURL('http://localhost:3000');
@@ -268,9 +232,9 @@ function createWindow() {
     menu.insert(2, canvasItem);
     // console.log({menu});
     Menu.setApplicationMenu(menu);
-    mainWindow.webContents.on('did-finish-load', () => {
-        mainWindow.webContents.send('canvasColorChange', canvasColor);
-    });
+    // mainWindow.webContents.on('did-finish-load', () => {
+    //     mainWindow.webContents.send('canvasColorChange', canvasColor);
+    // });
 }
 
 // This method will be called when Electron has finished

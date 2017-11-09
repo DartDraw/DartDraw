@@ -13,6 +13,7 @@ export const HANDLE_DRAG_START = 'HANDLE_DRAG_START';
 export const HANDLE_DRAG = 'HANDLE_DRAG';
 export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
 export const UPDATE_BOUNDING_BOXES = 'UPDATE_BOUNDING_BOXES';
+export const CANVAS_COLOR_CHANGE = 'CANVAS_COLOR_CHANGE';
 
 export function canvasDrag(draggableData) {
     return { type: CANVAS_DRAG, payload: { draggableData } };
@@ -72,4 +73,8 @@ export function handleDragStop(shapeId, handleIndex, draggableData) {
 
 export function updateBoundingBoxes(boundingBoxes) {
     return { type: UPDATE_BOUNDING_BOXES, payload: { boundingBoxes } };
+}
+
+export function canvasColorChange(color) {
+    return { type: CANVAS_COLOR_CHANGE, payload: { color } };
 }

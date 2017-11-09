@@ -6,7 +6,6 @@ import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import { deepCopy } from './utilities/object';
-import { SET_BACKGROUND_COLOR, OPEN_FILE } from '../index';
 
 const initialState = {
     shapes: {
@@ -101,6 +100,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
+        case canvasActions.CANVAS_COLOR_CHANGE:
+            console.log(action.payload);
+            updatedState = canvas.canvasColorChange(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -142,10 +144,6 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case SET_BACKGROUND_COLOR:
-            return setBackgroundColor(stateCopy, action);
-        case OPEN_FILE:
-            return openFile(stateCopy, action);
         default: break;
     }
 

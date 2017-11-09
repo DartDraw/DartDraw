@@ -1,11 +1,6 @@
 import { connect } from 'react-redux';
 import BackgroundLayer from './BackgroundLayer';
-
-// console.log(window.require('electron').menu[3]);
-window.require('electron').remote.globalShortcut.register('CommandOrControl+Y', () => {
-    // Do stuff when Y and either Command/Control is pressed.
-    console.log("pressed y");
-});
+import { canvasColorChange } from './../../actions/canvas';
 
 // const {remote} = window.require('electron');
 // const {MenuItem} = remote;
@@ -32,6 +27,15 @@ const mapStateToProps = ({ drawingState }) => {
     };
 };
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onCanvasColorChange: (color) => {
+            dispatch(canvasColorChange(color));
+        }
+    };
+};
+
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(BackgroundLayer);
