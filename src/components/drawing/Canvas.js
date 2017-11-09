@@ -56,17 +56,6 @@ class Canvas extends Component {
         this.handleGroupClick = this.handleGroupClick.bind(this);
     }
 
-    // componentDidMount() {
-    //     console.log('inside componentDidMount');
-    //     const {ipcRenderer} = window.require('electron');
-    //         ipcRenderer.on('loaded-from-file', (event, arg) => {
-    //             // const stateCopy = deepCopy(store.getState());
-    //             // store.dispatch(setStateFromLoad(stateCopy, arg));
-    //             console.log(arg);
-    //             // event.sender.send('loaded-from-file', "hello from your new renderer process!");
-    //     });
-    // }
-
     componentDidUpdate(prevProps) {
         const { onBoundingBoxUpdate, shapes, selected } = this.props;
         const selectedHasChanged = JSON.stringify(selected) !== JSON.stringify(prevProps.selected);

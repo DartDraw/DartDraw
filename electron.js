@@ -1,19 +1,13 @@
 const electron = require('electron');
+const { app, Menu, MenuItem, BrowserWindow, dialog, ipcMain} = require('electron');
 
-// Module to control application life.
-// const app = require('app');
-const { app, Menu, MenuItem, ipcMain } = require('electron');
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-
-const dialog = electron.dialog;
+// Module to create handle file management
 const fs = require('fs');
 
-
-let ready = false;
-ipcMain.on('async', (event, arg) => {
-    ready = arg;
-});
+// Module to handle window management
+const windowManager = require('electron-window-manager');
+var numWindows = 0;
+var windowNameStart = 'Window #';
 
 const template = [
     {
@@ -41,9 +35,25 @@ const template = [
             {
                 label: 'Open', 
                 click() {
-                    dialog.showOpenDialog(function (filenames) {
-                        mainWindow.send('file-open', filenames[0]);
-                    });
+                    console.log('opening file');
+                    // dialog.showOpenDialog(function (filenames) {
+                    //     if (filenames[0] === null) {
+                    //         return;
+                    //     } else{
+                    //         for (filename in filenames) {
+                                
+                    //         }
+                    //     }
+
+                        
+                    //     mainWindow.send('file-open', filenames[0]);
+                    // });
+                }
+            },
+            {
+                label: 'New', 
+                click() {
+                    createWindow();
                 }
             }
         ]
@@ -95,8 +105,6 @@ const template = [
 ];
 
 if (process.platform === 'darwin') {
-    // console.log("TEST");
-    // console.log(template);
     template.unshift({
         label: app.getName(),
         submenu: [
@@ -144,7 +152,7 @@ const canvasItem = new MenuItem(
                     {label: 'Black',
                         click() {
                             canvasColor = '#000000';
-                            mainWindow.send('canvasColorChange', 'black');
+                            windowManager.getCurrent().object.send('canvasColorChange', 'black');
                             
                             // testWin = new BrowserWindow({width: 800, height: 600});
                             // testWin.focus();
@@ -173,7 +181,7 @@ const canvasItem = new MenuItem(
                     {label: 'White',
                         click() {
                             canvasColor = '#ffffff';
-                            mainWindow.send('canvasColorChange', 'white');
+                            windowManager.getCurrent().object.send('canvasColorChange', 'white');
                             // console.log('white');
                             // var secondaryWindow = new BrowserWindow({width: 800, height: 600});
                             // secondaryWindow.focus();
@@ -198,42 +206,37 @@ const canvasItem = new MenuItem(
             {label: 'Resize Canvas'}
         ]}
 );
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600});
-    mainWindow.focus();
-
+    numWindows++;
+    var windowName = windowNameStart.concat(String(numWindows));
+    var newWindow = windowManager.createNew(windowName, windowName, 'http://localhost:3000', {width: 800, height: 600}, null, true);
+    
+    newWindow.open();
+    newWindow.focus();
+   
     // and load the index.html of the app.
-    mainWindow.loadURL('http://localhost:3000');
-
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    newWindow.loadURL('http://localhost:3000');
 
     // Emitted when the window is closed.
-    mainWindow.on('closed', function() {
+    newWindow.object.on('closed', function() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        mainWindow = null;
+        newWindow = null;
     });
-
-    const menu = Menu.buildFromTemplate(template);
-    menu.insert(2, canvasItem);
-    // console.log({menu});
-    Menu.setApplicationMenu(menu);
-    // mainWindow.webContents.on('did-finish-load', () => {
-    //     mainWindow.webContents.send('canvasColorChange', canvasColor);
-    // });
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', function() {
+    createWindow();
+    const menu = Menu.buildFromTemplate(template);
+    menu.insert(2, canvasItem);
+    Menu.setApplicationMenu(menu);
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -247,7 +250,7 @@ app.on('window-all-closed', function() {
 app.on('activate', function() {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) {
+    if (windowManager.windows[0] === null) {
         createWindow();
     }
 });
