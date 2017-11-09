@@ -30,7 +30,7 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("selectTool")}>
                         <img src="./assets/cursor.svg" alt="select" id="button-icon" />
                     </button>
-                    <button onClick={() => this.handleToolSelect("textTool")}>
+                    <button onClick={() => this.handleToolSelect("rectangleTool")}>
                         <img src="./assets/frame.svg" alt="rect" id="button-icon" />
                     </button>
                     <button onClick={() => this.handleToolSelect("lineTool")}>
@@ -50,6 +50,9 @@ class LeftMenu extends Component {
                     </button>
                     <button onClick={() => this.handleToolSelect("zoomTool")}>
                         <img src="./assets/marquee-zoom.svg" alt="marquee zoom" id="button-icon" />
+                    </button>
+                    <button onClick={() => this.handleToolSelect("textTool")}>
+                        <img src="./assets/frame.svg" alt="rect" id="button-icon" />
                     </button>
                 </div>
             </div>
