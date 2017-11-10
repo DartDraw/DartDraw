@@ -48,6 +48,8 @@ export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     switch (root.menuState.toolType) {
         case "rectangleTool":
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.scale);
+            break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.scale);
             break;
@@ -70,10 +72,26 @@ export function drag(stateCopy, action, root) {
 export function dragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "rectangleTool":
+            let shapeIds = stateCopy.shapes.allIds;
+            let addedShapeId = shapeIds[shapeIds.length - 1];
+
+            // determine new shape width + height
+            let shape = stateCopy.shapes.byId[addedShapeId];
+            let transformedShape = {};
+            transformedShape.width = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters).x - shape.x;
+            transformedShape.height = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters).y - shape.y;
+
+            // remove if <= 1
+            if (Math.abs(transformedShape.width) <= 1 ||
+                Math.abs(transformedShape.height) <= 1) {
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
+            }
+            stateCopy.selected = [];
+            break;
         case "ellipseTool":
         case "lineTool":
-            const shapeIds = stateCopy.shapes.allIds;
-            const addedShapeId = shapeIds[shapeIds.length - 1];
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
             const addedShape = stateCopy.shapes.byId[addedShapeId];
             const addedShapeBoundingBox = stateCopy.boundingBoxes[addedShapeId];
             const { x, y, width, height } = addedShapeBoundingBox;

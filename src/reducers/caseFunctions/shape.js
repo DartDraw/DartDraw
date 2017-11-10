@@ -1,4 +1,5 @@
 import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
+
 import { selectShape } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
