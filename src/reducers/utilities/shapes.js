@@ -219,6 +219,9 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
+    const mouseX = draggableData.x - 45; // hard coded - how calculate offset?
+    const mouseY = draggableData.y - 33; // hard coded - how calculate offset?
+
     selected.map((id) => {
         const shape = shapes.byId[id];
         const shapeMatrix = shape.transform[0].parameters;
@@ -229,12 +232,10 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
         const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-        let transformedShape = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
-        transformedShape.width = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix).x - transformedShape.x;
-        transformedShape.height = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix).y - transformedShape.y;
-
-        let originalWidth = transformedShape.width;
-        let originalHeight = transformedShape.height;
+        let newWidth = 0;
+        let newHeight = 0;
+        let originalWidth = 0;
+        let originalHeight = 0;
         let sx = 0;
         let sy = 0;
 
@@ -242,51 +243,102 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         switch (handleIndex) {
             case 0:
-                let scaleX = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
-                let scaleY = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
+                let len03 = Math.sqrt((coords3.x - coords0.x) ** 2 + (coords3.y - coords0.y) ** 2);
+                let len01 = Math.sqrt((coords1.x - coords0.x) ** 2 + (coords1.y - coords0.y) ** 2);
 
-                if (scaledDeltaX < 0) scaleX *= -1;
-                if (scaledDeltaY < 0) scaleY *= -1;
+                originalWidth = len03;
+                originalHeight = len01;
 
-                transformedShape.width += scaleX;
-                transformedShape.height -= scaleY;
+                let scale03 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
+                let scale01 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
+
+                let distMouse03 = Math.sqrt((mouseX - coords3.x) ** 2 + (mouseY - coords3.y) ** 2);
+                let distMouse01 = Math.sqrt((mouseX - coords1.x) ** 2 + (mouseY - coords1.y) ** 2);
+                let distMouse00 = Math.sqrt((mouseX - coords0.x) ** 2 + (mouseY - coords0.y) ** 2);
+
+                if (distMouse03 < len03 || distMouse00 > distMouse03) scale03 *= -1;
+                if (distMouse01 < len01 || distMouse00 > distMouse01) scale01 *= -1;
+
+                len03 += scale03;
+                len01 += scale01;
+
+                newWidth = len03;
+                newHeight = len01;
 
                 cxCoords = coords2;
                 break;
             case 1:
-                scaleX = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
-                scaleY = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
+                let len12 = Math.sqrt((coords2.x - coords1.x) ** 2 + (coords2.y - coords1.y) ** 2);
+                let len10 = Math.sqrt((coords0.x - coords1.x) ** 2 + (coords0.y - coords1.y) ** 2);
 
-                if (scaledDeltaX < 0) scaleX *= -1;
-                if (scaledDeltaY < 0) scaleY *= -1;
+                originalWidth = len12;
+                originalHeight = len10;
 
-                transformedShape.width += scaleX;
-                transformedShape.height += scaleY;
+                let scale12 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
+                let scale10 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
+
+                let distMouse12 = Math.sqrt((mouseX - coords2.x) ** 2 + (mouseY - coords2.y) ** 2);
+                let distMouse10 = Math.sqrt((mouseX - coords0.x) ** 2 + (mouseY - coords0.y) ** 2);
+                let distMouse11 = Math.sqrt((mouseX - coords1.x) ** 2 + (mouseY - coords1.y) ** 2);
+
+                if (distMouse12 < len12 || distMouse11 > distMouse12) scale12 *= -1;
+                if (distMouse10 < len10 || distMouse11 > distMouse10) scale10 *= -1;
+
+                len12 += scale12;
+                len10 += scale10;
+
+                newWidth = len12;
+                newHeight = len10;
 
                 cxCoords = coords3;
                 break;
             case 2:
-                scaleX = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
-                scaleY = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
+                let len21 = Math.sqrt((coords1.x - coords2.x) ** 2 + (coords1.y - coords2.y) ** 2);
+                let len23 = Math.sqrt((coords3.x - coords2.x) ** 2 + (coords3.y - coords2.y) ** 2);
 
-                if (scaledDeltaX < 0) scaleX *= -1;
-                if (scaledDeltaY < 0) scaleY *= -1;
+                originalWidth = len21;
+                originalHeight = len23;
 
-                transformedShape.width -= scaleX;
-                transformedShape.height += scaleY;
+                let scale21 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
+                let scale23 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
+
+                let distMouse21 = Math.sqrt((mouseX - coords1.x) ** 2 + (mouseY - coords1.y) ** 2);
+                let distMouse23 = Math.sqrt((mouseX - coords3.x) ** 2 + (mouseY - coords3.y) ** 2);
+                let distMouse22 = Math.sqrt((mouseX - coords2.x) ** 2 + (mouseY - coords2.y) ** 2);
+
+                if (distMouse21 < len21 || distMouse22 > distMouse21) scale21 *= -1;
+                if (distMouse23 < len23 || distMouse22 > distMouse23) scale23 *= -1;
+
+                len21 += scale21;
+                len23 += scale23;
+
+                newWidth = len21;
+                newHeight = len23;
 
                 cxCoords = coords0;
                 break;
             case 3:
+                let len30 = Math.sqrt((coords0.x - coords3.x) ** 2 + (coords0.y - coords3.y) ** 2);
+                let len32 = Math.sqrt((coords2.x - coords3.x) ** 2 + (coords2.y - coords3.y) ** 2);
 
-                scaleX = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
-                scaleY = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
+                originalWidth = len30;
+                originalHeight = len32;
 
-                if (scaledDeltaX < 0) scaleX *= -1;
-                if (scaledDeltaY < 0) scaleY *= -1;
+                let scale30 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
+                let scale32 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
 
-                transformedShape.width -= scaleX;
-                transformedShape.height -= scaleY;
+                let distMouse30 = Math.sqrt((mouseX - coords0.x) ** 2 + (mouseY - coords0.y) ** 2);
+                let distMouse32 = Math.sqrt((mouseX - coords2.x) ** 2 + (mouseY - coords2.y) ** 2);
+                let distMouse33 = Math.sqrt((mouseX - coords3.x) ** 2 + (mouseY - coords3.y) ** 2);
+
+                if (distMouse30 < len30 || distMouse33 > distMouse30) scale30 *= -1;
+                if (distMouse32 < len32 || distMouse33 > distMouse32) scale32 *= -1;
+
+                len30 += scale30;
+                len32 += scale32;
+
+                newWidth = len30;
+                newHeight = len32;
 
                 cxCoords = coords1;
                 break;
@@ -297,17 +349,18 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let cx = cxCoords.x;
         let cy = cxCoords.y;
 
-        sx = originalWidth !== 0 ? transformedShape.width / originalWidth : 0;
-        sy = originalHeight !== 0 ? transformedShape.height / originalHeight : 0;
+        sx = originalWidth !== 0 ? newWidth / originalWidth : 0;
+        sy = originalHeight !== 0 ? newHeight / originalHeight : 0;
 
         if (sx === 0) sx = 0.001; // never zero out
         if (sy === 0) sy = 0.001; // never zero out
 
         let decomposed = decomposeMatrix(shapeMatrix);
+
         if (decomposed.skewX !== 0) {
-            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewX * Math.PI / 180, cx, cy);
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewX * Math.PI / 180, cx, cy);
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewY, cx, cy);
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
@@ -327,7 +380,7 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale)
         return (scaleXY);
     }
     const mouseX = draggableData.x - 45; // hard coded - how calculate offset?
-    const mouseY = draggableData.y - 42.28125; // hard coded - how calculate offset?
+    const mouseY = draggableData.y - 33; // hard coded - how calculate offset?
 
     const shapeMatrix = shape.transform[0].parameters;
     const boundingBox = boundingBoxes[shape.id];
@@ -434,7 +487,8 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData, hand
         let v2x = newCoords.x - cx;
         let v2y = newCoords.y - cy;
 
-        let degree = Math.atan2(v1x, v1y) - Math.atan2(v2x, v2y);
+        let degree = Math.atan2(v2y, v2x) - Math.atan2(v1y, v1x);
+
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
     });
     return shapes;
@@ -465,8 +519,8 @@ function decomposeMatrix(matrix) {
     var py = deltaTransformPoint(matrix, { x: 1, y: 0 });
 
     // calculate skew
-    var skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
-    var skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+    var skewX = (Math.atan2(px.y, px.x) - 90 * (Math.PI / 180));
+    var skewY = (Math.atan2(py.y, py.x));
 
     return {
         px: px,
