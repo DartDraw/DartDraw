@@ -237,8 +237,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
-    const mouseX = draggableData.x - 45; // hard coded - how calculate offset?
-    const mouseY = draggableData.y - 33; // hard coded - how calculate offset?
+    const mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
+    const mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
 
     selected.map((id) => {
         const shape = shapes.byId[id];
@@ -397,8 +397,8 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale)
         };
         return (scaleXY);
     }
-    const mouseX = draggableData.x - 45; // hard coded - how calculate offset?
-    const mouseY = draggableData.y - 33; // hard coded - how calculate offset?
+    const mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
+    const mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
 
     const shapeMatrix = shape.transform[0].parameters;
     const boundingBox = boundingBoxes[shape.id];
