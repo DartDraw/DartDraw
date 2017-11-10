@@ -12,7 +12,8 @@ import {
     moveBackward,
     moveForward,
     sendToBack,
-    bringToFront
+    bringToFront,
+    toggleGridSnapping
 } from './../../actions/menu';
 
 const mapStateToProps = ({ drawingState }) => {
@@ -58,6 +59,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onCustomZoom: (customScale) => {
             dispatch(customZoom(customScale));
+        },
+        onToggleGridSnapping: () => {
+            dispatch(toggleGridSnapping());
         }
     };
 };
