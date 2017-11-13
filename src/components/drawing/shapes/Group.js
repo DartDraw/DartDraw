@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { formatTransform } from '../../utilities/shapes';
+import { formatTransform } from '../../../utilities/shapes';
 
 class Group extends Component {
     static propTypes = {

@@ -12,19 +12,32 @@ class TextInputLayer extends Component {
                 y: PropTypes.number
             })
         }),
-        onHandleTextInputChange: PropTypes.func
+        onHandleTextInputChange: PropTypes.func,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func
     };
 
     constructor(props) {
         super(props);
 
         this.handleTextInputChange = this.handleTextInputChange.bind(this);
+        this.handleFocus = this.handleFocus.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
     }
 
     handleTextInputChange(event) {
         const { onHandleTextInputChange } = this.props;
-
         onHandleTextInputChange(event.target.id, event.target.value);
+    }
+
+    handleFocus() {
+        const { onFocus } = this.props;
+        onFocus();
+    }
+
+    handleBlur() {
+        const { onBlur } = this.props;
+        onBlur();
     }
 
     renderInputs() {
@@ -33,16 +46,18 @@ class TextInputLayer extends Component {
         return Object.keys(textInputs).map(textInputId => {
             const textInput = textInputs[textInputId];
 
-            return (
+            return textInput.visible ? (
                 <input
                     key={textInput.id}
                     id={textInput.shapeId}
                     type="text"
                     value={textInput.value}
                     onChange={this.handleTextInputChange}
+                    onFocus={this.handleFocus}
+                    onBlur={this.handleBlur}
                     style={{position: 'absolute', top: textInput.y, left: textInput.x, pointerEvents: 'all'}}
                 />
-            );
+            ) : null;
         });
     }
 

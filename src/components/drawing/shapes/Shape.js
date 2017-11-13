@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Draggable } from '../shared';
+import { Draggable } from '../../shared';
 
 class Shape extends Component {
     static propTypes = {

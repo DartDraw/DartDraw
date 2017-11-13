@@ -24,29 +24,36 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
 }
 
 export function updateTextInputs(selected, shapes, textInputs) {
-    const updatedTextInputs = {};
+    Object.keys(textInputs).map((id) => {
+        const textInput = textInputs[id];
+        const shape = shapes.byId[textInput.shapeId];
+        if (shape) {
+            textInput.x = shape.x;
+            textInput.y = shape.y;
+            textInput.value = shape.text;
+            textInput.visible = (selected.indexOf(shape.id) > -1);
+        } else {
+            delete textInputs[id];
+        }
+    });
     selected.map((id) => {
         const shape = shapes.byId[id];
         if (shape.type === 'text') {
             const textInput = textInputs[id];
-            if (textInput) {
-                textInput.x = shape.x;
-                textInput.y = shape.y;
-                textInput.value = shape.text;
-                updatedTextInputs[id] = textInput;
-            } else {
-                updatedTextInputs[id] = {
+            if (!textInput) {
+                textInputs[id] = {
                     id: uuidv1(),
                     shapeId: id,
                     x: shape.x,
                     y: shape.y,
-                    value: shape.text
+                    value: shape.text,
+                    visible: true
                 };
             }
         }
     });
 
-    return updatedTextInputs;
+    return textInputs;
 }
 
 export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingBoxes) {
@@ -56,9 +63,25 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
         const selectionBox = selectionBoxes[id];
         const boundingBox = boundingBoxes[id];
         if (selectionBox) {
-            updatedSelectionBoxes[id] = updateSelectionBox(selectionBox, shape.transform, boundingBox);
+            if (shape.type !== 'text') {
+                updatedSelectionBoxes[id] = updateSelectionBox(selectionBox, shape.transform, boundingBox);
+            } else {
+                updatedSelectionBoxes[id] = updateSelectionBox(
+                    selectionBox,
+                    shape.transform,
+                    {x: shape.x, y: shape.y, width: shape.width, height: shape.height}
+                );
+            }
         } else {
-            updatedSelectionBoxes[id] = generateSelectionBox(id, shape.transform, boundingBox);
+            if (shape.type !== 'text') {
+                updatedSelectionBoxes[id] = generateSelectionBox(id, shape.transform, boundingBox);
+            } else {
+                updatedSelectionBoxes[id] = generateSelectionBox(
+                    id,
+                    shape.transform,
+                    {x: shape.x, y: shape.y, width: shape.width, height: shape.height}
+                );
+            }
         }
     });
     return updatedSelectionBoxes;

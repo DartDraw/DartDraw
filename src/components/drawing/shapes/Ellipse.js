@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatPath, formatTransform } from '../../utilities/shapes';
+import { formatTransform } from '../../../utilities/shapes';
 
-class Path extends Component {
+class Ellipse extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        d: PropTypes.arrayOf(PropTypes.shape({
-            command: PropTypes.string,
-            parameters: PropTypes.arrayOf(PropTypes.number)
-        })),
+        width: PropTypes.number,
+        height: PropTypes.number,
+        cx: PropTypes.number,
+        cy: PropTypes.number,
+        rx: PropTypes.number,
+        ry: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -58,14 +60,30 @@ class Path extends Component {
     }
 
     render() {
-        const { id, d, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
-        const svgProps = {
+        const {
             id,
-            d: formatPath(d),
+            cx,
+            cy,
+            rx,
+            ry,
             stroke,
             strokeWidth,
-            fill: fill || 'none',
-            transform: formatTransform(transform)
+            fill,
+            transform,
+            propagateEvents
+        } = this.props;
+
+        const svgProps = {
+            id,
+            cx,
+            cy,
+            rx,
+            ry,
+            stroke,
+            strokeWidth,
+            fill,
+            transform: formatTransform(transform),
+            vectorEffect: "non-scaling-stroke"
         };
 
         return (
@@ -77,10 +95,10 @@ class Path extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <path {...svgProps} />
+                <ellipse {...svgProps} />
             </Shape>
         );
     }
 }
 
-export default Path;
+export default Ellipse;

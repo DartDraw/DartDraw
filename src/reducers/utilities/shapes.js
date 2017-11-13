@@ -70,6 +70,9 @@ export function addText(shapes, action, fill, panX, panY, scale) {
         text: '',
         x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        width: 0,
+        height: 0,
+        fill: formatColor(fill),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
@@ -87,6 +90,40 @@ export function moveLineAnchor(shapes, selected, draggableData, scale) {
         const line = shapes.byId[id];
         line.x2 += scaledDeltaX;
         line.y2 += scaledDeltaY;
+    });
+
+    return shapes;
+}
+
+export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, scale) {
+    const { deltaX, deltaY } = draggableData;
+    const scaledDeltaX = deltaX / scale;
+    const scaledDeltaY = deltaY / scale;
+
+    selected.map((id) => {
+        const text = shapes.byId[id];
+        switch (handleIndex) {
+            case 0:
+                text.width += scaledDeltaX;
+                text.y += scaledDeltaY;
+                text.height -= scaledDeltaY;
+                break;
+            case 1:
+                text.width += scaledDeltaX;
+                text.height += scaledDeltaY;
+                break;
+            case 2:
+                text.x += scaledDeltaX;
+                text.width -= scaledDeltaX;
+                text.height += scaledDeltaY;
+                break;
+            case 3:
+                text.x += scaledDeltaX;
+                text.width -= scaledDeltaX;
+                text.y += scaledDeltaY;
+                text.height -= scaledDeltaY;
+                break;
+        }
     });
 
     return shapes;

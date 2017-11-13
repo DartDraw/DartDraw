@@ -1,4 +1,4 @@
-import { resizeShape, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
+import { resizeShape, resizeTextBoundingBox, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
 
 import { selectShape } from '../utilities/selection';
 
@@ -80,7 +80,11 @@ export function handleDrag(stateCopy, action, root) {
         const { draggableData, handleIndex, shapeId } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
-                stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId);
+                if (stateCopy.shapes.byId[shapeId].type !== 'text') {
+                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId);
+                } else {
+                    stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
+                }
                 break;
             case "rotateTool":
                 stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, stateCopy.selectionBoxes);
@@ -142,9 +146,11 @@ export function keyDown(stateCopy, action, root) {
 
     switch (keyCode) {
         case 8:
-            stateCopy.lastSavedShapes = root.drawingState.shapes;
-            stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
-            stateCopy.selected = [];
+            if (!stateCopy.textInputFocused) {
+                stateCopy.lastSavedShapes = root.drawingState.shapes;
+                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.selected = [];
+            }
             break;
         default: break;
     }

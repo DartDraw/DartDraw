@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import SelectionLayer from './SelectionLayer';
-import { handleDragStart, handleDrag, handleDragStop } from './../../actions/canvas';
+import { handleDragStart, handleDrag, handleDragStop } from '../../../actions/canvas';
 
 const propagateEventTools = [
     'rectangleTool',
