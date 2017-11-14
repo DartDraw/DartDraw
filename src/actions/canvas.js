@@ -13,6 +13,7 @@ export const HANDLE_DRAG_START = 'HANDLE_DRAG_START';
 export const HANDLE_DRAG = 'HANDLE_DRAG';
 export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
 export const TEXT_INPUT_CHANGE = 'TEXT_INPUT_CHANGE';
+export const TOGGLE_TEXT_INPUT_FOCUS = 'TOGGLE_TEXT_INPUT_FOCUS';
 export const UPDATE_BOUNDING_BOXES = 'UPDATE_BOUNDING_BOXES';
 
 export function canvasDrag(draggableData) {
@@ -73,6 +74,10 @@ export function handleDragStop(shapeId, handleIndex, draggableData) {
 
 export function textInputChange(shapeId, value) {
     return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value } };
+}
+
+export function toggleTextInputFocus(textInputFocused) {
+    return { type: TOGGLE_TEXT_INPUT_FOCUS, payload: { textInputFocused } };
 }
 
 export function updateBoundingBoxes(boundingBoxes) {

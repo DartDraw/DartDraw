@@ -6,14 +6,16 @@ import {
     BackgroundLayerContainer,
     GridLayerContainer,
     SelectionLayerContainer,
-    TextInputLayerContainer,
+    TextInputLayerContainer
+} from './layers';
+import {
     Group,
     Rectangle,
     Ellipse,
     Path,
     Line,
     Text
-} from '.';
+} from './shapes';
 
 class Canvas extends Component {
     static propTypes = {

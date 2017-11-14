@@ -1,4 +1,4 @@
-import { addRectangle, addEllipse, addLine, addText, removeShape, resizeShape, moveLineAnchor } from '../utilities/shapes';
+import { addRectangle, addEllipse, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
 import { selectShape, updateSelectionBoxes, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
@@ -55,6 +55,9 @@ export function drag(stateCopy, action, root) {
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.scale);
+            break;
+        case "textTool":
+            stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);
             break;
         case "panTool":
             const { panX, panY } = pan(stateCopy, draggableData);

@@ -1,25 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatTransform } from '../../utilities/shapes';
+import { formatPath, formatTransform } from '../../../utilities/shapes';
 
-class Text extends Component {
+class Path extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        text: PropTypes.string,
-        x: PropTypes.number,
-        y: PropTypes.number,
-        tspans: PropTypes.arrayOf(PropTypes.shape({
-            indices: PropTypes.arrayOf(PropTypes.shape({
-                first: PropTypes.number,
-                last: PropTypes.number
-            })),
-            style: PropTypes.object
+        d: PropTypes.arrayOf(PropTypes.shape({
+            command: PropTypes.string,
+            parameters: PropTypes.arrayOf(PropTypes.number)
         })),
+        stroke: PropTypes.string,
+        strokeWidth: PropTypes.number,
+        fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
@@ -61,21 +58,15 @@ class Text extends Component {
     }
 
     render() {
-        const { id, x, y, tspans, transform, propagateEvents, text } = this.props;
+        const { id, d, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
         const svgProps = {
             id,
-            x,
-            y,
+            d: formatPath(d),
+            stroke,
+            strokeWidth,
+            fill: fill || 'none',
             transform: formatTransform(transform)
         };
-
-        const element = tspans ? tspans.map(tspan => {
-            return (
-                <tspan style={tspan.style}>
-                    {text.slice(tspan.indices.first, tspan.indices.last)}
-                </tspan>
-            );
-        }) : text;
 
         return (
             <Shape
@@ -86,12 +77,10 @@ class Text extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <text {...svgProps}>
-                    {element}
-                </text>
+                <path {...svgProps} />
             </Shape>
         );
     }
 }
 
-export default Text;
+export default Path;
