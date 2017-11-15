@@ -82,7 +82,9 @@ export function handleDrag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
-                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId, stateCopy.selectionBoxes);
+                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
+                        stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId,
+                        stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
                 }

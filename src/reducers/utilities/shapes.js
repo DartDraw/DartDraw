@@ -269,9 +269,9 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes, gridSnapping, minorGrid) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
-    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, scale, selected);
+    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, scale, gridSnapping, minorGrid);
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
@@ -304,12 +304,20 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len03;
                 originalHeight = len01;
 
-                let scale03 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
-                let scale01 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
+                let targetX = coords0.x + scaledDeltaX;
+                let targetY = coords0.y + scaledDeltaY;
 
-                let distMouse03 = Math.sqrt(((coords0.x + scaledDeltaX) - coords3.x) ** 2 + ((coords0.y + scaledDeltaY) - coords3.y) ** 2);
-                let distMouse01 = Math.sqrt(((coords0.x + scaledDeltaX) - coords1.x) ** 2 + ((coords0.y + scaledDeltaY) - coords1.y) ** 2);
-                let distMouse00 = Math.sqrt(((coords0.x + scaledDeltaX) - coords0.x) ** 2 + ((coords0.y + scaledDeltaY) - coords0.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale03 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: targetX, y: targetY});
+                let scale01 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: targetX, y: targetY});
+
+                let distMouse03 = Math.sqrt((targetX - coords3.x) ** 2 + (targetY - coords3.y) ** 2);
+                let distMouse01 = Math.sqrt((targetX - coords1.x) ** 2 + (targetY - coords1.y) ** 2);
+                let distMouse00 = Math.sqrt((targetX - coords0.x) ** 2 + (targetY - coords0.y) ** 2);
 
                 if (distMouse03 < len03 || distMouse00 > distMouse03) scale03 *= -1;
                 if (distMouse01 < len01 || distMouse00 > distMouse01) scale01 *= -1;
@@ -329,12 +337,20 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len12;
                 originalHeight = len10;
 
-                let scale12 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
-                let scale10 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
+                targetX = coords1.x + scaledDeltaX;
+                targetY = coords1.y + scaledDeltaY;
 
-                let distMouse12 = Math.sqrt(((coords1.x + scaledDeltaX) - coords2.x) ** 2 + ((coords1.y + scaledDeltaY) - coords2.y) ** 2);
-                let distMouse10 = Math.sqrt(((coords1.x + scaledDeltaX) - coords0.x) ** 2 + ((coords1.y + scaledDeltaY) - coords0.y) ** 2);
-                let distMouse11 = Math.sqrt(((coords1.x + scaledDeltaX) - coords1.x) ** 2 + ((coords1.y + scaledDeltaY) - coords1.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale12 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: targetX, y: targetY});
+                let scale10 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: targetX, y: targetY});
+
+                let distMouse12 = Math.sqrt((targetX - coords2.x) ** 2 + (targetY - coords2.y) ** 2);
+                let distMouse10 = Math.sqrt((targetX - coords0.x) ** 2 + (targetY - coords0.y) ** 2);
+                let distMouse11 = Math.sqrt((targetX - coords1.x) ** 2 + (targetY - coords1.y) ** 2);
 
                 if (distMouse12 < len12 || distMouse11 > distMouse12) scale12 *= -1;
                 if (distMouse10 < len10 || distMouse11 > distMouse10) scale10 *= -1;
@@ -354,12 +370,20 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len21;
                 originalHeight = len23;
 
-                let scale21 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
-                let scale23 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
+                targetX = coords2.x + scaledDeltaX;
+                targetY = coords2.y + scaledDeltaY;
 
-                let distMouse21 = Math.sqrt(((coords2.x + scaledDeltaX) - coords1.x) ** 2 + ((coords2.y + scaledDeltaY) - coords1.y) ** 2);
-                let distMouse23 = Math.sqrt(((coords2.x + scaledDeltaX) - coords3.x) ** 2 + ((coords2.y + scaledDeltaY) - coords3.y) ** 2);
-                let distMouse22 = Math.sqrt(((coords2.x + scaledDeltaX) - coords2.x) ** 2 + ((coords2.y + scaledDeltaY) - coords2.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale21 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: targetX, y: targetY});
+                let scale23 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: targetX, y: targetY});
+
+                let distMouse21 = Math.sqrt((targetX - coords1.x) ** 2 + (targetY - coords1.y) ** 2);
+                let distMouse23 = Math.sqrt((targetX - coords3.x) ** 2 + (targetY - coords3.y) ** 2);
+                let distMouse22 = Math.sqrt((targetX - coords2.x) ** 2 + (targetY - coords2.y) ** 2);
 
                 if (distMouse21 < len21 || distMouse22 > distMouse21) scale21 *= -1;
                 if (distMouse23 < len23 || distMouse22 > distMouse23) scale23 *= -1;
@@ -379,12 +403,20 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len30;
                 originalHeight = len32;
 
-                let scale30 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
-                let scale32 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
+                targetX = coords3.x + scaledDeltaX;
+                targetY = coords3.y + scaledDeltaY;
 
-                let distMouse30 = Math.sqrt(((coords3.x + scaledDeltaX) - coords0.x) ** 2 + ((coords3.y + scaledDeltaY) - coords0.y) ** 2);
-                let distMouse32 = Math.sqrt(((coords3.x + scaledDeltaX) - coords2.x) ** 2 + ((coords3.y + scaledDeltaY) - coords2.y) ** 2);
-                let distMouse33 = Math.sqrt(((coords3.x + scaledDeltaX) - coords3.x) ** 2 + ((coords3.y + scaledDeltaY) - coords3.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale30 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: targetX, y: targetY});
+                let scale32 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: targetX, y: targetY});
+
+                let distMouse30 = Math.sqrt((targetX - coords0.x) ** 2 + (targetY - coords0.y) ** 2);
+                let distMouse32 = Math.sqrt((targetX - coords2.x) ** 2 + (targetY - coords2.y) ** 2);
+                let distMouse33 = Math.sqrt((targetX - coords3.x) ** 2 + (targetY - coords3.y) ** 2);
 
                 if (distMouse30 < len30 || distMouse33 > distMouse30) scale30 *= -1;
                 if (distMouse32 < len32 || distMouse33 > distMouse32) scale32 *= -1;
@@ -451,11 +483,11 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
     return handleIndex;
 }
 
-function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale) {
+function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale, gridSnapping, minorGrid) {
     let scaleXY = {};
 
-    const mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
-    const mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
+    let mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
+    let mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
 
     const shapeMatrix = shape.transform[0].parameters;
     const boundingBox = boundingBoxes[shape.id];
@@ -464,6 +496,11 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale)
     const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
     const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    if (gridSnapping) {
+        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
+        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+    }
 
     switch (handleIndex) {
         case 0:

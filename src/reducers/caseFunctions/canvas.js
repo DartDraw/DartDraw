@@ -48,7 +48,8 @@ export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.scale);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
+                stateCopy.selected, draggableData, 1, stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid);
             break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.scale);
