@@ -171,34 +171,21 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
         const boundingBox = boundingBoxes[id];
 
         if (gridSnapping) {
+            if (!shape.initialX) shape.initialX = boundingBox.x;
+            if (!shape.initialY) shape.initialY = boundingBox.y;
             if (!shape.dragX) shape.dragX = 0;
             if (!shape.dragY) shape.dragY = 0;
 
             shape.dragX += scaledDeltaX;
             shape.dragY += scaledDeltaY;
 
-            let moveMatrix = [1, 0, 0, 1, shape.dragX, shape.dragY];
-            let proposedMoveMatrix = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
-            const coords0Transformed = transformPoint(boundingBox.x, boundingBox.y, proposedMoveMatrix);
             const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
-            let newX = Math.round(coords0Transformed.x / minorGrid) * minorGrid;
-            let newY = Math.round(coords0Transformed.y / minorGrid) * minorGrid;
+            let newX = Math.round((shape.initialX + shape.dragX) / minorGrid) * minorGrid;
+            let newY = Math.round((shape.initialY + shape.dragY) / minorGrid) * minorGrid;
 
-            moveMatrix = [1, 0, 0, 1, newX - coords0.x, newY - coords0.y];
+            let moveMatrix = [1, 0, 0, 1, newX - coords0.x, newY - coords0.y];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
-
-            if (newX - coords0.x !== 0) {
-                // reset
-                shape.dragX = 0;
-            }
-
-            if (newY - coords0.y !== 0) {
-                // reset
-                shape.dragY = 0;
-            }
-
-            console.log(coords0);
         } else {
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
