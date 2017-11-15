@@ -179,8 +179,8 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
 
             let moveMatrix = [1, 0, 0, 1, shape.dragX, shape.dragY];
             let proposedMoveMatrix = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
-            const coords0Transformed = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, proposedMoveMatrix);
-            const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
+            const coords0Transformed = transformPoint(boundingBox.x, boundingBox.y, proposedMoveMatrix);
+            const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
             let newX = Math.round(coords0Transformed.x / minorGrid) * minorGrid;
             let newY = Math.round(coords0Transformed.y / minorGrid) * minorGrid;
@@ -197,6 +197,8 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
                 // reset
                 shape.dragY = 0;
             }
+
+            console.log(coords0);
         } else {
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
