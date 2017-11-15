@@ -46,7 +46,8 @@ export function drag(stateCopy, action, root) {
     } else {
         switch (root.menuState.toolType) {
             case "selectTool":
-                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale);
+                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 break;
             default: break;
         }
