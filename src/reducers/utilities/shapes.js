@@ -120,7 +120,7 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
     return shapes;
 }
 
-export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
+export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, scale) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
     const scaledDeltaY = deltaY / scale;
