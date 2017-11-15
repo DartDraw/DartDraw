@@ -86,7 +86,8 @@ export function handleDrag(stateCopy, action, root) {
                         stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId,
                         stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 } else {
-                    stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
+                    stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
+                        draggableData, handleIndex, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
                 }
                 break;
             case "rotateTool":

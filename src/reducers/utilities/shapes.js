@@ -1,7 +1,7 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 
-export function addRectangle(shapes, action, fill, panX, panY, scale) {
+export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const rectangle = {
@@ -15,12 +15,17 @@ export function addRectangle(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        rectangle.x = Math.round(rectangle.x / minorGrid) * minorGrid;
+        rectangle.y = Math.round(rectangle.y / minorGrid) * minorGrid;
+    }
+
     shapes.byId[rectangle.id] = rectangle;
     shapes.allIds.push(rectangle.id);
     return shapes;
 }
 
-export function addEllipse(shapes, action, fill, panX, panY, scale) {
+export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const ellipse = {
@@ -34,12 +39,17 @@ export function addEllipse(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        ellipse.cx = Math.round(ellipse.cx / minorGrid) * minorGrid;
+        ellipse.cy = Math.round(ellipse.cy / minorGrid) * minorGrid;
+    }
+
     shapes.byId[ellipse.id] = ellipse;
     shapes.allIds.push(ellipse.id);
     return shapes;
 }
 
-export function addLine(shapes, action, fill, panX, panY, scale) {
+export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -55,12 +65,17 @@ export function addLine(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        line.x1 = Math.round(line.x1 / minorGrid) * minorGrid;
+        line.y1 = Math.round(line.y1 / minorGrid) * minorGrid;
+    }
+
     shapes.byId[line.id] = line;
     shapes.allIds.push(line.id);
     return shapes;
 }
 
-export function addText(shapes, action, fill, panX, panY, scale) {
+export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -76,26 +91,35 @@ export function addText(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        text.x = Math.round(text.x / minorGrid) * minorGrid;
+        text.y = Math.round(text.y / minorGrid) * minorGrid;
+    }
+
     shapes.byId[text.id] = text;
     shapes.allIds.push(text.id);
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, scale) {
-    const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
+export function moveLineAnchor(shapes, selected, draggableData, scale, gridSnapping, minorGrid) {
+    let mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
+    let mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
 
     selected.map((id) => {
         const line = shapes.byId[id];
-        line.x2 += scaledDeltaX;
-        line.y2 += scaledDeltaY;
+        line.x2 = mouseX;
+        line.y2 = mouseY;
+
+        if (gridSnapping) {
+            line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
+            line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
+        }
     });
 
     return shapes;
 }
 
-export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, scale) {
+export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, scale, gridSnapping, minorGrid) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
     const scaledDeltaY = deltaY / scale;
