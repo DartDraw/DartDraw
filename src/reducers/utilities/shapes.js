@@ -171,15 +171,15 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
         const boundingBox = boundingBoxes[id];
 
         if (gridSnapping) {
-            if (!shape.initialX) shape.initialX = boundingBox.x;
-            if (!shape.initialY) shape.initialY = boundingBox.y;
+            const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+            if (!shape.initialX) shape.initialX = coords0.x;
+            if (!shape.initialY) shape.initialY = coords0.y;
             if (!shape.dragX) shape.dragX = 0;
             if (!shape.dragY) shape.dragY = 0;
 
             shape.dragX += scaledDeltaX;
             shape.dragY += scaledDeltaY;
-
-            const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
             let newX = Math.round((shape.initialX + shape.dragX) / minorGrid) * minorGrid;
             let newY = Math.round((shape.initialY + shape.dragY) / minorGrid) * minorGrid;
