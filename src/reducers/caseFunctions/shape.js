@@ -88,7 +88,7 @@ export function handleDrag(stateCopy, action, root) {
                 }
                 break;
             case "rotateTool":
-                stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, stateCopy.selectionBoxes);
+                stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId, stateCopy.selectionBoxes);
                 break;
             default: break;
         }
