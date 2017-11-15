@@ -160,6 +160,24 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
+export function initializeMoveShape(shapes, selected, scale, boundingBoxes, gridSnapping, minorGrid) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+
+        const boundingBox = boundingBoxes[id];
+        const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+        if (gridSnapping) {
+            shape.xOffset = coords0.x;
+            shape.yOffset = coords0.y;
+            shape.dragX = 0;
+            shape.dragY = 0;
+        }
+    });
+
+    return shapes;
+}
+
 export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
@@ -173,16 +191,11 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
         if (gridSnapping) {
             const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
-            if (!shape.initialX) shape.initialX = coords0.x;
-            if (!shape.initialY) shape.initialY = coords0.y;
-            if (!shape.dragX) shape.dragX = 0;
-            if (!shape.dragY) shape.dragY = 0;
-
             shape.dragX += scaledDeltaX;
             shape.dragY += scaledDeltaY;
 
-            let newX = Math.round((shape.initialX + shape.dragX) / minorGrid) * minorGrid;
-            let newY = Math.round((shape.initialY + shape.dragY) / minorGrid) * minorGrid;
+            let newX = Math.round((shape.xOffset + shape.dragX) / minorGrid) * minorGrid;
+            let newY = Math.round((shape.yOffset + shape.dragY) / minorGrid) * minorGrid;
 
             let moveMatrix = [1, 0, 0, 1, newX - coords0.x, newY - coords0.y];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);

@@ -1,4 +1,4 @@
-import { resizeShape, resizeTextBoundingBox, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
+import { resizeShape, resizeTextBoundingBox, moveShape, initializeMoveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
 
@@ -40,6 +40,8 @@ export function drag(stateCopy, action, root) {
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
                 }
+                stateCopy.shapes = initializeMoveShape(stateCopy.shapes, stateCopy.selected, stateCopy.scale,
+                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 break;
             default: break;
         }
