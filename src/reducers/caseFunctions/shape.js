@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
 
-import { selectShape } from '../utilities/selection';
+import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
     switch (root.menuState.toolType) {
@@ -74,6 +74,7 @@ export function handleDrag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
 
     if (!stateCopy.editInProgress) {
+        stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     } else {
@@ -81,7 +82,7 @@ export function handleDrag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
-                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId);
+                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId, stateCopy.selectionBoxes);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
                 }

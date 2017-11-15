@@ -155,3 +155,53 @@ function generateSelectionBox(shapeId, transform, boundingBox) {
         ]
     };
 }
+
+export function updateSelectionBoxesCorners(selected, selectionBoxes) {
+    const updatedSelectionBoxes = {};
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        if (selectionBox) {
+            updatedSelectionBoxes[id] = updateSelectionBoxCorners(selectionBox);
+        }
+    });
+    return updatedSelectionBoxes;
+}
+
+function updateSelectionBoxCorners(selectionBox) {
+    let xValues = [selectionBox.handles[0].x, selectionBox.handles[1].x,
+        selectionBox.handles[2].x, selectionBox.handles[3].x];
+    let yValues = [selectionBox.handles[0].y, selectionBox.handles[1].y,
+        selectionBox.handles[2].y, selectionBox.handles[3].y];
+
+    for (let i = 0; i < 4; i++) {
+        selectionBox[determineCornerOrientation(xValues, yValues, i)] = i;
+    }
+
+    return selectionBox;
+}
+
+function determineCornerOrientation(xValues, yValues, index) {
+    let xGreaterCount = 0;
+    let yGreaterCount = 0;
+
+    for (let i = 0; i < 4; i++) {
+        if (i !== index) {
+            if (xValues[i] > xValues[index]) {
+                xGreaterCount++;
+            }
+            if (yValues[i] > yValues[index]) {
+                yGreaterCount++;
+            }
+        }
+    }
+
+    if (xGreaterCount >= 2 && yGreaterCount < 2) {
+        return "lowerLeft";
+    } else if (xGreaterCount >= 2 && yGreaterCount >= 2) {
+        return "upperLeft";
+    } else if (xGreaterCount < 2 && yGreaterCount >= 2) {
+        return "upperRight";
+    } else if (xGreaterCount < 2 && yGreaterCount < 2) {
+        return "lowerRight";
+    }
+}

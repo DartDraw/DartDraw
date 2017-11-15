@@ -269,8 +269,9 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes) {
     let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, scale);
+    let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
@@ -296,6 +297,9 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let cxCoords = {};
 
+        console.log(handleCorner);
+        let handle = determineHandle(handleCorner, selectionBoxes, id, handleIndex);
+        console.log(handle);
         switch (handleIndex) {
             case 0:
                 let len03 = Math.sqrt((coords3.x - coords0.x) ** 2 + (coords3.y - coords0.y) ** 2);
@@ -424,6 +428,34 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
     return shapes;
 }
 
+function determineHandleCorner(handleIndex, selectionBoxes, shapeId) {
+    if (selectionBoxes) {
+        let selectionBox = selectionBoxes[shapeId];
+        if (selectionBox) {
+            if (selectionBox.lowerLeft === handleIndex) {
+                return "lowerLeft";
+            } else if (selectionBox.upperLeft === handleIndex) {
+                return "upperLeft";
+            } else if (selectionBox.upperRight === handleIndex) {
+                return "upperRight";
+            } else if (selectionBox.lowerRight === handleIndex) {
+                return "lowerRight";
+            }
+        }
+    }
+    return null;
+}
+
+function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
+    if (selectionBoxes && handleCorner) {
+        let selectionBox = selectionBoxes[shapeId];
+        if (selectionBox) {
+            return selectionBox[handleCorner];
+        }
+    }
+    return handleIndex;
+}
+
 function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale) {
     let scaleXY = {};
 
@@ -485,7 +517,7 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
     return multiplyMatrices(transform2, transform1);
 }
 
-export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale) {
+export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, selectionBoxes) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
     const scaledDeltaY = deltaY / scale;
