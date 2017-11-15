@@ -101,9 +101,10 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, scale, gridSnapping, minorGrid) {
-    let mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
-    let mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
+export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     selected.map((id) => {
         const line = shapes.byId[id];
@@ -119,7 +120,7 @@ export function moveLineAnchor(shapes, selected, draggableData, scale, gridSnapp
     return shapes;
 }
 
-export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, scale, gridSnapping, minorGrid) {
+export function resizeTextBoundingBox(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
     const scaledDeltaY = deltaY / scale;
@@ -326,9 +327,9 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes, gridSnapping, minorGrid) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
-    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, scale, gridSnapping, minorGrid);
+    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid);
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
@@ -338,10 +339,10 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         const shapeMatrix = shape.transform[0].parameters;
         const boundingBox = boundingBoxes[id];
 
-        const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
-        const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
-        const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
-        const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+        let coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+        let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+        let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+        let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
         let newWidth = 0;
         let newHeight = 0;
@@ -540,19 +541,20 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
     return handleIndex;
 }
 
-function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale, gridSnapping, minorGrid) {
+function determineScale(shape, boundingBoxes, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
     let scaleXY = {};
 
-    let mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
-    let mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     const shapeMatrix = shape.transform[0].parameters;
     const boundingBox = boundingBoxes[shape.id];
 
-    const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
-    const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
-    const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
-    const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+    let coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+    let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
     if (gridSnapping) {
         mouseX = Math.round(mouseX / minorGrid) * minorGrid;
@@ -562,26 +564,26 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale,
     switch (handleIndex) {
         case 0:
             scaleXY = {
-                x: mouseX - coords0.x / scale,
-                y: mouseY - coords0.y / scale
+                x: (mouseX - coords0.x),
+                y: (mouseY - coords0.y)
             };
             break;
         case 1:
             scaleXY = {
-                x: mouseX - coords1.x / scale,
-                y: mouseY - coords1.y / scale
+                x: (mouseX - coords1.x),
+                y: (mouseY - coords1.y)
             };
             break;
         case 2:
             scaleXY = {
-                x: mouseX - coords2.x / scale,
-                y: mouseY - coords2.y / scale
+                x: (mouseX - coords2.x),
+                y: (mouseY - coords2.y)
             };
             break;
         case 3:
             scaleXY = {
-                x: mouseX - coords3.x / scale,
-                y: mouseY - coords3.y / scale
+                x: (mouseX - coords3.x),
+                y: (mouseY - coords3.y)
             };
             break;
         default:

@@ -74,7 +74,7 @@ export function handleDragStart(stateCopy, action, root) {
 }
 
 export function handleDrag(stateCopy, action, root) {
-    action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
+    action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode.parentNode;
 
     if (!stateCopy.editInProgress) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
@@ -86,8 +86,8 @@ export function handleDrag(stateCopy, action, root) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
                     stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
-                        stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId,
-                        stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
+                        stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
+                        stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
                         draggableData, handleIndex, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
