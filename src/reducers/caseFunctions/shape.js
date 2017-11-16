@@ -1,4 +1,4 @@
-import { resizeShape, resizeTextBoundingBox, moveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
+import { resizeShape, resizeTextBoundingBox, moveShape, initializeMoveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
 
@@ -40,13 +40,16 @@ export function drag(stateCopy, action, root) {
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
                 }
+                stateCopy.shapes = initializeMoveShape(stateCopy.shapes, stateCopy.selected, stateCopy.scale,
+                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 break;
             default: break;
         }
     } else {
         switch (root.menuState.toolType) {
             case "selectTool":
-                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale);
+                stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
                 break;
             default: break;
         }
@@ -72,6 +75,7 @@ export function handleDragStart(stateCopy, action, root) {
 
 export function handleDrag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
+    let shiftSelected = 16 in root.menuState.currentKeys;
 
     if (!stateCopy.editInProgress) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
@@ -82,9 +86,14 @@ export function handleDrag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
-                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId, stateCopy.selectionBoxes);
+                    action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
+                    stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
+                        stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
+                        stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.gridSnapping,
+                        root.menuState.minorGrid, shiftSelected);
                 } else {
-                    stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale);
+                    stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
+                        draggableData, handleIndex, stateCopy.scale);
                 }
                 break;
             case "rotateTool":

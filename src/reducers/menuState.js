@@ -10,7 +10,7 @@ const initialState = {
     gridSnapping: false,
     unitType: 'inch',
     majorGrid: 100,
-    minorGrid: 10
+    minorGrid: 20
 };
 
 function menuState(state = initialState, action, root) {

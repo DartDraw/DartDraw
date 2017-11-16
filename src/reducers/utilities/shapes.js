@@ -1,7 +1,7 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 
-export function addRectangle(shapes, action, fill, panX, panY, scale) {
+export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const rectangle = {
@@ -15,12 +15,17 @@ export function addRectangle(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        rectangle.x = Math.round(rectangle.x / minorGrid) * minorGrid;
+        rectangle.y = Math.round(rectangle.y / minorGrid) * minorGrid;
+    }
+
     shapes.byId[rectangle.id] = rectangle;
     shapes.allIds.push(rectangle.id);
     return shapes;
 }
 
-export function addEllipse(shapes, action, fill, panX, panY, scale) {
+export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const ellipse = {
@@ -34,12 +39,17 @@ export function addEllipse(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        ellipse.cx = Math.round(ellipse.cx / minorGrid) * minorGrid;
+        ellipse.cy = Math.round(ellipse.cy / minorGrid) * minorGrid;
+    }
+
     shapes.byId[ellipse.id] = ellipse;
     shapes.allIds.push(ellipse.id);
     return shapes;
 }
 
-export function addLine(shapes, action, fill, panX, panY, scale) {
+export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -55,12 +65,17 @@ export function addLine(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        line.x1 = Math.round(line.x1 / minorGrid) * minorGrid;
+        line.y1 = Math.round(line.y1 / minorGrid) * minorGrid;
+    }
+
     shapes.byId[line.id] = line;
     shapes.allIds.push(line.id);
     return shapes;
 }
 
-export function addText(shapes, action, fill, panX, panY, scale) {
+export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -76,20 +91,30 @@ export function addText(shapes, action, fill, panX, panY, scale) {
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
+    if (gridSnapping) {
+        text.x = Math.round(text.x / minorGrid) * minorGrid;
+        text.y = Math.round(text.y / minorGrid) * minorGrid;
+    }
+
     shapes.byId[text.id] = text;
     shapes.allIds.push(text.id);
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, scale) {
-    const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
+export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     selected.map((id) => {
         const line = shapes.byId[id];
-        line.x2 += scaledDeltaX;
-        line.y2 += scaledDeltaY;
+        line.x2 = mouseX;
+        line.y2 = mouseY;
+
+        if (gridSnapping) {
+            line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
+            line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
+        }
     });
 
     return shapes;
@@ -136,7 +161,25 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function moveShape(shapes, selected, action, scale) {
+export function initializeMoveShape(shapes, selected, scale, boundingBoxes, gridSnapping, minorGrid) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+
+        const boundingBox = boundingBoxes[id];
+        const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+        if (gridSnapping) {
+            shape.xOffset = coords0.x;
+            shape.yOffset = coords0.y;
+            shape.dragX = 0;
+            shape.dragY = 0;
+        }
+    });
+
+    return shapes;
+}
+
+export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
@@ -144,8 +187,23 @@ export function moveShape(shapes, selected, action, scale) {
 
     selected.map((id) => {
         const shape = shapes.byId[id];
-        let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
-        shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        const boundingBox = boundingBoxes[id];
+
+        if (gridSnapping) {
+            const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+            shape.dragX += scaledDeltaX;
+            shape.dragY += scaledDeltaY;
+
+            let newX = Math.round((shape.xOffset + shape.dragX) / minorGrid) * minorGrid;
+            let newY = Math.round((shape.yOffset + shape.dragY) / minorGrid) * minorGrid;
+
+            let moveMatrix = [1, 0, 0, 1, newX - coords0.x, newY - coords0.y];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        } else {
+            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        }
     });
 
     return shapes;
@@ -269,10 +327,13 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
+    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
-    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, scale, selected);
+
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
+    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex,
+        panX, panY, scale, gridSnapping, minorGrid, shiftSelected);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
@@ -281,15 +342,17 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         const shapeMatrix = shape.transform[0].parameters;
         const boundingBox = boundingBoxes[id];
 
-        const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
-        const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
-        const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
-        const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+        let coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+        let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+        let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+        let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
         let newWidth = 0;
         let newHeight = 0;
         let originalWidth = 0;
         let originalHeight = 0;
+        let deltaX = 0;
+        let deltaY = 0;
         let sx = 0;
         let sy = 0;
 
@@ -304,21 +367,37 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len03;
                 originalHeight = len01;
 
-                let scale03 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
-                let scale01 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: coords0.x + scaledDeltaX, y: coords0.y + scaledDeltaY});
+                let targetX = coords0.x + scaledDeltaX;
+                let targetY = coords0.y + scaledDeltaY;
 
-                let distMouse03 = Math.sqrt(((coords0.x + scaledDeltaX) - coords3.x) ** 2 + ((coords0.y + scaledDeltaY) - coords3.y) ** 2);
-                let distMouse01 = Math.sqrt(((coords0.x + scaledDeltaX) - coords1.x) ** 2 + ((coords0.y + scaledDeltaY) - coords1.y) ** 2);
-                let distMouse00 = Math.sqrt(((coords0.x + scaledDeltaX) - coords0.x) ** 2 + ((coords0.y + scaledDeltaY) - coords0.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale03 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: targetX, y: targetY});
+                let scale01 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords0.x, y1: coords0.y }, {x: targetX, y: targetY});
+
+                let distMouse03 = Math.sqrt((targetX - coords3.x) ** 2 + (targetY - coords3.y) ** 2);
+                let distMouse01 = Math.sqrt((targetX - coords1.x) ** 2 + (targetY - coords1.y) ** 2);
+                let distMouse00 = Math.sqrt((targetX - coords0.x) ** 2 + (targetY - coords0.y) ** 2);
 
                 if (distMouse03 < len03 || distMouse00 > distMouse03) scale03 *= -1;
                 if (distMouse01 < len01 || distMouse00 > distMouse01) scale01 *= -1;
 
-                len03 += scale03;
-                len01 += scale01;
+                deltaX = scale03;
+                deltaY = scale01;
 
-                newWidth = len03;
-                newHeight = len01;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale03;
+                    } else {
+                        deltaX = scale01;
+                    }
+                }
+
+                newWidth = len03 + deltaX;
+                newHeight = len01 + deltaY;
 
                 cxCoords = coords2;
                 break;
@@ -329,21 +408,37 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len12;
                 originalHeight = len10;
 
-                let scale12 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
-                let scale10 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: coords1.x + scaledDeltaX, y: coords1.y + scaledDeltaY});
+                targetX = coords1.x + scaledDeltaX;
+                targetY = coords1.y + scaledDeltaY;
 
-                let distMouse12 = Math.sqrt(((coords1.x + scaledDeltaX) - coords2.x) ** 2 + ((coords1.y + scaledDeltaY) - coords2.y) ** 2);
-                let distMouse10 = Math.sqrt(((coords1.x + scaledDeltaX) - coords0.x) ** 2 + ((coords1.y + scaledDeltaY) - coords0.y) ** 2);
-                let distMouse11 = Math.sqrt(((coords1.x + scaledDeltaX) - coords1.x) ** 2 + ((coords1.y + scaledDeltaY) - coords1.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale12 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: targetX, y: targetY});
+                let scale10 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords1.x, y1: coords1.y }, {x: targetX, y: targetY});
+
+                let distMouse12 = Math.sqrt((targetX - coords2.x) ** 2 + (targetY - coords2.y) ** 2);
+                let distMouse10 = Math.sqrt((targetX - coords0.x) ** 2 + (targetY - coords0.y) ** 2);
+                let distMouse11 = Math.sqrt((targetX - coords1.x) ** 2 + (targetY - coords1.y) ** 2);
 
                 if (distMouse12 < len12 || distMouse11 > distMouse12) scale12 *= -1;
                 if (distMouse10 < len10 || distMouse11 > distMouse10) scale10 *= -1;
 
-                len12 += scale12;
-                len10 += scale10;
+                deltaX = scale12;
+                deltaY = scale10;
 
-                newWidth = len12;
-                newHeight = len10;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale12;
+                    } else {
+                        deltaX = scale10;
+                    }
+                }
+
+                newWidth = len12 + deltaX;
+                newHeight = len10 + deltaY;
 
                 cxCoords = coords3;
                 break;
@@ -354,21 +449,37 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len21;
                 originalHeight = len23;
 
-                let scale21 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
-                let scale23 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: coords2.x + scaledDeltaX, y: coords2.y + scaledDeltaY});
+                targetX = coords2.x + scaledDeltaX;
+                targetY = coords2.y + scaledDeltaY;
 
-                let distMouse21 = Math.sqrt(((coords2.x + scaledDeltaX) - coords1.x) ** 2 + ((coords2.y + scaledDeltaY) - coords1.y) ** 2);
-                let distMouse23 = Math.sqrt(((coords2.x + scaledDeltaX) - coords3.x) ** 2 + ((coords2.y + scaledDeltaY) - coords3.y) ** 2);
-                let distMouse22 = Math.sqrt(((coords2.x + scaledDeltaX) - coords2.x) ** 2 + ((coords2.y + scaledDeltaY) - coords2.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale21 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: targetX, y: targetY});
+                let scale23 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords2.x, y1: coords2.y }, {x: targetX, y: targetY});
+
+                let distMouse21 = Math.sqrt((targetX - coords1.x) ** 2 + (targetY - coords1.y) ** 2);
+                let distMouse23 = Math.sqrt((targetX - coords3.x) ** 2 + (targetY - coords3.y) ** 2);
+                let distMouse22 = Math.sqrt((targetX - coords2.x) ** 2 + (targetY - coords2.y) ** 2);
 
                 if (distMouse21 < len21 || distMouse22 > distMouse21) scale21 *= -1;
                 if (distMouse23 < len23 || distMouse22 > distMouse23) scale23 *= -1;
 
-                len21 += scale21;
-                len23 += scale23;
+                deltaX = scale21;
+                deltaY = scale23;
 
-                newWidth = len21;
-                newHeight = len23;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale21;
+                    } else {
+                        deltaX = scale23;
+                    }
+                }
+
+                newWidth = len21 + deltaX;
+                newHeight = len23 + deltaY;
 
                 cxCoords = coords0;
                 break;
@@ -379,21 +490,37 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len30;
                 originalHeight = len32;
 
-                let scale30 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
-                let scale32 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: coords3.x + scaledDeltaX, y: coords3.y + scaledDeltaY});
+                targetX = coords3.x + scaledDeltaX;
+                targetY = coords3.y + scaledDeltaY;
 
-                let distMouse30 = Math.sqrt(((coords3.x + scaledDeltaX) - coords0.x) ** 2 + ((coords3.y + scaledDeltaY) - coords0.y) ** 2);
-                let distMouse32 = Math.sqrt(((coords3.x + scaledDeltaX) - coords2.x) ** 2 + ((coords3.y + scaledDeltaY) - coords2.y) ** 2);
-                let distMouse33 = Math.sqrt(((coords3.x + scaledDeltaX) - coords3.x) ** 2 + ((coords3.y + scaledDeltaY) - coords3.y) ** 2);
+                if (gridSnapping) {
+                    targetX = Math.round(targetX / minorGrid) * minorGrid;
+                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                }
+
+                let scale30 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: targetX, y: targetY});
+                let scale32 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords3.x, y1: coords3.y }, {x: targetX, y: targetY});
+
+                let distMouse30 = Math.sqrt((targetX - coords0.x) ** 2 + (targetY - coords0.y) ** 2);
+                let distMouse32 = Math.sqrt((targetX - coords2.x) ** 2 + (targetY - coords2.y) ** 2);
+                let distMouse33 = Math.sqrt((targetX - coords3.x) ** 2 + (targetY - coords3.y) ** 2);
 
                 if (distMouse30 < len30 || distMouse33 > distMouse30) scale30 *= -1;
                 if (distMouse32 < len32 || distMouse33 > distMouse32) scale32 *= -1;
 
-                len30 += scale30;
-                len32 += scale32;
+                deltaX = scale30;
+                deltaY = scale32;
 
-                newWidth = len30;
-                newHeight = len32;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale30;
+                    } else {
+                        deltaX = scale32;
+                    }
+                }
+
+                newWidth = len30 + deltaX;
+                newHeight = len32 + deltaY;
 
                 cxCoords = coords1;
                 break;
@@ -409,14 +536,15 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let decomposed = decomposeMatrix(shapeMatrix);
 
-        if (sx !== 0 && sy !== 0) {
-            if (decomposed.skewX !== 0) {
-                shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
-                shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-                shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewY, cx, cy);
-            } else {
-                shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-            }
+        if (sx === 0) sx = 0.000001;
+        if (sy === 0) sy = 0.000001;
+
+        if (decomposed.skewX !== 0) {
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewY, cx, cy);
+        } else {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
     });
 
@@ -451,48 +579,64 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
     return handleIndex;
 }
 
-function determineScale(shape, boundingBoxes, draggableData, handleIndex, scale) {
+function determineScale(shape, boundingBoxes, draggableData, handleIndex,
+    panX, panY, scale, gridSnapping, minorGrid, shiftSelected) {
     let scaleXY = {};
 
-    const mouseX = draggableData.x - draggableData.node.parentNode.getBoundingClientRect().left;
-    const mouseY = draggableData.y - draggableData.node.parentNode.getBoundingClientRect().top;
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     const shapeMatrix = shape.transform[0].parameters;
     const boundingBox = boundingBoxes[shape.id];
 
-    const coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
-    const coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
-    const coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
-    const coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+    let coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+    let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    if (gridSnapping) {
+        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
+        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+    }
 
     switch (handleIndex) {
         case 0:
             scaleXY = {
-                x: mouseX - coords0.x / scale,
-                y: mouseY - coords0.y / scale
+                x: (mouseX - coords0.x),
+                y: (mouseY - coords0.y)
             };
             break;
         case 1:
             scaleXY = {
-                x: mouseX - coords1.x / scale,
-                y: mouseY - coords1.y / scale
+                x: (mouseX - coords1.x),
+                y: (mouseY - coords1.y)
             };
             break;
         case 2:
             scaleXY = {
-                x: mouseX - coords2.x / scale,
-                y: mouseY - coords2.y / scale
+                x: (mouseX - coords2.x),
+                y: (mouseY - coords2.y)
             };
             break;
         case 3:
             scaleXY = {
-                x: mouseX - coords3.x / scale,
-                y: mouseY - coords3.y / scale
+                x: (mouseX - coords3.x),
+                y: (mouseY - coords3.y)
             };
             break;
         default:
             break;
     }
+
+    if (shiftSelected) {
+        if (scaleXY.x > scaleXY.y) {
+            scaleXY.main = "x";
+        } else {
+            scaleXY.main = "y";
+        }
+    }
+
     return scaleXY;
 }
 

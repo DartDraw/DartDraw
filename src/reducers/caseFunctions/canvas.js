@@ -9,26 +9,30 @@ export function dragStart(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "ellipseTool":
-            stateCopy.shapes = addEllipse(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.shapes = addEllipse(stateCopy.shapes, action, root.menuState.color,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
 
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "textTool":
-            stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -46,15 +50,21 @@ export function dragStart(stateCopy, action, root) {
 
 export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
+    let shiftSelected = 16 in root.menuState.currentKeys;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.scale);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
+                stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected);
             break;
         case "ellipseTool":
-            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, 1, stateCopy.scale);
+            stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
+                draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null,
+                root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected);
             break;
         case "lineTool":
-            stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.scale);
+            stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             break;
         case "textTool":
             stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);
