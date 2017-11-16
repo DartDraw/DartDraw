@@ -180,6 +180,18 @@ export function initializeMoveShape(shapes, selected, scale, boundingBoxes, sele
     return shapes;
 }
 
+export function endMoveShape(shapes, selected) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        delete shape.xOffset;
+        delete shape.yOffset;
+        delete shape.dragX;
+        delete shape.dragY;
+    });
+
+    return shapes;
+}
+
 function getAlignedCoord(shape, selectionBox, boundingBox, align) {
     const coords = {};
     coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
@@ -227,16 +239,23 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, select
         const boundingBox = boundingBoxes[id];
 
         if (gridSnapping) {
+            if (!shape.dragX) shape.dragX = 0;
+            if (!shape.dragY) shape.dragY = 0;
             let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBox, align);
 
-            shape.dragX += scaledDeltaX;
-            shape.dragY += scaledDeltaY;
+            if (coord) {
+                if (!shape.xOffset) shape.xOffset = coord.x;
+                if (!shape.yOffset) shape.yOffset = coord.y;
 
-            let newX = Math.round((shape.xOffset + shape.dragX) / minorGrid) * minorGrid;
-            let newY = Math.round((shape.yOffset + shape.dragY) / minorGrid) * minorGrid;
+                shape.dragX += scaledDeltaX;
+                shape.dragY += scaledDeltaY;
 
-            let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
-            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+                let newX = Math.round((shape.xOffset + shape.dragX) / minorGrid) * minorGrid;
+                let newY = Math.round((shape.yOffset + shape.dragY) / minorGrid) * minorGrid;
+
+                let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
+                shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+            }
         } else {
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
