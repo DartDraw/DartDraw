@@ -89,8 +89,9 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
         yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
     }
 
-    if (Math.abs(xCoord - polygon.points[0]) < 5 &&
-          Math.abs(yCoord - polygon.points[1]) < 5) {
+    if (Math.abs(xCoord - polygon.points[0]) < (5 / scale) &&
+          Math.abs(yCoord - polygon.points[1]) < (5 / scale)) {
+        // close the polygon
         xCoord = polygon.points[0];
         yCoord = polygon.points[1];
         polygon.type = 'polygon';
