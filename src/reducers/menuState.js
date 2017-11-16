@@ -12,7 +12,8 @@ const initialState = {
     majorGrid: 100,
     minorGrid: 20,
     copied: false,
-    pasted: false
+    pasted: false,
+    centeredControl: false
 };
 
 function menuState(state = initialState, action, root) {

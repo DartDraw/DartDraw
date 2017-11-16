@@ -16,9 +16,16 @@ export function keyUp(stateCopy, action) {
         delete stateCopy.currentKeys[keyCode];
     }
 
-    if (keyCode === 91) {
-        stateCopy.copied = false;
-        stateCopy.pasted = false;
+    switch (keyCode) {
+        case 91:
+            stateCopy.copied = false;
+            stateCopy.pasted = false;
+            break;
+        case 49: // TEMP: NEED FRONTEND
+            stateCopy.centeredControl = !stateCopy.centeredControl;
+            break;
+        default:
+            break;
     }
 
     return stateCopy;

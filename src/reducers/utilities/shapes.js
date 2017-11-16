@@ -329,7 +329,7 @@ export function deleteShapes(shapes, selected) {
 }
 
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
-    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected) {
+    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected, centeredControl) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
 
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
@@ -540,6 +540,12 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         if (sx === 0) sx = 0.000001;
         if (sy === 0) sy = 0.000001;
 
+        if (centeredControl) {
+            let center = getCenter(boundingBox, shapeMatrix);
+            cx = center.x;
+            cy = center.y;
+        }
+
         if (decomposed.skewX !== 0) {
             shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
@@ -650,7 +656,8 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
     return multiplyMatrices(transform2, transform1);
 }
 
-export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes) {
+export function rotateShape(shapes, boundingBoxes, selected, draggableData,
+    handleIndex, scale, shapeId, selectionBoxes, centeredControl) {
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let degree = determineDegree(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes);
 
@@ -686,6 +693,12 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData, hand
                 break;
             default:
                 break;
+        }
+
+        if (centeredControl) {
+            let center = getCenter(boundingBox, shapeMatrix);
+            cx = center.x;
+            cy = center.y;
         }
 
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
@@ -813,4 +826,18 @@ export function pasteShapes(shapes, copied, pasteOffset) {
         shapes.allIds.push(shape.id);
     });
     return shapes;
+}
+
+function getCenter(boundingBox, shapeMatrix) {
+    let center = {};
+
+    let coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+    let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    center.x = (coords0.x + coords1.x + coords2.x + coords3.x) / 4;
+    center.y = (coords0.y + coords1.y + coords2.y + coords3.y) / 4;
+
+    return center;
 }
