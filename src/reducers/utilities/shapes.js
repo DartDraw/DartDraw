@@ -51,16 +51,54 @@ export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping
 }
 
 export function addPolygon(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
     const polygon = {
         id: uuidv1(),
-        type: 'polygon',
-        points: [200, 10, 250, 180, 260, 190, 160, 210],
+        type: 'polyline',
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         fill: formatColor(fill),
-        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        stroke: 'black',
+        strokeWidth: 5,
+        isEditing: true
     };
+
+    if (gridSnapping) {
+        polygon.points[0] = Math.round(polygon.points[0] / minorGrid) * minorGrid;
+        polygon.points[1] = Math.round(polygon.points[1] / minorGrid) * minorGrid;
+    }
 
     shapes.byId[polygon.id] = polygon;
     shapes.allIds.push(polygon.id);
+    return shapes;
+}
+
+export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const polygon = shapes.byId[selected[0]];
+    let xCoord = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let yCoord = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        xCoord = (Math.round(xCoord / minorGrid) * minorGrid);
+        yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
+    }
+
+    if (Math.abs(xCoord - polygon.points[0]) < 5 &&
+          Math.abs(yCoord - polygon.points[1]) < 5) {
+        xCoord = polygon.points[0];
+        yCoord = polygon.points[1];
+        polygon.type = 'polygon';
+    }
+
+    polygon.points.push(xCoord);
+    polygon.points.push(yCoord);
+
     return shapes;
 }
 

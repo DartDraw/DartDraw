@@ -4,6 +4,8 @@ import { handleDragStart, handleDrag, handleDragStop } from '../../../actions/ca
 
 const propagateEventTools = [
     'rectangleTool',
+    'ellipseTool',
+    'polygonTool',
     'lineTool',
     'textTool',
     'panTool',

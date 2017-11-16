@@ -13,6 +13,7 @@ import {
     Rectangle,
     Ellipse,
     Polygon,
+    Polyline,
     Path,
     Line,
     Text
@@ -165,6 +166,8 @@ class Canvas extends Component {
                 return <Ellipse {...shapeProps} />;
             case 'polygon':
                 return <Polygon {...shapeProps} />;
+            case 'polyline':
+                return <Polyline {...shapeProps} />;
             case 'path':
                 return <Path {...shapeProps} />;
             case 'line':

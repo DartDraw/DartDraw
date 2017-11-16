@@ -1,10 +1,11 @@
-import { addRectangle, addEllipse, addPolygon, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
+import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
 import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
+    const prevEditState = stateCopy.editInProgress;
     stateCopy.editInProgress = true;
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
@@ -23,11 +24,15 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "polygonTool":
-            stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
-                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
-            shapeIds = stateCopy.shapes.allIds;
-            addedShapeId = shapeIds[shapeIds.length - 1];
-            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            if (!prevEditState) {
+                stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
+                    stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                shapeIds = stateCopy.shapes.allIds;
+                addedShapeId = shapeIds[shapeIds.length - 1];
+                stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            } else {
+                stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            }
             break;
         case "lineTool":
             stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
@@ -143,7 +148,10 @@ export function dragStop(stateCopy, action, root) {
         default:
             break;
     }
-    stateCopy.editInProgress = false;
+
+    if (root.menuState.toolType !== "polygonTool" || stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+        stateCopy.editInProgress = false;
+    }
     return stateCopy;
 }
 

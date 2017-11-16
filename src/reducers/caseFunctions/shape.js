@@ -15,10 +15,14 @@ export function click(stateCopy, action, root) {
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
             }
+            stateCopy.editInProgress = false;
             break;
-        default: break;
+        case 'polygonTool':
+            break;
+        default:
+            stateCopy.editInProgress = false;
+            break;
     }
-    stateCopy.editInProgress = false;
     return stateCopy;
 }
 
@@ -63,9 +67,12 @@ export function dragStop(stateCopy, action, root) {
         case "selectTool":
             stateCopy.shapes = endMoveShape(stateCopy.shapes, stateCopy.selected);
             break;
-        default: break;
+        case 'polygonTool':
+            break;
+        default:
+            stateCopy.editInProgress = false;
+            break;
     }
-    stateCopy.editInProgress = false;
     return stateCopy;
 }
 
@@ -111,10 +118,12 @@ export function handleDrag(stateCopy, action, root) {
 
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
+        case 'polygonTool':
+            break;
         default:
+            stateCopy.editInProgress = false;
             break;
     }
-    stateCopy.editInProgress = false;
     return stateCopy;
 }
 

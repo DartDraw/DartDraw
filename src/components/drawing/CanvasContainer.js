@@ -35,6 +35,16 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         return formatShape(shapes.byId[id], shapes);
     });
 
+    const propagateEventTools = [
+        'rectangleTool',
+        'ellipseTool',
+        'polygonTool',
+        'lineTool',
+        'textTool',
+        'panTool',
+        'zoomTool'
+    ];
+
     return {
         shapes: shapesArray,
         selected,
@@ -42,7 +52,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         canvasWidth: canvasWidth * scale,
         viewBox: [drawingState.panX, drawingState.panY, canvasWidth, canvasHeight],
         textInput,
-        propagateEvents: toolType === 'rectangleTool' || toolType === 'ellipseTool' || toolType === 'lineTool' || toolType === 'panTool' || toolType === 'zoomTool'
+        propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };
 
