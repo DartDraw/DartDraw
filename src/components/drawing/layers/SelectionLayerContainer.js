@@ -6,6 +6,8 @@ const propagateEventTools = [
     'rectangleTool',
     'ellipseTool',
     'polygonTool',
+    'arcTool',
+    'freehandPathTool',
     'lineTool',
     'textTool',
     'panTool',
