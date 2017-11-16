@@ -1,5 +1,5 @@
 import { addRectangle, addEllipse, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
-import { selectShape, updateSelectionBoxes, updateTextInputs } from '../utilities/selection';
+import { selectShape, selectShapes, updateSelectionBoxes, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
@@ -39,6 +39,7 @@ export function dragStart(stateCopy, action, root) {
             break;
         case "selectTool":
             stateCopy.selected = selectShape([], null);
+            stateCopy.marqueeBox = addMarqueeBox(action, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             break;
         case "zoomTool":
             stateCopy.marqueeBox = addMarqueeBox(action, stateCopy.panX, stateCopy.panY, stateCopy.scale);
@@ -74,6 +75,7 @@ export function drag(stateCopy, action, root) {
             stateCopy.panX = panX;
             stateCopy.panY = panY;
             break;
+        case "selectTool":
         case "zoomTool":
             stateCopy.marqueeBox = resizeMarqueeBox(stateCopy.marqueeBox, draggableData, stateCopy.scale);
             break;
@@ -117,6 +119,10 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
             }
             stateCopy.selected = [];
+            break;
+        case "selectTool":
+            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.marqueeBox);
+            stateCopy.marqueeBox = null;
             break;
         case "zoomTool":
             if (stateCopy.marqueeBox.width !== 0 || stateCopy.marqueeBox.height !== 0) {
