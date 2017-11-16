@@ -1,4 +1,4 @@
-import { resizeShape, resizeTextBoundingBox, moveShape, initializeMoveShape, rotateShape,
+import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, rotateShape,
     fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
@@ -43,8 +43,6 @@ export function drag(stateCopy, action, root) {
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
                 }
-                stateCopy.shapes = initializeMoveShape(stateCopy.shapes, stateCopy.selected, stateCopy.scale,
-                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
                 break;
             default: break;
         }
@@ -62,8 +60,10 @@ export function drag(stateCopy, action, root) {
 
 export function dragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
-        default:
+        case "selectTool":
+            stateCopy.shapes = endMoveShape(stateCopy.shapes, stateCopy.selected);
             break;
+        default: break;
     }
     stateCopy.editInProgress = false;
     return stateCopy;
