@@ -1,4 +1,4 @@
-import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, rotateShape,
+import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
@@ -174,14 +174,21 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.selected = [];
             }
             break;
-        case 67:
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+            stateCopy.shapes = keyboardMoveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
+            break;
+        case 67: // copy
             let commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
                 stateCopy.justCopied = true;
             }
             break;
-        case 68:
+        case 68: // duplicate
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toDuplicate = copyShapes(stateCopy.shapes, stateCopy.selected);
@@ -189,7 +196,7 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
             }
             break;
-        case 86:
+        case 86: // paste
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {

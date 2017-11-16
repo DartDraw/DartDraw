@@ -412,6 +412,52 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, select
     return shapes;
 }
 
+export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
+    const { keyCode } = action.payload;
+    let scaledDeltaX = 0;
+    let scaledDeltaY = 0;
+
+    switch (keyCode) {
+        case 37:
+            scaledDeltaX = -1 / scale;
+            break;
+        case 38:
+            scaledDeltaY = -1 / scale;
+            break;
+        case 39:
+            scaledDeltaX = 1 / scale;
+            break;
+        case 40:
+            scaledDeltaY = 1 / scale;
+            break;
+        default:
+            break;
+    }
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        const boundingBox = boundingBoxes[id];
+
+        if (gridSnapping) {
+            let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBox, align);
+
+            let dragX = scaledDeltaX * minorGrid;
+            let dragY = scaledDeltaY * minorGrid;
+
+            let newX = Math.round((coord.x + dragX) / minorGrid) * minorGrid;
+            let newY = Math.round((coord.y + dragY) / minorGrid) * minorGrid;
+
+            let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        } else {
+            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        }
+    });
+
+    return shapes;
+}
+
 export function fillShape(shapes, selected, action) {
     const { color } = action.payload;
     selected.map((id) => {
