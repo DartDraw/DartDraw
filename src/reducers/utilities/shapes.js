@@ -327,10 +327,13 @@ export function deleteShapes(shapes, selected) {
     return shapes;
 }
 
-export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex, panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid) {
+export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
+    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
-    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid);
+
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
+    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex,
+        panX, panY, scale, gridSnapping, minorGrid, shiftSelected);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
@@ -348,6 +351,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let newHeight = 0;
         let originalWidth = 0;
         let originalHeight = 0;
+        let deltaX = 0;
+        let deltaY = 0;
         let sx = 0;
         let sy = 0;
 
@@ -380,11 +385,19 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse03 < len03 || distMouse00 > distMouse03) scale03 *= -1;
                 if (distMouse01 < len01 || distMouse00 > distMouse01) scale01 *= -1;
 
-                len03 += scale03;
-                len01 += scale01;
+                deltaX = scale03;
+                deltaY = scale01;
 
-                newWidth = len03;
-                newHeight = len01;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale03;
+                    } else {
+                        deltaX = scale01;
+                    }
+                }
+
+                newWidth = len03 + deltaX;
+                newHeight = len01 + deltaY;
 
                 cxCoords = coords2;
                 break;
@@ -413,11 +426,19 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse12 < len12 || distMouse11 > distMouse12) scale12 *= -1;
                 if (distMouse10 < len10 || distMouse11 > distMouse10) scale10 *= -1;
 
-                len12 += scale12;
-                len10 += scale10;
+                deltaX = scale12;
+                deltaY = scale10;
 
-                newWidth = len12;
-                newHeight = len10;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale12;
+                    } else {
+                        deltaX = scale10;
+                    }
+                }
+
+                newWidth = len12 + deltaX;
+                newHeight = len10 + deltaY;
 
                 cxCoords = coords3;
                 break;
@@ -446,11 +467,19 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse21 < len21 || distMouse22 > distMouse21) scale21 *= -1;
                 if (distMouse23 < len23 || distMouse22 > distMouse23) scale23 *= -1;
 
-                len21 += scale21;
-                len23 += scale23;
+                deltaX = scale21;
+                deltaY = scale23;
 
-                newWidth = len21;
-                newHeight = len23;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale21;
+                    } else {
+                        deltaX = scale23;
+                    }
+                }
+
+                newWidth = len21 + deltaX;
+                newHeight = len23 + deltaY;
 
                 cxCoords = coords0;
                 break;
@@ -479,11 +508,19 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse30 < len30 || distMouse33 > distMouse30) scale30 *= -1;
                 if (distMouse32 < len32 || distMouse33 > distMouse32) scale32 *= -1;
 
-                len30 += scale30;
-                len32 += scale32;
+                deltaX = scale30;
+                deltaY = scale32;
 
-                newWidth = len30;
-                newHeight = len32;
+                if (shiftSelected) {
+                    if (scaleXY.main === "x") {
+                        deltaY = scale30;
+                    } else {
+                        deltaX = scale32;
+                    }
+                }
+
+                newWidth = len30 + deltaX;
+                newHeight = len32 + deltaY;
 
                 cxCoords = coords1;
                 break;
@@ -499,14 +536,15 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let decomposed = decomposeMatrix(shapeMatrix);
 
-        if (sx !== 0 && sy !== 0) {
-            if (decomposed.skewX !== 0) {
-                shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
-                shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-                shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewY, cx, cy);
-            } else {
-                shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
-            }
+        if (sx === 0) sx = 0.000001;
+        if (sy === 0) sy = 0.000001;
+
+        if (decomposed.skewX !== 0) {
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
+            shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, decomposed.skewY, cx, cy);
+        } else {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
     });
 
@@ -541,7 +579,8 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
     return handleIndex;
 }
 
-function determineScale(shape, boundingBoxes, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
+function determineScale(shape, boundingBoxes, draggableData, handleIndex,
+    panX, panY, scale, gridSnapping, minorGrid, shiftSelected) {
     let scaleXY = {};
 
     const { x, y, node } = draggableData;
@@ -589,6 +628,15 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex, panX, 
         default:
             break;
     }
+
+    if (shiftSelected) {
+        if (scaleXY.x > scaleXY.y) {
+            scaleXY.main = "x";
+        } else {
+            scaleXY.main = "y";
+        }
+    }
+
     return scaleXY;
 }
 

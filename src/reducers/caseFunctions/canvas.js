@@ -50,14 +50,17 @@ export function dragStart(stateCopy, action, root) {
 
 export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
+    let shiftSelected = 16 in root.menuState.currentKeys;
     switch (root.menuState.toolType) {
         case "rectangleTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
-                stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid);
+                stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected);
             break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
-                draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid);
+                draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null,
+                root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected);
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
