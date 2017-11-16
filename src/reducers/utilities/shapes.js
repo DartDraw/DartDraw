@@ -157,6 +157,31 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     return shapes;
 }
 
+export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const path = {
+        id: uuidv1(),
+        type: 'freehandPath',
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        stroke: 'black',
+        strokeWidth: 1
+    };
+
+    if (gridSnapping) {
+        path.points[0] = Math.round(path.points[0] / minorGrid) * minorGrid;
+        path.points[1] = Math.round(path.points[1] / minorGrid) * minorGrid;
+    }
+
+    shapes.byId[path.id] = path;
+    shapes.allIds.push(path.id);
+    return shapes;
+}
+
 export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
@@ -219,6 +244,25 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
 
         arc.rx = arc.x2 - arc.x1;
         arc.ry = arc.y2 - arc.y1;
+    });
+
+    return shapes;
+}
+
+export function addFreehandPathPoint(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
+        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+    }
+
+    selected.map((id) => {
+        const path = shapes.byId[id];
+        path.points.push(mouseX);
+        path.points.push(mouseY);
     });
 
     return shapes;

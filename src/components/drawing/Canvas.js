@@ -14,6 +14,7 @@ import {
     Ellipse,
     Polygon,
     Polyline,
+    FreehandPath,
     Path,
     Arc,
     Line,
@@ -173,6 +174,8 @@ class Canvas extends Component {
                 return <Arc {...shapeProps} />;
             case 'path':
                 return <Path {...shapeProps} />;
+            case 'freehandPath':
+                return <FreehandPath {...shapeProps} />;
             case 'line':
                 return <Line {...shapeProps} />;
             case 'text':

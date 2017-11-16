@@ -4,6 +4,7 @@ export {default as Polyline} from './Polyline';
 export {default as Group} from './Group';
 export {default as Handle} from './Handle';
 export {default as Line} from './Line';
+export {default as FreehandPath} from './FreehandPath';
 export {default as Path} from './Path';
 export {default as Arc} from './Arc';
 export {default as Rectangle} from './Rectangle';

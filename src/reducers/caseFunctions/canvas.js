@@ -1,4 +1,6 @@
-import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, resizeTextBoundingBox } from '../utilities/shapes';
+import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addFreehandPath,
+    addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
+    resizeTextBoundingBox } from '../utilities/shapes';
 import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
@@ -51,6 +53,13 @@ export function dragStart(stateCopy, action, root) {
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
+        case "freehandPathTool":
+            stateCopy.shapes = addFreehandPath(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
+            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            break;
         case "textTool":
             stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
@@ -87,6 +96,10 @@ export function drag(stateCopy, action, root) {
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        case "freehandPathTool":
+            stateCopy.shapes = addFreehandPathPoint(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             break;
         case "arcTool":
