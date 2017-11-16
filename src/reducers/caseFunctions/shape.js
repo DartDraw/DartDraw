@@ -26,6 +26,7 @@ export function dragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
+    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
     return stateCopy;
 }
 
@@ -35,6 +36,7 @@ export function drag(stateCopy, action, root) {
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
+        stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         switch (root.menuState.toolType) {
             case "selectTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
@@ -42,7 +44,7 @@ export function drag(stateCopy, action, root) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
                 }
                 stateCopy.shapes = initializeMoveShape(stateCopy.shapes, stateCopy.selected, stateCopy.scale,
-                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
+                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
                 break;
             default: break;
         }
@@ -50,7 +52,7 @@ export function drag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
+                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
                 break;
             default: break;
         }

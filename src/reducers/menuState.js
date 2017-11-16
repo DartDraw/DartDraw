@@ -10,9 +10,10 @@ const initialState = {
     gridSnapping: false,
     unitType: 'inch',
     majorGrid: 100,
-    minorGrid: 20,
+    minorGrid: 50,
     copied: false,
     pasted: false,
+    align: ['top', 'left'],
     centeredControl: false
 };
 

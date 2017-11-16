@@ -24,6 +24,24 @@ export function keyUp(stateCopy, action) {
         case 49: // TEMP: NEED FRONTEND
             stateCopy.centeredControl = !stateCopy.centeredControl;
             break;
+        case 84: // TEMP: NEED FRONTEND
+            stateCopy.align[0] = 'top';
+            break;
+        case 66: // TEMP: NEED FRONTEND
+            stateCopy.align[0] = 'bottom';
+            break;
+        case 76: // TEMP: NEED FRONTEND
+            stateCopy.align[1] = 'left';
+            break;
+        case 82: // TEMP: NEED FRONTEND
+            stateCopy.align[1] = 'right';
+            break;
+        case 88: // TEMP: NEED FRONTEND
+            stateCopy.align[1] = 'center';
+            break;
+        case 89: // TEMP: NEED FRONTEND
+            stateCopy.align[0] = 'center';
+            break;
         default:
             break;
     }
