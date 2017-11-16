@@ -166,13 +166,27 @@ export function keyDown(stateCopy, action, root) {
             let commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.justCopied = true;
+            }
+            break;
+        case 68:
+            commandSelected = 91 in root.menuState.currentKeys;
+            if (commandSelected && !root.menuState.copied) {
+                stateCopy.toDuplicate = copyShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, 10);
+                stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
             }
             break;
         case 86:
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
-                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy);
+                if (stateCopy.justCopied) {
+                    stateCopy.pasteOffset += 10;
+                    stateCopy.justCopied = false;
+                }
+                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy, stateCopy.pasteOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
+                stateCopy.pasteOffset += 10;
             }
             break;
         default: break;

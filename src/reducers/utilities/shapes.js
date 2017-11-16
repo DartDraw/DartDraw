@@ -803,10 +803,12 @@ export function copyShapes(shapes, selected) {
     return copied;
 }
 
-export function pasteShapes(shapes, copied) {
+export function pasteShapes(shapes, copied, pasteOffset) {
     Object.keys(copied).map((id) => {
         let shape = deepCopy(copied[id]);
         shape.id = uuidv1();
+        let moveMatrix = [1, 0, 0, 1, pasteOffset, pasteOffset];
+        shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         shapes.byId[shape.id] = shape;
         shapes.allIds.push(shape.id);
     });
