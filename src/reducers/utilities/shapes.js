@@ -50,6 +50,58 @@ export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping
     return shapes;
 }
 
+export function addPolygon(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const polygon = {
+        id: uuidv1(),
+        type: 'polyline',
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        stroke: 'black',
+        strokeWidth: 5
+    };
+
+    if (gridSnapping) {
+        polygon.points[0] = Math.round(polygon.points[0] / minorGrid) * minorGrid;
+        polygon.points[1] = Math.round(polygon.points[1] / minorGrid) * minorGrid;
+    }
+
+    shapes.byId[polygon.id] = polygon;
+    shapes.allIds.push(polygon.id);
+    return shapes;
+}
+
+export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const polygon = shapes.byId[selected[0]];
+    let xCoord = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let yCoord = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        xCoord = (Math.round(xCoord / minorGrid) * minorGrid);
+        yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
+    }
+
+    if (Math.abs(xCoord - polygon.points[0]) < (5 / scale) &&
+          Math.abs(yCoord - polygon.points[1]) < (5 / scale)) {
+        // close the polygon
+        xCoord = polygon.points[0];
+        yCoord = polygon.points[1];
+        polygon.type = 'polygon';
+    }
+
+    polygon.points.push(xCoord);
+    polygon.points.push(yCoord);
+
+    return shapes;
+}
+
 export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
@@ -73,6 +125,60 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
 
     shapes.byId[line.id] = line;
     shapes.allIds.push(line.id);
+    return shapes;
+}
+
+export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const arc = {
+        id: uuidv1(),
+        type: "arc",
+        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        rx: 0,
+        ry: 0,
+        stroke: formatColor(fill),
+        strokeWidth: 10,
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+    };
+
+    if (gridSnapping) {
+        arc.x1 = Math.round(arc.x1 / minorGrid) * minorGrid;
+        arc.y1 = Math.round(arc.y1 / minorGrid) * minorGrid;
+    }
+
+    arc.x2 = arc.x1;
+    arc.y2 = arc.y1;
+
+    shapes.byId[arc.id] = arc;
+    shapes.allIds.push(arc.id);
+    return shapes;
+}
+
+export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const path = {
+        id: uuidv1(),
+        type: 'freehandPath',
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        stroke: 'black',
+        strokeWidth: 1
+    };
+
+    if (gridSnapping) {
+        path.points[0] = Math.round(path.points[0] / minorGrid) * minorGrid;
+        path.points[1] = Math.round(path.points[1] / minorGrid) * minorGrid;
+    }
+
+    shapes.byId[path.id] = path;
+    shapes.allIds.push(path.id);
     return shapes;
 }
 
@@ -116,6 +222,47 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
             line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
             line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
         }
+    });
+
+    return shapes;
+}
+
+export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    selected.map((id) => {
+        const arc = shapes.byId[id];
+        arc.x2 = mouseX;
+        arc.y2 = mouseY;
+
+        if (gridSnapping) {
+            arc.x2 = Math.round(arc.x2 / minorGrid) * minorGrid;
+            arc.y2 = Math.round(arc.y2 / minorGrid) * minorGrid;
+        }
+
+        arc.rx = arc.x2 - arc.x1;
+        arc.ry = arc.y2 - arc.y1;
+    });
+
+    return shapes;
+}
+
+export function addFreehandPathPoint(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
+        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+    }
+
+    selected.map((id) => {
+        const path = shapes.byId[id];
+        path.points.push(mouseX);
+        path.points.push(mouseY);
     });
 
     return shapes;
@@ -256,6 +403,52 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, select
                 let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
                 shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
             }
+        } else {
+            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+        }
+    });
+
+    return shapes;
+}
+
+export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
+    const { keyCode } = action.payload;
+    let scaledDeltaX = 0;
+    let scaledDeltaY = 0;
+
+    switch (keyCode) {
+        case 37:
+            scaledDeltaX = -1 / scale;
+            break;
+        case 38:
+            scaledDeltaY = -1 / scale;
+            break;
+        case 39:
+            scaledDeltaX = 1 / scale;
+            break;
+        case 40:
+            scaledDeltaY = 1 / scale;
+            break;
+        default:
+            break;
+    }
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        const boundingBox = boundingBoxes[id];
+
+        if (gridSnapping) {
+            let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBox, align);
+
+            let dragX = scaledDeltaX * minorGrid;
+            let dragY = scaledDeltaY * minorGrid;
+
+            let newX = Math.round((coord.x + dragX) / minorGrid) * minorGrid;
+            let newY = Math.round((coord.y + dragY) / minorGrid) * minorGrid;
+
+            let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         } else {
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);

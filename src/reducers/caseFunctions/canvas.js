@@ -1,12 +1,17 @@
-import { addRectangle, addEllipse, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
+import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addFreehandPath,
+    addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
+    resizeTextBoundingBox } from '../utilities/shapes';
 import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
+    const prevEditState = stateCopy.editInProgress;
+    if (root.menuState.toolType !== "polygonTool") {
+        stateCopy.lastSavedShapes = root.drawingState.shapes;
+    }
     stateCopy.editInProgress = true;
-    stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
         case "rectangleTool":
             stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
@@ -22,9 +27,34 @@ export function dragStart(stateCopy, action, root) {
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
-
+        case "polygonTool":
+            if (!prevEditState) {
+                stateCopy.lastSavedShapes = root.drawingState.shapes;
+                stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
+                    stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                shapeIds = stateCopy.shapes.allIds;
+                addedShapeId = shapeIds[shapeIds.length - 1];
+                stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            } else {
+                stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            }
+            break;
         case "lineTool":
             stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
+            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            break;
+        case "arcTool":
+            stateCopy.shapes = addArc(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
+            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            break;
+        case "freehandPathTool":
+            stateCopy.shapes = addFreehandPath(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
@@ -66,6 +96,14 @@ export function drag(stateCopy, action, root) {
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        case "freehandPathTool":
+            stateCopy.shapes = addFreehandPathPoint(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        case "arcTool":
+            stateCopy.shapes = moveArcAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             break;
         case "textTool":
@@ -137,7 +175,10 @@ export function dragStop(stateCopy, action, root) {
         default:
             break;
     }
-    stateCopy.editInProgress = false;
+
+    if (root.menuState.toolType !== "polygonTool" || stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+        stateCopy.editInProgress = false;
+    }
     return stateCopy;
 }
 

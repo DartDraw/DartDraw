@@ -12,7 +12,11 @@ import {
     Group,
     Rectangle,
     Ellipse,
+    Polygon,
+    Polyline,
+    FreehandPath,
     Path,
+    Arc,
     Line,
     Text
 } from './shapes';
@@ -162,8 +166,16 @@ class Canvas extends Component {
                 return <Rectangle {...shapeProps} />;
             case 'ellipse':
                 return <Ellipse {...shapeProps} />;
+            case 'polygon':
+                return <Polygon {...shapeProps} />;
+            case 'polyline':
+                return <Polyline {...shapeProps} />;
+            case 'arc':
+                return <Arc {...shapeProps} />;
             case 'path':
                 return <Path {...shapeProps} />;
+            case 'freehandPath':
+                return <FreehandPath {...shapeProps} />;
             case 'line':
                 return <Line {...shapeProps} />;
             case 'text':
