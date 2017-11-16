@@ -6,8 +6,10 @@ import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
     const prevEditState = stateCopy.editInProgress;
+    if (root.menuState.toolType !== "polygonTool") {
+        stateCopy.lastSavedShapes = root.drawingState.shapes;
+    }
     stateCopy.editInProgress = true;
-    stateCopy.lastSavedShapes = root.drawingState.shapes;
     switch (root.menuState.toolType) {
         case "rectangleTool":
             stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
@@ -25,6 +27,7 @@ export function dragStart(stateCopy, action, root) {
             break;
         case "polygonTool":
             if (!prevEditState) {
+                stateCopy.lastSavedShapes = root.drawingState.shapes;
                 stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
                     stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
                 shapeIds = stateCopy.shapes.allIds;

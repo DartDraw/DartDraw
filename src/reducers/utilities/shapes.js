@@ -62,8 +62,7 @@ export function addPolygon(shapes, action, fill, panX, panY, scale, gridSnapping
         fill: formatColor(fill),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         stroke: 'black',
-        strokeWidth: 5,
-        isEditing: true
+        strokeWidth: 5
     };
 
     if (gridSnapping) {

@@ -205,3 +205,10 @@ export function keyDown(stateCopy, action, root) {
     }
     return stateCopy;
 }
+
+export function selectTool(stateCopy, action, root) {
+    if (root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') {
+        stateCopy.editInProgress = false;
+    }
+    return stateCopy;
+}
