@@ -25,6 +25,7 @@ const initialState = {
     scale: 1,
     panX: 0,
     panY: 0,
+    pasteOffset: 0,
     past: [],
     future: []
 };
@@ -136,6 +137,11 @@ function drawingState(state = initialState, action, root) {
                 updatedState.past.push({ delta, selected });
             }
         }
+    }
+
+    if (updatedState.editInProgress) {
+        updatedState.justCopied = false;
+        updatedState.pasteOffset = 0;
     }
 
     return updatedState;

@@ -15,6 +15,12 @@ export function keyUp(stateCopy, action) {
     if (stateCopy.currentKeys[keyCode]) {
         delete stateCopy.currentKeys[keyCode];
     }
+
+    if (keyCode === 91) {
+        stateCopy.copied = false;
+        stateCopy.pasted = false;
+    }
+
     return stateCopy;
 }
 
