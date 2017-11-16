@@ -23,6 +23,44 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
     return selected;
 }
 
+export function selectShapes(shapes, boundingBoxes, marqueeBox) {
+    let selected = [];
+
+    if (marqueeBox.width < 0) {
+        marqueeBox.x += marqueeBox.width;
+        marqueeBox.width *= -1;
+    }
+
+    if (marqueeBox.height < 0) {
+        marqueeBox.y += marqueeBox.height;
+        marqueeBox.height *= -1;
+    }
+
+    shapes.allIds.map((id) => {
+        const shapeMatrix = shapes.byId[id].transform[0].parameters;
+        const boundingBox = boundingBoxes[id];
+
+        let inBox = 0;
+        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
+        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
+        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
+        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
+
+        if (inBox === 4) {
+            selected.push(id);
+        }
+    });
+
+    return selected;
+}
+
+function pointInBox(box, p) {
+    if (box.x <= p.x && p.x <= (box.x + box.width) && box.y <= p.y && p.y <= (box.y + box.height)) {
+        return 1;
+    }
+    return 0;
+}
+
 export function updateTextInputs(selected, shapes, textInputs) {
     Object.keys(textInputs).map((id) => {
         const textInput = textInputs[id];
