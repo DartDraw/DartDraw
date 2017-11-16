@@ -15,6 +15,7 @@ import {
     Polygon,
     Polyline,
     Path,
+    Arc,
     Line,
     Text
 } from './shapes';
@@ -168,6 +169,8 @@ class Canvas extends Component {
                 return <Polygon {...shapeProps} />;
             case 'polyline':
                 return <Polyline {...shapeProps} />;
+            case 'arc':
+                return <Arc {...shapeProps} />;
             case 'path':
                 return <Path {...shapeProps} />;
             case 'line':

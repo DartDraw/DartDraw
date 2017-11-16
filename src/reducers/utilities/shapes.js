@@ -129,6 +129,35 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
     return shapes;
 }
 
+export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const arc = {
+        id: uuidv1(),
+        type: "arc",
+        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        rx: 0,
+        ry: 0,
+        stroke: formatColor(fill),
+        strokeWidth: 10,
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+    };
+
+    if (gridSnapping) {
+        arc.x1 = Math.round(arc.x1 / minorGrid) * minorGrid;
+        arc.y1 = Math.round(arc.y1 / minorGrid) * minorGrid;
+    }
+
+    arc.x2 = arc.x1;
+    arc.y2 = arc.y1;
+
+    shapes.byId[arc.id] = arc;
+    shapes.allIds.push(arc.id);
+    return shapes;
+}
+
 export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
@@ -169,6 +198,29 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
             line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
             line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
         }
+        console.log(line);
+    });
+
+    return shapes;
+}
+
+export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    selected.map((id) => {
+        const arc = shapes.byId[id];
+        arc.x2 = mouseX;
+        arc.y2 = mouseY;
+
+        if (gridSnapping) {
+            arc.x2 = Math.round(arc.x2 / minorGrid) * minorGrid;
+            arc.y2 = Math.round(arc.y2 / minorGrid) * minorGrid;
+        }
+
+        arc.rx = arc.x2 - arc.x1;
+        arc.ry = arc.y2 - arc.y1;
     });
 
     return shapes;

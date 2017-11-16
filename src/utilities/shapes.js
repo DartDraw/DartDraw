@@ -12,6 +12,20 @@ export function formatPath(d) {
     return formattedD;
 }
 
+export function formatArc(d) {
+    if (!d) {
+        return '';
+    }
+    let formattedD = '';
+    d.map(command => {
+        formattedD = formattedD + command.command + ' ';
+        command.parameters.map(parameter => {
+            formattedD = formattedD + parameter + ' ';
+        });
+    });
+    return formattedD;
+}
+
 export function formatTransform(transform) {
     if (!transform) {
         return '';

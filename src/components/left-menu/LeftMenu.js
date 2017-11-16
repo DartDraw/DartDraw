@@ -42,6 +42,9 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("polygonTool")}>
                         P
                     </button>
+                    <button onClick={() => this.handleToolSelect("arcTool")}>
+                        A
+                    </button>
                     <button onClick={this.handleExportSelect}>
                         <img src="./assets/export.svg" alt="export" id="button-icon" />
                     </button>
