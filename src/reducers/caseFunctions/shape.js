@@ -26,6 +26,7 @@ export function dragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
+    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
     return stateCopy;
 }
 
@@ -35,6 +36,7 @@ export function drag(stateCopy, action, root) {
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
+        stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         switch (root.menuState.toolType) {
             case "selectTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
@@ -42,7 +44,7 @@ export function drag(stateCopy, action, root) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
                 }
                 stateCopy.shapes = initializeMoveShape(stateCopy.shapes, stateCopy.selected, stateCopy.scale,
-                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
+                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
                 break;
             default: break;
         }
@@ -50,7 +52,7 @@ export function drag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                    stateCopy.boundingBoxes, root.menuState.gridSnapping, root.menuState.minorGrid);
+                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
                 break;
             default: break;
         }
@@ -91,14 +93,15 @@ export function handleDrag(stateCopy, action, root) {
                     stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                         stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
                         stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                        root.menuState.minorGrid, shiftSelected);
+                        root.menuState.minorGrid, shiftSelected, root.menuState.centeredControl);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
                         draggableData, handleIndex, stateCopy.scale);
                 }
                 break;
             case "rotateTool":
-                stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected, draggableData, handleIndex, stateCopy.scale, shapeId, stateCopy.selectionBoxes);
+                stateCopy.shapes = rotateShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
+                    draggableData, handleIndex, stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.centeredControl);
                 break;
             default: break;
         }
@@ -173,7 +176,7 @@ export function keyDown(stateCopy, action, root) {
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toDuplicate = copyShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, 10);
+                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, root.menuState.minorGrid);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
             }
             break;
@@ -181,12 +184,12 @@ export function keyDown(stateCopy, action, root) {
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {
-                    stateCopy.pasteOffset += 10;
+                    stateCopy.pasteOffset += root.menuState.minorGrid;
                     stateCopy.justCopied = false;
                 }
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy, stateCopy.pasteOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
-                stateCopy.pasteOffset += 10;
+                stateCopy.pasteOffset += root.menuState.minorGrid;
             }
             break;
         default: break;

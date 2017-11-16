@@ -56,12 +56,13 @@ export function drag(stateCopy, action, root) {
         case "rectangleTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                 stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected);
+                stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid,
+                shiftSelected, root.menuState.centeredControl);
             break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
                 draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null,
-                root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected);
+                root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected, root.menuState.centeredControl);
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
@@ -114,7 +115,7 @@ export function dragStop(stateCopy, action, root) {
             transformedBoundingBox.width = transformPoint(x + width, y, addedShape.transform[0].parameters).x - x;
             transformedBoundingBox.height = transformPoint(x, y + height, addedShape.transform[0].parameters).y - y;
 
-            if (Math.abs(transformedBoundingBox.width) <= 1 ||
+            if (Math.abs(transformedBoundingBox.width) <= 1 &&
                 Math.abs(transformedBoundingBox.height) <= 1) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
             }

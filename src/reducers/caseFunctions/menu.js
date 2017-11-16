@@ -16,9 +16,34 @@ export function keyUp(stateCopy, action) {
         delete stateCopy.currentKeys[keyCode];
     }
 
-    if (keyCode === 91) {
-        stateCopy.copied = false;
-        stateCopy.pasted = false;
+    switch (keyCode) {
+        case 91:
+            stateCopy.copied = false;
+            stateCopy.pasted = false;
+            break;
+        case 49: // TEMP: NEED FRONTEND
+            stateCopy.centeredControl = !stateCopy.centeredControl;
+            break;
+        case 84: // TEMP: NEED FRONTEND
+            stateCopy.align[0] = 'top';
+            break;
+        case 66: // TEMP: NEED FRONTEND
+            stateCopy.align[0] = 'bottom';
+            break;
+        case 76: // TEMP: NEED FRONTEND
+            stateCopy.align[1] = 'left';
+            break;
+        case 82: // TEMP: NEED FRONTEND
+            stateCopy.align[1] = 'right';
+            break;
+        case 88: // TEMP: NEED FRONTEND
+            stateCopy.align[1] = 'center';
+            break;
+        case 89: // TEMP: NEED FRONTEND
+            stateCopy.align[0] = 'center';
+            break;
+        default:
+            break;
     }
 
     return stateCopy;
@@ -68,11 +93,22 @@ export function groupButtonClick(stateCopy, action, root) {
     }
 
     const group = groupShapes(stateCopy.selected, stateCopy.shapes);
-    stateCopy.selected.map((id) => {
-        const i = stateCopy.shapes.allIds.indexOf(id);
-        stateCopy.shapes.allIds.splice(i, 1);
+
+    let toRemove = [];
+    stateCopy.shapes.allIds.map((id, index) => {
+        const i = stateCopy.selected.indexOf(id);
+        if (i > -1) {
+            toRemove.push(index);
+        }
     });
-    stateCopy.shapes.allIds.push(group.id);
+
+    // bring group to highest z-index
+    stateCopy.shapes.allIds[toRemove[toRemove.length - 1]] = group.id;
+    toRemove.pop();
+
+    for (let i = toRemove.length - 1; i >= 0; i--) {
+        stateCopy.shapes.allIds.splice(toRemove[i], 1);
+    }
     stateCopy.shapes.byId[group.id] = group;
     stateCopy.selected = [group.id];
     return stateCopy;

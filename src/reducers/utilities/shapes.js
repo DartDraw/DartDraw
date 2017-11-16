@@ -162,16 +162,16 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function initializeMoveShape(shapes, selected, scale, boundingBoxes, gridSnapping, minorGrid) {
+export function initializeMoveShape(shapes, selected, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
     selected.map((id) => {
         const shape = shapes.byId[id];
-
         const boundingBox = boundingBoxes[id];
-        const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
         if (gridSnapping) {
-            shape.xOffset = coords0.x;
-            shape.yOffset = coords0.y;
+            let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBox, align);
+
+            shape.xOffset = coord.x;
+            shape.yOffset = coord.y;
             shape.dragX = 0;
             shape.dragY = 0;
         }
@@ -180,7 +180,43 @@ export function initializeMoveShape(shapes, selected, scale, boundingBoxes, grid
     return shapes;
 }
 
-export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSnapping, minorGrid) {
+function getAlignedCoord(shape, selectionBox, boundingBox, align) {
+    const coords = {};
+    coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
+    coords[1] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+    coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+    coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+    let center = getCenter(boundingBox, shape.transform[0].parameters);
+    let allXs = [coords[0].x, coords[1].x, coords[2].x, coords[3].x];
+    let allYs = [coords[0].y, coords[1].y, coords[2].y, coords[3].y];
+
+    let coord = coords[0]; // At first no selection box?
+    if (selectionBox) {
+        if (align[0] === 'top' && align[1] === 'left') {
+            coord = coords[selectionBox.upperLeft];
+        } else if (align[0] === 'top' && align[1] === 'center') {
+            coord = { x: center.x, y: Math.min(...allYs) };
+        } else if (align[0] === 'top' && align[1] === 'right') {
+            coord = coords[selectionBox.upperRight];
+        } else if (align[0] === 'center' && align[1] === 'left') {
+            coord = coord = { x: Math.min(...allXs), y: center.y };
+        } else if (align[0] === 'center' && align[1] === 'center') {
+            coord = center;
+        } else if (align[0] === 'center' && align[1] === 'right') {
+            coord = coord = { x: Math.max(...allXs), y: center.y };
+        } else if (align[0] === 'bottom' && align[1] === 'left') {
+            coord = coords[selectionBox.lowerLeft];
+        } else if (align[0] === 'bottom' && align[1] === 'center') {
+            coord = { x: center.x, y: Math.max(...allYs) };
+        } else if (align[0] === 'bottom' && align[1] === 'right') {
+            coord = coords[selectionBox.lowerRight];
+        }
+    }
+    return coord;
+}
+
+export function moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
     const scaledDeltaX = deltaX / scale;
@@ -191,7 +227,7 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
         const boundingBox = boundingBoxes[id];
 
         if (gridSnapping) {
-            const coords0 = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+            let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBox, align);
 
             shape.dragX += scaledDeltaX;
             shape.dragY += scaledDeltaY;
@@ -199,7 +235,7 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes, gridSn
             let newX = Math.round((shape.xOffset + shape.dragX) / minorGrid) * minorGrid;
             let newY = Math.round((shape.yOffset + shape.dragY) / minorGrid) * minorGrid;
 
-            let moveMatrix = [1, 0, 0, 1, newX - coords0.x, newY - coords0.y];
+            let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         } else {
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
@@ -329,7 +365,7 @@ export function deleteShapes(shapes, selected) {
 }
 
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
-    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected) {
+    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected, centeredControl) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
 
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
@@ -352,6 +388,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let newHeight = 0;
         let originalWidth = 0;
         let originalHeight = 0;
+        let targetX = 0;
+        let targetY = 0;
         let deltaX = 0;
         let deltaY = 0;
         let sx = 0;
@@ -368,8 +406,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 originalWidth = len03;
                 originalHeight = len01;
 
-                let targetX = coords0.x + scaledDeltaX;
-                let targetY = coords0.y + scaledDeltaY;
+                targetX = coords0.x + scaledDeltaX;
+                targetY = coords0.y + scaledDeltaY;
 
                 if (gridSnapping) {
                     targetX = Math.round(targetX / minorGrid) * minorGrid;
@@ -540,6 +578,12 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         if (sx === 0) sx = 0.000001;
         if (sy === 0) sy = 0.000001;
 
+        if (centeredControl) {
+            let center = getCenter(boundingBox, shapeMatrix);
+            cx = center.x;
+            cy = center.y;
+        }
+
         if (decomposed.skewX !== 0) {
             shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
@@ -650,7 +694,8 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
     return multiplyMatrices(transform2, transform1);
 }
 
-export function rotateShape(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes) {
+export function rotateShape(shapes, boundingBoxes, selected, draggableData,
+    handleIndex, scale, shapeId, selectionBoxes, centeredControl) {
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let degree = determineDegree(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes);
 
@@ -686,6 +731,12 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData, hand
                 break;
             default:
                 break;
+        }
+
+        if (centeredControl) {
+            let center = getCenter(boundingBox, shapeMatrix);
+            cx = center.x;
+            cy = center.y;
         }
 
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
@@ -813,4 +864,18 @@ export function pasteShapes(shapes, copied, pasteOffset) {
         shapes.allIds.push(shape.id);
     });
     return shapes;
+}
+
+function getCenter(boundingBox, shapeMatrix) {
+    let center = {};
+
+    let coords0 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix);
+    let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
+    let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    center.x = (coords0.x + coords1.x + coords2.x + coords3.x) / 4;
+    center.y = (coords0.y + coords1.y + coords2.y + coords3.y) / 4;
+
+    return center;
 }
