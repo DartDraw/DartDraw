@@ -197,7 +197,6 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
             line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
             line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
         }
-        console.log(line);
     });
 
     return shapes;
