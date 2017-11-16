@@ -10,7 +10,9 @@ const initialState = {
     gridSnapping: false,
     unitType: 'inch',
     majorGrid: 100,
-    minorGrid: 20
+    minorGrid: 20,
+    copied: false,
+    pasted: false
 };
 
 function menuState(state = initialState, action, root) {

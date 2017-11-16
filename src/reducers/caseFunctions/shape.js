@@ -1,4 +1,5 @@
-import { resizeShape, resizeTextBoundingBox, moveShape, initializeMoveShape, rotateShape, fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes } from '../utilities/shapes';
+import { resizeShape, resizeTextBoundingBox, moveShape, initializeMoveShape, rotateShape,
+    fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
 
@@ -153,7 +154,6 @@ export function sendBack(stateCopy, action, root) {
 
 export function keyDown(stateCopy, action, root) {
     const { keyCode } = action.payload;
-
     switch (keyCode) {
         case 8:
             if (!stateCopy.textInputFocused) {
@@ -162,8 +162,20 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.selected = [];
             }
             break;
+        case 67:
+            let commandSelected = 91 in root.menuState.currentKeys;
+            if (commandSelected && !root.menuState.copied) {
+                stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
+            }
+            break;
+        case 86:
+            commandSelected = 91 in root.menuState.currentKeys;
+            if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
+                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy);
+                stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
+            }
+            break;
         default: break;
     }
-
     return stateCopy;
 }
