@@ -50,6 +50,20 @@ export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping
     return shapes;
 }
 
+export function addPolygon(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+    const polygon = {
+        id: uuidv1(),
+        type: 'polygon',
+        points: [200, 10, 250, 180, 260, 190, 160, 210],
+        fill: formatColor(fill),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+    };
+
+    shapes.byId[polygon.id] = polygon;
+    shapes.allIds.push(polygon.id);
+    return shapes;
+}
+
 export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;

@@ -1,4 +1,5 @@
 export {default as Ellipse} from './Ellipse';
+export {default as Polygon} from './Polygon';
 export {default as Group} from './Group';
 export {default as Handle} from './Handle';
 export {default as Line} from './Line';

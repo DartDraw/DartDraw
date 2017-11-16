@@ -12,6 +12,7 @@ import {
     Group,
     Rectangle,
     Ellipse,
+    Polygon,
     Path,
     Line,
     Text
@@ -162,6 +163,8 @@ class Canvas extends Component {
                 return <Rectangle {...shapeProps} />;
             case 'ellipse':
                 return <Ellipse {...shapeProps} />;
+            case 'polygon':
+                return <Polygon {...shapeProps} />;
             case 'path':
                 return <Path {...shapeProps} />;
             case 'line':

@@ -1,4 +1,4 @@
-import { addRectangle, addEllipse, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
+import { addRectangle, addEllipse, addPolygon, addLine, addText, removeShape, resizeShape, moveLineAnchor, resizeTextBoundingBox } from '../utilities/shapes';
 import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
@@ -22,7 +22,13 @@ export function dragStart(stateCopy, action, root) {
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
-
+        case "polygonTool":
+            stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
+            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            break;
         case "lineTool":
             stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
