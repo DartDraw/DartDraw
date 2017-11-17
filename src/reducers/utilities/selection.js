@@ -23,14 +23,16 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
     return selected;
 }
 
-export function selectShapes(shapes, boundingBoxes, marqueeBox) {
+export function selectShapes(shapes, boundingBoxes, marqueeBox, commandSelected) {
     let selected = [];
 
+    // reverse negatives
     if (marqueeBox.width < 0) {
         marqueeBox.x += marqueeBox.width;
         marqueeBox.width *= -1;
     }
 
+    // reverse negatives
     if (marqueeBox.height < 0) {
         marqueeBox.y += marqueeBox.height;
         marqueeBox.height *= -1;
@@ -40,14 +42,20 @@ export function selectShapes(shapes, boundingBoxes, marqueeBox) {
         const shapeMatrix = shapes.byId[id].transform[0].parameters;
         const boundingBox = boundingBoxes[id];
 
-        let inBox = 0;
-        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
-        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
-        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
-        inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
+        if (!commandSelected) {
+            let inBox = 0;
+            inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
+            inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInBox(marqueeBox, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
 
-        if (inBox === 4) {
-            selected.push(id);
+            if (inBox === 4) {
+                selected.push(id);
+            }
+        } else {
+            if (polygonInSelection(marqueeBox, boundingBox, shapeMatrix)) {
+                selected.push(id);
+            }
         }
     });
 
@@ -242,4 +250,60 @@ function determineCornerOrientation(xValues, yValues, index) {
     } else if (xGreaterCount < 2 && yGreaterCount < 2) {
         return "lowerRight";
     }
+}
+
+function polygonInSelection(marqueeBox, boundingBox, shapeMatrix) {
+    // adapted from http://stackoverflow.com/questions/10962379/how-to-check-intersection-between-2-rotated-rectangles/12414951#12414951
+    const rect1 = [{ x: marqueeBox.x + marqueeBox.width, y: marqueeBox.y },
+        { x: marqueeBox.x + marqueeBox.width, y: marqueeBox.y + marqueeBox.height },
+        { x: marqueeBox.x, y: marqueeBox.y + marqueeBox.height },
+        { x: marqueeBox.x, y: marqueeBox.y }
+    ];
+
+    const rect2 = [transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix),
+        transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix),
+        transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix),
+        transformPoint(boundingBox.x, boundingBox.y, shapeMatrix)];
+
+    var polygons = [rect1, rect2];
+    var minA, maxA, projected, i, i1, j, minB, maxB;
+
+    for (i = 0; i < polygons.length; i++) {
+        var polygon = polygons[i];
+        for (i1 = 0; i1 < polygon.length; i1++) {
+            var i2 = (i1 + 1) % polygon.length;
+            var p1 = polygon[i1];
+            var p2 = polygon[i2];
+
+            var normal = { x: p2.y - p1.y, y: p1.x - p2.x };
+
+            minA = maxA = undefined;
+
+            for (let j = 0; j < rect1.length; j++) {
+                projected = normal.x * rect1[j].x + normal.y * rect1[j].y;
+                if (typeof (minA) === "undefined" || projected < minA) {
+                    minA = projected;
+                }
+                if (typeof (maxA) === "undefined" || projected > maxA) {
+                    maxA = projected;
+                }
+            }
+
+            minB = maxB = undefined;
+            for (j = 0; j < rect2.length; j++) {
+                projected = normal.x * rect2[j].x + normal.y * rect2[j].y;
+                if (typeof (minB) === "undefined" || projected < minB) {
+                    minB = projected;
+                }
+                if (typeof (maxB) === "undefined" || projected > maxB) {
+                    maxB = projected;
+                }
+            }
+
+            if (maxA < minB || maxB < minA) {
+                return false;
+            }
+        }
+    }
+    return true;
 }

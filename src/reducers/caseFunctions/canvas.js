@@ -160,7 +160,8 @@ export function dragStop(stateCopy, action, root) {
             stateCopy.selected = [];
             break;
         case "selectTool":
-            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.marqueeBox);
+            let commandSelected = 91 in root.menuState.currentKeys;
+            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.marqueeBox, commandSelected);
             stateCopy.marqueeBox = null;
             break;
         case "zoomTool":
