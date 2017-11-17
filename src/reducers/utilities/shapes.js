@@ -208,19 +208,26 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid, centeredControl) {
     const { x, y, node } = draggableData;
     let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
     let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     selected.map((id) => {
         const line = shapes.byId[id];
+        let oldX2 = line.x2;
+        let oldY2 = line.y2;
         line.x2 = mouseX;
         line.y2 = mouseY;
 
         if (gridSnapping) {
             line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
             line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
+        }
+
+        if (centeredControl) {
+            line.x1 -= (line.x2 - oldX2);
+            line.y1 -= (line.y2 - oldY2);
         }
     });
 

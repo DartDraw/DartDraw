@@ -96,7 +96,7 @@ export function drag(stateCopy, action, root) {
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.centeredControl);
             break;
         case "freehandPathTool":
             stateCopy.shapes = addFreehandPathPoint(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
