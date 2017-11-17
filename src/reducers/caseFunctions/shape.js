@@ -53,8 +53,10 @@ export function drag(stateCopy, action, root) {
     } else {
         switch (root.menuState.toolType) {
             case "selectTool":
+                let shiftSelected = 16 in root.menuState.currentKeys;
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
+                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping,
+                    root.menuState.minorGrid, root.menuState.align, shiftSelected);
                 break;
             default: break;
         }

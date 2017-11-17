@@ -375,11 +375,38 @@ function getAlignedCoord(shape, selectionBox, boundingBox, align) {
     return coord;
 }
 
-export function moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
+export function moveShape(shapes, selected, action, scale, boundingBoxes,
+    selectionBoxes, gridSnapping, minorGrid, align, shiftSelected) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
+    let scaledDeltaX = deltaX / scale;
+    let scaledDeltaY = deltaY / scale;
+    //  console.log(Math.atan2(scaledDeltaY, scaledDeltaX) + Math.PI);
+
+    if (shiftSelected) {
+        let angle = Math.atan2(scaledDeltaY, scaledDeltaX) + Math.PI;
+        angle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+
+        if (angle === (Math.PI) || angle === (2 * Math.PI)) {
+            scaledDeltaY = 0;
+        } else if (angle === (Math.PI / 2) || angle === (3 * Math.PI / 2)) {
+            scaledDeltaX = 0;
+        } else {
+            let newScale = Math.min(Math.abs(scaledDeltaX), Math.abs(scaledDeltaY));
+
+            if (scaledDeltaX < 0) {
+                scaledDeltaX = newScale * -1;
+            } else {
+                scaledDeltaX = newScale;
+            }
+
+            if (scaledDeltaY < 0) {
+                scaledDeltaY = newScale * -1;
+            } else {
+                scaledDeltaY = newScale;
+            }
+        }
+    }
 
     selected.map((id) => {
         const shape = shapes.byId[id];
