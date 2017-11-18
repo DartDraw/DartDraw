@@ -1,7 +1,7 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes } from '../utilities/shapes';
 
-import { selectShape, updateSelectionBoxesCorners } from '../utilities/selection';
+import { selectShape, updateSelectionBoxesCorners, determineShiftDirection } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
     switch (root.menuState.toolType) {
@@ -54,9 +54,14 @@ export function drag(stateCopy, action, root) {
         switch (root.menuState.toolType) {
             case "selectTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
+                if (shiftSelected && stateCopy.shiftDirection === null) {
+                    stateCopy.shiftDirection = determineShiftDirection(action, stateCopy.scale, shiftSelected);
+                }
+
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                     stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                    root.menuState.minorGrid, root.menuState.align, shiftSelected);
+                    root.menuState.minorGrid, root.menuState.align, stateCopy.shiftDirection);
+
                 break;
             default: break;
         }
@@ -89,6 +94,10 @@ export function handleDrag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
     let shiftSelected = 16 in root.menuState.currentKeys;
 
+    if (shiftSelected && stateCopy.shiftDirection === null) {
+        stateCopy.shiftDirection = determineShiftDirection(action, stateCopy.scale, shiftSelected);
+    }
+
     if (!stateCopy.editInProgress) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         stateCopy.editInProgress = true;
@@ -102,7 +111,7 @@ export function handleDrag(stateCopy, action, root) {
                     stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                         stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
                         stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                        root.menuState.minorGrid, shiftSelected, root.menuState.centeredControl);
+                        root.menuState.minorGrid, stateCopy.shiftDirection, root.menuState.centeredControl);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
                         draggableData, handleIndex, stateCopy.scale);
@@ -211,6 +220,19 @@ export function keyDown(stateCopy, action, root) {
             }
             break;
         default: break;
+    }
+
+    return stateCopy;
+}
+
+export function keyUp(stateCopy, action, root) {
+    const { keyCode } = action.payload;
+    switch (keyCode) {
+        case 16:
+            stateCopy.shiftDirection = null;
+            break;
+        default:
+            break;
     }
     return stateCopy;
 }

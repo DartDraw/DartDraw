@@ -307,3 +307,29 @@ function polygonInSelection(marqueeBox, boundingBox, shapeMatrix) {
     }
     return true;
 }
+
+export function determineShiftDirection(action, scale, shiftSelected) {
+    const { draggableData } = action.payload;
+    const { deltaX, deltaY } = draggableData;
+    let scaledDeltaX = deltaX / scale;
+    let scaledDeltaY = deltaY / scale;
+
+    if (shiftSelected) {
+        if (scaledDeltaY === 0 && scaledDeltaX === 0) {
+            return "diagonal";
+        }
+
+        let angle = Math.atan2(scaledDeltaY, scaledDeltaX) + Math.PI;
+        angle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+
+        if ((5 * Math.PI / 6 <= angle && angle <= 7 * Math.PI / 6) || angle >= 11 * Math.PI / 6) {
+            return "x";
+        } else if ((Math.PI / 3 <= angle && angle <= 2 * Math.PI / 3) || (4 * Math.PI / 3 <= angle && angle < 5 * Math.PI / 3)) {
+            return "y";
+        } else {
+            return "diagonal";
+        }
+    }
+
+    return null;
+}

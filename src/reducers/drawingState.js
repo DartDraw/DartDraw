@@ -26,6 +26,7 @@ const initialState = {
     panX: 0,
     panY: 0,
     pasteOffset: 0,
+    shiftDirection: null,
     past: [],
     future: []
 };
@@ -95,6 +96,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
+            break;
+        case menuActions.KEY_UP:
+            updatedState = shape.keyUp(stateCopy, action, root);
             break;
         case menuActions.SELECT_TOOL:
             updatedState = shape.selectTool(stateCopy, action, root);
