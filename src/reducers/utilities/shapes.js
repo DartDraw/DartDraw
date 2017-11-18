@@ -511,6 +511,19 @@ export function formatColor(rgba) {
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
 
+export function flipShape(shapes, selected, selectionBoxes, boundingBoxes, vertical) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBoxes[id], ["center", "center"]);
+        if (vertical) {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, -1, 1, coord.x, coord.y);
+        } else {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, 1, -1, coord.x, coord.y);
+        }
+    });
+    return shapes;
+}
+
 export function bringToFront(shapes, selected) {
     for (let i = 0; i < selected.length; i++) {
         shapes.allIds.splice(shapes.allIds.indexOf(selected[i]), 1);

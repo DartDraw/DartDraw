@@ -12,6 +12,8 @@ import {
     moveBackward,
     moveForward,
     sendToBack,
+    flipHorizontal,
+    flipVertical,
     bringToFront,
     toggleGridSnapping
 } from './../../actions/menu';
@@ -47,6 +49,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onBringToFront: () => {
             dispatch(bringToFront());
+        },
+        onFlipHorizontal: () => {
+            dispatch(flipHorizontal());
+        },
+        onFlipVertical: () => {
+            dispatch(flipVertical());
         },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));

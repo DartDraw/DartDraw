@@ -1,5 +1,5 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
-    fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes } from '../utilities/shapes';
+    fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes, flipShape } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection } from '../utilities/selection';
 
@@ -172,6 +172,20 @@ export function bringFront(stateCopy, action, root) {
 export function sendBack(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
     stateCopy.shapes = sendToBack(stateCopy.shapes, stateCopy.selected);
+    return stateCopy;
+}
+
+export function flipVertical(stateCopy, action, root) {
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    stateCopy.shapes = flipShape(stateCopy.shapes, stateCopy.selected,
+        stateCopy.selectionBoxes, stateCopy.boundingBoxes, true);
+    return stateCopy;
+}
+
+export function flipHorizontal(stateCopy, action, root) {
+    stateCopy.lastSavedShapes = root.drawingState.shapes;
+    stateCopy.shapes = flipShape(stateCopy.shapes, stateCopy.selected,
+        stateCopy.selectionBoxes, stateCopy.boundingBoxes, false);
     return stateCopy;
 }
 

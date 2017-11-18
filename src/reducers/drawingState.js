@@ -94,6 +94,12 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SEND_BACK:
             updatedState = shape.sendBack(stateCopy, action, root);
             break;
+        case menuActions.FLIP_VERTICAL:
+            updatedState = shape.flipVertical(stateCopy, action, root);
+            break;
+        case menuActions.FLIP_HORIZONTAL:
+            updatedState = shape.flipHorizontal(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
             break;
