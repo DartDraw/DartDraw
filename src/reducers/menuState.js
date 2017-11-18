@@ -14,7 +14,8 @@ const initialState = {
     copied: false,
     pasted: false,
     align: ['top', 'left'],
-    centeredControl: false
+    centeredControl: false,
+    rectangleRadius: {x: 50, y: 50}
 };
 
 function menuState(state = initialState, action, root) {

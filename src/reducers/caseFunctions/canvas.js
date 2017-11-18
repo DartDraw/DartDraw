@@ -15,9 +15,18 @@ export function dragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "rectangleTool":
             stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
-                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping,
+                root.menuState.minorGrid, {x: 0, y: 0});
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
+            stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            break;
+        case "roundedRectangleTool":
+            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping,
+                root.menuState.minorGrid, root.menuState.rectangleRadius);
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "ellipseTool":
@@ -88,6 +97,7 @@ export function drag(stateCopy, action, root) {
     stateCopy.shiftDirection = shiftSelected ? "diagonal" : null;
     switch (root.menuState.toolType) {
         case "rectangleTool":
+        case "roundedRectangleTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                 stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid,
@@ -130,6 +140,7 @@ export function drag(stateCopy, action, root) {
 export function dragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "rectangleTool":
+        case "roundedRectangleTool":
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
 
