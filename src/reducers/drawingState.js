@@ -25,7 +25,8 @@ const initialState = {
     scale: 1,
     panX: 0,
     panY: 0,
-    pasteOffset: 0,
+    pasteOffset: {x: 0, y: 0},
+    duplicateOffset: {x: 0, y: 0},
     shiftDirection: null,
     past: [],
     future: []
@@ -154,7 +155,7 @@ function drawingState(state = initialState, action, root) {
 
     if (updatedState.editInProgress) {
         updatedState.justCopied = false;
-        updatedState.pasteOffset = 0;
+        updatedState.pasteOffset = {x: 0, y: 0};
     }
 
     return updatedState;

@@ -14,6 +14,11 @@ export function click(stateCopy, action, root) {
                     selectMultiple = true;
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
+
+                if (!stateCopy.justDuplicated) {
+                    stateCopy.duplicateOffset.x = root.menuState.minorGrid;
+                    stateCopy.duplicateOffset.y = root.menuState.minorGrid;
+                }
             }
             stateCopy.editInProgress = false;
             break;
@@ -23,6 +28,7 @@ export function click(stateCopy, action, root) {
             stateCopy.editInProgress = false;
             break;
     }
+
     return stateCopy;
 }
 
@@ -62,6 +68,11 @@ export function drag(stateCopy, action, root) {
                     stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping,
                     root.menuState.minorGrid, root.menuState.align, stateCopy.shiftDirection);
 
+                if (stateCopy.justDuplicated) {
+                    stateCopy.duplicateOffset.x += action.payload.draggableData.deltaX / stateCopy.scale;
+                    stateCopy.duplicateOffset.y += action.payload.draggableData.deltaY / stateCopy.scale;
+                }
+
                 break;
             default: break;
         }
@@ -80,6 +91,12 @@ export function dragStop(stateCopy, action, root) {
             stateCopy.editInProgress = false;
             break;
     }
+
+    if (!stateCopy.justDuplicated) {
+        stateCopy.duplicateOffset.x = root.menuState.minorGrid;
+        stateCopy.duplicateOffset.y = root.menuState.minorGrid;
+    }
+    stateCopy.justDuplicated = false;
     return stateCopy;
 }
 
@@ -217,20 +234,23 @@ export function keyDown(stateCopy, action, root) {
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toDuplicate = copyShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, root.menuState.minorGrid);
+                stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, stateCopy.duplicateOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
+                stateCopy.justDuplicated = true;
             }
             break;
         case 86: // paste
             commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {
-                    stateCopy.pasteOffset += root.menuState.minorGrid;
+                    stateCopy.pasteOffset.x += root.menuState.minorGrid;
+                    stateCopy.pasteOffset.y += root.menuState.minorGrid;
                     stateCopy.justCopied = false;
                 }
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy, stateCopy.pasteOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
-                stateCopy.pasteOffset += root.menuState.minorGrid;
+                stateCopy.pasteOffset.x += root.menuState.minorGrid;
+                stateCopy.pasteOffset.y += root.menuState.minorGrid;
             }
             break;
         default: break;
