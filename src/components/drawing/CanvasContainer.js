@@ -22,7 +22,7 @@ function formatShape(shape, shapes, scale) {
     const formattedShape = Object.assign({}, shape);
     if (formattedShape.type === 'group') {
         formattedShape.members = formattedShape.members.map((shapeId, i) => {
-            return formatShape(shapes.byId[shapeId], shapes);
+            return formatShape(shapes.byId[shapeId], shapes, scale);
         });
     } else {
         formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
