@@ -68,7 +68,9 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "selectTool":
-            stateCopy.selected = selectShape([], null);
+            if (!(16 in root.menuState.currentKeys)) {
+                stateCopy.selected = selectShape([], null);
+            }
             stateCopy.marqueeBox = addMarqueeBox(action, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             break;
         case "zoomTool":
@@ -163,7 +165,8 @@ export function dragStop(stateCopy, action, root) {
             break;
         case "selectTool":
             let commandSelected = 91 in root.menuState.currentKeys;
-            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.marqueeBox, commandSelected);
+            let shiftSelected = 16 in root.menuState.currentKeys;
+            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.marqueeBox, commandSelected, shiftSelected);
             stateCopy.marqueeBox = null;
             break;
         case "zoomTool":

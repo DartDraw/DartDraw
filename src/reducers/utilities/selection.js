@@ -23,8 +23,14 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
     return selected;
 }
 
-export function selectShapes(shapes, boundingBoxes, marqueeBox, commandSelected) {
-    let selected = [];
+export function selectShapes(shapes, selected, boundingBoxes, marqueeBox, commandSelected, shiftSelected) {
+    if (!shiftSelected) {
+        selected = [];
+    }
+
+    if (selected === null || typeof (selected) === "undefined") {
+        selected = [];
+    }
 
     // reverse negatives
     if (marqueeBox.width < 0) {
