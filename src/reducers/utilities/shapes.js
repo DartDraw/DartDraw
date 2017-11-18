@@ -2,7 +2,7 @@ import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
 
-export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid, rectangleRadius) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const rectangle = {
@@ -10,6 +10,8 @@ export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnappi
         type: 'rectangle',
         x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        rx: rectangleRadius.x,
+        ry: rectangleRadius.y,
         width: 1,
         height: 1,
         fill: formatColor(fill),
@@ -795,6 +797,12 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             let center = getCenter(boundingBox, shapeMatrix);
             cx = center.x;
             cy = center.y;
+        }
+
+        if (shape.type === 'rectangle') {
+            // preserve rounded rectangle radius
+            shape.rx = Math.abs(shape.rx / sx);
+            shape.ry = Math.abs(shape.ry / sy);
         }
 
         if (decomposed.skewX !== 0) {

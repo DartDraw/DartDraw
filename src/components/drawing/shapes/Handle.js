@@ -46,7 +46,7 @@ class Handle extends Component {
     }
 
     render() {
-        const { id, x, y, width, height, strokeWidth, propagateEvents, transform } = this.props;
+        const { id, x, y, width, height, strokeWidth, propagateEvents } = this.props;
         const rectProps = { x, y };
         return (
             <Rectangle

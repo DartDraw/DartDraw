@@ -14,6 +14,8 @@ class Rectangle extends Component {
         height: PropTypes.number,
         x: PropTypes.number,
         y: PropTypes.number,
+        rx: PropTypes.number,
+        ry: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.number,
@@ -66,6 +68,8 @@ class Rectangle extends Component {
             height,
             x,
             y,
+            rx,
+            ry,
             stroke,
             strokeWidth,
             strokeDasharray,
@@ -81,7 +85,9 @@ class Rectangle extends Component {
             strokeDasharray,
             fill,
             transform: formatTransform(transform),
-            vectorEffect: 'non-scaling-stroke'
+            vectorEffect: 'non-scaling-stroke',
+            rx,
+            ry
         };
 
         return (
