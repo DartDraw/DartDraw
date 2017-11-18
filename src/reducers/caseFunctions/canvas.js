@@ -68,7 +68,9 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "selectTool":
-            stateCopy.selected = selectShape([], null);
+            if (!(16 in root.menuState.currentKeys)) {
+                stateCopy.selected = selectShape([], null);
+            }
             stateCopy.marqueeBox = addMarqueeBox(action, stateCopy.panX, stateCopy.panY, stateCopy.scale);
             break;
         case "zoomTool":
@@ -76,27 +78,29 @@ export function dragStart(stateCopy, action, root) {
             break;
         default: break;
     }
+
     return stateCopy;
 }
 
 export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     let shiftSelected = 16 in root.menuState.currentKeys;
+    stateCopy.shiftDirection = shiftSelected ? "diagonal" : null;
     switch (root.menuState.toolType) {
         case "rectangleTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                 stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.minorGrid,
-                shiftSelected, root.menuState.centeredControl);
+                stateCopy.shiftDirection, root.menuState.centeredControl);
             break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
                 draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null,
-                root.menuState.gridSnapping, root.menuState.minorGrid, shiftSelected, root.menuState.centeredControl);
+                root.menuState.gridSnapping, root.menuState.minorGrid, stateCopy.shiftDirection, root.menuState.centeredControl);
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.centeredControl);
             break;
         case "freehandPathTool":
             stateCopy.shapes = addFreehandPathPoint(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
@@ -160,7 +164,9 @@ export function dragStop(stateCopy, action, root) {
             stateCopy.selected = [];
             break;
         case "selectTool":
-            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.marqueeBox);
+            let commandSelected = 91 in root.menuState.currentKeys;
+            let shiftSelected = 16 in root.menuState.currentKeys;
+            stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.marqueeBox, commandSelected, shiftSelected);
             stateCopy.marqueeBox = null;
             break;
         case "zoomTool":

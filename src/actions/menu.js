@@ -14,6 +14,8 @@ export const MOVE_BACKWARD = 'MOVE_BACKWARD';
 export const MOVE_FORWARD = 'MOVE_FORWARD';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
+export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
+export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 
@@ -79,6 +81,14 @@ export function sendToBack() {
 
 export function bringToFront() {
     return { type: BRING_FRONT };
+}
+
+export function flipHorizontal() {
+    return { type: FLIP_HORIZONTAL };
+}
+
+export function flipVertical() {
+    return { type: FLIP_VERTICAL };
 }
 
 export function setGrid(unitType, majorGrid, minorGrid) {

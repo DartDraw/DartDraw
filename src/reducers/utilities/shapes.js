@@ -208,19 +208,26 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid, centeredControl) {
     const { x, y, node } = draggableData;
     let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
     let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     selected.map((id) => {
         const line = shapes.byId[id];
+        let oldX2 = line.x2;
+        let oldY2 = line.y2;
         line.x2 = mouseX;
         line.y2 = mouseY;
 
         if (gridSnapping) {
             line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
             line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
+        }
+
+        if (centeredControl) {
+            line.x1 -= (line.x2 - oldX2);
+            line.y1 -= (line.y2 - oldY2);
         }
     });
 
@@ -375,11 +382,38 @@ function getAlignedCoord(shape, selectionBox, boundingBox, align) {
     return coord;
 }
 
-export function moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
+export function moveShape(shapes, selected, action, scale, boundingBoxes,
+    selectionBoxes, gridSnapping, minorGrid, align, shiftDirection) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
-    const scaledDeltaX = deltaX / scale;
-    const scaledDeltaY = deltaY / scale;
+    let scaledDeltaX = deltaX / scale;
+    let scaledDeltaY = deltaY / scale;
+
+    switch (shiftDirection) {
+        case 'x':
+            scaledDeltaY = 0;
+            break;
+        case 'y':
+            scaledDeltaX = 0;
+            break;
+        case 'diagonal':
+            let newScale = Math.min(Math.abs(scaledDeltaX), Math.abs(scaledDeltaY));
+
+            if (scaledDeltaX < 0) {
+                scaledDeltaX = newScale * -1;
+            } else {
+                scaledDeltaX = newScale;
+            }
+
+            if (scaledDeltaY < 0) {
+                scaledDeltaY = newScale * -1;
+            } else {
+                scaledDeltaY = newScale;
+            }
+            break;
+        default:
+            break;
+    }
 
     selected.map((id) => {
         const shape = shapes.byId[id];
@@ -475,6 +509,19 @@ export function fillShape(shapes, selected, action) {
 export function formatColor(rgba) {
     const { r, g, b, a } = rgba;
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
+
+export function flipShape(shapes, selected, selectionBoxes, boundingBoxes, vertical) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBoxes[id], ["center", "center"]);
+        if (vertical) {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, -1, 1, coord.x, coord.y);
+        } else {
+            shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, 1, -1, coord.x, coord.y);
+        }
+    });
+    return shapes;
 }
 
 export function bringToFront(shapes, selected) {
@@ -577,12 +624,12 @@ export function deleteShapes(shapes, selected) {
 }
 
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
-    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftSelected, centeredControl) {
+    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftDirection, centeredControl) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
 
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex,
-        panX, panY, scale, gridSnapping, minorGrid, shiftSelected);
+        panX, panY, scale, gridSnapping, minorGrid, shiftDirection);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
@@ -602,8 +649,6 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let originalHeight = 0;
         let targetX = 0;
         let targetY = 0;
-        let deltaX = 0;
-        let deltaY = 0;
         let sx = 0;
         let sy = 0;
 
@@ -636,19 +681,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse03 < len03 || distMouse00 > distMouse03) scale03 *= -1;
                 if (distMouse01 < len01 || distMouse00 > distMouse01) scale01 *= -1;
 
-                deltaX = scale03;
-                deltaY = scale01;
-
-                if (shiftSelected) {
-                    if (scaleXY.main === "x") {
-                        deltaY = scale03;
-                    } else {
-                        deltaX = scale01;
-                    }
-                }
-
-                newWidth = len03 + deltaX;
-                newHeight = len01 + deltaY;
+                newWidth = len03 + scale03;
+                newHeight = len01 + scale01;
 
                 cxCoords = coords2;
                 break;
@@ -677,19 +711,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse12 < len12 || distMouse11 > distMouse12) scale12 *= -1;
                 if (distMouse10 < len10 || distMouse11 > distMouse10) scale10 *= -1;
 
-                deltaX = scale12;
-                deltaY = scale10;
-
-                if (shiftSelected) {
-                    if (scaleXY.main === "x") {
-                        deltaY = scale12;
-                    } else {
-                        deltaX = scale10;
-                    }
-                }
-
-                newWidth = len12 + deltaX;
-                newHeight = len10 + deltaY;
+                newWidth = len12 + scale12;
+                newHeight = len10 + scale10;
 
                 cxCoords = coords3;
                 break;
@@ -718,19 +741,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse21 < len21 || distMouse22 > distMouse21) scale21 *= -1;
                 if (distMouse23 < len23 || distMouse22 > distMouse23) scale23 *= -1;
 
-                deltaX = scale21;
-                deltaY = scale23;
-
-                if (shiftSelected) {
-                    if (scaleXY.main === "x") {
-                        deltaY = scale21;
-                    } else {
-                        deltaX = scale23;
-                    }
-                }
-
-                newWidth = len21 + deltaX;
-                newHeight = len23 + deltaY;
+                newWidth = len21 + scale21;
+                newHeight = len23 + scale23;
 
                 cxCoords = coords0;
                 break;
@@ -759,19 +771,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 if (distMouse30 < len30 || distMouse33 > distMouse30) scale30 *= -1;
                 if (distMouse32 < len32 || distMouse33 > distMouse32) scale32 *= -1;
 
-                deltaX = scale30;
-                deltaY = scale32;
-
-                if (shiftSelected) {
-                    if (scaleXY.main === "x") {
-                        deltaY = scale30;
-                    } else {
-                        deltaX = scale32;
-                    }
-                }
-
-                newWidth = len30 + deltaX;
-                newHeight = len32 + deltaY;
+                newWidth = len30 + scale30;
+                newHeight = len32 + scale32;
 
                 cxCoords = coords1;
                 break;
@@ -837,7 +838,7 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
 }
 
 function determineScale(shape, boundingBoxes, draggableData, handleIndex,
-    panX, panY, scale, gridSnapping, minorGrid, shiftSelected) {
+    panX, panY, scale, gridSnapping, minorGrid, shiftDirection) {
     let scaleXY = {};
 
     const { x, y, node } = draggableData;
@@ -886,12 +887,30 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex,
             break;
     }
 
-    if (shiftSelected) {
-        if (scaleXY.x > scaleXY.y) {
-            scaleXY.main = "x";
-        } else {
-            scaleXY.main = "y";
-        }
+    switch (shiftDirection) {
+        case 'x':
+            scaleXY.y = 0;
+            break;
+        case 'y':
+            scaleXY.x = 0;
+            break;
+        case 'diagonal':
+            let newScale = Math.min(Math.abs(scaleXY.x), Math.abs(scaleXY.y));
+
+            if (scaleXY.x < 0) {
+                scaleXY.x = newScale * -1;
+            } else {
+                scaleXY.x = newScale;
+            }
+
+            if (scaleXY.y < 0) {
+                scaleXY.y = newScale * -1;
+            } else {
+                scaleXY.y = newScale;
+            }
+            break;
+        default:
+            break;
     }
 
     return scaleXY;
@@ -1070,7 +1089,7 @@ export function pasteShapes(shapes, copied, pasteOffset) {
     Object.keys(copied).map((id) => {
         let shape = deepCopy(copied[id]);
         shape.id = uuidv1();
-        let moveMatrix = [1, 0, 0, 1, pasteOffset, pasteOffset];
+        let moveMatrix = [1, 0, 0, 1, pasteOffset.x, pasteOffset.y];
         shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         shapes.byId[shape.id] = shape;
         shapes.allIds.push(shape.id);

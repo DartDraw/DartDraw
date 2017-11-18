@@ -18,6 +18,8 @@ class TopMenu extends Component {
         onMoveForward: PropTypes.func,
         onSendToBack: PropTypes.func,
         onBringToFront: PropTypes.func,
+        onFlipHorizontal: PropTypes.func,
+        onFlipVertical: PropTypes.func,
         onCustomZoom: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
         scale: PropTypes.number
@@ -39,6 +41,8 @@ class TopMenu extends Component {
         this.handleMoveForward = this.handleMoveForward.bind(this);
         this.handleSendToBack = this.handleSendToBack.bind(this);
         this.handleBringToFront = this.handleBringToFront.bind(this);
+        this.handleFlipHorizontal = this.handleFlipHorizontal.bind(this);
+        this.handleFlipVertical = this.handleFlipVertical.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
@@ -74,6 +78,14 @@ class TopMenu extends Component {
 
     handleSendToBack() {
         this.props.onSendToBack();
+    }
+
+    handleFlipHorizontal() {
+        this.props.onFlipHorizontal();
+    }
+
+    handleFlipVertical() {
+        this.props.onFlipVertical();
     }
 
     handleChangeComplete(color, event) {
@@ -128,6 +140,12 @@ class TopMenu extends Component {
                 </button>
                 <button onClick={this.handleBringToFront}>
                     <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
+                </button>
+                <button onClick={this.handleFlipHorizontal}>
+                    FH
+                </button>
+                <button onClick={this.handleFlipVertical}>
+                    FV
                 </button>
                 <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
                 <div id="color-palette">
