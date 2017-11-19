@@ -158,6 +158,14 @@ function drawingState(state = initialState, action, root) {
         updatedState.pasteOffset = {x: 0, y: 0};
     }
 
+    if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
+        if (root.menuState.toolType !== 'polygonTool') {
+            stateCopy.mode = '';
+            stateCopy.selected = [];
+            stateCopy.selectionBoxes = [];
+        }
+    }
+
     return updatedState;
 }
 

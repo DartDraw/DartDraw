@@ -635,6 +635,45 @@ export function removeTransformation(shapes, selected) {
     return shapes;
 }
 
+export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.parentNode.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.parentNode.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
+        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+    }
+
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'line':
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+                break;
+            case 'polygon':
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = mouseX;
+                    shape.points[shape.points.length - 1] = mouseY;
+                }
+
+                if (handleIndex === (shape.points.length / 2) - 1) {
+                    shape.points[0] = mouseX;
+                    shape.points[1] = mouseY;
+                }
+
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
 export function deleteShapes(shapes, selected) {
     selected.map((id) => {
         if (shapes.byId[id].type === "group") {

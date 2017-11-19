@@ -1,10 +1,12 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes, flipShape,
-    removeTransformation } from '../utilities/shapes';
+    removeTransformation, reshape } from '../utilities/shapes';
 
-import { selectShape, updateSelectionBoxesCorners, determineShiftDirection } from '../utilities/selection';
+import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
 export function click(stateCopy, action, root) {
+    if (stateCopy.mode === 'reshape') { return stateCopy; }
+
     switch (root.menuState.toolType) {
         case "selectTool":
             if (!stateCopy.editInProgress) {
@@ -24,6 +26,7 @@ export function click(stateCopy, action, root) {
             stateCopy.editInProgress = false;
             break;
         case 'polygonTool':
+            stateCopy.mode = "reshape";
             break;
         default:
             stateCopy.editInProgress = false;
@@ -37,11 +40,13 @@ export function dragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
-    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
+    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
     return stateCopy;
 }
 
 export function drag(stateCopy, action, root) {
+    if (stateCopy.mode === 'reshape') { return stateCopy; }
+
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
 
     if (!stateCopy.editInProgress) {
@@ -82,6 +87,8 @@ export function drag(stateCopy, action, root) {
 }
 
 export function dragStop(stateCopy, action, root) {
+    if (stateCopy.mode === 'reshape') { return stateCopy; }
+
     switch (root.menuState.toolType) {
         case "selectTool":
             stateCopy.shapes = endMoveShape(stateCopy.shapes, stateCopy.selected);
@@ -112,8 +119,16 @@ export function handleDrag(stateCopy, action, root) {
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode.parentNode;
     let shiftSelected = 16 in root.menuState.currentKeys;
 
+    const { draggableData, handleIndex, shapeId } = action.payload;
+
     if (shiftSelected && stateCopy.shiftDirection === null) {
         stateCopy.shiftDirection = determineShiftDirection(action, stateCopy.scale, shiftSelected);
+    }
+
+    if (stateCopy.mode === 'reshape') {
+        stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+            stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+        return stateCopy;
     }
 
     if (!stateCopy.editInProgress) {
@@ -121,7 +136,6 @@ export function handleDrag(stateCopy, action, root) {
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     } else {
-        const { draggableData, handleIndex, shapeId } = action.payload;
         switch (root.menuState.toolType) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
@@ -217,6 +231,12 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.selected = [];
             }
             break;
+        case 13: // finish reshape
+            if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
+                stateCopy.mode = "";
+                stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+            }
+            break;
         case 37:
         case 38:
         case 39:
@@ -240,9 +260,14 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.justDuplicated = true;
             }
             break;
-        case 82: // paste
-            if (stateCopy.selected.length === 1) {
-                stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
+        case 82: // reshape
+            if (root.menuState.toolType === 'selectTool' && stateCopy.selected.length === 1) {
+                const type = stateCopy.shapes.byId[stateCopy.selected[0]].type;
+                if (type === 'polygon' || type === 'line') {
+                    stateCopy.mode = "reshape";
+                    stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
+                    stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+                }
             }
             break;
         case 86: // paste
