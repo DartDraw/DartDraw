@@ -262,8 +262,8 @@ export function keyDown(stateCopy, action, root) {
             break;
         case 82: // reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.selected.length === 1) {
-                const type = stateCopy.shapes.byId[stateCopy.selected[0]].type;
-                if (type === 'polygon' || type === 'line') {
+                const hasPoints = stateCopy.shapes.byId[stateCopy.selected[0]].points;
+                if (hasPoints) {
                     stateCopy.mode = "reshape";
                     stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
                     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);

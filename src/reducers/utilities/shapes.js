@@ -121,8 +121,8 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
     };
 
     if (gridSnapping) {
-        line.points[0] = Math.round(line.x1 / minorGrid) * minorGrid;
-        line.points[1] = Math.round(line.y1 / minorGrid) * minorGrid;
+        line.points[0] = Math.round(line.points[0] / minorGrid) * minorGrid;
+        line.points[1] = Math.round(line.points[1] / minorGrid) * minorGrid;
     }
 
     shapes.byId[line.id] = line;
@@ -137,8 +137,8 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     const arc = {
         id: uuidv1(),
         type: "arc",
-        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
-        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        points: [ (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         rx: 0,
         ry: 0,
         stroke: formatColor(fill),
@@ -147,12 +147,12 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     };
 
     if (gridSnapping) {
-        arc.x1 = Math.round(arc.x1 / minorGrid) * minorGrid;
-        arc.y1 = Math.round(arc.y1 / minorGrid) * minorGrid;
+        arc.points[0] = Math.round(arc.points[0] / minorGrid) * minorGrid;
+        arc.points[1] = Math.round(arc.points[1] / minorGrid) * minorGrid;
     }
 
-    arc.x2 = arc.x1;
-    arc.y2 = arc.y1;
+    arc.points[2] = arc.points[0];
+    arc.points[3] = arc.points[1];
 
     shapes.byId[arc.id] = arc;
     shapes.allIds.push(arc.id);
@@ -243,16 +243,16 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
 
     selected.map((id) => {
         const arc = shapes.byId[id];
-        arc.x2 = mouseX;
-        arc.y2 = mouseY;
+        arc.points[2] = mouseX;
+        arc.points[3] = mouseY;
 
         if (gridSnapping) {
-            arc.x2 = Math.round(arc.x2 / minorGrid) * minorGrid;
-            arc.y2 = Math.round(arc.y2 / minorGrid) * minorGrid;
+            arc.points[2] = Math.round(arc.points[2] / minorGrid) * minorGrid;
+            arc.points[3] = Math.round(arc.points[3] / minorGrid) * minorGrid;
         }
 
-        arc.rx = arc.x2 - arc.x1;
-        arc.ry = arc.y2 - arc.y1;
+        arc.rx = arc.points[2] - arc.points[0];
+        arc.ry = arc.points[3] - arc.points[1];
     });
 
     return shapes;
@@ -628,6 +628,24 @@ export function removeTransformation(shapes, selected) {
                 }
                 shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;
+            case 'arc':
+                for (let i = 0; i < shape.points.length; i += 2) {
+                    let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
+                    shape.points[i] = coords.x;
+                    shape.points[i + 1] = coords.y;
+                }
+                shape.rx = transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x;
+                shape.ry = transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y;
+
+                if (Math.sign(shape.rx) !== Math.sign(shape.ry)) {
+                    shape.points = [shape.points[2], shape.points[3], shape.points[0], shape.points[1]];
+                }
+
+                shape.rx = Math.abs(shape.rx);
+                shape.ry = Math.abs(shape.ry);
+
+                shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+                break;
             default:
                 break;
         }
@@ -649,6 +667,10 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
         let shape = shapes.byId[id];
         switch (shape.type) {
             case 'line':
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+                break;
+            case 'arc':
                 shape.points[handleIndex * 2] = mouseX;
                 shape.points[handleIndex * 2 + 1] = mouseY;
                 break;

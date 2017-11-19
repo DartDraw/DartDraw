@@ -9,10 +9,7 @@ class Arc extends Component {
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        x1: PropTypes.number,
-        y1: PropTypes.number,
-        x2: PropTypes.number,
-        y2: PropTypes.number,
+        points: PropTypes.arrayOf(PropTypes.number),
         rx: PropTypes.number,
         ry: PropTypes.number,
         stroke: PropTypes.string,
@@ -59,9 +56,9 @@ class Arc extends Component {
     }
 
     render() {
-        const { id, x1, y1, x2, y2, rx, ry, stroke, strokeWidth, transform, propagateEvents } = this.props;
+        const { id, points, rx, ry, stroke, strokeWidth, transform, propagateEvents } = this.props;
         const svgProps = {
-            d: [{command: 'M', parameters: [x1, y1]}, {command: 'A', parameters: [rx, ry, 0, 0, 1, x2, y2]}],
+            d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'A', parameters: [rx, ry, 0, 0, 1, points[2], points[3]]}],
             stroke,
             strokeWidth,
             transform
