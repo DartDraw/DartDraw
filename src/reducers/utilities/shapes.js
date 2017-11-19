@@ -253,6 +253,12 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
 
         arc.rx = arc.points[2] - arc.points[0];
         arc.ry = arc.points[3] - arc.points[1];
+
+        if (Math.sign(arc.rx) === Math.sign(arc.ry)) {
+            arc.center = {x: arc.points[0], y: arc.points[3]};
+        } else {
+            arc.center = {x: arc.points[2], y: arc.points[1]};
+        }
     });
 
     return shapes;
@@ -633,16 +639,19 @@ export function removeTransformation(shapes, selected) {
                     let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
                     shape.points[i] = coords.x;
                     shape.points[i + 1] = coords.y;
+                    shape.center = transformPoint(shape.center.x, shape.center.y, shapeMatrix);
                 }
-                shape.rx = transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x;
-                shape.ry = transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y;
 
-                if (Math.sign(shape.rx) !== Math.sign(shape.ry)) {
+                let rxSign = Math.sign(shape.rx);
+                let rySign = Math.sign(shape.ry);
+
+                shape.rx = (transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x);
+                shape.ry = (transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y);
+
+                if (!((Math.sign(shape.rx) === rxSign && Math.sign(shape.ry) === rySign) ||
+                        (Math.sign(shape.rx) !== rxSign && Math.sign(shape.ry) !== rySign))) {
                     shape.points = [shape.points[2], shape.points[3], shape.points[0], shape.points[1]];
                 }
-
-                shape.rx = Math.abs(shape.rx);
-                shape.ry = Math.abs(shape.ry);
 
                 shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;
