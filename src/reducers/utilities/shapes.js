@@ -111,18 +111,18 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
     const line = {
         id: uuidv1(),
         type: "line",
-        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
-        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
-        x2: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
-        y2: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+            (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
         strokeWidth: 10,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
     if (gridSnapping) {
-        line.x1 = Math.round(line.x1 / minorGrid) * minorGrid;
-        line.y1 = Math.round(line.y1 / minorGrid) * minorGrid;
+        line.points[0] = Math.round(line.points[0] / minorGrid) * minorGrid;
+        line.points[1] = Math.round(line.points[1] / minorGrid) * minorGrid;
     }
 
     shapes.byId[line.id] = line;
@@ -137,8 +137,8 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     const arc = {
         id: uuidv1(),
         type: "arc",
-        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
-        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        points: [ (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         rx: 0,
         ry: 0,
         stroke: formatColor(fill),
@@ -147,12 +147,12 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     };
 
     if (gridSnapping) {
-        arc.x1 = Math.round(arc.x1 / minorGrid) * minorGrid;
-        arc.y1 = Math.round(arc.y1 / minorGrid) * minorGrid;
+        arc.points[0] = Math.round(arc.points[0] / minorGrid) * minorGrid;
+        arc.points[1] = Math.round(arc.points[1] / minorGrid) * minorGrid;
     }
 
-    arc.x2 = arc.x1;
-    arc.y2 = arc.y1;
+    arc.points[2] = arc.points[0];
+    arc.points[3] = arc.points[1];
 
     shapes.byId[arc.id] = arc;
     shapes.allIds.push(arc.id);
@@ -217,19 +217,19 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
 
     selected.map((id) => {
         const line = shapes.byId[id];
-        let oldX2 = line.x2;
-        let oldY2 = line.y2;
-        line.x2 = mouseX;
-        line.y2 = mouseY;
+        let oldX2 = line.points[2];
+        let oldY2 = line.points[3];
+        line.points[2] = mouseX;
+        line.points[3] = mouseY;
 
         if (gridSnapping) {
-            line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
-            line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
+            line.points[2] = Math.round(line.points[2] / minorGrid) * minorGrid;
+            line.points[3] = Math.round(line.points[3] / minorGrid) * minorGrid;
         }
 
         if (centeredControl) {
-            line.x1 -= (line.x2 - oldX2);
-            line.y1 -= (line.y2 - oldY2);
+            line.points[0] -= (line.points[2] - oldX2);
+            line.points[1] -= (line.points[3] - oldY2);
         }
     });
 
@@ -243,16 +243,22 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
 
     selected.map((id) => {
         const arc = shapes.byId[id];
-        arc.x2 = mouseX;
-        arc.y2 = mouseY;
+        arc.points[2] = mouseX;
+        arc.points[3] = mouseY;
 
         if (gridSnapping) {
-            arc.x2 = Math.round(arc.x2 / minorGrid) * minorGrid;
-            arc.y2 = Math.round(arc.y2 / minorGrid) * minorGrid;
+            arc.points[2] = Math.round(arc.points[2] / minorGrid) * minorGrid;
+            arc.points[3] = Math.round(arc.points[3] / minorGrid) * minorGrid;
         }
 
-        arc.rx = arc.x2 - arc.x1;
-        arc.ry = arc.y2 - arc.y1;
+        arc.rx = arc.points[2] - arc.points[0];
+        arc.ry = arc.points[3] - arc.points[1];
+
+        if (Math.sign(arc.rx) === Math.sign(arc.ry)) {
+            arc.center = {x: arc.points[0], y: arc.points[3]};
+        } else {
+            arc.center = {x: arc.points[2], y: arc.points[1]};
+        }
     });
 
     return shapes;
@@ -612,6 +618,91 @@ export function ungroupShapes(selected, shapes) {
 function applyTransformation(shape, group) {
     shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
     return shape;
+}
+
+export function removeTransformation(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        const shapeMatrix = shape.transform[0].parameters;
+        switch (shape.type) {
+            case 'line':
+            case 'polygon':
+                for (let i = 0; i < shape.points.length; i += 2) {
+                    let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
+                    shape.points[i] = coords.x;
+                    shape.points[i + 1] = coords.y;
+                }
+                shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+                break;
+            case 'arc':
+                for (let i = 0; i < shape.points.length; i += 2) {
+                    let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
+                    shape.points[i] = coords.x;
+                    shape.points[i + 1] = coords.y;
+                    shape.center = transformPoint(shape.center.x, shape.center.y, shapeMatrix);
+                }
+
+                let rxSign = Math.sign(shape.rx);
+                let rySign = Math.sign(shape.ry);
+
+                shape.rx = (transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x);
+                shape.ry = (transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y);
+
+                if (!((Math.sign(shape.rx) === rxSign && Math.sign(shape.ry) === rySign) ||
+                        (Math.sign(shape.rx) !== rxSign && Math.sign(shape.ry) !== rySign))) {
+                    shape.points = [shape.points[2], shape.points[3], shape.points[0], shape.points[1]];
+                }
+
+                shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
+export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y, node } = draggableData;
+    let mouseX = (x + (panX * scale) - node.parentNode.getBoundingClientRect().left) / scale;
+    let mouseY = (y + (panY * scale) - node.parentNode.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
+        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+    }
+
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'line':
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+                break;
+            case 'arc':
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+                break;
+            case 'polygon':
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = mouseX;
+                    shape.points[shape.points.length - 1] = mouseY;
+                }
+
+                if (handleIndex === (shape.points.length / 2) - 1) {
+                    shape.points[0] = mouseX;
+                    shape.points[1] = mouseY;
+                }
+
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
 }
 
 export function deleteShapes(shapes, selected) {

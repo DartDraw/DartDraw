@@ -38,6 +38,7 @@ export function dragStart(stateCopy, action, root) {
             break;
         case "polygonTool":
             if (!prevEditState) {
+                stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
                 stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
                     stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
@@ -46,6 +47,11 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
                 stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+                    stateCopy.mode = '';
+                    stateCopy.selected = [];
+                    stateCopy.editInProgress = false;
+                }
             }
             break;
         case "lineTool":
@@ -92,6 +98,8 @@ export function dragStart(stateCopy, action, root) {
 }
 
 export function drag(stateCopy, action, root) {
+    if (stateCopy.mode === 'reshape') { return stateCopy; }
+
     const { draggableData } = action.payload;
     let shiftSelected = 16 in root.menuState.currentKeys;
     stateCopy.shiftDirection = shiftSelected ? "diagonal" : null;
@@ -138,6 +146,8 @@ export function drag(stateCopy, action, root) {
 }
 
 export function dragStop(stateCopy, action, root) {
+    if (stateCopy.mode === 'reshape') { return stateCopy; }
+
     switch (root.menuState.toolType) {
         case "rectangleTool":
         case "roundedRectangleTool":
@@ -193,7 +203,7 @@ export function dragStop(stateCopy, action, root) {
             break;
     }
 
-    if (root.menuState.toolType !== "polygonTool" || stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+    if (root.menuState.toolType !== "polygonTool") {
         stateCopy.editInProgress = false;
     }
     return stateCopy;
@@ -202,8 +212,8 @@ export function dragStop(stateCopy, action, root) {
 export function handleBoundingBoxUpdate(stateCopy, action, root) {
     const { boundingBoxes } = action.payload;
     stateCopy.boundingBoxes = boundingBoxes;
-    stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes);
-    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
+    stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
     stateCopy.textInputs = updateTextInputs(stateCopy.selected, stateCopy.shapes, stateCopy.textInputs);
     return stateCopy;
 }

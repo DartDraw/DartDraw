@@ -108,29 +108,28 @@ export function updateTextInputs(selected, shapes, textInputs) {
     return textInputs;
 }
 
-export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingBoxes) {
+export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingBoxes, mode) {
     const updatedSelectionBoxes = {};
     selected.map((id) => {
         const shape = shapes.byId[id];
         const selectionBox = selectionBoxes[id];
         const boundingBox = boundingBoxes[id];
-        if (selectionBox) {
+        if (selectionBox && selectionBox.mode === mode) {
             if (shape.type !== 'text') {
-                updatedSelectionBoxes[id] = updateSelectionBox(selectionBox, shape.transform, boundingBox);
+                updatedSelectionBoxes[id] = updateSelectionBox(shape, selectionBox, boundingBox, mode);
             } else {
                 updatedSelectionBoxes[id] = updateSelectionBox(
+                    shape,
                     selectionBox,
-                    shape.transform,
                     {x: shape.x, y: shape.y, width: shape.width, height: shape.height}
                 );
             }
         } else {
             if (shape.type !== 'text') {
-                updatedSelectionBoxes[id] = generateSelectionBox(id, shape.transform, boundingBox);
+                updatedSelectionBoxes[id] = generateSelectionBox(shape, boundingBox, mode);
             } else {
                 updatedSelectionBoxes[id] = generateSelectionBox(
-                    id,
-                    shape.transform,
+                    shape,
                     {x: shape.x, y: shape.y, width: shape.width, height: shape.height}
                 );
             }
@@ -139,76 +138,113 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
     return updatedSelectionBoxes;
 }
 
-function updateSelectionBox(selectionBox, transform, boundingBox) {
+function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
     const { x, y, height, width } = boundingBox;
-
-    let handle0, handle1, handle2, handle3;
-    if (transform && transform[0] && transform[0].parameters) {
-        const matrix = transform[0].parameters;
-        handle0 = transformPoint(x + width, y, matrix);
-        handle1 = transformPoint(x + width, y + height, matrix);
-        handle2 = transformPoint(x, y + height, matrix);
-        handle3 = transformPoint(x, y, matrix);
-    } else {
-        handle0 = { x: x + width, y };
-        handle1 = { x: x + width, y: y + height };
-        handle2 = { x, y: y + height };
-        handle3 = { x, y };
-    }
-
     selectionBox.x = x;
     selectionBox.y = y;
     selectionBox.height = height;
     selectionBox.width = width;
-    selectionBox.transform = transform;
-    selectionBox.handles[0].x = handle0.x;
-    selectionBox.handles[0].y = handle0.y;
-    selectionBox.handles[1].x = handle1.x;
-    selectionBox.handles[1].y = handle1.y;
-    selectionBox.handles[2].x = handle2.x;
-    selectionBox.handles[2].y = handle2.y;
-    selectionBox.handles[3].x = handle3.x;
-    selectionBox.handles[3].y = handle3.y;
-    return selectionBox;
+    selectionBox.transform = shape.transform;
+    switch (mode) {
+        case 'reshape':
+            selectionBox.height = 0;
+            selectionBox.width = 0;
+            for (let i = 0; i < selectionBox.handles.length; i++) {
+                selectionBox.handles[i].x = shape.points[i * 2];
+                selectionBox.handles[i].y = shape.points[i * 2 + 1];
+            }
+            return selectionBox;
+        default:
+            let handle0, handle1, handle2, handle3;
+            if (shape.transform && shape.transform[0] && shape.transform[0].parameters) {
+                const matrix = shape.transform[0].parameters;
+                handle0 = transformPoint(x + width, y, matrix);
+                handle1 = transformPoint(x + width, y + height, matrix);
+                handle2 = transformPoint(x, y + height, matrix);
+                handle3 = transformPoint(x, y, matrix);
+            } else {
+                handle0 = { x: x + width, y };
+                handle1 = { x: x + width, y: y + height };
+                handle2 = { x, y: y + height };
+                handle3 = { x, y };
+            }
+            selectionBox.handles[0].x = handle0.x;
+            selectionBox.handles[0].y = handle0.y;
+            selectionBox.handles[1].x = handle1.x;
+            selectionBox.handles[1].y = handle1.y;
+            selectionBox.handles[2].x = handle2.x;
+            selectionBox.handles[2].y = handle2.y;
+            selectionBox.handles[3].x = handle3.x;
+            selectionBox.handles[3].y = handle3.y;
+            return selectionBox;
+    }
 }
 
-function generateSelectionBox(shapeId, transform, boundingBox) {
+function generateSelectionBox(shape, boundingBox, mode) {
     // Still have to apply transform to x, y, height, width here:
     const { x, y, height, width } = boundingBox;
+    const transform = shape.transform;
 
-    let handle0, handle1, handle2, handle3;
-    if (transform && transform[0] && transform[0].parameters) {
-        const matrix = transform[0].parameters;
-        handle0 = transformPoint(x + width, y, matrix);
-        handle1 = transformPoint(x + width, y + height, matrix);
-        handle2 = transformPoint(x, y + height, matrix);
-        handle3 = transformPoint(x, y, matrix);
-    } else {
-        handle0 = { x: x + width, y };
-        handle1 = { x: x + width, y: y + height };
-        handle2 = { x, y: y + height };
-        handle3 = { x, y };
+    switch (mode) {
+        case 'reshape':
+            let handles = [];
+            if (shape.points) {
+                for (let i = 0; i < shape.points.length / 2; i++) {
+                    handles.push({id: uuidv1(), index: i, x: shape.points[i * 2], y: shape.points[i * 2 + 1]});
+                }
+            }
+
+            return {
+                id: uuidv1(),
+                shapeId: shape.id,
+                type: 'selectionBox',
+                x,
+                y,
+                height: 0,
+                width: 0,
+                transform,
+                handles,
+                mode
+            };
+        default:
+
+            let handle0, handle1, handle2, handle3;
+            if (transform && transform[0] && transform[0].parameters) {
+                const matrix = transform[0].parameters;
+                handle0 = transformPoint(x + width, y, matrix);
+                handle1 = transformPoint(x + width, y + height, matrix);
+                handle2 = transformPoint(x, y + height, matrix);
+                handle3 = transformPoint(x, y, matrix);
+            } else {
+                handle0 = { x: x + width, y };
+                handle1 = { x: x + width, y: y + height };
+                handle2 = { x, y: y + height };
+                handle3 = { x, y };
+            }
+
+            return {
+                id: uuidv1(),
+                shapeId: shape.id,
+                type: 'selectionBox',
+                x,
+                y,
+                height,
+                width,
+                transform,
+                handles: [
+                    { id: uuidv1(), index: 0, x: handle0.x, y: handle0.y },
+                    { id: uuidv1(), index: 1, x: handle1.x, y: handle1.y },
+                    { id: uuidv1(), index: 2, x: handle2.x, y: handle2.y },
+                    { id: uuidv1(), index: 3, x: handle3.x, y: handle3.y }
+                ],
+                mode
+            };
     }
-
-    return {
-        id: uuidv1(),
-        shapeId,
-        type: 'selectionBox',
-        x,
-        y,
-        height,
-        width,
-        transform,
-        handles: [
-            { id: uuidv1(), index: 0, x: handle0.x, y: handle0.y },
-            { id: uuidv1(), index: 1, x: handle1.x, y: handle1.y },
-            { id: uuidv1(), index: 2, x: handle2.x, y: handle2.y },
-            { id: uuidv1(), index: 3, x: handle3.x, y: handle3.y }
-        ]
-    };
 }
 
-export function updateSelectionBoxesCorners(selected, selectionBoxes) {
+export function updateSelectionBoxesCorners(selected, selectionBoxes, mode) {
+    if (mode === 'reshape') return selectionBoxes;
+
     const updatedSelectionBoxes = {};
     selected.map((id) => {
         const selectionBox = selectionBoxes[id];

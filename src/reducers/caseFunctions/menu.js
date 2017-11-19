@@ -33,7 +33,7 @@ export function keyUp(stateCopy, action) {
         case 76: // TEMP: NEED FRONTEND
             stateCopy.align[1] = 'left';
             break;
-        case 82: // TEMP: NEED FRONTEND
+        case 186: // TEMP: NEED FRONTEND
             stateCopy.align[1] = 'right';
             break;
         case 88: // TEMP: NEED FRONTEND
