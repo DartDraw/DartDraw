@@ -111,18 +111,18 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
     const line = {
         id: uuidv1(),
         type: "line",
-        x1: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
-        y1: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
-        x2: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
-        y2: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
+            (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
         strokeWidth: 10,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
     if (gridSnapping) {
-        line.x1 = Math.round(line.x1 / minorGrid) * minorGrid;
-        line.y1 = Math.round(line.y1 / minorGrid) * minorGrid;
+        line.points[0] = Math.round(line.x1 / minorGrid) * minorGrid;
+        line.points[1] = Math.round(line.y1 / minorGrid) * minorGrid;
     }
 
     shapes.byId[line.id] = line;
@@ -217,19 +217,19 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
 
     selected.map((id) => {
         const line = shapes.byId[id];
-        let oldX2 = line.x2;
-        let oldY2 = line.y2;
-        line.x2 = mouseX;
-        line.y2 = mouseY;
+        let oldX2 = line.points[2];
+        let oldY2 = line.points[3];
+        line.points[2] = mouseX;
+        line.points[3] = mouseY;
 
         if (gridSnapping) {
-            line.x2 = Math.round(line.x2 / minorGrid) * minorGrid;
-            line.y2 = Math.round(line.y2 / minorGrid) * minorGrid;
+            line.points[2] = Math.round(line.points[2] / minorGrid) * minorGrid;
+            line.points[3] = Math.round(line.points[3] / minorGrid) * minorGrid;
         }
 
         if (centeredControl) {
-            line.x1 -= (line.x2 - oldX2);
-            line.y1 -= (line.y2 - oldY2);
+            line.points[0] -= (line.points[2] - oldX2);
+            line.points[1] -= (line.points[3] - oldY2);
         }
     });
 
@@ -612,6 +612,27 @@ export function ungroupShapes(selected, shapes) {
 function applyTransformation(shape, group) {
     shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
     return shape;
+}
+
+export function removeTransformation(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        const shapeMatrix = shape.transform[0].parameters;
+        switch (shape.type) {
+            case 'line':
+            case 'polygon':
+                for (let i = 0; i < shape.points.length; i += 2) {
+                    let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
+                    shape.points[i] = coords.x;
+                    shape.points[i + 1] = coords.y;
+                }
+                shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
 }
 
 export function deleteShapes(shapes, selected) {

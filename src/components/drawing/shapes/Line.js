@@ -9,10 +9,7 @@ class Line extends Component {
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        x1: PropTypes.number,
-        y1: PropTypes.number,
-        x2: PropTypes.number,
-        y2: PropTypes.number,
+        points: PropTypes.arrayOf(PropTypes.number),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -57,9 +54,9 @@ class Line extends Component {
     }
 
     render() {
-        const { id, x1, y1, x2, y2, stroke, strokeWidth, transform, propagateEvents } = this.props;
+        const { id, points, stroke, strokeWidth, transform, propagateEvents } = this.props;
         const svgProps = {
-            d: [{command: 'M', parameters: [x1, y1]}, {command: 'L', parameters: [x2, y2]}],
+            d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}],
             stroke,
             strokeWidth,
             transform

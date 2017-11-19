@@ -1,5 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
-    fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes, flipShape } from '../utilities/shapes';
+    fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes, flipShape,
+    removeTransformation } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection } from '../utilities/selection';
 
@@ -237,6 +238,11 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, stateCopy.duplicateOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
                 stateCopy.justDuplicated = true;
+            }
+            break;
+        case 82: // paste
+            if (stateCopy.selected.length === 1) {
+                stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             }
             break;
         case 86: // paste
