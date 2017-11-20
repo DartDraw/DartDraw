@@ -18,6 +18,7 @@ export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
+export const SELECT_BUTTON = 'SELECT_BUTTON';
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
@@ -29,6 +30,10 @@ export function keyUp(keyCode) {
 
 export function selectTool(toolType) {
     return { type: SELECT_TOOL, payload: { toolType } };
+}
+
+export function selectButton(button) {
+    return { type: SELECT_BUTTON, payload: { button } };
 }
 
 export function exportClick() {
