@@ -1,5 +1,5 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
-    fillShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes, flipShape,
+    fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes, flipShape,
     removeTransformation, reshape } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
@@ -179,7 +179,11 @@ export function textInputChange(stateCopy, action, root) {
 
 export function setColor(stateCopy, action, root) {
     stateCopy.lastSavedShapes = root.drawingState.shapes;
-    stateCopy.shapes = fillShape(stateCopy.shapes, stateCopy.selected, action);
+    if (root.menuState.fillStrokeButton === "fill") {
+        stateCopy.shapes = fillShape(stateCopy.shapes, stateCopy.selected, action);
+    } else {
+        stateCopy.shapes = strokeShape(stateCopy.shapes, stateCopy.selected, action);
+    }
     return stateCopy;
 }
 

@@ -2,7 +2,7 @@ import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
 
-export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid, rectangleRadius) {
+export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid, rectangleRadius) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const rectangle = {
@@ -15,6 +15,7 @@ export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnappi
         width: 1,
         height: 1,
         fill: formatColor(fill),
+        stroke: formatColor(stroke),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
@@ -28,7 +29,7 @@ export function addRectangle(shapes, action, fill, panX, panY, scale, gridSnappi
     return shapes;
 }
 
-export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const ellipse = {
@@ -39,6 +40,7 @@ export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping
         rx: 0.5,
         ry: 0.5,
         fill: formatColor(fill),
+        stroke: formatColor(stroke),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
@@ -52,7 +54,7 @@ export function addEllipse(shapes, action, fill, panX, panY, scale, gridSnapping
     return shapes;
 }
 
-export function addPolygon(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addPolygon(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -62,8 +64,8 @@ export function addPolygon(shapes, action, fill, panX, panY, scale, gridSnapping
         points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         fill: formatColor(fill),
+        stroke: formatColor(stroke),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
-        stroke: 'black',
         strokeWidth: 5
     };
 
@@ -170,7 +172,7 @@ export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSna
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         fill: formatColor(fill),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
-        stroke: 'black',
+        stroke: formatColor(fill),
         strokeWidth: 1
     };
 
@@ -508,6 +510,18 @@ export function fillShape(shapes, selected, action) {
             shapes = fillShape(shapes, shape.members, action);
         } else {
             shape.fill = formatColor(color);
+        }
+    });
+    return shapes;
+}
+
+export function strokeShape(shapes, selected, action) {
+    const { color } = action.payload;
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        if (shape.type === "group") {
+            shapes = fillShape(shapes, shape.members, action);
+        } else {
             shape.stroke = formatColor(color);
         }
     });

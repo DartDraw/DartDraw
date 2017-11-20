@@ -14,24 +14,24 @@ export function dragStart(stateCopy, action, root) {
     stateCopy.editInProgress = true;
     switch (root.menuState.toolType) {
         case "rectangleTool":
-            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
-                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping,
+            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.fillColor,
+                root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping,
                 root.menuState.minorGrid, {x: 0, y: 0});
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "roundedRectangleTool":
-            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.color,
-                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping,
+            stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.fillColor,
+                root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping,
                 root.menuState.minorGrid, root.menuState.rectangleRadius);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "ellipseTool":
-            stateCopy.shapes = addEllipse(stateCopy.shapes, action, root.menuState.color,
-                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            stateCopy.shapes = addEllipse(stateCopy.shapes, action, root.menuState.fillColor,
+                root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -40,8 +40,8 @@ export function dragStart(stateCopy, action, root) {
             if (!prevEditState) {
                 stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
-                stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.color,
-                    stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.fillColor,
+                    root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
                 shapeIds = stateCopy.shapes.allIds;
                 addedShapeId = shapeIds[shapeIds.length - 1];
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -55,28 +55,28 @@ export function dragStart(stateCopy, action, root) {
             }
             break;
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "arcTool":
-            stateCopy.shapes = addArc(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addArc(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "freehandPathTool":
-            stateCopy.shapes = addFreehandPath(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addFreehandPath(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "textTool":
-            stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.color, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
