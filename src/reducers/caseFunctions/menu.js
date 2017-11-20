@@ -81,7 +81,17 @@ export function selectTool(stateCopy, action) {
     return stateCopy;
 }
 
+export function selectButton(stateCopy, action) {
+    stateCopy.fillStrokeButton = action.payload.button;
+    return stateCopy;
+}
+
 export function selectColor(stateCopy, action) {
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor = action.payload.color;
+    } else {
+        stateCopy.strokeColor = action.payload.color;
+    }
     stateCopy.color = action.payload.color;
     return stateCopy;
 }

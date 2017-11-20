@@ -15,12 +15,15 @@ import {
     flipHorizontal,
     flipVertical,
     bringToFront,
-    toggleGridSnapping
+    toggleGridSnapping,
+    selectButton
 } from './../../actions/menu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     return {
-        scale: drawingState.scale
+        scale: drawingState.scale,
+        fillColor: menuState.fillColor,
+        strokeColor: menuState.strokeColor
     };
 };
 
@@ -70,6 +73,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onToggleGridSnapping: () => {
             dispatch(toggleGridSnapping());
+        },
+        onButtonSelect: (button) => {
+            dispatch(selectButton(button));
         }
     };
 };

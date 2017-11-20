@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './top-menu.css';
 import { CirclePicker } from 'react-color';
 
-const currentPalette = ["#ffffff", "#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548"];
+const currentPalette = ["#000000", "#ffffff", "#e91e63", "#9c27b0", "#673ab7", "#03a9f4", "#009688", "#4caf50", "#cddc39", "#ffc107", "#ff9800"];
 
 class TopMenu extends Component {
     static propTypes = {
@@ -22,7 +22,10 @@ class TopMenu extends Component {
         onFlipVertical: PropTypes.func,
         onCustomZoom: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
-        scale: PropTypes.number
+        scale: PropTypes.number,
+        fillColor: PropTypes.object,
+        strokeColor: PropTypes.object,
+        onButtonSelect: PropTypes.func
     };
 
     constructor(props) {
@@ -46,6 +49,7 @@ class TopMenu extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
+        this.handleButtonSelect = this.handleButtonSelect.bind(this);
     }
 
     handleUndoClick() {
@@ -113,8 +117,18 @@ class TopMenu extends Component {
         this.props.onToggleGridSnapping();
     }
 
+    handleButtonSelect(button) {
+        this.props.onButtonSelect(button);
+    }
+
     render() {
-        const { scale } = this.props;
+        const { scale, fillColor, strokeColor } = this.props;
+        const fillStyle = {
+            backgroundColor: `rgba(${fillColor.r}, ${fillColor.g}, ${fillColor.b}, ${fillColor.a} )` // this.props.fillColor
+        };
+        const strokeStyle = {
+            backgroundColor: `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b}, ${strokeColor.a} )` // this.props.strokeColor
+        };
         return (
             <div id="top-bar">
                 <button onClick={this.handleUndoClick}>
@@ -148,6 +162,15 @@ class TopMenu extends Component {
                     FV
                 </button>
                 <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
+                <form id="fill-toggle" >
+                    <input type="radio" name="toggle" value="fill" id="fill" defaultChecked />
+                    <label htmlFor="fill" style={fillStyle} onClick={() => { this.handleButtonSelect("fill"); }} />
+                    <p>Fill</p>
+                    <span />
+                    <input type="radio" name="toggle" value="stroke" id="stroke" />
+                    <label htmlFor="stroke" style={strokeStyle} onClick={() => { this.handleButtonSelect("stroke"); }} />
+                    <p>Stroke</p>
+                </form>
                 <div id="color-palette">
                     <CirclePicker onChangeComplete={this.handleChangeComplete} colors={currentPalette} circleSize={20} circleSpacing={5} width='450px' />
                 </div>

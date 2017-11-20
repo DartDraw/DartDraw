@@ -5,7 +5,10 @@ import { deepCopy } from './utilities/object';
 
 const initialState = {
     color: { r: 33, g: 150, b: 243, a: 1 },
+    fillColor: {r: 33, g: 15, b: 243, a: 1},
+    strokeColor: {r: 200, g: 0, b: 200, a: 1},
     toolType: '',
+    fillStrokeButton: '',
     currentKeys: {},
     gridSnapping: false,
     unitType: 'inch',
@@ -28,6 +31,8 @@ function menuState(state = initialState, action, root) {
             return menu.keyUp(stateCopy, action, root);
         case menuActions.SELECT_TOOL:
             return menu.selectTool(stateCopy, action, root);
+        case menuActions.SELECT_BUTTON:
+            return menu.selectButton(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
             return menu.selectColor(stateCopy, action, root);
         case menuActions.SET_GRID:
