@@ -4,6 +4,8 @@ import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMo
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
+import * as menu from './menu';
+
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
 
@@ -227,6 +229,7 @@ export function flipHorizontal(stateCopy, action, root) {
 
 export function keyDown(stateCopy, action, root) {
     const { keyCode } = action.payload;
+    let commandSelected = 91 in root.menuState.currentKeys;
     switch (keyCode) {
         case 8:
             if (!stateCopy.textInputFocused) {
@@ -249,19 +252,38 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
             break;
         case 67: // copy
-            let commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
                 stateCopy.justCopied = true;
             }
             break;
         case 68: // duplicate
-            commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toDuplicate = copyShapes(stateCopy.shapes, stateCopy.selected);
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, stateCopy.duplicateOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
                 stateCopy.justDuplicated = true;
+            }
+            break;
+        case 70: // forward
+            let upSelected = 38 in root.menuState.currentKeys;
+            if (commandSelected && upSelected) {
+                stateCopy = bringFront(stateCopy, action, root);
+            } else if (commandSelected) {
+                stateCopy = moveForward(stateCopy, action, root);
+            }
+            break;
+        case 71: // group
+            if (commandSelected) {
+                stateCopy = menu.groupButtonClick(stateCopy, action, root);
+            }
+            break;
+        case 74: // backward
+            upSelected = 38 in root.menuState.currentKeys;
+            if (commandSelected && upSelected) {
+                stateCopy = sendBack(stateCopy, action, root);
+            } else if (commandSelected) {
+                stateCopy = moveBackward(stateCopy, action, root);
             }
             break;
         case 82: // reshape
@@ -274,8 +296,12 @@ export function keyDown(stateCopy, action, root) {
                 }
             }
             break;
+        case 85: // ungroup
+            if (commandSelected) {
+                stateCopy = menu.ungroupButtonClick(stateCopy, action, root);
+            }
+            break;
         case 86: // paste
-            commandSelected = 91 in root.menuState.currentKeys;
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {
                     stateCopy.pasteOffset.x += root.menuState.minorGrid;
@@ -288,7 +314,8 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.pasteOffset.y += root.menuState.minorGrid;
             }
             break;
-        default: break;
+        default:
+            break;
     }
 
     return stateCopy;

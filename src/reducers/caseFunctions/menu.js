@@ -2,20 +2,26 @@ import jsondiffpatch from 'jsondiffpatch';
 import { groupShapes, ungroupShapes } from '../utilities/shapes';
 import { generateEps } from '../../eps/eps';
 
-export function keyDown(stateCopy, action) {
+export function keyDown(stateCopy, action, root) {
     const { keyCode } = action.payload;
     if (!stateCopy.currentKeys[keyCode]) {
         stateCopy.currentKeys[keyCode] = true;
     }
+
+    switch (keyCode) {
+        default:
+            break;
+    }
     return stateCopy;
 }
 
-export function keyUp(stateCopy, action) {
+export function keyUp(stateCopy, action, root) {
     const { keyCode } = action.payload;
     if (stateCopy.currentKeys[keyCode]) {
         delete stateCopy.currentKeys[keyCode];
     }
 
+    let commandSelected = 91 in root.menuState.currentKeys;
     switch (keyCode) {
         case 91:
             stateCopy.copied = false;
@@ -24,7 +30,7 @@ export function keyUp(stateCopy, action) {
         case 49: // TEMP: NEED FRONTEND
             stateCopy.centeredControl = !stateCopy.centeredControl;
             break;
-        case 84: // TEMP: NEED FRONTEND
+        case 72: // TEMP: NEED FRONTEND
             stateCopy.align[0] = 'top';
             break;
         case 66: // TEMP: NEED FRONTEND
@@ -32,6 +38,12 @@ export function keyUp(stateCopy, action) {
             break;
         case 76: // TEMP: NEED FRONTEND
             stateCopy.align[1] = 'left';
+            break;
+        case 84: // rotate mode
+            if (commandSelected && root.drawingState.mode !== 'reshape' &&
+              root.drawingState.selected.length > 0) {
+                stateCopy.toolType = 'rotateTool';
+            }
             break;
         case 186: // TEMP: NEED FRONTEND
             stateCopy.align[1] = 'right';
