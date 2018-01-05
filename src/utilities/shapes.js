@@ -26,3 +26,15 @@ export function formatTransform(transform) {
     });
     return formattedTransform;
 }
+
+export function formatPoints(points) {
+    if (!points) {
+        return '';
+    }
+    let formattedP = '';
+
+    for (let i = 0; i < points.length; i += 2) {
+        formattedP = formattedP + points[i] + ',' + points[i + 1] + ' ';
+    }
+    return formattedP;
+}

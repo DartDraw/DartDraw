@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Path } from '.';
+import { Shape } from '.';
+import { formatPath, formatTransform } from '../../../utilities/shapes';
 
-class Line extends Component {
+class Path extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        x1: PropTypes.number,
-        y1: PropTypes.number,
-        x2: PropTypes.number,
-        y2: PropTypes.number,
+        d: PropTypes.arrayOf(PropTypes.shape({
+            command: PropTypes.string,
+            parameters: PropTypes.arrayOf(PropTypes.number)
+        })),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -57,26 +58,30 @@ class Line extends Component {
     }
 
     render() {
-        const { id, x1, y1, x2, y2, stroke, strokeWidth, transform, propagateEvents } = this.props;
+        const { id, d, stroke, strokeWidth, fill, transform, propagateEvents } = this.props;
         const svgProps = {
-            d: [{command: 'M', parameters: [x1, y1]}, {command: 'L', parameters: [x2, y2]}],
+            id,
+            d: formatPath(d),
             stroke,
             strokeWidth,
-            transform
+            fill: fill || 'none',
+            transform: formatTransform(transform),
+            vectorEffect: "non-scaling-stroke"
         };
 
         return (
-            <Path
+            <Shape
                 id={id}
                 onDragStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
                 onClick={this.handleClick}
-                {...svgProps}
                 propagateEvents={propagateEvents}
-            />
+            >
+                <path {...svgProps} />
+            </Shape>
         );
     }
 }
 
-export default Line;
+export default Path;

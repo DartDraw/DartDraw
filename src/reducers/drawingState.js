@@ -18,12 +18,17 @@ const initialState = {
     marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
+    textInputFocused: false,
     canvasHeight: 850,
     canvasWidth: 1000,
     canvasFill: 'white',
+    textInputs: {},
     scale: 1,
     panX: 0,
     panY: 0,
+    pasteOffset: {x: 0, y: 0},
+    duplicateOffset: {x: 0, y: 0},
+    shiftDirection: null,
     past: [],
     future: []
 };
@@ -97,6 +102,12 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.HANDLE_DRAG_STOP:
             updatedState = shape.handleDragStop(stateCopy, action, root);
             break;
+        case canvasActions.TEXT_INPUT_CHANGE:
+            updatedState = shape.textInputChange(stateCopy, action, root);
+            break;
+        case canvasActions.TOGGLE_TEXT_INPUT_FOCUS:
+            updatedState.textInputFocused = action.payload.textInputFocused;
+            break;
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
@@ -118,8 +129,20 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SEND_BACK:
             updatedState = shape.sendBack(stateCopy, action, root);
             break;
+        case menuActions.FLIP_VERTICAL:
+            updatedState = shape.flipVertical(stateCopy, action, root);
+            break;
+        case menuActions.FLIP_HORIZONTAL:
+            updatedState = shape.flipHorizontal(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
+            break;
+        case menuActions.KEY_UP:
+            updatedState = shape.keyUp(stateCopy, action, root);
+            break;
+        case menuActions.SELECT_TOOL:
+            updatedState = shape.selectTool(stateCopy, action, root);
             break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
@@ -160,9 +183,24 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
+                console.log(action.type, root.menuState);
             }
         }
     }
+
+    if (updatedState.editInProgress) {
+        updatedState.justCopied = false;
+        updatedState.pasteOffset = {x: 0, y: 0};
+    }
+
+    if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
+        if (root.menuState.toolType !== 'polygonTool') {
+            stateCopy.mode = '';
+            stateCopy.selected = [];
+            stateCopy.selectionBoxes = [];
+        }
+    }
+
     return updatedState;
 }
 

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatTransform } from '../../utilities/shapes';
+import { formatPoints, formatTransform } from '../../../utilities/shapes';
 
-class Rectangle extends Component {
+class Polyline extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
@@ -12,12 +12,9 @@ class Rectangle extends Component {
         onClick: PropTypes.func,
         width: PropTypes.number,
         height: PropTypes.number,
-        x: PropTypes.number,
-        y: PropTypes.number,
+        points: PropTypes.arrayOf(PropTypes.number),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
-        strokeDasharray: PropTypes.number,
-        vectorEffect: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -62,13 +59,9 @@ class Rectangle extends Component {
     render() {
         const {
             id,
-            width,
-            height,
-            x,
-            y,
+            points,
             stroke,
             strokeWidth,
-            strokeDasharray,
             fill,
             transform,
             propagateEvents
@@ -76,16 +69,12 @@ class Rectangle extends Component {
 
         const svgProps = {
             id,
-            x,
-            y,
-            width,
-            height,
             stroke,
             strokeWidth,
-            strokeDasharray,
             fill,
             transform: formatTransform(transform),
-            vectorEffect: 'non-scaling-stroke'
+            points: formatPoints(points),
+            vectorEffect: "non-scaling-stroke"
         };
 
         return (
@@ -97,10 +86,10 @@ class Rectangle extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <rect {...svgProps} />
+                <polyline {...svgProps} />
             </Shape>
         );
     }
 }
 
-export default Rectangle;
+export default Polyline;

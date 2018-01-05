@@ -12,12 +12,18 @@ import {
     moveBackward,
     moveForward,
     sendToBack,
-    bringToFront
+    flipHorizontal,
+    flipVertical,
+    bringToFront,
+    toggleGridSnapping,
+    selectButton
 } from './../../actions/menu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     return {
-        scale: drawingState.scale
+        scale: drawingState.scale,
+        fillColor: menuState.fillColor,
+        strokeColor: menuState.strokeColor
     };
 };
 
@@ -47,6 +53,12 @@ const mapDispatchToProps = (dispatch) => {
         onBringToFront: () => {
             dispatch(bringToFront());
         },
+        onFlipHorizontal: () => {
+            dispatch(flipHorizontal());
+        },
+        onFlipVertical: () => {
+            dispatch(flipVertical());
+        },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
         },
@@ -58,6 +70,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onCustomZoom: (customScale) => {
             dispatch(customZoom(customScale));
+        },
+        onToggleGridSnapping: () => {
+            dispatch(toggleGridSnapping());
+        },
+        onButtonSelect: (button) => {
+            dispatch(selectButton(button));
         }
     };
 };

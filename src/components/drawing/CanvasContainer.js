@@ -18,22 +18,36 @@ import {
     updateBoundingBoxes
 } from './../../actions/canvas';
 
-function formatShape(shape, shapes) {
+function formatShape(shape, shapes, scale) {
     const formattedShape = Object.assign({}, shape);
     if (formattedShape.type === 'group') {
         formattedShape.members = formattedShape.members.map((shapeId, i) => {
-            return formatShape(shapes.byId[shapeId], shapes);
+            return formatShape(shapes.byId[shapeId], shapes, scale);
         });
+    } else {
+        formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
     }
     return formattedShape;
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, canvasHeight, canvasWidth, scale } = drawingState;
+    const { shapes, selected, canvasHeight, canvasWidth, textInput, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
-        return formatShape(shapes.byId[id], shapes);
+        return formatShape(shapes.byId[id], shapes, scale);
     });
+
+    const propagateEventTools = [
+        'rectangleTool',
+        'ellipseTool',
+        'polygonTool',
+        'arcTool',
+        'freehandPathTool',
+        'lineTool',
+        'textTool',
+        'panTool',
+        'zoomTool'
+    ];
 
     return {
         shapes: shapesArray,
@@ -41,7 +55,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,
         viewBox: [drawingState.panX, drawingState.panY, canvasWidth, canvasHeight],
-        propagateEvents: toolType === 'rectangleTool' || toolType === 'ellipseTool' || toolType === 'lineTool' || toolType === 'panTool' || toolType === 'zoomTool'
+        textInput,
+        propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };
 
