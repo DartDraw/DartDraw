@@ -38,9 +38,9 @@ export function selectButton(button) {
     return { type: SELECT_BUTTON, payload: { button } };
 }
 
-export function exportClick() {
-    return { type: EXPORT_CLICK };
-}
+// export function exportClick() {
+//     return { type: EXPORT_CLICK };
+// }
 
 export function selectColor(color) {
     return { type: SELECT_COLOR, payload: { color } };
@@ -106,9 +106,9 @@ export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
 }
 
-export function fileSave(data) {
-    return { type: FILE_SAVE, payload: { data } };
-}
+// export function fileSave(data) {
+//     return { type: FILE_SAVE, payload: { data } };
+// }
 
 // export function fileOpen() {
 //     return { type: FILE_OPEN };

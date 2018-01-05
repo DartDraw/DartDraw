@@ -3,28 +3,25 @@ import PropTypes from 'prop-types';
 
 class IpcMiddleware extends Component {
     static propTypes = {
-        onFileSave: PropTypes.func,
+        // onFileSave: PropTypes.func
         // onFileOpen: PropTypes.func
         onCanvasColorChange: PropTypes.func
     };
 
     constructor(props) {
         super(props);
-        console.log('ipc middle constructor');
-
         this.handleFileSave = this.handleFileSave.bind(this);
-        // this.handleFileOpen = this.handleFileOpen.bind(this);
+        this.handleFileOpen = this.handleFileOpen.bind(this);
         this.handleCanvasColorChange = this.handleCanvasColorChange.bind(this);
     }
 
     componentDidMount() {
-        console.log('ipcMiddleware mounted');
         const fs = window.require('fs');
         const { ipcRenderer } = window.require('electron');
 
-        ipcRenderer.on('file-save', (event, arg) => {
-            this.handleFileSave(event);
-        });
+        // ipcRenderer.on('file-save', (event, arg) => {
+        //     this.handleFileSave(event);
+        // });
 
         // ipcRenderer.on('file-open', (event, data) => {
         //     this.handleFileOpen(data);
@@ -36,12 +33,14 @@ class IpcMiddleware extends Component {
     }
 
     handleFileSave(event) {
-        this.props.onFileSave(event);
+        // this.props.onFileSave(event);
+        return;
     }
 
-    // handleFileOpen(data) {
-    //     this.props.onFileOpen();
-    // }
+    handleFileOpen(data) {
+        // this.props.onFileOpen();
+        return;
+    }
 
     handleCanvasColorChange(color) {
         this.props.onCanvasColorChange(color);

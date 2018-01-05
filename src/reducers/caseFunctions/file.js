@@ -1,8 +1,8 @@
-export function fileSave(root, action) {
-	let stateString = JSON.stringify(root);
-	const event = action.payload.data;
-    event.sender.send('file-save', stateString);
-}
+// export function fileSave(root, action) {
+// 	let stateString = JSON.stringify(root);
+// 	const event = action.payload.data;
+//     event.sender.send('file-save', stateString);
+// }
 
 // export function fileOpen() {
 	
