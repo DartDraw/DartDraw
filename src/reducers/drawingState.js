@@ -2,6 +2,7 @@ import jsondiffpatch from 'jsondiffpatch';
 import * as canvasActions from './../actions/canvas';
 import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
+import * as file from './caseFunctions/file';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
@@ -167,6 +168,12 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
+        case menuActions.FILE_SAVE:
+            file.fileSave(root, action);
+            return stateCopy;
+        // case menuActions.FILE_OPEN:
+        //     file.fileOpen();
+        //     return stateCopy;
         default: break;
     }
 

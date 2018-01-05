@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import BackgroundLayer from './BackgroundLayer';
-import { canvasColorChange } from './../../actions/canvas';
 
 // const {remote} = window.require('electron');
 // const {MenuItem} = remote;
@@ -27,15 +26,7 @@ const mapStateToProps = ({ drawingState }) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onCanvasColorChange: (color) => {
-            dispatch(canvasColorChange(color));
-        }
-    };
-};
-
 export default connect(
     mapStateToProps,
-    mapDispatchToProps
+    null
 )(BackgroundLayer);

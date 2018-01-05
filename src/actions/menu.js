@@ -19,6 +19,8 @@ export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
+export const FILE_OPEN = 'FILE_OPEN';
+export const FILE_SAVE = 'FILE_SAVE';
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
@@ -103,3 +105,11 @@ export function setGrid(unitType, majorGrid, minorGrid) {
 export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
 }
+
+export function fileSave(data) {
+    return { type: FILE_SAVE, payload: { data } };
+}
+
+// export function fileOpen() {
+//     return { type: FILE_OPEN };
+// }

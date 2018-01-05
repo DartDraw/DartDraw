@@ -23,11 +23,17 @@ const template = [
             {
                 label: 'Save', 
                 click() {
+                    let win = windowManager.getCurrent();
                     dialog.showSaveDialog(function (filename) {
-                        mainWindow.send('file-save', 'writing to file');
+                        win.object.send('file-save', 'writing to file');
                         ipcMain.on('file-save', (event, stateString) => {
-                            console.log(stateString)
-                            fs.writeFile(filename, stateString);
+                            fs.writeFile(filename, stateString, (err) => {
+                                if(err){
+                                    alert("An error ocurred creating the file "+ err.message)
+                                } else {
+                                    alert("The file has been succesfully saved");
+                                }
+                            });
                         });
                     });
                 }
@@ -35,19 +41,21 @@ const template = [
             {
                 label: 'Open', 
                 click() {
-                    console.log('opening file');
-                    // dialog.showOpenDialog(function (filenames) {
-                    //     if (filenames[0] === null) {
-                    //         return;
-                    //     } else{
-                    //         for (filename in filenames) {
-                                
-                    //         }
-                    //     }
-
-                        
-                    //     mainWindow.send('file-open', filenames[0]);
-                    // });
+                    dialog.showOpenDialog(function (filenames) {
+                        if (filenames[0] === null) {
+                            return;
+                        } else {
+                            let win;
+                            for (filename in filenames) {
+                                win = createWindow();
+                                win.once('ready-to-show', () => {
+                                    fs.readFile(filename, (err, data) => {
+                                        win.object.send('file-open', data);
+                                    });
+                                });
+                            }
+                        }
+                    });
                 }
             },
             {
@@ -214,7 +222,6 @@ function createWindow() {
     var newWindow = windowManager.createNew(windowName, windowName, 'http://localhost:3000', {width: 800, height: 600}, null, true);
     
     newWindow.open();
-    newWindow.focus();
    
     // and load the index.html of the app.
     newWindow.loadURL('http://localhost:3000');
@@ -226,6 +233,8 @@ function createWindow() {
         // when you should delete the corresponding element.
         newWindow = null;
     });
+
+    return newWindow;
 }
 
 // This method will be called when Electron has finished

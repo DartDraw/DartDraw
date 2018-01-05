@@ -5,24 +5,11 @@ class BackgroundLayer extends Component {
     static propTypes = {
         width: PropTypes.number,
         height: PropTypes.number,
-        fill: PropTypes.string,
-        onCanvasColorChange: PropTypes.func
+        fill: PropTypes.string
     };
 
     constructor(props) {
         super(props);
-        this.handleCanvasColorChange = this.handleCanvasColorChange.bind(this);
-    }
-
-    componentDidMount() {
-        const { ipcRenderer } = window.require('electron');
-        ipcRenderer.on('canvasColorChange', (event, color) => {
-            this.handleCanvasColorChange(color);
-        });
-    }
-
-    handleCanvasColorChange(color) {
-        this.props.onCanvasColorChange(color);
     }
 
     render() {
