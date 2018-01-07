@@ -15,7 +15,11 @@ class Text extends Component {
         y: PropTypes.number,
         width: PropTypes.number,
         height: PropTypes.number,
+        fontFamily: PropTypes.string,
+        fontSize: PropTypes.string,
+        textAlign: PropTypes.string,
         fill: PropTypes.string,
+        stroke: PropTypes.string,
         tspans: PropTypes.arrayOf(PropTypes.shape({
             indices: PropTypes.arrayOf(PropTypes.shape({
                 first: PropTypes.number,
@@ -64,7 +68,7 @@ class Text extends Component {
     }
 
     render() {
-        const { id, x, y, width, height, fill, tspans, transform, propagateEvents, text } = this.props;
+        const { id, x, y, width, height, fontFamily, fontSize, textAlign, fill, tspans, transform, propagateEvents, text } = this.props;
         const svgProps = {
             id,
             transform: formatTransform(transform)
@@ -94,7 +98,7 @@ class Text extends Component {
                     width={Math.abs(width)}
                     height={Math.abs(height)}
                 >
-                    <div style={{color: fill}}>{element}</div>
+                    <div style={{color: fill, fontFamily, fontSize, textAlign}}>{element}</div>
                 </foreignObject>
             </Shape>
         );
