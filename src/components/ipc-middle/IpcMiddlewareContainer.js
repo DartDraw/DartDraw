@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-// import { fileSave } from './../../actions/menu';
+import { fileSave } from './../../actions/menu';
 import { canvasColorChange } from './../../actions/canvas';
 import IpcMiddleware from './IpcMiddleware';
 
@@ -11,9 +11,9 @@ const mapStateToProps = (props) => {
 const mapDispatchToProps = (dispatch) => {
     console.log('ipc container');
     return {
-        // onFileSave: (data) => {
-        //     dispatch(fileSave(data));
-        // },
+        onFileSave: (data) => {
+            dispatch(fileSave(data));
+        },
         // onFileOpen: (data) => {
         //     dispatch(fileOpen(data));
         // },

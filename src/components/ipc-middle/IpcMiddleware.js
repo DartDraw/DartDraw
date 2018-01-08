@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 class IpcMiddleware extends Component {
     static propTypes = {
-        // onFileSave: PropTypes.func
+        onFileSave: PropTypes.func,
         // onFileOpen: PropTypes.func
         onCanvasColorChange: PropTypes.func
     };
@@ -19,9 +19,9 @@ class IpcMiddleware extends Component {
         const fs = window.require('fs');
         const { ipcRenderer } = window.require('electron');
 
-        // ipcRenderer.on('file-save', (event, arg) => {
-        //     this.handleFileSave(event);
-        // });
+        ipcRenderer.on('file-save', (event, arg) => {
+            this.handleFileSave(event);
+        });
 
         // ipcRenderer.on('file-open', (event, data) => {
         //     this.handleFileOpen(data);
@@ -33,8 +33,7 @@ class IpcMiddleware extends Component {
     }
 
     handleFileSave(event) {
-        // this.props.onFileSave(event);
-        return;
+        this.props.onFileSave(event);
     }
 
     handleFileOpen(data) {

@@ -166,11 +166,11 @@ function drawingState(state = initialState, action, root) {
         case menuActions.CUSTOM_ZOOM:
             updatedState = zoom.zoomToCustom(stateCopy, action, root);
             break;
-        // case menuActions.EXPORT_CLICK:
-        //     return menu.exportClick(stateCopy);
-        // case menuActions.FILE_SAVE:
-        //     file.fileSave(root, action);
-        //     return stateCopy;
+        case menuActions.EXPORT_CLICK:
+            return menu.exportClick(stateCopy);
+        case menuActions.FILE_SAVE:
+            file.fileSave(root, action);
+            return stateCopy;
         // case menuActions.FILE_OPEN:
         //     file.fileOpen();
         //     return stateCopy;

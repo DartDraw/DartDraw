@@ -141,7 +141,7 @@ export function ungroupButtonClick(stateCopy, action, root) {
     return stateCopy;
 }
 
-// export function exportClick(stateCopy, action) {
-//     generateEps(stateCopy);
-//     return stateCopy;
-// }
+export function exportClick(stateCopy, action) {
+    generateEps(stateCopy);
+    return stateCopy;
+}
