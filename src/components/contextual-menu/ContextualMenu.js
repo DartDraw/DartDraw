@@ -46,9 +46,19 @@ class ContextualMenu extends Component {
         }
 
         return (
-            <div className="contextual-menu" style={{ right: hidden ? -330 : 0 }}>
-                { menuLayout }
-                <div className="hide-button" onClick={this.toggleMenu} />
+            <div className="contextual-menu" style={{ right: hidden ? -352 : 0 }}>
+                <div className="hide-button-column">
+                    <div className="hide-button" onClick={this.toggleMenu} />
+                </div>
+                <div className="menu-column">
+                    <div className="static-menu">
+                    </div>
+                    <div className="dynamic-menu">
+                        { menuLayout }
+                    </div>
+                    <div className="zoom-menu">
+                    </div>
+                </div>
             </div>
         );
     }
