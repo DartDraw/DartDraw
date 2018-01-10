@@ -5,6 +5,7 @@ import * as canvas from './caseFunctions/canvas';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
+import { transformPoint } from './utilities/matrix';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -133,6 +134,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
+        case menuActions.EDIT_SHAPE:
+            updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
+            break;
         default: break;
     }
 
@@ -149,7 +153,6 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
-                console.log(action.type, root.menuState);
             }
         }
     }

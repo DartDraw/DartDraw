@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
+import { ContextualMenuContainer } from './components/contextual-menu';
 
 class App extends Component {
     static propTypes = {
@@ -44,6 +45,7 @@ class App extends Component {
                     <LeftMenuContainer />
                     <CanvasContainer />
                 </div>
+                <ContextualMenuContainer />
             </div>
         );
     }

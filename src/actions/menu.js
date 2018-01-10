@@ -1,3 +1,4 @@
+export const EDIT_SHAPE = 'EDIT_SHAPE';
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const SELECT_TOOL = 'SELECT_TOOL';
@@ -19,6 +20,10 @@ export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
+
+export function editShape(shape) {
+    return { type: EDIT_SHAPE, payload: { shape } };
+}
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
