@@ -17,7 +17,7 @@ class Text extends Component {
         height: PropTypes.number,
         fontFamily: PropTypes.string,
         fontSize: PropTypes.string,
-        textAlign: PropTypes.string,
+        textAlign: PropTypes.oneOf(['center', 'left', 'right']),
         fill: PropTypes.string,
         stroke: PropTypes.string,
         tspans: PropTypes.arrayOf(PropTypes.shape({
