@@ -201,6 +201,10 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
         height: 0,
         fontFamily: 'helvetica',
         fontSize: '24px',
+        lineHeight: '24px',
+        fontStyle: 'normal',
+        textAlign: 'left',
+        fontWeight: 'normal',
         fill: formatColor(fill),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
