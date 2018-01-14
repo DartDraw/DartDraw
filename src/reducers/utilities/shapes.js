@@ -394,6 +394,17 @@ function getAlignedCoord(shape, selectionBox, boundingBox, align) {
     }
     return coord;
 }
+export function moveShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
+    action.payload.draggableData = {};
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        action.payload.draggableData.deltaX = action.payload.x - transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
+        action.payload.draggableData.deltaY = action.payload.y - transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+        console.log(action.payload.draggableData);
+        shapes = moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
 
 export function moveShape(shapes, selected, action, scale, boundingBoxes,
     selectionBoxes, gridSnapping, minorGrid, align, shiftDirection) {
