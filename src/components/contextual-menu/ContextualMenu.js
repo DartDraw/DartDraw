@@ -152,10 +152,10 @@ class ContextualMenu extends Component {
                             <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
                         </button>
                         <button onClick={this.handleFlipHorizontal}>
-                          FH
+                            <img src="./assets/flip-horz.svg" alt="frontall" id="button-icon" />
                         </button>
                         <button onClick={this.handleFlipVertical}>
-                          FV
+                            <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
                         </button>
                         <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
                     </div>

@@ -24,3 +24,10 @@ button:focus {
 button:hover {
   background-color: rgba(10,10,10,0.5);
 }
+
+#separator {
+  height: 1px;
+  width: 33px;
+  background-color: #5C7080;
+  margin: 10px 6px 10px 6px;
+}
