@@ -5,7 +5,6 @@ import * as canvas from './caseFunctions/canvas';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
-import { transformPoint } from './utilities/matrix';
 import { deepCopy } from './utilities/object';
 
 const initialState = {

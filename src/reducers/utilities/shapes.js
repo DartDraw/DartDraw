@@ -454,6 +454,7 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -500,6 +501,7 @@ export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -545,6 +547,7 @@ export function flipShape(shapes, selected, selectionBoxes, boundingBoxes, verti
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, 1, -1, coord.x, coord.y);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -920,6 +923,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -1087,6 +1091,7 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData,
         }
 
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -1225,4 +1230,24 @@ function getCenter(boundingBox, shapeMatrix) {
     center.y = (coords0.y + coords1.y + coords2.y + coords3.y) / 4;
 
     return center;
+}
+
+function getShapeInfo(shape, boundingBox) {
+    const shapeInfo = {};
+    shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
+    shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
+    let coords = [];
+    coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
+    coords[1] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+    coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+    coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+    shapeInfo.width = Math.sqrt((coords[0].x - coords[3].x) ** 2 + (coords[0].y - coords[3].y) ** 2);
+    shapeInfo.height = Math.sqrt((coords[0].x - coords[1].x) ** 2 + (coords[0].y - coords[1].y) ** 2);
+
+    return shapeInfo;
 }
