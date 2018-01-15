@@ -13,6 +13,7 @@ class TextMenu extends Component {
 
         this.handleFontFamilyChange = this.handleFontFamilyChange.bind(this);
         this.handleFontSizeChange = this.handleFontSizeChange.bind(this);
+        this.handleTextAlignChange = this.handleTextAlignChange.bind(this);
     }
 
     handleFontFamilyChange(event) {
@@ -24,6 +25,12 @@ class TextMenu extends Component {
     handleFontSizeChange(event) {
         const { text, onEdit } = this.props;
         const newText = Object.assign({}, text, { fontSize: event.target.value });
+        onEdit && onEdit(newText);
+    }
+
+    handleTextAlignChange(event){
+        const { text, onEdit } = this.props;
+        const newText = Object.assign({}, text, { textAlign: event.target.value});
         onEdit && onEdit(newText);
     }
 
@@ -48,6 +55,11 @@ class TextMenu extends Component {
                     <option value="24px">24</option>
                     <option value="72px">72</option>
                     <option value="100px">100</option>
+                </select>
+                <select value={this.props.text.textAlign} onChange={this.handleTextAlignChange}>
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="center">Center</option>
                 </select>
             </div>
         );
