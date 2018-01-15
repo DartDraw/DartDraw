@@ -19,7 +19,7 @@ export function click(stateCopy, action, root) {
                     selectMultiple = true;
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
-
+                console.log(stateCopy.shapes.byId[stateCopy.selected[0]].info);
                 if (!stateCopy.justDuplicated) {
                     stateCopy.duplicateOffset.x = root.menuState.minorGrid;
                     stateCopy.duplicateOffset.y = root.menuState.minorGrid;
@@ -314,7 +314,7 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.pasteOffset.y += root.menuState.minorGrid;
             }
             break;
-        case 49: // TEMP MOVE
+        case 52: // TEMP MOVE
             action.payload.x = 50;
             action.payload.y = 50;
             stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
