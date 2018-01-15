@@ -169,6 +169,7 @@ function drawingState(state = initialState, action, root) {
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         case menuActions.FILE_SAVE:
+            console.log(stateCopy);
             file.fileSave(root, action);
             return stateCopy;
         // case menuActions.FILE_OPEN:

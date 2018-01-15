@@ -1,5 +1,5 @@
 import uuidv1 from 'uuid';
-import { multiplyMatrices, transformPoint } from './matrix';
+import { multiplyMatrices, transformPoint, decomposedMatrix, decomposed_toString } from './matrix';
 import { deepCopy } from './object';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid, rectangleRadius) {
@@ -917,8 +917,11 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
+        console.log("beginning matrix decomposition");
+        let tr = decomposedMatrix(shape.transform[0].parameters);
+        console.log(decomposed_toString(tr));
+        console.log("ending matrix decomposition");
     });
-
     return shapes;
 }
 
@@ -965,6 +968,11 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex,
     let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    console.log(coords0);
+    console.log(coords1);
+    console.log(coords2);
+    console.log(coords3);
 
     if (gridSnapping) {
         mouseX = Math.round(mouseX / minorGrid) * minorGrid;
