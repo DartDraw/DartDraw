@@ -217,3 +217,9 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.textInputs = updateTextInputs(stateCopy.selected, stateCopy.shapes, stateCopy.textInputs);
     return stateCopy;
 }
+
+export function canvasColorChange(stateCopy, action, root) {
+    const { color } = action.payload;
+    stateCopy.canvasFill = color;
+    return stateCopy;
+}

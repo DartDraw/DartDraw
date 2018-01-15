@@ -8,6 +8,10 @@ class BackgroundLayer extends Component {
         fill: PropTypes.string
     };
 
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         const { width, height, fill } = this.props;
         return (

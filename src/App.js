@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { IpcMiddlewareContainer } from './components/ipc-middle';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
@@ -45,6 +46,7 @@ class App extends Component {
                     <LeftMenuContainer />
                     <CanvasContainer />
                 </div>
+                <IpcMiddlewareContainer />
                 <ContextualMenuContainer />
             </div>
         );

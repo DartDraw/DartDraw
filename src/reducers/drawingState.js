@@ -2,6 +2,7 @@ import jsondiffpatch from 'jsondiffpatch';
 import * as canvasActions from './../actions/canvas';
 import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
+import * as file from './caseFunctions/file';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
@@ -22,6 +23,7 @@ const initialState = {
     textInputFocused: false,
     canvasHeight: 850,
     canvasWidth: 1000,
+    canvasFill: 'white',
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -32,6 +34,36 @@ const initialState = {
     past: [],
     future: []
 };
+
+function setBackgroundColor(stateCopy, action) {
+    const { color } = action.payload;
+    stateCopy.canvasFill = color;
+    return stateCopy;
+
+}
+
+// function openFile(stateCopy, action) {
+//     var newState = JSON.parse(action.payload.data);
+//     console.log(newState);
+//     var newDrawingState = newState.drawingState;
+//     stateCopy.shapes = newDrawingState.shapes;
+//     stateCopy.selected = newDrawingState.selected;
+//     stateCopy.boundingBoxes = newDrawingState.boundingBoxes;
+//     stateCopy.selectionBoxes = newDrawingState.selectionBoxes;
+//     stateCopy.marqueeBox = newDrawingState.marqueeBox;
+//     stateCopy.lastSavedShapes = newDrawingState.lastSavedShapes;
+//     stateCopy.editInProgress = newDrawingState.editInProgress;
+//     stateCopy.canvasHeight = newDrawingState.canvasHeight;
+//     stateCopy.canvasWidth = newDrawingState.canvasWidth;
+//     stateCopy.canvasFill = newDrawingState.canvasFill;
+//     stateCopy.scale = newDrawingState.scale;
+//     stateCopy.panX = newDrawingState.panX;
+//     stateCopy.panY = newDrawingState.panY;
+//     stateCopy.past = newDrawingState.past;
+//     stateCopy.future = newDrawingState.future;
+
+//     return stateCopy;
+// }
 
 function drawingState(state = initialState, action, root) {
     const stateCopy = deepCopy(state);
@@ -81,6 +113,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
+        case canvasActions.CANVAS_COLOR_CHANGE:
+            console.log(action.payload);
+            updatedState = canvas.canvasColorChange(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -132,6 +167,14 @@ function drawingState(state = initialState, action, root) {
         case menuActions.CUSTOM_ZOOM:
             updatedState = zoom.zoomToCustom(stateCopy, action, root);
             break;
+        // case menuActions.EXPORT_CLICK:
+        //     return menu.exportClick(stateCopy);
+        // case menuActions.FILE_SAVE:
+        //     file.fileSave(root, action);
+        //     return stateCopy;
+        // case menuActions.FILE_OPEN:
+        //     file.fileOpen();
+        //     return stateCopy;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         case menuActions.EDIT_SHAPE:

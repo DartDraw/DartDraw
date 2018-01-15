@@ -4,8 +4,8 @@ import './left-menu.css';
 
 class LeftMenu extends Component {
     static propTypes = {
-        onToolSelect: PropTypes.func,
-        onExportSelect: PropTypes.func
+        onToolSelect: PropTypes.func
+        // onExportSelect: PropTypes.func
     };
 
     constructor(props) {
@@ -20,7 +20,8 @@ class LeftMenu extends Component {
     }
 
     handleExportSelect() {
-        this.props.onExportSelect();
+        // this.props.onExportSelect();
+        return;
     }
 
     render() {

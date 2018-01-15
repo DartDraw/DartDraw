@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import AppContainer from './AppContainer';
 import registerServiceWorker from './registerServiceWorker';
+import { deepCopy } from './reducers/utilities/object';
 
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
