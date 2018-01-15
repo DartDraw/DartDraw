@@ -190,7 +190,6 @@ const canvasItem = new MenuItem(
                         click() {
                             canvasColor = '#ffffff';
                             windowManager.getCurrent().object.send('canvasColorChange', 'white');
-                            // console.log('white');
                             // var secondaryWindow = new BrowserWindow({width: 800, height: 600});
                             // secondaryWindow.focus();
 
