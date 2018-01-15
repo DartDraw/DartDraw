@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="11px" viewBox="0 0 14 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>002-frame copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Most-Recent-Mock" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-20.000000, -276.000000)">
+        <g id="Group-2" transform="translate(18.000000, 181.000000)" fill="#EBF1F5">
+            <g id="002-frame" transform="translate(2.000000, 95.000000)">
+                <g id="Shape">
+                    <path d="M12.4399896,0 L1.55636553,0 C0.696172872,0 0,0.820703125 0,1.83476563 L0,9.16953125 C0,10.1792969 0.696172872,11 1.55636553,11 L12.4436345,11 C13.3038271,11 14,10.1792969 14,9.16523438 L14,1.83476563 C13.9963551,0.820703125 13.3001822,0 12.4399896,0 Z M12.4399896,9.16523437 L1.55636553,9.16523437 L1.55636553,1.83476563 L12.4436345,1.83476563 L12.4399896,9.16523437 Z" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
