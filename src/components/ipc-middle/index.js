@@ -1,2 +1,2 @@
-export {default as LeftMenuContainer} from './LeftMenuContainer';
-export {default as LeftMenu} from './LeftMenu';
+export {default as IpcMiddlewareContainer} from './IpcMiddlewareContainer';
+export {default as IpcMiddleware} from './IpcMiddleware';

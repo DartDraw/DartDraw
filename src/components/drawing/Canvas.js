@@ -6,12 +6,20 @@ import {
     BackgroundLayerContainer,
     GridLayerContainer,
     SelectionLayerContainer,
+    TextInputLayerContainer
+} from './layers';
+import {
     Group,
     Rectangle,
     Ellipse,
+    Polygon,
+    Polyline,
+    FreehandPath,
     Path,
-    Line
-} from '.';
+    Arc,
+    Line,
+    Text
+} from './shapes';
 
 class Canvas extends Component {
     static propTypes = {
@@ -55,17 +63,6 @@ class Canvas extends Component {
         this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
     }
-
-    // componentDidMount() {
-    //     console.log('inside componentDidMount');
-    //     const {ipcRenderer} = window.require('electron');
-    //         ipcRenderer.on('loaded-from-file', (event, arg) => {
-    //             // const stateCopy = deepCopy(store.getState());
-    //             // store.dispatch(setStateFromLoad(stateCopy, arg));
-    //             console.log(arg);
-    //             // event.sender.send('loaded-from-file', "hello from your new renderer process!");
-    //     });
-    // }
 
     componentDidUpdate(prevProps) {
         const { onBoundingBoxUpdate, shapes, selected } = this.props;
@@ -137,6 +134,16 @@ class Canvas extends Component {
 
     renderShape(shape) {
         const { propagateEvents } = this.props;
+        const shapeProps = {
+            ...shape,
+            key: shape.id,
+            onDragStart: this.handleShapeDragStart,
+            onDrag: this.handleShapeDrag,
+            onDragStop: this.handleShapeDragStop,
+            onClick: this.handleShapeClick,
+            propagateEvents: propagateEvents
+        };
+
         switch (shape.type) {
             case 'group':
                 const groupMembers = shape.members.map((shape) => {
@@ -156,53 +163,23 @@ class Canvas extends Component {
                     </Group>
                 );
             case 'rectangle':
-                return (
-                    <Rectangle
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Rectangle {...shapeProps} />;
             case 'ellipse':
-                return (
-                    <Ellipse
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Ellipse {...shapeProps} />;
+            case 'polygon':
+                return <Polygon {...shapeProps} />;
+            case 'polyline':
+                return <Polyline {...shapeProps} />;
+            case 'arc':
+                return <Arc {...shapeProps} />;
             case 'path':
-                return (
-                    <Path
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Path {...shapeProps} />;
+            case 'freehandPath':
+                return <FreehandPath {...shapeProps} />;
             case 'line':
-                return (
-                    <Line
-                        key={shape.id}
-                        {...shape}
-                        onDragStart={this.handleShapeDragStart}
-                        onDrag={this.handleShapeDrag}
-                        onDragStop={this.handleShapeDragStop}
-                        onClick={this.handleShapeClick}
-                        propagateEvents={propagateEvents}
-                    />
-                );
+                return <Line {...shapeProps} />;
+            case 'text':
+                return <Text {...shapeProps} />;
             default:
                 break;
         }
@@ -237,6 +214,7 @@ class Canvas extends Component {
                         <SelectionLayerContainer />
                     </svg>
                 </Draggable>
+                <TextInputLayerContainer />
             </div>
         );
     }

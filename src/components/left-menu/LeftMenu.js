@@ -33,11 +33,23 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("rectangleTool")}>
                         <img src="./assets/frame.svg" alt="rect" id="button-icon" />
                     </button>
+                    <button onClick={() => this.handleToolSelect("roundedRectangleTool")}>
+                        RR
+                    </button>
                     <button onClick={() => this.handleToolSelect("lineTool")}>
                         <img src="./assets/drawline.svg" alt="line" id="button-icon" />
                     </button>
                     <button onClick={() => this.handleToolSelect("ellipseTool")}>
                         <img src="./assets/ellipse.svg" alt="ellipse" id="button-icon" />
+                    </button>
+                    <button onClick={() => this.handleToolSelect("polygonTool")}>
+                        P
+                    </button>
+                    <button onClick={() => this.handleToolSelect("arcTool")}>
+                        A
+                    </button>
+                    <button onClick={() => this.handleToolSelect("freehandPathTool")}>
+                        F
                     </button>
                     <button onClick={this.handleExportSelect}>
                         <img src="./assets/export.svg" alt="export" id="button-icon" />
@@ -50,6 +62,9 @@ class LeftMenu extends Component {
                     </button>
                     <button onClick={() => this.handleToolSelect("zoomTool")}>
                         <img src="./assets/marquee-zoom.svg" alt="marquee zoom" id="button-icon" />
+                    </button>
+                    <button onClick={() => this.handleToolSelect("textTool")}>
+                        <img src="./assets/text.svg" alt="rect" id="button-icon" />
                     </button>
                 </div>
             </div>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatTransform } from '../../utilities/shapes';
+import { formatTransform } from '../../../utilities/shapes';
 
-class Ellipse extends Component {
+class Rectangle extends Component {
     static propTypes = {
         id: PropTypes.string,
         onDragStart: PropTypes.func,
@@ -12,12 +12,14 @@ class Ellipse extends Component {
         onClick: PropTypes.func,
         width: PropTypes.number,
         height: PropTypes.number,
-        cx: PropTypes.number,
-        cy: PropTypes.number,
+        x: PropTypes.number,
+        y: PropTypes.number,
         rx: PropTypes.number,
         ry: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeDasharray: PropTypes.number,
+        vectorEffect: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -62,12 +64,15 @@ class Ellipse extends Component {
     render() {
         const {
             id,
-            cx,
-            cy,
+            width,
+            height,
+            x,
+            y,
             rx,
             ry,
             stroke,
             strokeWidth,
+            strokeDasharray,
             fill,
             transform,
             propagateEvents
@@ -75,15 +80,14 @@ class Ellipse extends Component {
 
         const svgProps = {
             id,
-            cx,
-            cy,
-            rx,
-            ry,
             stroke,
             strokeWidth,
+            strokeDasharray,
             fill,
             transform: formatTransform(transform),
-            vectorEffect: "non-scaling-stroke"
+            vectorEffect: 'non-scaling-stroke',
+            rx,
+            ry
         };
 
         return (
@@ -95,10 +99,16 @@ class Ellipse extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <ellipse {...svgProps} />
+                <rect
+                    x={width < 0 ? x + width : x}
+                    y={height < 0 ? y + height : y}
+                    width={Math.abs(width)}
+                    height={Math.abs(height)}
+                    {...svgProps}
+                />
             </Shape>
         );
     }
 }
 
-export default Ellipse;
+export default Rectangle;

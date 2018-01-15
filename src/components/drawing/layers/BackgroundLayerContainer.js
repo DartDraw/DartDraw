@@ -1,12 +1,6 @@
 import { connect } from 'react-redux';
 import BackgroundLayer from './BackgroundLayer';
 
-// console.log(window.require('electron').menu[3]);
-window.require('electron').remote.globalShortcut.register('CommandOrControl+Y', () => {
-    // Do stuff when Y and either Command/Control is pressed.
-    console.log("pressed y");
-});
-
 // const {remote} = window.require('electron');
 // const {MenuItem} = remote;
 
@@ -33,5 +27,6 @@ const mapStateToProps = ({ drawingState }) => {
 };
 
 export default connect(
-    mapStateToProps
+    mapStateToProps,
+    null
 )(BackgroundLayer);

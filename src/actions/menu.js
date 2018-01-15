@@ -14,6 +14,13 @@ export const MOVE_BACKWARD = 'MOVE_BACKWARD';
 export const MOVE_FORWARD = 'MOVE_FORWARD';
 export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
+export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
+export const FLIP_VERTICAL = 'FLIP_VERTICAL';
+export const SET_GRID = 'SET_GRID';
+export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
+export const SELECT_BUTTON = 'SELECT_BUTTON';
+export const FILE_OPEN = 'FILE_OPEN';
+export const FILE_SAVE = 'FILE_SAVE';
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
@@ -25,6 +32,10 @@ export function keyUp(keyCode) {
 
 export function selectTool(toolType) {
     return { type: SELECT_TOOL, payload: { toolType } };
+}
+
+export function selectButton(button) {
+    return { type: SELECT_BUTTON, payload: { button } };
 }
 
 export function exportClick() {
@@ -77,4 +88,28 @@ export function sendToBack() {
 
 export function bringToFront() {
     return { type: BRING_FRONT };
+}
+
+export function flipHorizontal() {
+    return { type: FLIP_HORIZONTAL };
+}
+
+export function flipVertical() {
+    return { type: FLIP_VERTICAL };
+}
+
+export function setGrid(unitType, majorGrid, minorGrid) {
+    return { type: SET_GRID, payload: { unitType, majorGrid, minorGrid } };
+}
+
+export function toggleGridSnapping() {
+    return { type: TOGGLE_GRID_SNAPPING };
+}
+
+export function fileSave(data) {
+    return { type: FILE_SAVE, payload: { data } };
+}
+
+export function fileOpen() {
+    return { type: FILE_OPEN };
 }

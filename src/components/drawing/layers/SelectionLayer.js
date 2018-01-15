@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Rectangle, Handle } from '.';
+import { Rectangle, Handle } from '../shapes';
 
 class SelectionLayer extends Component {
     static propTypes = {
@@ -84,14 +84,11 @@ class SelectionLayer extends Component {
 
     renderMarqueeBox() {
         const { propagateEvents, marqueeBox } = this.props;
+
         if (marqueeBox != null) {
             return (
                 <g key={marqueeBox.id}>
                     <Rectangle
-                        x={marqueeBox.x}
-                        y={marqueeBox.y}
-                        width={marqueeBox.width}
-                        height={marqueeBox.height}
                         {...marqueeBox}
                         propagateEvents={propagateEvents}
                     />

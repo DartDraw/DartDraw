@@ -2,11 +2,11 @@ import jsondiffpatch from 'jsondiffpatch';
 import * as canvasActions from './../actions/canvas';
 import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
+import * as file from './caseFunctions/file';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import { deepCopy } from './utilities/object';
-import { SET_BACKGROUND_COLOR, OPEN_FILE } from '../index';
 
 const initialState = {
     shapes: {
@@ -19,12 +19,17 @@ const initialState = {
     marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
+    textInputFocused: false,
     canvasHeight: 850,
     canvasWidth: 1000,
     canvasFill: 'white',
+    textInputs: {},
     scale: 1,
     panX: 0,
     panY: 0,
+    pasteOffset: {x: 0, y: 0},
+    duplicateOffset: {x: 0, y: 0},
+    shiftDirection: null,
     past: [],
     future: []
 };
@@ -36,28 +41,28 @@ function setBackgroundColor(stateCopy, action) {
 
 }
 
-function openFile(stateCopy, action) {
-    var newState = JSON.parse(action.payload.data);
-    console.log(newState);
-    var newDrawingState = newState.drawingState;
-    stateCopy.shapes = newDrawingState.shapes;
-    stateCopy.selected = newDrawingState.selected;
-    stateCopy.boundingBoxes = newDrawingState.boundingBoxes;
-    stateCopy.selectionBoxes = newDrawingState.selectionBoxes;
-    stateCopy.marqueeBox = newDrawingState.marqueeBox;
-    stateCopy.lastSavedShapes = newDrawingState.lastSavedShapes;
-    stateCopy.editInProgress = newDrawingState.editInProgress;
-    stateCopy.canvasHeight = newDrawingState.canvasHeight;
-    stateCopy.canvasWidth = newDrawingState.canvasWidth;
-    stateCopy.canvasFill = newDrawingState.canvasFill;
-    stateCopy.scale = newDrawingState.scale;
-    stateCopy.panX = newDrawingState.panX;
-    stateCopy.panY = newDrawingState.panY;
-    stateCopy.past = newDrawingState.past;
-    stateCopy.future = newDrawingState.future;
+// function openFile(stateCopy, action) {
+//     var newState = JSON.parse(action.payload.data);
+//     console.log(newState);
+//     var newDrawingState = newState.drawingState;
+//     stateCopy.shapes = newDrawingState.shapes;
+//     stateCopy.selected = newDrawingState.selected;
+//     stateCopy.boundingBoxes = newDrawingState.boundingBoxes;
+//     stateCopy.selectionBoxes = newDrawingState.selectionBoxes;
+//     stateCopy.marqueeBox = newDrawingState.marqueeBox;
+//     stateCopy.lastSavedShapes = newDrawingState.lastSavedShapes;
+//     stateCopy.editInProgress = newDrawingState.editInProgress;
+//     stateCopy.canvasHeight = newDrawingState.canvasHeight;
+//     stateCopy.canvasWidth = newDrawingState.canvasWidth;
+//     stateCopy.canvasFill = newDrawingState.canvasFill;
+//     stateCopy.scale = newDrawingState.scale;
+//     stateCopy.panX = newDrawingState.panX;
+//     stateCopy.panY = newDrawingState.panY;
+//     stateCopy.past = newDrawingState.past;
+//     stateCopy.future = newDrawingState.future;
 
-    return stateCopy;
-}
+//     return stateCopy;
+// }
 
 function drawingState(state = initialState, action, root) {
     const stateCopy = deepCopy(state);
@@ -98,9 +103,18 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.HANDLE_DRAG_STOP:
             updatedState = shape.handleDragStop(stateCopy, action, root);
             break;
+        case canvasActions.TEXT_INPUT_CHANGE:
+            updatedState = shape.textInputChange(stateCopy, action, root);
+            break;
+        case canvasActions.TOGGLE_TEXT_INPUT_FOCUS:
+            updatedState.textInputFocused = action.payload.textInputFocused;
+            break;
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
+        case canvasActions.CANVAS_COLOR_CHANGE:
+            console.log(action.payload);
+            updatedState = canvas.canvasColorChange(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -116,8 +130,20 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SEND_BACK:
             updatedState = shape.sendBack(stateCopy, action, root);
             break;
+        case menuActions.FLIP_VERTICAL:
+            updatedState = shape.flipVertical(stateCopy, action, root);
+            break;
+        case menuActions.FLIP_HORIZONTAL:
+            updatedState = shape.flipHorizontal(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
+            break;
+        case menuActions.KEY_UP:
+            updatedState = shape.keyUp(stateCopy, action, root);
+            break;
+        case menuActions.SELECT_TOOL:
+            updatedState = shape.selectTool(stateCopy, action, root);
             break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
@@ -142,10 +168,13 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case SET_BACKGROUND_COLOR:
-            return setBackgroundColor(stateCopy, action);
-        case OPEN_FILE:
-            return openFile(stateCopy, action);
+        case menuActions.FILE_SAVE:
+            console.log(stateCopy);
+            file.fileSave(root, action);
+            return stateCopy;
+        // case menuActions.FILE_OPEN:
+        //     file.fileOpen();
+        //     return stateCopy;
         default: break;
     }
 
@@ -162,9 +191,24 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
+                console.log(action.type, root.menuState);
             }
         }
     }
+
+    if (updatedState.editInProgress) {
+        updatedState.justCopied = false;
+        updatedState.pasteOffset = {x: 0, y: 0};
+    }
+
+    if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
+        if (root.menuState.toolType !== 'polygonTool') {
+            stateCopy.mode = '';
+            stateCopy.selected = [];
+            stateCopy.selectionBoxes = [];
+        }
+    }
+
     return updatedState;
 }
 

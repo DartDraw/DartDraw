@@ -1,6 +1,18 @@
 import { connect } from 'react-redux';
 import SelectionLayer from './SelectionLayer';
-import { handleDragStart, handleDrag, handleDragStop } from './../../actions/canvas';
+import { handleDragStart, handleDrag, handleDragStop } from '../../../actions/canvas';
+
+const propagateEventTools = [
+    'rectangleTool',
+    'ellipseTool',
+    'polygonTool',
+    'arcTool',
+    'freehandPathTool',
+    'lineTool',
+    'textTool',
+    'panTool',
+    'zoomTool'
+];
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { selectionBoxes } = drawingState;
@@ -13,7 +25,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         selectionBoxes: selectionBoxesArray,
         marqueeBox: drawingState.marqueeBox,
         scale: drawingState.scale,
-        propagateEvents: toolType === 'rectangleTool' || toolType === 'lineTool' || toolType === 'panTool' || toolType === 'zoomTool'
+        propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };
 
