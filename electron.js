@@ -32,7 +32,6 @@ const template = [
                     dialog.showSaveDialog(function (filename) {
                         mainWindow.send('file-save', 'writing to file');
                         ipcMain.on('file-save', (event, stateString) => {
-                            console.log(stateString)
                             fs.writeFile(filename, stateString, (err) => {
                                 if(err){
                                     mainWindow.send('alert', 'An error ocurred creating the file '+ err.message);
@@ -47,7 +46,6 @@ const template = [
             {
                 label: 'open', 
                 click() {
-                    console.log('opening file');
                     dialog.showOpenDialog(function (filenames) {
                         mainWindow.send('file-open', filenames[0]);
                     });
@@ -102,8 +100,6 @@ const template = [
 ];
 
 if (process.platform === 'darwin') {
-    // console.log("TEST");
-    // console.log(template);
     template.unshift({
         label: app.getName(),
         submenu: [
@@ -248,7 +244,6 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({width: 800, height: 600});
     mainWindow.focus();
-    console.log('Entered createWindow');
 
     // and load the index.html of the app.
     mainWindow.loadURL('http://localhost:3000');
@@ -266,7 +261,6 @@ function createWindow() {
 
     const menu = Menu.buildFromTemplate(template);
     menu.insert(2, canvasItem);
-    // console.log({menu});
     Menu.setApplicationMenu(menu);
     mainWindow.webContents.on('did-finish-load', () => {
         mainWindow.webContents.send('canvasColorChange', canvasColor);
