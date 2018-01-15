@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -314,10 +314,22 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.pasteOffset.y += root.menuState.minorGrid;
             }
             break;
-        case 49: // TEMP MOVE X
+        case 49: // TEMP MOVE
             action.payload.x = 50;
             action.payload.y = 50;
             stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+            break;
+        case 50: // TEMP RESIZE X
+            action.payload.x = 50;
+            //  action.payload.y = 50;
+            stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+            break;
+        case 51: // TEMP RESIZE X
+            action.payload.y = 50;
+            //  action.payload.y = 50;
+            stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
         default:
