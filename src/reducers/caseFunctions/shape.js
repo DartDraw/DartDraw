@@ -21,8 +21,8 @@ export function click(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
 
                 if (!stateCopy.justDuplicated) {
-                    stateCopy.duplicateOffset.x = root.menuState.minorGrid;
-                    stateCopy.duplicateOffset.y = root.menuState.minorGrid;
+                    stateCopy.duplicateOffset.x = stateCopy.minorGrid;
+                    stateCopy.duplicateOffset.y = stateCopy.minorGrid;
                 }
             }
             stateCopy.editInProgress = false;
@@ -73,8 +73,8 @@ export function drag(stateCopy, action, root) {
                 }
 
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                    root.menuState.minorGrid, root.menuState.align, stateCopy.shiftDirection);
+                    stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapping,
+                    stateCopy.minorGrid, root.menuState.align, stateCopy.shiftDirection);
 
                 if (stateCopy.justDuplicated) {
                     stateCopy.duplicateOffset.x += action.payload.draggableData.deltaX / stateCopy.scale;
@@ -103,8 +103,8 @@ export function dragStop(stateCopy, action, root) {
     }
 
     if (!stateCopy.justDuplicated) {
-        stateCopy.duplicateOffset.x = root.menuState.minorGrid;
-        stateCopy.duplicateOffset.y = root.menuState.minorGrid;
+        stateCopy.duplicateOffset.x = stateCopy.minorGrid;
+        stateCopy.duplicateOffset.y = stateCopy.minorGrid;
     }
     stateCopy.justDuplicated = false;
     return stateCopy;
@@ -129,7 +129,7 @@ export function handleDrag(stateCopy, action, root) {
 
     if (stateCopy.mode === 'reshape') {
         stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.minorGrid);
         return stateCopy;
     }
 
@@ -144,8 +144,8 @@ export function handleDrag(stateCopy, action, root) {
                     action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
                     stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                         stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
-                        stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                        root.menuState.minorGrid, stateCopy.shiftDirection, root.menuState.centeredControl);
+                        stateCopy.scale, shapeId, stateCopy.selectionBoxes, stateCopy.gridSnapping,
+                        stateCopy.minorGrid, stateCopy.shiftDirection, root.menuState.centeredControl);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
                         draggableData, handleIndex, stateCopy.scale);
@@ -249,7 +249,7 @@ export function keyDown(stateCopy, action, root) {
         case 39:
         case 40:
             stateCopy.shapes = keyboardMoveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapping, stateCopy.minorGrid, root.menuState.align);
             break;
         case 67: // copy
             if (commandSelected && !root.menuState.copied) {
@@ -304,14 +304,14 @@ export function keyDown(stateCopy, action, root) {
         case 86: // paste
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {
-                    stateCopy.pasteOffset.x += root.menuState.minorGrid;
-                    stateCopy.pasteOffset.y += root.menuState.minorGrid;
+                    stateCopy.pasteOffset.x += stateCopy.minorGrid;
+                    stateCopy.pasteOffset.y += stateCopy.minorGrid;
                     stateCopy.justCopied = false;
                 }
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy, stateCopy.pasteOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
-                stateCopy.pasteOffset.x += root.menuState.minorGrid;
-                stateCopy.pasteOffset.y += root.menuState.minorGrid;
+                stateCopy.pasteOffset.x += stateCopy.minorGrid;
+                stateCopy.pasteOffset.y += stateCopy.minorGrid;
             }
             break;
         default:

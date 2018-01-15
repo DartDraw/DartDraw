@@ -16,6 +16,7 @@ import {
     flipVertical,
     bringToFront,
     toggleGridSnapping,
+    // updateRuler,
     selectButton
 } from './../../actions/menu';
 
@@ -74,6 +75,9 @@ const mapDispatchToProps = (dispatch) => {
         onToggleGridSnapping: () => {
             dispatch(toggleGridSnapping());
         },
+        // onUpdateRuler: () => {
+        //     dispatch(updateRuler());
+        // },
         onButtonSelect: (button) => {
             dispatch(selectButton(button));
         }

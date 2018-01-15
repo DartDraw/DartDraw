@@ -22,6 +22,7 @@ class TopMenu extends Component {
         onFlipVertical: PropTypes.func,
         onCustomZoom: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
+        // onUpdateRuler: PropTypes.func,
         scale: PropTypes.number,
         fillColor: PropTypes.object,
         strokeColor: PropTypes.object,
@@ -49,6 +50,7 @@ class TopMenu extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
+        // this.handleUpdateRuler = this.handleUpdateRuler.bind(this);
         this.handleButtonSelect = this.handleButtonSelect.bind(this);
     }
 
@@ -116,6 +118,10 @@ class TopMenu extends Component {
     handleToggleGridSnapping(event) {
         this.props.onToggleGridSnapping();
     }
+
+    // handleUpdateRuler(event) {
+    //     this.props.onUpdateRuler();
+    // }
 
     handleButtonSelect(button) {
         this.props.onButtonSelect(button);

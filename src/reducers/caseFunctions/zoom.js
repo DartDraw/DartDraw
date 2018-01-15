@@ -1,3 +1,5 @@
+// import { updateRuler } from './rulers';
+
 export function zoomIn(stateCopy) {
     const scaleFactor = 2;
     const newScale = stateCopy.scale * scaleFactor;
@@ -7,6 +9,8 @@ export function zoomIn(stateCopy) {
     stateCopy.panX = panX;
     stateCopy.panY = panY;
     stateCopy.scale = newScale;
+
+    // stateCopy = updateRuler(stateCopy);
 
     return stateCopy;
 }
@@ -39,8 +43,8 @@ export function zoomToCustom(stateCopy, action) {
 export function zoomToMarqueeBox(marqueeBox, canvasWidth, canvasHeight) {
     // The values 38 and 43 are the widths and heights of the menus.
     // Needs to change if menu changes.
-    const windowWidth = window.innerWidth - 38;
-    const windowHeight = window.innerHeight - 43;
+    const windowWidth = window.innerWidth - 38 - 30;
+    const windowHeight = window.innerHeight - 43 - 30;
 
     const zoomRatioX = Math.abs(windowWidth / marqueeBox.width);
     const zoomRatioY = Math.abs(windowHeight / marqueeBox.height);
@@ -68,8 +72,8 @@ export function pan(stateCopy, draggableData) {
     var panY = stateCopy.panY - deltaY / scale;
 
     return {
-        panX: clamp(panX, 0, canvasWidth - (window.innerWidth - 38) / scale),
-        panY: clamp(panY, 0, canvasHeight - (window.innerHeight - 43) / scale)
+        panX: clamp(panX, 0, canvasWidth - (window.innerWidth - 38 - 30) / scale),
+        panY: clamp(panY, 0, canvasHeight - (window.innerHeight - 43 - 30) / scale)
     };
 }
 
@@ -78,8 +82,8 @@ function setPan(stateCopy, newScale) {
 
     // The values 38 and 43 are the widths and heights of the menus.
     // Needs to change if menu changes.
-    const windowWidth = window.innerWidth - 38;
-    const windowHeight = window.innerHeight - 43;
+    const windowWidth = window.innerWidth - 38 - 30;
+    const windowHeight = window.innerHeight - 43 - 30;
 
     // set panX
     if ((windowWidth / scale) < canvasWidth) {

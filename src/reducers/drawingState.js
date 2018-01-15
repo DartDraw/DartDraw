@@ -5,6 +5,8 @@ import * as canvas from './caseFunctions/canvas';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
+import * as rulers from './caseFunctions/rulers';
+import * as grid from './caseFunctions/grid';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -19,8 +21,8 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeight: 850,
-    canvasWidth: 1000,
+    canvasHeight: 72 * 8,
+    canvasWidth: 72 * 8,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -29,7 +31,18 @@ const initialState = {
     duplicateOffset: {x: 0, y: 0},
     shiftDirection: null,
     past: [],
-    future: []
+    future: [],
+    gridSnapping: false,
+    majorGrid: 100,
+    minorGrid: 50,
+    ruler: {
+        unitType: 'inch',
+        width: 16,
+        height: 25,
+        subDivisions: 4,
+        ticks: [],
+        labels: []
+    }
 };
 
 function drawingState(state = initialState, action, root) {
@@ -80,6 +93,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
+        case canvasActions.UPDATE_RULER:
+            updatedState = rulers.updateRuler(stateCopy, action, root);
+            break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -124,15 +140,24 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.ZOOM_IN:
             updatedState = zoom.zoomIn(stateCopy, action, root);
+            updatedState = rulers.updateRuler(updatedState, action, root);
             break;
         case menuActions.ZOOM_OUT:
             updatedState = zoom.zoomOut(stateCopy, action, root);
+            updatedState = rulers.updateRuler(updatedState, action, root);
             break;
         case menuActions.CUSTOM_ZOOM:
             updatedState = zoom.zoomToCustom(stateCopy, action, root);
+            updatedState = rulers.updateRuler(updatedState, action, root);
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
+        case menuActions.SET_GRID:
+            updatedState = grid.setGrid(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_GRID_SNAPPING:
+            updatedState = grid.toggleGridSnapping(stateCopy, action, root);
+            break;
         default: break;
     }
 

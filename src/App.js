@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
+import { RulerLayerContainer } from './components/drawing/layers';
 
 class App extends Component {
     static propTypes = {
@@ -42,7 +43,13 @@ class App extends Component {
                 <TopMenuContainer />
                 <div className="mainBody">
                     <LeftMenuContainer />
-                    <CanvasContainer />
+                    <div className="subBody">
+                        <RulerLayerContainer dir="horizontal" />
+                        <div className="body">
+                            <RulerLayerContainer dir="vertical" />
+                            <CanvasContainer />
+                        </div>
+                    </div>
                 </div>
             </div>
         );
