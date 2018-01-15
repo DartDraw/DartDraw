@@ -7,9 +7,9 @@
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Artboard-2" transform="translate(-325.000000, -168.000000)">
             <g id="Group-4" transform="translate(325.000000, 168.000000)">
-                <rect id="Rectangle-20" stroke="#979797" x="0.5" y="0.5" width="5.4" height="5.4" rx="1"></rect>
-                <rect id="Rectangle-20-Copy" stroke="#979797" x="10.1" y="10.1" width="5.4" height="5.4" rx="1"></rect>
-                <rect id="Rectangle-21" fill="#979797" x="3.2" y="3.2" width="9.6" height="9.6" rx="1"></rect>
+                <rect id="Rectangle-20" stroke="#EBF1F5" x="0.5" y="0.5" width="5.4" height="5.4" rx="1"></rect>
+                <rect id="Rectangle-20-Copy" stroke="#EBF1F5" x="10.1" y="10.1" width="5.4" height="5.4" rx="1"></rect>
+                <rect id="Rectangle-21" fill="#EBF1F5" x="3.2" y="3.2" width="9.6" height="9.6" rx="1"></rect>
             </g>
         </g>
     </g>

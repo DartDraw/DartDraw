@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>018-flip</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="flipVertical" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="018-flip" fill="#EBF1F5" fill-rule="nonzero">
+            <polygon id="Shape" points="0 15 6.4 10 0 5.1"></polygon>
+            <path d="M9.6,10.1 L16,15 L16,5 L9.6,10.1 Z M14.9333333,12.9 L11.3066667,10.1 L14.9333333,7.1 L14.9333333,12.9 Z" id="Shape"></path>
+            <polygon id="Shape" points="7.46666667 5 8.53333333 5 8.53333333 6 7.46666667 6"></polygon>
+            <polygon id="Shape" points="7.46666667 3 8.53333333 3 8.53333333 4 7.46666667 4"></polygon>
+            <polygon id="Shape" points="7.46666667 7 8.53333333 7 8.53333333 8 7.46666667 8"></polygon>
+            <polygon id="Shape" points="7.46666667 9 8.53333333 9 8.53333333 10 7.46666667 10"></polygon>
+            <polygon id="Shape" points="7.46666667 11 8.53333333 11 8.53333333 12 7.46666667 12"></polygon>
+            <polygon id="Shape" points="7.46666667 13 8.53333333 13 8.53333333 14 7.46666667 14"></polygon>
+            <polygon id="Shape" points="7.46666667 15 8.53333333 15 8.53333333 16 7.46666667 16"></polygon>
+            <path d="M8,1 C9.38666667,1 10.7733333,1.7 11.84,2.9 L10.6666667,4 L13.8666667,4 L13.8666667,1 L12.5866667,2.2 C11.3066667,0.8 9.70666667,0 8,0 C8,0 8,0 8,0 C5.97333333,0 4.16,1 2.77333333,2.9 L3.62666667,3.5 C4.8,1.9 6.29333333,1 8,1 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

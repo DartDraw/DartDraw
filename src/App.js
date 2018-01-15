@@ -4,6 +4,7 @@ import { IpcMiddlewareContainer } from './components/ipc-middle';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
+import { ContextualMenuContainer } from './components/contextual-menu';
 
 class App extends Component {
     static propTypes = {
@@ -46,6 +47,7 @@ class App extends Component {
                     <CanvasContainer />
                 </div>
                 <IpcMiddlewareContainer />
+                <ContextualMenuContainer />
             </div>
         );
     }
