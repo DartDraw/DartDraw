@@ -4,7 +4,6 @@ import { canvasColorChange } from './../../actions/canvas';
 import IpcMiddleware from './IpcMiddleware';
 
 const mapStateToProps = (props) => {
-    console.log(props);
     return props;
 };
 
