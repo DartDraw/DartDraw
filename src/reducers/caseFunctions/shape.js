@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -314,12 +314,6 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.pasteOffset.y += root.menuState.minorGrid;
             }
             break;
-        case 52: // TEMP MOVE
-            action.payload.x = 50;
-            action.payload.y = 50;
-            stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
         case 50: // TEMP RESIZE X
             action.payload.x = 50;
             //  action.payload.y = 50;
@@ -330,6 +324,17 @@ export function keyDown(stateCopy, action, root) {
             action.payload.y = 50;
             //  action.payload.y = 50;
             stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+            break;
+        case 52: // TEMP MOVE
+            action.payload.x = 50;
+            action.payload.y = 50;
+            stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+            break;
+        case 53: // TEMP Rotate
+            action.payload.degree = 45;
+            stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
         default:

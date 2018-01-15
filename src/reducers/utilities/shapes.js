@@ -1326,13 +1326,12 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
 }
 
 export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
-    action.payload.draggableData = {};
     selected.map((id) => {
         const shape = shapes.byId[id];
-        action.payload.draggableData.deltaX = action.payload.x - transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
-        action.payload.draggableData.deltaY = action.payload.y - transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
-        console.log(action.payload.draggableData);
-        shapes = rotateShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes);
+        let c = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+        let degree = (action.payload.degree - shape.info.rotation);
+        shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree * (Math.PI / 180), c.x, c.y);
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
