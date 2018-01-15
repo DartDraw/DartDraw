@@ -1,0 +1,51 @@
+.contextual-menu {
+  background-color: #202B33;
+  display: flex;
+  width: 360px;
+  position: absolute;
+  top: 43px;
+  bottom: 0;
+  transition: right 500ms ease-in-out;
+}
+
+.menu-column {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: red;
+}
+
+.static-menu {
+    display: flex;
+    flex: 0.15;
+    height: 80px;
+    background-color: #202B33;
+}
+
+.dynamic-menu {
+    display: flex;
+    flex: 0.80;
+    height: 80px;
+    background-color: #30404D;
+}
+
+.zoom-menu {
+    display: flex;
+    flex: 0.05;
+    height: 80px;
+    background-color: #202B33;
+}
+
+.hide-button-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 8px;
+}
+
+.hide-button {
+    width: 30px;
+    height: 30px;
+    background-color: #000000;
+}

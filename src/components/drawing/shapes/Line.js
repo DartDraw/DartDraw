@@ -12,6 +12,7 @@ class Line extends Component {
         points: PropTypes.arrayOf(PropTypes.number),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeDasharray: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -54,11 +55,12 @@ class Line extends Component {
     }
 
     render() {
-        const { id, points, stroke, strokeWidth, transform, propagateEvents } = this.props;
+        const { id, points, stroke, strokeWidth, strokeDasharray, transform, propagateEvents } = this.props;
         const svgProps = {
             d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}],
             stroke,
             strokeWidth,
+            strokeDasharray,
             transform
         };
 

@@ -119,6 +119,7 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
         strokeWidth: 10,
+        strokeDasharray: '1, 0',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
@@ -198,6 +199,12 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         width: 0,
         height: 0,
+        fontFamily: 'helvetica',
+        fontSize: '24px',
+        lineHeight: '24px',
+        fontStyle: 'normal',
+        textAlign: 'left',
+        fontWeight: 'normal',
         fill: formatColor(fill),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
