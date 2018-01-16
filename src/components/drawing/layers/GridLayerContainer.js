@@ -2,12 +2,11 @@ import { connect } from 'react-redux';
 import GridLayer from './GridLayer';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { canvasWidth, canvasHeight, scale, ruler } = drawingState;
+    const { canvasWidth, canvasHeight, gridLines } = drawingState;
     return {
-        scale: scale,
-        width: canvasWidth,
-        height: canvasHeight,
-        ticks: ruler.ticks
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        lines: gridLines
     };
 };
 

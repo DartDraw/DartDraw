@@ -2,7 +2,7 @@ import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
 
-export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid, rectangleRadius) {
+export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, subDivisions, rectangleRadius) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const rectangle = {
@@ -20,8 +20,8 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
     };
 
     if (gridSnapping) {
-        rectangle.x = Math.round(rectangle.x / minorGrid) * minorGrid;
-        rectangle.y = Math.round(rectangle.y / minorGrid) * minorGrid;
+        rectangle.x = Math.round(rectangle.x / subDivisions) * subDivisions;
+        rectangle.y = Math.round(rectangle.y / subDivisions) * subDivisions;
     }
 
     shapes.byId[rectangle.id] = rectangle;
@@ -29,7 +29,7 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
     return shapes;
 }
 
-export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid) {
+export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
     const ellipse = {
@@ -45,8 +45,8 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
     };
 
     if (gridSnapping) {
-        ellipse.cx = Math.round(ellipse.cx / minorGrid) * minorGrid;
-        ellipse.cy = Math.round(ellipse.cy / minorGrid) * minorGrid;
+        ellipse.cx = Math.round(ellipse.cx / subDivisions) * subDivisions;
+        ellipse.cy = Math.round(ellipse.cy / subDivisions) * subDivisions;
     }
 
     shapes.byId[ellipse.id] = ellipse;
@@ -54,7 +54,7 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
     return shapes;
 }
 
-export function addPolygon(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid) {
+export function addPolygon(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -70,8 +70,8 @@ export function addPolygon(shapes, action, fill, stroke, panX, panY, scale, grid
     };
 
     if (gridSnapping) {
-        polygon.points[0] = Math.round(polygon.points[0] / minorGrid) * minorGrid;
-        polygon.points[1] = Math.round(polygon.points[1] / minorGrid) * minorGrid;
+        polygon.points[0] = Math.round(polygon.points[0] / subDivisions) * subDivisions;
+        polygon.points[1] = Math.round(polygon.points[1] / subDivisions) * subDivisions;
     }
 
     shapes.byId[polygon.id] = polygon;
@@ -79,7 +79,7 @@ export function addPolygon(shapes, action, fill, stroke, panX, panY, scale, grid
     return shapes;
 }
 
-export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gridSnapping, minorGrid) {
+export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -88,8 +88,8 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
     let yCoord = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     if (gridSnapping) {
-        xCoord = (Math.round(xCoord / minorGrid) * minorGrid);
-        yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
+        xCoord = (Math.round(xCoord / subDivisions) * subDivisions);
+        yCoord = (Math.round(yCoord / subDivisions) * subDivisions);
     }
 
     if (Math.abs(xCoord - polygon.points[0]) < (5 / scale) &&
@@ -106,7 +106,7 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
     return shapes;
 }
 
-export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -124,8 +124,8 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
     };
 
     if (gridSnapping) {
-        line.points[0] = Math.round(line.points[0] / minorGrid) * minorGrid;
-        line.points[1] = Math.round(line.points[1] / minorGrid) * minorGrid;
+        line.points[0] = Math.round(line.points[0] / subDivisions) * subDivisions;
+        line.points[1] = Math.round(line.points[1] / subDivisions) * subDivisions;
     }
 
     shapes.byId[line.id] = line;
@@ -133,7 +133,7 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
     return shapes;
 }
 
-export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -150,8 +150,8 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     };
 
     if (gridSnapping) {
-        arc.points[0] = Math.round(arc.points[0] / minorGrid) * minorGrid;
-        arc.points[1] = Math.round(arc.points[1] / minorGrid) * minorGrid;
+        arc.points[0] = Math.round(arc.points[0] / subDivisions) * subDivisions;
+        arc.points[1] = Math.round(arc.points[1] / subDivisions) * subDivisions;
     }
 
     arc.points[2] = arc.points[0];
@@ -162,7 +162,7 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     return shapes;
 }
 
-export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -178,8 +178,8 @@ export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSna
     };
 
     if (gridSnapping) {
-        path.points[0] = Math.round(path.points[0] / minorGrid) * minorGrid;
-        path.points[1] = Math.round(path.points[1] / minorGrid) * minorGrid;
+        path.points[0] = Math.round(path.points[0] / subDivisions) * subDivisions;
+        path.points[1] = Math.round(path.points[1] / subDivisions) * subDivisions;
     }
 
     shapes.byId[path.id] = path;
@@ -187,7 +187,7 @@ export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSna
     return shapes;
 }
 
-export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
+export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, subDivisions) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -210,8 +210,8 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
     };
 
     if (gridSnapping) {
-        text.x = Math.round(text.x / minorGrid) * minorGrid;
-        text.y = Math.round(text.y / minorGrid) * minorGrid;
+        text.x = Math.round(text.x / subDivisions) * subDivisions;
+        text.y = Math.round(text.y / subDivisions) * subDivisions;
     }
 
     shapes.byId[text.id] = text;
@@ -219,7 +219,7 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, m
     return shapes;
 }
 
-export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid, centeredControl) {
+export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, subDivisions, centeredControl) {
     const { x, y, node } = draggableData;
     let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
     let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
@@ -232,8 +232,8 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
         line.points[3] = mouseY;
 
         if (gridSnapping) {
-            line.points[2] = Math.round(line.points[2] / minorGrid) * minorGrid;
-            line.points[3] = Math.round(line.points[3] / minorGrid) * minorGrid;
+            line.points[2] = Math.round(line.points[2] / subDivisions) * subDivisions;
+            line.points[3] = Math.round(line.points[3] / subDivisions) * subDivisions;
         }
 
         if (centeredControl) {
@@ -245,7 +245,7 @@ export function moveLineAnchor(shapes, selected, draggableData, panX, panY, scal
     return shapes;
 }
 
-export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale, gridSnapping, subDivisions) {
     const { x, y, node } = draggableData;
     let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
     let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
@@ -256,8 +256,8 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
         arc.points[3] = mouseY;
 
         if (gridSnapping) {
-            arc.points[2] = Math.round(arc.points[2] / minorGrid) * minorGrid;
-            arc.points[3] = Math.round(arc.points[3] / minorGrid) * minorGrid;
+            arc.points[2] = Math.round(arc.points[2] / subDivisions) * subDivisions;
+            arc.points[3] = Math.round(arc.points[3] / subDivisions) * subDivisions;
         }
 
         arc.rx = arc.points[2] - arc.points[0];
@@ -273,14 +273,14 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
     return shapes;
 }
 
-export function addFreehandPathPoint(shapes, selected, draggableData, panX, panY, scale, gridSnapping, minorGrid) {
+export function addFreehandPathPoint(shapes, selected, draggableData, panX, panY, scale, gridSnapping, subDivisions) {
     const { x, y, node } = draggableData;
     let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
     let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     if (gridSnapping) {
-        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
-        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+        mouseX = Math.round(mouseX / subDivisions) * subDivisions;
+        mouseY = Math.round(mouseY / subDivisions) * subDivisions;
     }
 
     selected.map((id) => {
@@ -333,7 +333,7 @@ export function removeShape(shapes, shapeId) {
     return shapes;
 }
 
-export function initializeMoveShape(shapes, selected, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
+export function initializeMoveShape(shapes, selected, scale, boundingBoxes, selectionBoxes, gridSnapping, subDivisions, align) {
     selected.map((id) => {
         const shape = shapes.byId[id];
         const boundingBox = boundingBoxes[id];
@@ -400,7 +400,7 @@ function getAlignedCoord(shape, selectionBox, boundingBox, align) {
 }
 
 export function moveShape(shapes, selected, action, scale, boundingBoxes,
-    selectionBoxes, gridSnapping, minorGrid, align, shiftDirection) {
+    selectionBoxes, gridSnapping, subDivisions, align, shiftDirection) {
     const { draggableData } = action.payload;
     const { deltaX, deltaY } = draggableData;
     let scaledDeltaX = deltaX / scale;
@@ -448,8 +448,8 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
                 shape.dragX += scaledDeltaX;
                 shape.dragY += scaledDeltaY;
 
-                let newX = Math.round((shape.xOffset + shape.dragX) / minorGrid) * minorGrid;
-                let newY = Math.round((shape.yOffset + shape.dragY) / minorGrid) * minorGrid;
+                let newX = Math.round((shape.xOffset + shape.dragX) / subDivisions) * subDivisions;
+                let newY = Math.round((shape.yOffset + shape.dragY) / subDivisions) * subDivisions;
 
                 let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
                 shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
@@ -463,7 +463,7 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
     return shapes;
 }
 
-export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, minorGrid, align) {
+export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapping, subDivisions, align) {
     const { keyCode } = action.payload;
     let scaledDeltaX = 0;
     let scaledDeltaY = 0;
@@ -492,11 +492,11 @@ export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes
         if (gridSnapping) {
             let coord = getAlignedCoord(shape, selectionBoxes[id], boundingBox, align);
 
-            let dragX = scaledDeltaX * minorGrid;
-            let dragY = scaledDeltaY * minorGrid;
+            let dragX = scaledDeltaX * subDivisions;
+            let dragY = scaledDeltaY * subDivisions;
 
-            let newX = Math.round((coord.x + dragX) / minorGrid) * minorGrid;
-            let newY = Math.round((coord.y + dragY) / minorGrid) * minorGrid;
+            let newX = Math.round((coord.x + dragX) / subDivisions) * subDivisions;
+            let newY = Math.round((coord.y + dragY) / subDivisions) * subDivisions;
 
             let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
@@ -683,14 +683,14 @@ export function removeTransformation(shapes, selected) {
     return shapes;
 }
 
-export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
+export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, subDivisions) {
     const { x, y, node } = draggableData;
     let mouseX = (x + (panX * scale) - node.parentNode.getBoundingClientRect().left) / scale;
     let mouseY = (y + (panY * scale) - node.parentNode.getBoundingClientRect().top) / scale;
 
     if (gridSnapping) {
-        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
-        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+        mouseX = Math.round(mouseX / subDivisions) * subDivisions;
+        mouseY = Math.round(mouseY / subDivisions) * subDivisions;
     }
 
     selected.map((id) => {
@@ -738,12 +738,12 @@ export function deleteShapes(shapes, selected) {
 }
 
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
-    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftDirection, centeredControl) {
+    panX, panY, scale, shapeId, selectionBoxes, gridSnapping, subDivisions, shiftDirection, centeredControl) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
 
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex,
-        panX, panY, scale, gridSnapping, minorGrid, shiftDirection);
+        panX, panY, scale, gridSnapping, subDivisions, shiftDirection);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
 
@@ -781,8 +781,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 targetY = coords0.y + scaledDeltaY;
 
                 if (gridSnapping) {
-                    targetX = Math.round(targetX / minorGrid) * minorGrid;
-                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                    targetX = Math.round(targetX / subDivisions) * subDivisions;
+                    targetY = Math.round(targetY / subDivisions) * subDivisions;
                 }
 
                 let scale03 = calculateDistance({ x2: coords1.x, y2: coords1.y, x1: coords0.x, y1: coords0.y }, {x: targetX, y: targetY});
@@ -811,8 +811,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 targetY = coords1.y + scaledDeltaY;
 
                 if (gridSnapping) {
-                    targetX = Math.round(targetX / minorGrid) * minorGrid;
-                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                    targetX = Math.round(targetX / subDivisions) * subDivisions;
+                    targetY = Math.round(targetY / subDivisions) * subDivisions;
                 }
 
                 let scale12 = calculateDistance({ x2: coords0.x, y2: coords0.y, x1: coords1.x, y1: coords1.y }, {x: targetX, y: targetY});
@@ -841,8 +841,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 targetY = coords2.y + scaledDeltaY;
 
                 if (gridSnapping) {
-                    targetX = Math.round(targetX / minorGrid) * minorGrid;
-                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                    targetX = Math.round(targetX / subDivisions) * subDivisions;
+                    targetY = Math.round(targetY / subDivisions) * subDivisions;
                 }
 
                 let scale21 = calculateDistance({ x2: coords3.x, y2: coords3.y, x1: coords2.x, y1: coords2.y }, {x: targetX, y: targetY});
@@ -871,8 +871,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
                 targetY = coords3.y + scaledDeltaY;
 
                 if (gridSnapping) {
-                    targetX = Math.round(targetX / minorGrid) * minorGrid;
-                    targetY = Math.round(targetY / minorGrid) * minorGrid;
+                    targetX = Math.round(targetX / subDivisions) * subDivisions;
+                    targetY = Math.round(targetY / subDivisions) * subDivisions;
                 }
 
                 let scale30 = calculateDistance({ x2: coords2.x, y2: coords2.y, x1: coords3.x, y1: coords3.y }, {x: targetX, y: targetY});
@@ -958,7 +958,7 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
 }
 
 function determineScale(shape, boundingBoxes, draggableData, handleIndex,
-    panX, panY, scale, gridSnapping, minorGrid, shiftDirection) {
+    panX, panY, scale, gridSnapping, subDivisions, shiftDirection) {
     let scaleXY = {};
 
     const { x, y, node } = draggableData;
@@ -974,8 +974,8 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex,
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
     if (gridSnapping) {
-        mouseX = Math.round(mouseX / minorGrid) * minorGrid;
-        mouseY = Math.round(mouseY / minorGrid) * minorGrid;
+        mouseX = Math.round(mouseX / subDivisions) * subDivisions;
+        mouseY = Math.round(mouseY / subDivisions) * subDivisions;
     }
 
     switch (handleIndex) {

@@ -1,6 +1,5 @@
 import * as menuActions from '../actions/menu';
 import * as menu from './caseFunctions/menu';
-// import * as grid from './caseFunctions/grid';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -12,7 +11,6 @@ const initialState = {
     currentKeys: {},
     copied: false,
     pasted: false,
-    // gridSnapping: false,
     align: ['top', 'left'],
     centeredControl: false,
     rectangleRadius: {x: 50, y: 50}

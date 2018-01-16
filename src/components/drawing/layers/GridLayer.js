@@ -3,31 +3,58 @@ import PropTypes from 'prop-types';
 
 class GridLayer extends Component {
     static propTypes = {
-        scale: PropTypes.number,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        ticks: PropTypes.array
+        canvasWidth: PropTypes.number,
+        canvasHeight: PropTypes.number,
+        lines: PropTypes.object
     };
 
-    renderLines() {
-        const { ticks, width, height } = this.props;
-        return ticks.map((tick) => {
+    renderMajorLines() {
+        const { canvasWidth, canvasHeight, lines } = this.props;
+        return lines.divisions.map((line) => {
             return (
                 <g>
                     <line
-                        x1={tick[1]}
+                        x1={line}
                         y1="0"
-                        x2={tick[1]}
-                        y2={height}
+                        x2={line}
+                        y2={canvasHeight}
+                        vectorEffect="non-scaling-stroke"
+                        stroke="black"
+                        strokeWidth="1"
+                    />
+                    <line
+                        x1="0"
+                        y1={line}
+                        x2={canvasWidth}
+                        y2={line}
+                        vectorEffect="non-scaling-stroke"
+                        stroke="black"
+                        strokeWidth="1"
+                    />
+                </g>
+            );
+        });
+    }
+
+    renderMinorLines() {
+        const { canvasWidth, canvasHeight, lines } = this.props;
+        return lines.subDivisions.map((line) => {
+            return (
+                <g>
+                    <line
+                        x1={line}
+                        y1="0"
+                        x2={line}
+                        y2={canvasHeight}
                         vectorEffect="non-scaling-stroke"
                         stroke="gray"
                         strokeWidth="0.5"
                     />
                     <line
                         x1="0"
-                        y1={tick[1]}
-                        x2={width}
-                        y2={tick[1]}
+                        y1={line}
+                        x2={canvasWidth}
+                        y2={line}
                         vectorEffect="non-scaling-stroke"
                         stroke="gray"
                         strokeWidth="0.5"
@@ -40,23 +67,11 @@ class GridLayer extends Component {
     render() {
         return (
             <svg className="grid">
-                {this.renderLines()}
+                {this.renderMajorLines()}
+                {this.renderMinorLines()}
             </svg>
         );
     }
 }
 
 export default GridLayer;
-
-// <g>
-//     <defs>
-//         <pattern id="smallGrid" width={minorGrid} height={minorGrid} patternUnits="userSpaceOnUse">
-//             <path d={"M " + minorGrid + " 0 L 0 0 0 " + minorGrid} fill="none" stroke="#adadad" strokeWidth={0.5 / scale} />
-//         </pattern>
-//         <pattern id="grid" width={majorGrid} height={majorGrid} patternUnits="userSpaceOnUse">
-//             <rect width={majorGrid} height={majorGrid} fill="url(#smallGrid)" />
-//             <path d={"M " + majorGrid + " 0 L 0 0 0 " + majorGrid} fill="none" stroke="#adadad" strokeWidth={1 / scale} />
-//         </pattern>
-//     </defs>
-//     <rect width={width} height={height} fill="url(#grid)" pointerEvents="none" />
-// </g>

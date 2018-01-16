@@ -4,16 +4,14 @@ import PropTypes from 'prop-types';
 class RulerLayer extends Component {
     static propTypes = {
         onUpdateRuler: PropTypes.func,
+        onUpdateGrid: PropTypes.func,
         ticks: PropTypes.array,
-        labels: PropTypes.array,
-        canvasHeight: PropTypes.number,
-        canvasWidth: PropTypes.number,
-        windowWidth: PropTypes.number,
-        viewBox: PropTypes.array
+        labels: PropTypes.array
     };
 
     componentWillMount() {
         this.props.onUpdateRuler();
+        this.props.onUpdateGrid();
     }
 
     renderNums() {
@@ -59,16 +57,12 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { windowWidth, viewBox, dir } = this.props;
-        console.log(viewBox);
+        const { dir } = this.props;
         return (
             <svg className="ruler"
                 id={dir}
-                width={windowWidth}
+                width={window.innerWidth - 30 - 45}
                 height={30}
-                // viewBox={viewBox.join(' ')}
-                preserveAspectRation="slice"
-                ref={(ref) => { this.svgRef = ref; }}
             >
                 {this.renderTicks()}
                 {this.renderNums()}
@@ -78,9 +72,3 @@ class RulerLayer extends Component {
 }
 
 export default RulerLayer;
-
-// width={canvasWidth}
-// height={30}
-// viewBox={viewBox.join(' ')}
-
-//                viewBox={viewBox.join(' ')}

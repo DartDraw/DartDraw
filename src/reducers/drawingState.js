@@ -21,8 +21,8 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeight: 72 * 8,
-    canvasWidth: 72 * 8,
+    canvasHeight: 72 * 10,
+    canvasWidth: 72 * 10,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -33,13 +33,14 @@ const initialState = {
     past: [],
     future: [],
     gridSnapping: false,
-    majorGrid: 100,
-    minorGrid: 50,
+    gridLines: {
+        divisions: null,
+        subDivisions: null
+    },
     ruler: {
         unitType: 'inch',
-        width: 16,
-        height: 25,
-        subDivisions: 4,
+        base: 5,
+        exponent: 1,
         ticks: [],
         labels: []
     }
@@ -152,8 +153,8 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.SET_GRID:
-            updatedState = grid.setGrid(stateCopy, action, root);
+        case menuActions.UPDATE_GRID:
+            updatedState = grid.updateGrid(stateCopy, action, root);
             break;
         case menuActions.TOGGLE_GRID_SNAPPING:
             updatedState = grid.toggleGridSnapping(stateCopy, action, root);

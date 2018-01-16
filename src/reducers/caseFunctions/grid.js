@@ -1,11 +1,20 @@
-export function setGrid(stateCopy, action) {
-    const { unitType, majorGrid, minorGrid } = action.payload;
+export function updateGrid(stateCopy) {
+    const { ruler } = stateCopy;
 
-    // NEED LOGIC TO CONVERT FROM UNIT TYPE TO CANONICAL TYPE
+    stateCopy.gridLines.divisions = [];
+    stateCopy.gridLines.subDivisions = [];
 
-    stateCopy.unitType = unitType;
-    stateCopy.majorGrid = majorGrid;
-    stateCopy.minorGrid = minorGrid;
+    var pixelsPerUnit = 72;
+    var divisions = pixelsPerUnit;
+    var subDivisions = pixelsPerUnit / Math.pow(ruler.base, ruler.exponent);
+
+    for (var i = 0; i < stateCopy.canvasWidth; i += subDivisions) {
+        if (i % divisions === 0) {
+            stateCopy.gridLines.divisions.push(i);
+        } else {
+            stateCopy.gridLines.subDivisions.push(i);
+        }
+    }
 
     return stateCopy;
 }
