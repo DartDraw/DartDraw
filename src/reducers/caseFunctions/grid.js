@@ -1,18 +1,19 @@
-export function updateGrid(stateCopy) {
-    const { ruler } = stateCopy;
-
-    stateCopy.gridLines.divisions = [];
-    stateCopy.gridLines.subDivisions = [];
-
+export function setGrid(stateCopy) {
+    const { ruler, gridLines } = stateCopy;
     var pixelsPerUnit = 72;
     var divisions = pixelsPerUnit;
-    var subDivisions = pixelsPerUnit / Math.pow(ruler.base, ruler.exponent);
+    gridLines.divisions = [];
+    gridLines.subDivisions = [];
+    gridLines.snapTo = pixelsPerUnit / Math.pow(ruler.base, ruler.exponent);
 
-    for (var i = 0; i < stateCopy.canvasWidth; i += subDivisions) {
+    for (var i = 0; i < stateCopy.canvasWidth; i += gridLines.snapTo) {
+        if (i === 0) {
+            continue;
+        }
         if (i % divisions === 0) {
-            stateCopy.gridLines.divisions.push(i);
+            gridLines.divisions.push(i);
         } else {
-            stateCopy.gridLines.subDivisions.push(i);
+            gridLines.subDivisions.push(i);
         }
     }
 

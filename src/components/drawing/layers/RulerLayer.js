@@ -3,71 +3,103 @@ import PropTypes from 'prop-types';
 
 class RulerLayer extends Component {
     static propTypes = {
-        onUpdateRuler: PropTypes.func,
-        onUpdateGrid: PropTypes.func,
-        ticks: PropTypes.array,
-        labels: PropTypes.array
+        onSetRulers: PropTypes.func,
+        onSetGrid: PropTypes.func,
+        dir: PropTypes.string,
+        ruler: PropTypes.object,
+        rulerWidth: PropTypes.number
     };
 
     componentWillMount() {
-        this.props.onUpdateRuler();
-        this.props.onUpdateGrid();
+        this.props.onSetRulers();
+        this.props.onSetGrid();
     }
 
-    renderNums() {
-        const { labels, dir } = this.props;
-        return labels.map((label) => {
-            switch (dir) {
-                case "horizontal":
-                    return <text x={label[1]} y={30 - label[0]} textAnchor="start" alignmentBaseline="hanging">{label[2]}</text>;
-                case "vertical":
-                    return <text x={30 - label[0]} y={label[1]} textAnchor="start" alignmentBaseline="hanging">{label[2]}</text>;
-                default: break;
-            }
+    renderHorizontalLabels() {
+        const { ruler, rulerWidth } = this.props;
+        return ruler.top.labels.map((label) => {
+            return (
+                <text
+                    x={label[1]}
+                    y={rulerWidth - label[0]}
+                    textAnchor="start"
+                    alignmentBaseline="hanging"
+                >{label[2]}</text>
+            );
         });
     }
 
-    renderTicks() {
-        const { ticks, dir } = this.props;
-        return ticks.map((tick) => {
-            switch (dir) {
-                case "horizontal":
-                    return (
-                        <line
-                            x1={tick[1]}
-                            y1="30"
-                            x2={tick[1]}
-                            y2={30 - tick[0]}
-                            stroke="black"
-                        />
-                    );
-                case "vertical":
-                    return (
-                        <line
-                            x1="30"
-                            y1={tick[1]}
-                            x2={30 - tick[0]}
-                            y2={tick[1]}
-                            stroke="black"
-                        />
-                    );
-                default: break;
-            }
+    renderVerticalLabels() {
+        const { ruler, rulerWidth } = this.props;
+        return ruler.left.labels.map((label) => {
+            return (
+                <text
+                    x={rulerWidth - label[0]}
+                    y={label[1]}
+                    textAnchor="start"
+                    alignmentBaseline="hanging"
+                >{label[2]}</text>
+            );
+        });
+    }
+
+    renderHorizontalTicks() {
+        const { ruler, rulerWidth } = this.props;
+        return ruler.top.ticks.map((tick) => {
+            return (
+                <line
+                    x1={tick[1]}
+                    y1={rulerWidth}
+                    x2={tick[1]}
+                    y2={rulerWidth - tick[0]}
+                    stroke="black"
+                />
+            );
+        });
+    }
+
+    renderVerticalTicks() {
+        const { ruler, rulerWidth } = this.props;
+        return ruler.left.ticks.map((tick) => {
+            return (
+                <line
+                    x1={rulerWidth}
+                    y1={tick[1]}
+                    x2={rulerWidth - tick[0]}
+                    y2={tick[1]}
+                    stroke="black"
+                />
+            );
         });
     }
 
     render() {
-        const { dir } = this.props;
-        return (
-            <svg className="ruler"
-                id={dir}
-                width={window.innerWidth - 30 - 45}
-                height={30}
-            >
-                {this.renderTicks()}
-                {this.renderNums()}
-            </svg>
-        );
+        const { rulerWidth, dir } = this.props;
+        switch (dir) {
+            case "horizontal":
+                return (
+                    <svg className="ruler"
+                        id={dir}
+                        width={window.innerWidth - rulerWidth - 45}
+                        height={rulerWidth}
+                    >
+                        {this.renderHorizontalTicks()}
+                        {this.renderHorizontalLabels()}
+                    </svg>
+                );
+            case "vertical":
+                return (
+                    <svg className="ruler"
+                        id={dir}
+                        width={rulerWidth}
+                        height={window.innerHeight - rulerWidth - 45}
+                    >
+                        {this.renderVerticalTicks()}
+                        {this.renderVerticalLabels()}
+                    </svg>
+                );
+            default: break;
+        }
     }
 }
 

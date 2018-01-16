@@ -15,7 +15,7 @@ export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
 export const TEXT_INPUT_CHANGE = 'TEXT_INPUT_CHANGE';
 export const TOGGLE_TEXT_INPUT_FOCUS = 'TOGGLE_TEXT_INPUT_FOCUS';
 export const UPDATE_BOUNDING_BOXES = 'UPDATE_BOUNDING_BOXES';
-export const UPDATE_RULER = 'UPDATE_RULER';
+export const SET_RULERS = 'SET_RULERS';
 
 export function canvasDrag(draggableData) {
     return { type: CANVAS_DRAG, payload: { draggableData } };
@@ -85,6 +85,6 @@ export function updateBoundingBoxes(boundingBoxes) {
     return { type: UPDATE_BOUNDING_BOXES, payload: { boundingBoxes } };
 }
 
-export function updateRuler() {
-    return { type: UPDATE_RULER };
+export function setRulers() {
+    return { type: SET_RULERS };
 }

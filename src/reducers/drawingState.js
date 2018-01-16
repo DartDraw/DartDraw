@@ -35,14 +35,22 @@ const initialState = {
     gridSnapping: false,
     gridLines: {
         divisions: null,
-        subDivisions: null
+        subDivisions: null,
+        snapTo: null
     },
     ruler: {
         unitType: 'inch',
-        base: 5,
-        exponent: 1,
-        ticks: [],
-        labels: []
+        pixelWidth: 30,
+        base: 2,
+        exponent: 3,
+        top: {
+            ticks: [],
+            labels: []
+        },
+        left: {
+            ticks: [],
+            labels: []
+        }
     }
 };
 
@@ -94,8 +102,8 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
-        case canvasActions.UPDATE_RULER:
-            updatedState = rulers.updateRuler(stateCopy, action, root);
+        case canvasActions.SET_RULERS:
+            updatedState = rulers.setRulers(stateCopy, action, root);
             break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
@@ -141,20 +149,17 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.ZOOM_IN:
             updatedState = zoom.zoomIn(stateCopy, action, root);
-            updatedState = rulers.updateRuler(updatedState, action, root);
             break;
         case menuActions.ZOOM_OUT:
             updatedState = zoom.zoomOut(stateCopy, action, root);
-            updatedState = rulers.updateRuler(updatedState, action, root);
             break;
         case menuActions.CUSTOM_ZOOM:
             updatedState = zoom.zoomToCustom(stateCopy, action, root);
-            updatedState = rulers.updateRuler(updatedState, action, root);
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.UPDATE_GRID:
-            updatedState = grid.updateGrid(stateCopy, action, root);
+        case menuActions.SET_GRID:
+            updatedState = grid.setGrid(stateCopy, action, root);
             break;
         case menuActions.TOGGLE_GRID_SNAPPING:
             updatedState = grid.toggleGridSnapping(stateCopy, action, root);

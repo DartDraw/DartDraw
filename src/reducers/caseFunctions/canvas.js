@@ -16,7 +16,7 @@ export function dragStart(stateCopy, action, root) {
         case "rectangleTool":
             stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.fillColor,
                 root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping,
-                stateCopy.gridLines.subDivisions, {x: 0, y: 0});
+                stateCopy.gridLines.snapTo, {x: 0, y: 0});
             let shapeIds = stateCopy.shapes.allIds;
             let addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -24,14 +24,14 @@ export function dragStart(stateCopy, action, root) {
         case "roundedRectangleTool":
             stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.fillColor,
                 root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping,
-                stateCopy.gridLines.subDivisions, root.menuState.rectangleRadius);
+                stateCopy.gridLines.snapTo, root.menuState.rectangleRadius);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "ellipseTool":
             stateCopy.shapes = addEllipse(stateCopy.shapes, action, root.menuState.fillColor,
-                root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -41,12 +41,12 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
                 stateCopy.shapes = addPolygon(stateCopy.shapes, action, root.menuState.fillColor,
-                    root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                    root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
                 shapeIds = stateCopy.shapes.allIds;
                 addedShapeId = shapeIds[shapeIds.length - 1];
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
-                stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
                 if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
@@ -56,28 +56,28 @@ export function dragStart(stateCopy, action, root) {
             break;
         case "lineTool":
             stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "arcTool":
             stateCopy.shapes = addArc(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "freehandPathTool":
             stateCopy.shapes = addFreehandPath(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "textTool":
             stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -108,31 +108,32 @@ export function drag(stateCopy, action, root) {
         case "roundedRectangleTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                 stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, null, null, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions,
+                stateCopy.scale, null, null, stateCopy.gridSnapping, stateCopy.gridLines.snapTo,
                 stateCopy.shiftDirection, root.menuState.centeredControl);
             break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
                 draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null,
-                stateCopy.gridSnapping, stateCopy.gridLines.subDivisions, stateCopy.shiftDirection, root.menuState.centeredControl);
+                stateCopy.gridSnapping, stateCopy.gridLines.snapTo, stateCopy.shiftDirection, root.menuState.centeredControl);
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions, root.menuState.centeredControl);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo, root.menuState.centeredControl);
             break;
         case "freehandPathTool":
             stateCopy.shapes = addFreehandPathPoint(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             break;
         case "arcTool":
             stateCopy.shapes = moveArcAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+                stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
             break;
         case "textTool":
             stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);
             break;
         case "panTool":
-            const { panX, panY } = pan(stateCopy, draggableData);
+            const { ruler, panX, panY } = pan(stateCopy, draggableData);
+            stateCopy.ruler = ruler;
             stateCopy.panX = panX;
             stateCopy.panY = panY;
             break;
@@ -192,7 +193,8 @@ export function dragStop(stateCopy, action, root) {
             break;
         case "zoomTool":
             if (stateCopy.marqueeBox.width !== 0 || stateCopy.marqueeBox.height !== 0) {
-                const { panX, panY, scale } = zoomToMarqueeBox(stateCopy.marqueeBox, stateCopy.canvasWidth, stateCopy.canvasHeight);
+                const { ruler, panX, panY, scale } = zoomToMarqueeBox(stateCopy);
+                stateCopy.ruler = ruler;
                 stateCopy.panX = panX;
                 stateCopy.panY = panY;
                 stateCopy.scale = scale;

@@ -1,25 +1,21 @@
 import { connect } from 'react-redux';
 import RulerLayer from './RulerLayer';
-import { updateRuler } from './../../../actions/canvas';
-import { updateGrid } from './../../../actions/menu';
+import { setRulers } from './../../../actions/canvas';
+import { setGrid } from './../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { ruler } = drawingState;
     return {
-        ticks: ruler.ticks,
-        labels: ruler.labels,
-        innerWidth: window.innerWidth,
-        panX: drawingState.panX,
-        viewBox: [drawingState.panX, 0, window.innerWidth - 30 - 45, 30]
+        ruler: drawingState.ruler,
+        rulerWidth: drawingState.ruler.pixelWidth
     };
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        onUpdateRuler: () => {
-            dispatch(updateRuler());
+        onSetRulers: () => {
+            dispatch(setRulers());
         },
-        onUpdateGrid: () => {
-            dispatch(updateGrid());
+        onSetGrid: () => {
+            dispatch(setGrid());
         }
     };
 };

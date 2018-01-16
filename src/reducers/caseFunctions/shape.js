@@ -21,8 +21,8 @@ export function click(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
 
                 if (!stateCopy.justDuplicated) {
-                    stateCopy.duplicateOffset.x = stateCopy.gridLines.subDivisions;
-                    stateCopy.duplicateOffset.y = stateCopy.gridLines.subDivisions;
+                    stateCopy.duplicateOffset.x = stateCopy.gridLines.snapTo;
+                    stateCopy.duplicateOffset.y = stateCopy.gridLines.snapTo;
                 }
             }
             stateCopy.editInProgress = false;
@@ -74,7 +74,7 @@ export function drag(stateCopy, action, root) {
 
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                     stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapping,
-                    stateCopy.gridLines.subDivisions, root.menuState.align, stateCopy.shiftDirection);
+                    stateCopy.gridLines.snapTo, root.menuState.align, stateCopy.shiftDirection);
 
                 if (stateCopy.justDuplicated) {
                     stateCopy.duplicateOffset.x += action.payload.draggableData.deltaX / stateCopy.scale;
@@ -103,8 +103,8 @@ export function dragStop(stateCopy, action, root) {
     }
 
     if (!stateCopy.justDuplicated) {
-        stateCopy.duplicateOffset.x = stateCopy.gridLines.subDivisions;
-        stateCopy.duplicateOffset.y = stateCopy.gridLines.subDivisions;
+        stateCopy.duplicateOffset.x = stateCopy.gridLines.snapTo;
+        stateCopy.duplicateOffset.y = stateCopy.gridLines.snapTo;
     }
     stateCopy.justDuplicated = false;
     return stateCopy;
@@ -129,7 +129,7 @@ export function handleDrag(stateCopy, action, root) {
 
     if (stateCopy.mode === 'reshape') {
         stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions);
+            stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, stateCopy.gridLines.snapTo);
         return stateCopy;
     }
 
@@ -145,7 +145,7 @@ export function handleDrag(stateCopy, action, root) {
                     stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                         stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
                         stateCopy.scale, shapeId, stateCopy.selectionBoxes, stateCopy.gridSnapping,
-                        stateCopy.gridLines.subDivisions, stateCopy.shiftDirection, root.menuState.centeredControl);
+                        stateCopy.gridLines.snapTo, stateCopy.shiftDirection, root.menuState.centeredControl);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
                         draggableData, handleIndex, stateCopy.scale);
@@ -249,7 +249,7 @@ export function keyDown(stateCopy, action, root) {
         case 39:
         case 40:
             stateCopy.shapes = keyboardMoveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapping, stateCopy.gridLines.subDivisions, root.menuState.align);
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapping, stateCopy.gridLines.snapTo, root.menuState.align);
             break;
         case 67: // copy
             if (commandSelected && !root.menuState.copied) {
@@ -304,14 +304,14 @@ export function keyDown(stateCopy, action, root) {
         case 86: // paste
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {
-                    stateCopy.pasteOffset.x += stateCopy.gridLines.subDivisions;
-                    stateCopy.pasteOffset.y += stateCopy.gridLines.subDivisions;
+                    stateCopy.pasteOffset.x += stateCopy.gridLines.snapTo;
+                    stateCopy.pasteOffset.y += stateCopy.gridLines.snapTo;
                     stateCopy.justCopied = false;
                 }
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy, stateCopy.pasteOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
-                stateCopy.pasteOffset.x += stateCopy.gridLines.subDivisions;
-                stateCopy.pasteOffset.y += stateCopy.gridLines.subDivisions;
+                stateCopy.pasteOffset.x += stateCopy.gridLines.snapTo;
+                stateCopy.pasteOffset.y += stateCopy.gridLines.snapTo;
             }
             break;
         default:

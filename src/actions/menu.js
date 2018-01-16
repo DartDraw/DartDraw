@@ -17,7 +17,7 @@ export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
-export const UPDATE_GRID = 'UPDATE_GRID';
+export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
 
@@ -101,8 +101,8 @@ export function flipVertical() {
     return { type: FLIP_VERTICAL };
 }
 
-export function updateGrid(divisions, subDivisions) {
-    return { type: UPDATE_GRID, payload: { divisions, subDivisions } };
+export function setGrid() {
+    return { type: SET_GRID };
 }
 
 export function toggleGridSnapping() {

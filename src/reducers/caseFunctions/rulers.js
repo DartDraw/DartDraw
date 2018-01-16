@@ -1,60 +1,88 @@
 // https://github.com/Robbbb/VectorRuler/blob/master/rulerGenerator.js
 
-// constants & not customizable
 var tickLengthMultiplier = 0.75;
-// var cmPerInch = 2.54;
+var pixelsPerInch = 72;
 
-export function updateRuler(stateCopy, action, root) {
-    const { ruler, scale } = stateCopy;
-    var pixelsPerUnit = 72 * scale;
-    var masterTickIndex = [];
-    var renderLength = Math.ceil(window.innerWidth / pixelsPerUnit);
+export function setRulers(stateCopy) {
+    const { ruler, scale, panX, panY } = stateCopy;
 
-    // ruler.horizontalTicks = [];
-    // ruler.verticalTicks = [];
-    ruler.ticks = [];
-    ruler.labels = [];
+    stateCopy.ruler = updateRulers(ruler, scale, panX, panY);
 
-    for (var exponentIndex = 0; exponentIndex <= ruler.exponent; exponentIndex++) {
-        // loop thru each desired level of ticks, inches, halves, quarters, etc...
-        var tickQty = renderLength * Math.pow(ruler.base, exponentIndex);
-        // var highestTickDenomonatorMultiplier = ruler.ticksPerUnit / Math.pow(ruler.base, exponentIndex)
-        // to prevent reduntant ticks, this multiplier is applied to current units to ensure consistent indexing of ticks.
-
-        for (var tickIndex = 0; tickIndex <= tickQty; tickIndex++) {
-            // ruler.masterTickIndex = highestTickDenomonatorMultiplier * tickIndex;
-
-            var tickLength = 30 * Math.pow(tickLengthMultiplier, exponentIndex);
-
-            var tickSpacing = pixelsPerUnit / Math.pow(ruler.base, exponentIndex);
-
-            var finalTick = false;
-
-            if (tickIndex === tickQty) {
-                finalTick = true;
-            }
-
-            tick(ruler, tickLength, tickIndex, exponentIndex, tickSpacing, finalTick, masterTickIndex);
-        }
-    }
     return stateCopy;
 }
 
-function tick(ruler, tickLength, tickIndex, exponentIndex, tickSpacing, finalTick, masterTickIndex) {
-    // exponentIndex is 0-6, with 6 being the smallest
-    var tickLoc = tickSpacing * tickIndex;
+export function updateRulers(ruler, scale, panX, panY) {
+    // const { ruler, scale, panX, panY } = stateCopy;
 
-    if (masterTickIndex.indexOf(tickLoc) === -1) {
-        ruler.ticks.push([tickLength, tickLoc]);
-        masterTickIndex.push(tickLoc);
-    }
+    var pixelsPerUnit = pixelsPerInch * scale;
 
-    if (exponentIndex === 0) { // if is a primary tick, it needs a label
-        tickLabel(ruler, tickLength, tickLoc, finalTick, tickIndex);
-    }
+    var xPanOffset = panX * scale;
+    var yPanOffset = panY * scale;
+
+    ruler.top = buildRuler(ruler, pixelsPerUnit, window.innerWidth, xPanOffset);
+    ruler.left = buildRuler(ruler, pixelsPerUnit, window.innerHeight, yPanOffset);
+
+    return ruler;
 }
 
-function tickLabel(ruler, tickLength, tickLoc, finalTick, tickIndex) {
-    var offset = 2;
-    ruler.labels.push([tickLength - offset, tickLoc + offset, tickIndex, finalTick]);
+function buildRuler(ruler, pixelsPerUnit, windowLength, panOffset) {
+    const labelOffset = 2;
+    const rulerLengthInUnits = Math.ceil((windowLength + panOffset) / pixelsPerUnit);
+    var masterTickIndex = [];
+    var result = {};
+    result.ticks = [];
+    result.labels = [];
+
+    // loop thru each desired level of ticks, inches, halves, quarters, etc...
+    for (var exponentIndex = 0; exponentIndex <= ruler.exponent; exponentIndex++) {
+        var tickLevel = Math.pow(ruler.base, exponentIndex);
+        var tickQty = rulerLengthInUnits * tickLevel;
+
+        for (var i = 0; i <= tickQty; i++) {
+            var tickLength = ruler.pixelWidth * Math.pow(tickLengthMultiplier, exponentIndex);
+            var tickLoc = pixelsPerUnit / tickLevel * i - panOffset;
+
+            // var finalTick = false;
+            //
+            // if (i === tickQty) {
+            //     finalTick = true;
+            // }
+
+            // ADD IN FINAL TICK LATER
+
+            if (masterTickIndex.indexOf(tickLoc) === -1) {
+                if (tickLoc >= 0) {
+                    result.ticks.push([tickLength, tickLoc]);
+                }
+                masterTickIndex.push(tickLoc);
+            }
+
+            if (exponentIndex === 0 && tickLoc >= 0) { // if is a primary tick, it needs a label
+                result.labels.push([tickLength - labelOffset, tickLoc + labelOffset, i]);
+            }
+        }
+    }
+    return result;
 }
+
+// tick(result, tickLength, tickIndex, exponentIndex, tickSpacing, panOffset, finalTick, masterTickIndex);
+
+// function tick(result, tickLength, tickIndex, exponentIndex, tickSpacing, panOffset, finalTick, masterTickIndex) {
+//     var tickLoc = tickSpacing * tickIndex - panOffset;
+//     var labelOffset = 2;
+//
+//     if (masterTickIndex.indexOf(tickLoc) === -1) {
+//         if (tickLoc >= 0) {
+//             result.ticks.push([tickLength, tickLoc]);
+//         }
+//         masterTickIndex.push(tickLoc);
+//     }
+//
+//     if (exponentIndex === 0) { // if is a primary tick, it needs a label
+//         if (tickLoc >= 0) {
+//             result.labels.push([tickLength - labelOffset, tickLoc + labelOffset, tickIndex, finalTick]);
+//         }
+//     }
+//
+//     return result;
+// }
