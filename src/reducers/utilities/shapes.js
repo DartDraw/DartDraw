@@ -1273,8 +1273,9 @@ export function moveShapeTo(shapes, selected, action, scale, boundingBoxes, sele
     action.payload.draggableData = {};
     selected.map((id) => {
         const shape = shapes.byId[id];
-        action.payload.draggableData.deltaX = action.payload.x - transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
-        action.payload.draggableData.deltaY = action.payload.y - transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+        const boundingBox = boundingBoxes[id];
+        action.payload.draggableData.deltaX = action.payload.x - transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters).x;
+        action.payload.draggableData.deltaY = action.payload.y - transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters).y;
         shapes = moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes);
     });
     return shapes;
@@ -1286,11 +1287,12 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
 
     selected.map((id) => {
         const shape = shapes.byId[id];
+        const boundingBox = boundingBoxes[id];
         let coords = {};
-        coords[3] = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+        coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
         if (action.payload.x) {
-            coords[0] = transformPoint(shape.x + shape.width, shape.y, shape.transform[0].parameters);
+            coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
             let dt = action.payload.x;
             let d = Math.sqrt((coords[3].x - coords[0].x) ** 2 + (coords[3].y - coords[0].y) ** 2);
 
@@ -1305,7 +1307,7 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
         }
 
         if (action.payload.y) {
-            coords[2] = transformPoint(shape.x, shape.y + shape.height, shape.transform[0].parameters);
+            coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
             let dt = action.payload.y;
             let d = Math.sqrt((coords[3].x - coords[2].x) ** 2 + (coords[3].y - coords[2].y) ** 2);
 
@@ -1328,7 +1330,8 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
 export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
     selected.map((id) => {
         const shape = shapes.byId[id];
-        let c = transformPoint(shape.x, shape.y, shape.transform[0].parameters);
+        const boundingBox = boundingBoxes[id];
+        let c = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
         let degree = (action.payload.degree - shape.info.rotation);
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree * (Math.PI / 180), c.x, c.y);
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
