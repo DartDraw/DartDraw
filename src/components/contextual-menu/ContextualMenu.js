@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TextMenu, PathMenu, RectangleMenu } from './menu-layouts';
+import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -123,6 +123,8 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
+            } else if (selectedShape.type == 'ellipse') {
+                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
             }
         }
 
