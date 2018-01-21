@@ -20,7 +20,7 @@ class TextMenu extends Component {
         this.handleWidthChange = this.handleWidthChange.bind(this);
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleXChange = this.handleXChange.bind(this);
-        this.handleXChange = this.handleYChange.bind(this);
+        this.handleYChange = this.handleYChange.bind(this);
 
     }
 
