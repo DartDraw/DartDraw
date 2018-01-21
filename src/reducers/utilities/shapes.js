@@ -458,6 +458,7 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -504,6 +505,7 @@ export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -549,6 +551,7 @@ export function flipShape(shapes, selected, selectionBoxes, boundingBoxes, verti
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, 1, -1, coord.x, coord.y);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -685,8 +688,17 @@ export function removeTransformation(shapes, selected) {
 
 export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, minorGrid) {
     const { x, y, node } = draggableData;
-    let mouseX = (x + (panX * scale) - node.parentNode.getBoundingClientRect().left) / scale;
-    let mouseY = (y + (panY * scale) - node.parentNode.getBoundingClientRect().top) / scale;
+
+    let offsetLeft = 0;
+    let offsetTop = 0;
+
+    if (node) {
+        offsetLeft = node.parentNode.getBoundingClientRect().left;
+        offsetTop = node.parentNode.getBoundingClientRect().left;
+    }
+
+    let mouseX = (x + (panX * scale) - offsetLeft) / scale;
+    let mouseY = (y + (panY * scale) - offsetTop) / scale;
 
     if (gridSnapping) {
         mouseX = Math.round(mouseX / minorGrid) * minorGrid;
@@ -924,6 +936,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -962,8 +975,16 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex,
     let scaleXY = {};
 
     const { x, y, node } = draggableData;
-    let mouseX = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
-    let mouseY = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+    let offsetLeft = 0;
+    let offsetTop = 0;
+
+    if (node) {
+        offsetLeft = node.parentNode.getBoundingClientRect().left;
+        offsetTop = node.parentNode.getBoundingClientRect().left;
+    }
+
+    let mouseX = (x + (panX * scale) - offsetLeft) / scale;
+    let mouseY = (y + (panY * scale) - offsetTop) / scale;
 
     const shapeMatrix = shape.transform[0].parameters;
     const boundingBox = boundingBoxes[shape.id];
@@ -1091,6 +1112,7 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData,
         }
 
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -1229,4 +1251,94 @@ function getCenter(boundingBox, shapeMatrix) {
     center.y = (coords0.y + coords1.y + coords2.y + coords3.y) / 4;
 
     return center;
+}
+
+function getShapeInfo(shape, boundingBox) {
+    const shapeInfo = {};
+    shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
+    shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
+    let coords = [];
+    coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
+    coords[1] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+    coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+    coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+    shapeInfo.width = Math.sqrt((coords[0].x - coords[3].x) ** 2 + (coords[0].y - coords[3].y) ** 2);
+    shapeInfo.height = Math.sqrt((coords[0].x - coords[1].x) ** 2 + (coords[0].y - coords[1].y) ** 2);
+
+    return shapeInfo;
+}
+
+export function moveShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
+    action.payload.draggableData = {};
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        const boundingBox = boundingBoxes[id];
+        action.payload.draggableData.deltaX = action.payload.x - transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters).x;
+        action.payload.draggableData.deltaY = action.payload.y - transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters).y;
+        shapes = moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
+    action.payload.draggableData = {};
+    let handleIndex = 0;
+
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        const boundingBox = boundingBoxes[id];
+        let coords = {};
+        coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+
+        if (action.payload.x) {
+            coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
+            let dt = action.payload.x;
+            let d = Math.sqrt((coords[3].x - coords[0].x) ** 2 + (coords[3].y - coords[0].y) ** 2);
+
+            if (d) {
+                action.payload.draggableData.x = (1 - dt / d) * coords[3].x + dt / d * coords[0].x;
+                action.payload.draggableData.y = (1 - dt / d) * coords[3].y + dt / d * coords[0].y;
+            } else {
+                action.payload.draggableData.x = coords[3].x + action.payload.x;
+                action.payload.draggableData.y = coords[3].y;
+            }
+            handleIndex = 0;
+        }
+
+        if (action.payload.y) {
+            coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
+            let dt = action.payload.y;
+            let d = Math.sqrt((coords[3].x - coords[2].x) ** 2 + (coords[3].y - coords[2].y) ** 2);
+
+            if (d) {
+                action.payload.draggableData.x = (1 - dt / d) * coords[3].x + dt / d * coords[2].x;
+                action.payload.draggableData.y = (1 - dt / d) * coords[3].y + dt / d * coords[2].y;
+            } else {
+                action.payload.draggableData.x = coords[3].x;
+                action.payload.draggableData.y = coords[3].y + action.payload.y;
+            }
+            handleIndex = 2;
+        }
+
+        shapes = resizeShape(shapes, boundingBoxes, selected, action.payload.draggableData, handleIndex,
+            0, 0, scale, selected[0], selectionBoxes);
+    });
+    return shapes;
+}
+
+export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
+    selected.map((id) => {
+        const shape = shapes.byId[id];
+        const boundingBox = boundingBoxes[id];
+        let c = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+        let degree = (action.payload.degree - shape.info.rotation);
+        shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree * (Math.PI / 180), c.x, c.y);
+        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+    });
+    return shapes;
 }
