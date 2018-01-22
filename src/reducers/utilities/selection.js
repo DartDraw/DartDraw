@@ -134,6 +134,12 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
                 );
             }
         }
+
+        if (shape.type === 'line' && mode !== 'reshape') {
+            updatedSelectionBoxes[id].handlesShown = calculateHandlesShown(shape, updatedSelectionBoxes[id].handles);
+            updatedSelectionBoxes[id].height = 0;
+            updatedSelectionBoxes[id].width = 0;
+        }
     });
     return updatedSelectionBoxes;
 }
@@ -240,6 +246,20 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 mode
             };
     }
+}
+
+function calculateHandlesShown(shape, handles) {
+    let handlesShown = {};
+    let point1 = transformPoint(shape.points[0], shape.points[1], shape.transform[0].parameters);
+    let point2 = transformPoint(shape.points[2], shape.points[3], shape.transform[0].parameters);
+
+    for (let i = 0; i <= 3; i++) {
+        if ((handles[i].x === point1.x && handles[i].y === point1.y) ||
+          (handles[i].x === point2.x && handles[i].y === point2.y)) {
+            handlesShown[i] = true;
+        }
+    }
+    return handlesShown;
 }
 
 export function updateSelectionBoxesCorners(selected, selectionBoxes, mode) {

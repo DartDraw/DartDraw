@@ -60,7 +60,6 @@ class Path extends Component {
 
     render() {
         const { id, d, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
-        console.log(strokeDasharray);
         const svgProps = {
             id,
             d: formatPath(d),

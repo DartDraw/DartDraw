@@ -35,7 +35,13 @@ class SelectionLayer extends Component {
 
     renderHandles(selectionBox) {
         const { propagateEvents, scale } = this.props;
-        return selectionBox.handles.map((handle) => {
+        return selectionBox.handles.map((handle, i) => {
+            if (selectionBox.handlesShown) {
+                if (!selectionBox.handlesShown[i]) {
+                    return;
+                }
+            }
+
             const { id, index } = handle;
             const x = handle.x - 5 / scale;
             const y = handle.y - 5 / scale;
