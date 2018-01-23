@@ -4,6 +4,7 @@
 
 html, body, #root, #root > div {
     height: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -15,6 +16,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    /* overflow: hidden; */
 }
 
 /*including menu and canvas*/

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
+import { CMYKMenu } from './color-layouts';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -19,7 +20,8 @@ class ContextualMenu extends Component {
         onCustomZoom: PropTypes.func,
         scale: PropTypes.number,
         onZoomIn: PropTypes.func,
-        onZoomOut: PropTypes.func
+        onZoomOut: PropTypes.func,
+        fillColor: PropTypes.object
     };
 
     constructor(props) {
@@ -113,9 +115,10 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { selectedShape, scale } = this.props;
+        const { selectedShape, scale, fillColor } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
+        let colorLayout = null;
         if (selectedShape) {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} />;
@@ -127,6 +130,8 @@ class ContextualMenu extends Component {
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
             }
         }
+
+        colorLayout = <CMYKMenu currentColor={fillColor} />;
 
         return (
             <div className="contextual-menu" style={{ right: hidden ? -352 : 0 }}>
@@ -183,6 +188,11 @@ class ContextualMenu extends Component {
                             <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="button-icon" />
                         </button>
 
+                    </div>
+                    <div className="static-menu">
+                        <h2>Color Editor</h2>
+                        <p>{this.props.fillColor.r}</p>
+                        { colorLayout}
                     </div>
                     <div className="dynamic-menu">
                         { menuLayout }

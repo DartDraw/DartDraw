@@ -16,11 +16,12 @@ import {
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selected } = drawingState;
     return {
         selectedShape: shapes.byId[selected[0]],
-        scale: drawingState.scale
+        scale: drawingState.scale,
+        fillColor: menuState.fillColor
     };
 };
 

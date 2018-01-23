@@ -4,6 +4,11 @@ export const KEY_UP = 'KEY_UP';
 export const SELECT_TOOL = 'SELECT_TOOL';
 export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
+export const SELECT_PALETTE = 'SELECT_PALETTE';
+export const ADD_COLOR = 'ADD_COLOR';
+export const REMOVE_COLOR = 'REMOVE_COLOR';
+export const ADD_PALETTE = 'ADD_PALETTE';
+export const REMOVE_PALETTE = 'REMOVE_PALETTE';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const ZOOM_IN = 'ZOOM_IN';
@@ -47,6 +52,26 @@ export function exportClick() {
 
 export function selectColor(color) {
     return { type: SELECT_COLOR, payload: { color } };
+}
+
+export function selectPalette(paletteName) {
+    return { type: SELECT_PALETTE, payload: { paletteName } };
+}
+
+export function addColor(color) {
+    return { type: ADD_COLOR, payload: { color } };
+}
+
+export function removeColor(color) {
+    return { type: REMOVE_COLOR, payload: { color } };
+}
+
+export function addPalette(paletteName, paletteColors) {
+    return { type: ADD_PALETTE, payload: { paletteName, paletteColors } };
+}
+
+export function removePalette(paletteName) {
+    return { type: REMOVE_PALETTE, payload: { paletteName } };
 }
 
 export function undoClick() {
