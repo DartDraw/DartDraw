@@ -19,13 +19,14 @@ export function click(stateCopy, action, root) {
                     selectMultiple = true;
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
-                console.log(stateCopy.shapes.byId[stateCopy.selected[0]].info);
                 if (!stateCopy.justDuplicated) {
                     stateCopy.duplicateOffset.x = root.menuState.minorGrid;
                     stateCopy.duplicateOffset.y = root.menuState.minorGrid;
                 }
             }
             stateCopy.editInProgress = false;
+            stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
+
             break;
         case 'polygonTool':
             stateCopy.mode = "reshape";
@@ -94,6 +95,7 @@ export function dragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "selectTool":
             stateCopy.shapes = endMoveShape(stateCopy.shapes, stateCopy.selected);
+            stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
             break;

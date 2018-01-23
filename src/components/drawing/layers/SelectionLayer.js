@@ -36,15 +36,19 @@ class SelectionLayer extends Component {
     renderHandles(selectionBox) {
         const { propagateEvents, scale } = this.props;
         return selectionBox.handles.map((handle, i) => {
-            if (selectionBox.handlesShown) {
-                if (!selectionBox.handlesShown[i]) {
-                    return;
-                }
-            }
-
             const { id, index } = handle;
             const x = handle.x - 5 / scale;
             const y = handle.y - 5 / scale;
+            let width = 10 / scale;
+            let height = 10 / scale;
+
+            if (selectionBox.handles.length > 4) {
+                if (i < 4) {
+                    width = 0;
+                    height = 0;
+                }
+            }
+
             return (
                 <Handle
                     key={id}
@@ -53,8 +57,8 @@ class SelectionLayer extends Component {
                     index={index}
                     x={x}
                     y={y}
-                    width={10 / scale}
-                    height={10 / scale}
+                    width={width}
+                    height={height}
                     strokeWidth={2}
                     onDragStart={this.handleHandleDragStart}
                     onDrag={this.handleHandleDrag}

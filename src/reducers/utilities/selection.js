@@ -136,7 +136,6 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
         }
 
         if (shape.type === 'line' && mode !== 'reshape') {
-            updatedSelectionBoxes[id].handlesShown = calculateHandlesShown(shape, updatedSelectionBoxes[id].handles);
             updatedSelectionBoxes[id].height = 0;
             updatedSelectionBoxes[id].width = 0;
         }
@@ -162,7 +161,12 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
             return selectionBox;
         default:
             let handle0, handle1, handle2, handle3;
-            if (shape.transform && shape.transform[0] && shape.transform[0].parameters) {
+            if (shape.type === 'line') {
+                handle0 = { x: Math.max(shape.points[0], shape.points[2]), y: Math.min(shape.points[1], shape.points[3]) };
+                handle1 = { x: Math.max(shape.points[0], shape.points[2]), y: Math.max(shape.points[1], shape.points[3]) };
+                handle2 = { x: Math.min(shape.points[0], shape.points[2]), y: Math.max(shape.points[1], shape.points[3]) };
+                handle3 = { x: Math.min(shape.points[0], shape.points[2]), y: Math.min(shape.points[1], shape.points[3]) };
+            } else if (shape.transform && shape.transform[0] && shape.transform[0].parameters) {
                 const matrix = shape.transform[0].parameters;
                 handle0 = transformPoint(x + width, y, matrix);
                 handle1 = transformPoint(x + width, y + height, matrix);
@@ -182,8 +186,32 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
             selectionBox.handles[2].y = handle2.y;
             selectionBox.handles[3].x = handle3.x;
             selectionBox.handles[3].y = handle3.y;
+
+            if (shape.type === 'line') {
+                selectionBox.handles[4].x = shape.points[0];
+                selectionBox.handles[4].y = shape.points[1];
+                selectionBox.handles[5].x = shape.points[2];
+                selectionBox.handles[5].y = shape.points[3];
+                selectionBox.handles[4].index = findClosestHandle(selectionBox.handles[4], selectionBox.handles);
+                selectionBox.handles[5].index = findClosestHandle(selectionBox.handles[5], selectionBox.handles);
+            }
+
             return selectionBox;
     }
+}
+
+function findClosestHandle(point, handles) {
+    let minHandle = 0;
+    let minDistance = Math.sqrt((handles[0].x - point.x) ** 2 + (handles[0].y - point.y) ** 2);
+
+    for (let i = 1; i <= 3; i++) {
+        let distance = Math.sqrt((handles[i].x - point.x) ** 2 + (handles[i].y - point.y) ** 2);
+        if (distance < minDistance) {
+            minDistance = distance;
+            minHandle = i;
+        }
+    }
+    return minHandle;
 }
 
 function generateSelectionBox(shape, boundingBox, mode) {
@@ -215,7 +243,12 @@ function generateSelectionBox(shape, boundingBox, mode) {
         default:
 
             let handle0, handle1, handle2, handle3;
-            if (transform && transform[0] && transform[0].parameters) {
+            if (shape.type === 'line') {
+                handle0 = { x: shape.points[2], y: shape.points[1] };
+                handle1 = { x: shape.points[2], y: shape.points[3] };
+                handle2 = { x: shape.points[0], y: shape.points[3] };
+                handle3 = { x: shape.points[0], y: shape.points[1] };
+            } else if (transform && transform[0] && transform[0].parameters) {
                 const matrix = transform[0].parameters;
                 handle0 = transformPoint(x + width, y, matrix);
                 handle1 = transformPoint(x + width, y + height, matrix);
@@ -228,7 +261,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 handle3 = { x, y };
             }
 
-            return {
+            const box = {
                 id: uuidv1(),
                 shapeId: shape.id,
                 type: 'selectionBox',
@@ -245,22 +278,29 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 ],
                 mode
             };
+
+            if (shape.type === 'line') {
+                box.handles.push({ id: uuidv1(), index: 3, x: shape.points[0], y: shape.points[1] });
+                box.handles.push({ id: uuidv1(), index: 1, x: shape.points[2], y: shape.points[3] });
+            }
+
+            return box;
     }
 }
 
-function calculateHandlesShown(shape, handles) {
+/* function calculateHandlesShown(shape, handles) {
     let handlesShown = {};
     let point1 = transformPoint(shape.points[0], shape.points[1], shape.transform[0].parameters);
     let point2 = transformPoint(shape.points[2], shape.points[3], shape.transform[0].parameters);
 
     for (let i = 0; i <= 3; i++) {
-        if ((handles[i].x === point1.x && handles[i].y === point1.y) ||
-          (handles[i].x === point2.x && handles[i].y === point2.y)) {
+        if ((handles[i].x - point1.x < 0.0001 && handles[i].x - point1.x > -0.0001 && handles[i].y - point1.y < 0.0001 && handles[i].y - point1.y > -0.0001) ||
+          (handles[i].x - point2.x < 0.0001 && handles[i].x - point2.x > -0.0001 && handles[i].y - point2.y < 0.0001 && handles[i].y - point2.y > -0.0001)) {
             handlesShown[i] = true;
         }
     }
     return handlesShown;
-}
+} */
 
 export function updateSelectionBoxesCorners(selected, selectionBoxes, mode) {
     if (mode === 'reshape') return selectionBoxes;

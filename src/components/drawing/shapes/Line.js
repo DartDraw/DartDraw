@@ -56,12 +56,12 @@ class Line extends Component {
 
     render() {
         const { id, points, stroke, strokeWidth, strokeDasharray, transform, propagateEvents } = this.props;
+
         const svgProps = {
             d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}],
             stroke,
             strokeWidth,
-            strokeDasharray,
-            transform
+            strokeDasharray
         };
 
         return (

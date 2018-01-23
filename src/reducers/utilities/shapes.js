@@ -459,6 +459,16 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
+
+        if (shape.type === 'line') {
+            for (let i = 0; i < shape.points.length; i += 2) {
+                let coords = transformPoint(shape.points[i], shape.points[i + 1], shape.transform[0].parameters);
+                shape.points[i] = coords.x;
+                shape.points[i + 1] = coords.y;
+            }
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
@@ -915,8 +925,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let decomposed = decomposeMatrix(shapeMatrix);
 
-        if (sx === 0) sx = 0.000001;
-        if (sy === 0) sy = 0.000001;
+        if (sx === 0) sx = -0.000001;
+        if (sy === 0) sy = -0.000001;
 
         if (centeredControl) {
             let center = getCenter(boundingBox, shapeMatrix);
@@ -937,6 +947,16 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
+
+        if (shape.type === 'line') {
+            for (let i = 0; i < shape.points.length; i += 2) {
+                let coords = transformPoint(shape.points[i], shape.points[i + 1], shape.transform[0].parameters);
+                shape.points[i] = coords.x;
+                shape.points[i + 1] = coords.y;
+            }
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
