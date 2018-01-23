@@ -7,7 +7,7 @@ const initialState = {
     fillColor: {r: 33, g: 15, b: 243, a: 1},
     strokeColor: {r: 200, g: 0, b: 200, a: 1},
     toolType: '',
-    fillStrokeButton: '',
+    fillStrokeButton: 'fill',
     currentKeys: {},
     copied: false,
     pasted: false,
