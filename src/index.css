@@ -41,7 +41,7 @@ body {
 }
 
 .ruler {
-    display: flex;
+    /* display: flex; */
     background-color: gray;
 }
 

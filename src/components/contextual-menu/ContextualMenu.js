@@ -6,6 +6,8 @@ import './contextual-menu.css';
 class ContextualMenu extends Component {
     static propTypes = {
         selectedShape: PropTypes.object,
+        scale: PropTypes.number,
+        ruler: PropTypes.object,
         editShape: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
@@ -17,9 +19,14 @@ class ContextualMenu extends Component {
         onFlipVertical: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
         onCustomZoom: PropTypes.func,
-        scale: PropTypes.number,
         onZoomIn: PropTypes.func,
-        onZoomOut: PropTypes.func
+        onZoomOut: PropTypes.func,
+        onShowGrid: PropTypes.func,
+        onShowRulers: PropTypes.func,
+        onShowSubDivisions: PropTypes.func,
+        onSetUnitType: PropTypes.func,
+        onSetRulerExponent: PropTypes.func,
+        onSetRulerBase: PropTypes.func
     };
 
     constructor(props) {
@@ -29,6 +36,8 @@ class ContextualMenu extends Component {
         };
 
         this.tempScale = this.props.scale;
+        this.tempExponent = this.props.ruler.exponent;
+        this.tempBase = this.props.ruler.base;
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
@@ -41,10 +50,18 @@ class ContextualMenu extends Component {
         this.handleFlipHorizontal = this.handleFlipHorizontal.bind(this);
         this.handleFlipVertical = this.handleFlipVertical.bind(this);
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
+        this.handleSubmitRulerBase = this.handleSubmitRulerBase.bind(this);
+        this.handleSubmitRulerExponent = this.handleSubmitRulerExponent.bind(this);
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeCustomZoom = this.handleChangeCustomZoom.bind(this);
+        this.handleShowGrid = this.handleShowGrid.bind(this);
+        this.handleShowRulers = this.handleShowRulers.bind(this);
+        this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
+        this.handleSetUnitType = this.handleSetUnitType.bind(this);
+        this.handleSetRulerBase = this.handleSetRulerBase.bind(this);
+        this.handleSetRulerExponent = this.handleSetRulerExponent.bind(this);
     }
 
     toggleMenu() {
@@ -59,11 +76,11 @@ class ContextualMenu extends Component {
         editShape && editShape(shape);
     }
 
-    handleChange(event) {
+    handleChangeCustomZoom(event) {
         this.tempScale = event.target.value / 100.0;
     }
 
-    handleSubmit(event) {
+    handleSubmitCustomZoom(event) {
         this.props.onCustomZoom(this.tempScale);
         event.preventDefault();
     }
@@ -112,8 +129,46 @@ class ContextualMenu extends Component {
         this.props.onZoomOut();
     }
 
+    handleShowRulers() {
+        this.props.onShowRulers();
+    }
+
+    handleShowGrid() {
+        this.props.onShowGrid();
+    }
+
+    handleShowSubDivisions() {
+        this.props.onShowSubDivisions();
+    }
+
+    handleSetUnitType(event) {
+        this.props.onSetUnitType(event.target.value);
+    }
+
+    handleSetRulerBase(event) {
+        console.log(event.target.value);
+        console.log("^base^");
+        this.tempBase = event.target.value;
+    }
+
+    handleSubmitRulerBase(event) {
+        this.props.onSetRulerBase(this.tempBase);
+        event.preventDefault();
+    }
+
+    handleSetRulerExponent(event) {
+        console.log(event.target.value);
+        console.log("^ex^");
+        this.tempExponent = event.target.value;
+    }
+
+    handleSubmitRulerExponent(event) {
+        this.props.onSetRulerExponent(this.tempExponent);
+        event.preventDefault();
+    }
+
     render() {
-        const { selectedShape, scale } = this.props;
+        const { selectedShape, scale, ruler } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         if (selectedShape) {
@@ -123,7 +178,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
-            } else if (selectedShape.type == 'ellipse') {
+            } else if (selectedShape.type === 'ellipse') {
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
             }
         }
@@ -164,11 +219,26 @@ class ContextualMenu extends Component {
                     <div className="dynamic-menu">
                         { menuLayout }
                     </div>
+                    <div className="temp">
+                        <button onClick={this.handleShowRulers} id="button-icon">R</button>
+                        <button onClick={this.handleShowGrid} id="button-icon">G</button>
+                        <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
+                        <select value={ruler.unitType} onChange={this.handleSetUnitType}>
+                            <option value="inch">inch</option>
+                            <option value="cm">cm</option>
+                        </select>
+                        <form id="button-icon" onSubmit={this.handleSubmitRulerBase}>
+                            <input type="text" onChange={this.handleSetRulerBase} />
+                        </form>
+                        <form id="button-icon" onSubmit={this.handleSubmitRulerExponent}>
+                            <input type="text" onChange={this.handleSetRulerExponent} />
+                        </form>
+                    </div>
                     <div className="zoom-menu">
                         <button onClick={this.handleZoomIn} id="button-icon">+</button>
                         <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                        <form id="button-icon" onSubmit={this.handleSubmit}>
-                            {Math.round(scale * 100) + "%"} <input type="text" onChange={this.handleChange} />
+                        <form id="button-icon" onSubmit={this.handleSubmitCustomZoom}>
+                            {Math.round(scale * 100) + "%"} <input type="text" onChange={this.handleChangeCustomZoom} />
                         </form>
                     </div>
                 </div>

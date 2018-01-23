@@ -9,7 +9,8 @@ class RulerLayer extends Component {
         ruler: PropTypes.object,
         rulerWidth: PropTypes.number,
         width: PropTypes.number,
-        height: PropTypes.number
+        height: PropTypes.number,
+        showRulers: PropTypes.bool
     };
 
     componentWillMount() {
@@ -76,7 +77,7 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { rulerWidth, dir, width, height } = this.props;
+        const { showRulers, rulerWidth, dir, width, height } = this.props;
         switch (dir) {
             case "horizontal":
                 return (
@@ -84,6 +85,7 @@ class RulerLayer extends Component {
                         id={dir}
                         width={width}
                         height={rulerWidth}
+                        display={showRulers ? "flex" : "none"}
                     >
                         {this.renderHorizontalTicks()}
                         {this.renderHorizontalLabels()}
@@ -95,6 +97,7 @@ class RulerLayer extends Component {
                         id={dir}
                         width={rulerWidth}
                         height={height}
+                        display={showRulers ? "flex" : "none"}
                     >
                         {this.renderVerticalTicks()}
                         {this.renderVerticalLabels()}

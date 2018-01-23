@@ -20,6 +20,12 @@ export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
+export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
+export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
+export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
+export const SET_RULER_BASE = 'SET_RULER_BASE';
+export const SET_RULER_EXPONENT = 'SET_RULER_EXPONENT';
+export const SET_UNIT_TYPE = 'SET_UNIT_TYPE';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -107,4 +113,28 @@ export function setGrid() {
 
 export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
+}
+
+export function toggleShowRulers() {
+    return { type: TOGGLE_SHOW_RULER };
+}
+
+export function toggleShowGrid() {
+    return { type: TOGGLE_SHOW_GRID };
+}
+
+export function toggleShowSubDivisions() {
+    return { type: TOGGLE_SHOW_SUBDIVISIONS };
+}
+
+export function setUnitType(unitType) {
+    return { type: SET_UNIT_TYPE, payload: { unitType } };
+}
+
+export function setRulerBase(base) {
+    return { type: SET_RULER_BASE, payload: { base } };
+}
+
+export function setRulerExponent(exponent) {
+    return { type: SET_RULER_EXPONENT, payload: { exponent } };
 }

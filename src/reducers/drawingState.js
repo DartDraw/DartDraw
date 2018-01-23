@@ -21,8 +21,8 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeight: 72 * 10,
-    canvasWidth: 72 * 8,
+    canvasHeight: 850,
+    canvasWidth: 1000,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -33,10 +33,17 @@ const initialState = {
     past: [],
     future: [],
     gridSnapping: false,
+    gridPreferences: {
+        showSubDivisions: true,
+        showGrid: true
+    },
     gridLines: {
         divisions: null,
         subDivisions: null,
         snapTo: null
+    },
+    rulerPreferences: {
+        showRulers: true
     },
     ruler: {
         unitType: 'inch',
@@ -163,6 +170,24 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.TOGGLE_GRID_SNAPPING:
             updatedState = grid.toggleGridSnapping(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_SHOW_GRID:
+            updatedState = grid.toggleShowGrid(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_SHOW_RULER:
+            updatedState = rulers.toggleShowRulers(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_SHOW_SUBDIVISIONS:
+            updatedState = grid.toggleShowSubDivisions(stateCopy, action, root);
+            break;
+        case menuActions.SET_RULER_BASE:
+            updatedState = rulers.setRulerBase(stateCopy, action, root);
+            break;
+        case menuActions.SET_RULER_EXPONENT:
+            updatedState = rulers.setRulerExponent(stateCopy, action, root);
+            break;
+        case menuActions.SET_UNIT_TYPE:
+            updatedState = rulers.setUnitType(stateCopy, action, root);
             break;
         default: break;
     }

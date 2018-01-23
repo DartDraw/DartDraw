@@ -12,7 +12,13 @@ import {
     toggleGridSnapping,
     zoomIn,
     zoomOut,
-    customZoom
+    customZoom,
+    toggleShowGrid,
+    toggleShowRulers,
+    toggleShowSubDivisions,
+    setUnitType,
+    setRulerBase,
+    setRulerExponent
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
@@ -20,7 +26,8 @@ const mapStateToProps = ({ drawingState }) => {
     const { shapes, selected } = drawingState;
     return {
         selectedShape: shapes.byId[selected[0]],
-        scale: drawingState.scale
+        scale: drawingState.scale,
+        ruler: drawingState.ruler
     };
 };
 
@@ -64,6 +71,24 @@ const mapDispatchToProps = (dispatch) => {
         },
         onCustomZoom: (customScale) => {
             dispatch(customZoom(customScale));
+        },
+        onShowGrid: () => {
+            dispatch(toggleShowGrid());
+        },
+        onShowRulers: () => {
+            dispatch(toggleShowRulers());
+        },
+        onShowSubDivisions: () => {
+            dispatch(toggleShowSubDivisions());
+        },
+        onSetUnitType: (unitType) => {
+            dispatch(setUnitType(unitType));
+        },
+        onSetRulerExponent: (base) => {
+            dispatch(setRulerBase(base));
+        },
+        onSetRulerBase: (exponent) => {
+            dispatch(setRulerExponent(exponent));
         }
     };
 };
