@@ -134,6 +134,7 @@ class ContextualMenu extends Component {
                     <div className="hide-button" onClick={this.toggleMenu} />
                 </div>
                 <div className="menu-column">
+                    <h2>Object Manipulation</h2>
                     <div className="static-menu">
                         <button onClick={this.handleGroupClick}>
                             <img src="./assets/group.svg" alt="group" id="button-icon" />
@@ -160,6 +161,28 @@ class ContextualMenu extends Component {
                             <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
                         </button>
                         <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
+                    </div>
+                    <h2>Alignment</h2>
+                    <div className="static-menu">
+                        <button onClick={this.handleGroupClick}>
+                            <img src="./assets/center-alignment.svg" alt="center-alignment" id="button-icon" />
+                        </button>
+                        <button onClick={this.handleUngroupClick}>
+                            <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="button-icon" />
+                        </button>
+                        <button onClick={this.handleMoveForward}>
+                            <img src="./assets/left-alignment.svg" alt="left-alignment" id="button-icon" />
+                        </button>
+                        <button onClick={this.handleMoveBackward}>
+                            <img src="./assets/right-alignment.svg" alt="right-alignment" id="button-icon" />
+                        </button>
+                        <button onClick={this.handleSendToBack}>
+                            <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="button-icon" />
+                        </button>
+                        <button onClick={this.handleBringToFront}>
+                            <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="button-icon" />
+                        </button>
+
                     </div>
                     <div className="dynamic-menu">
                         { menuLayout }
