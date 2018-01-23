@@ -6,7 +6,7 @@ export function zoomIn(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY);
+    stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
 
     stateCopy.panX = panX;
     stateCopy.panY = panY;
@@ -21,7 +21,7 @@ export function zoomOut(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY);
+    stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
 
     stateCopy.panX = panX;
     stateCopy.panY = panY;
@@ -35,7 +35,7 @@ export function zoomToCustom(stateCopy, action) {
 
     const { panX, panY } = setPan(stateCopy, customScale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, customScale, panX, panY);
+    stateCopy.ruler = updateRulers(stateCopy.ruler, customScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
 
     stateCopy.panX = panX;
     stateCopy.panY = panY;
@@ -63,7 +63,7 @@ export function zoomToMarqueeBox(stateCopy) {
     panY = marqueeBox.y + (marqueeBox.height / 2) - (windowHeight / 2 / scale);
     panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY);
+    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
 
     return {
         ruler: stateCopy.ruler,
@@ -85,7 +85,7 @@ export function pan(stateCopy, draggableData) {
     var panY = stateCopy.panY - deltaY / scale;
     panY = clamp(panY, 0, canvasHeight - (window.innerHeight - 45) / scale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY);
+    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
 
     return {
         ruler: stateCopy.ruler,

@@ -22,7 +22,7 @@ const initialState = {
     editInProgress: false,
     textInputFocused: false,
     canvasHeight: 72 * 10,
-    canvasWidth: 72 * 10,
+    canvasWidth: 72 * 8,
     textInputs: {},
     scale: 1,
     panX: 0,

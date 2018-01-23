@@ -45,13 +45,6 @@ body {
     background-color: gray;
 }
 
-#vertical {
-    width: 30px;
-    height: 100%;
-}
-
 #horizontal {
     padding-left: 30px;
-    height: 30px;
-    width: 100vw - 90;
 }

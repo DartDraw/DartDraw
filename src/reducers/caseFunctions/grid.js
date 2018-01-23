@@ -2,11 +2,12 @@ export function setGrid(stateCopy) {
     const { ruler, gridLines } = stateCopy;
     var pixelsPerUnit = 72;
     var divisions = pixelsPerUnit;
+    var max = Math.max(stateCopy.canvasWidth, stateCopy.canvasHeight);
     gridLines.divisions = [];
     gridLines.subDivisions = [];
     gridLines.snapTo = pixelsPerUnit / Math.pow(ruler.base, ruler.exponent);
 
-    for (var i = 0; i < stateCopy.canvasWidth; i += gridLines.snapTo) {
+    for (var i = 0; i <= max; i += gridLines.snapTo) {
         if (i === 0) {
             continue;
         }

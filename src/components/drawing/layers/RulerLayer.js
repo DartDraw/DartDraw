@@ -7,7 +7,9 @@ class RulerLayer extends Component {
         onSetGrid: PropTypes.func,
         dir: PropTypes.string,
         ruler: PropTypes.object,
-        rulerWidth: PropTypes.number
+        rulerWidth: PropTypes.number,
+        width: PropTypes.number,
+        height: PropTypes.number
     };
 
     componentWillMount() {
@@ -74,13 +76,13 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { rulerWidth, dir } = this.props;
+        const { rulerWidth, dir, width, height } = this.props;
         switch (dir) {
             case "horizontal":
                 return (
                     <svg className="ruler"
                         id={dir}
-                        width={window.innerWidth - rulerWidth - 45}
+                        width={width}
                         height={rulerWidth}
                     >
                         {this.renderHorizontalTicks()}
@@ -92,7 +94,7 @@ class RulerLayer extends Component {
                     <svg className="ruler"
                         id={dir}
                         width={rulerWidth}
-                        height={window.innerHeight - rulerWidth - 45}
+                        height={height}
                     >
                         {this.renderVerticalTicks()}
                         {this.renderVerticalLabels()}
