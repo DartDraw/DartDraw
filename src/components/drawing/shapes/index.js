@@ -10,3 +10,4 @@ export {default as Arc} from './Arc';
 export {default as Rectangle} from './Rectangle';
 export {default as Shape} from './Shape';
 export {default as Text} from './Text';
+export {default as Arrowhead} from './Arrowhead';

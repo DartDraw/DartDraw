@@ -114,6 +114,11 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
         const shape = shapes.byId[id];
         const selectionBox = selectionBoxes[id];
         const boundingBox = boundingBoxes[id];
+
+        if (shape.type === 'arrowhead') {
+            return;
+        }
+
         if (selectionBox && selectionBox.mode === mode) {
             if (shape.type !== 'text') {
                 updatedSelectionBoxes[id] = updateSelectionBox(shape, selectionBox, boundingBox, mode);
@@ -244,10 +249,10 @@ function generateSelectionBox(shape, boundingBox, mode) {
 
             let handle0, handle1, handle2, handle3;
             if (shape.type === 'line') {
-                handle0 = { x: shape.points[2], y: shape.points[1] };
-                handle1 = { x: shape.points[2], y: shape.points[3] };
-                handle2 = { x: shape.points[0], y: shape.points[3] };
-                handle3 = { x: shape.points[0], y: shape.points[1] };
+                handle0 = { x: Math.max(shape.points[0], shape.points[2]), y: Math.min(shape.points[1], shape.points[3]) };
+                handle1 = { x: Math.max(shape.points[0], shape.points[2]), y: Math.max(shape.points[1], shape.points[3]) };
+                handle2 = { x: Math.min(shape.points[0], shape.points[2]), y: Math.max(shape.points[1], shape.points[3]) };
+                handle3 = { x: Math.min(shape.points[0], shape.points[2]), y: Math.min(shape.points[1], shape.points[3]) };
             } else if (transform && transform[0] && transform[0].parameters) {
                 const matrix = transform[0].parameters;
                 handle0 = transformPoint(x + width, y, matrix);
@@ -282,25 +287,13 @@ function generateSelectionBox(shape, boundingBox, mode) {
             if (shape.type === 'line') {
                 box.handles.push({ id: uuidv1(), index: 3, x: shape.points[0], y: shape.points[1] });
                 box.handles.push({ id: uuidv1(), index: 1, x: shape.points[2], y: shape.points[3] });
+                box.handles[4].index = findClosestHandle(box.handles[4], box.handles);
+                box.handles[5].index = findClosestHandle(box.handles[5], box.handles);
             }
 
             return box;
     }
 }
-
-/* function calculateHandlesShown(shape, handles) {
-    let handlesShown = {};
-    let point1 = transformPoint(shape.points[0], shape.points[1], shape.transform[0].parameters);
-    let point2 = transformPoint(shape.points[2], shape.points[3], shape.transform[0].parameters);
-
-    for (let i = 0; i <= 3; i++) {
-        if ((handles[i].x - point1.x < 0.0001 && handles[i].x - point1.x > -0.0001 && handles[i].y - point1.y < 0.0001 && handles[i].y - point1.y > -0.0001) ||
-          (handles[i].x - point2.x < 0.0001 && handles[i].x - point2.x > -0.0001 && handles[i].y - point2.y < 0.0001 && handles[i].y - point2.y > -0.0001)) {
-            handlesShown[i] = true;
-        }
-    }
-    return handlesShown;
-} */
 
 export function updateSelectionBoxesCorners(selected, selectionBoxes, mode) {
     if (mode === 'reshape') return selectionBoxes;

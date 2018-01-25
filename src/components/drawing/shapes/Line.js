@@ -5,6 +5,7 @@ import { Path } from '.';
 class Line extends Component {
     static propTypes = {
         id: PropTypes.string,
+        arrowId: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
@@ -13,6 +14,8 @@ class Line extends Component {
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
+        arrowLength: PropTypes.number,
+        arrowShown: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -55,15 +58,25 @@ class Line extends Component {
     }
 
     render() {
-        const { id, points, stroke, strokeWidth, strokeDasharray, transform, propagateEvents } = this.props;
+        const { id, arrowId, arrowLength, arrowShown, points, stroke, strokeWidth, strokeDasharray, propagateEvents } = this.props;
+
+        let l = Math.sqrt((points[2] - points[0]) ** 2 + (points[3] - points[1]) ** 2);
+
+        let arrowEndX = (1 - (l - arrowLength) / l) * points[0] + (l - arrowLength) / l * points[2];
+        let arrowEndY = (1 - (l - arrowLength) / l) * points[1] + (l - arrowLength) / l * points[3];
 
         const svgProps = {
-            d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}],
+            d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [arrowEndX, arrowEndY]}],
             stroke,
             strokeWidth,
-            strokeDasharray
+            strokeDasharray,
+            arrowId
         };
 
+        if (arrowShown === 'no' || l < arrowLength || isNaN(arrowEndX) || isNaN(arrowEndY)) {
+            svgProps.arrowId = null;
+            svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}];
+        }
         return (
             <Path
                 id={id}

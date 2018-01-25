@@ -6,6 +6,7 @@ import { formatPath, formatTransform } from '../../../utilities/shapes';
 class Path extends Component {
     static propTypes = {
         id: PropTypes.string,
+        arrowId: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
@@ -59,7 +60,7 @@ class Path extends Component {
     }
 
     render() {
-        const { id, d, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
+        const { id, arrowId, d, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
         const svgProps = {
             id,
             d: formatPath(d),
@@ -68,8 +69,13 @@ class Path extends Component {
             strokeDasharray,
             fill: fill || 'none',
             transform: formatTransform(transform),
-            vectorEffect: "non-scaling-stroke"
+            vectorEffect: "non-scaling-stroke",
+            markerEnd: "url(#" + arrowId + ")"
         };
+
+        if (arrowId) {
+            svgProps.markerEnd = "url(#" + arrowId + ")";
+        }
 
         return (
             <Shape

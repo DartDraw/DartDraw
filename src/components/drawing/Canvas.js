@@ -18,7 +18,8 @@ import {
     Path,
     Arc,
     Line,
-    Text
+    Text,
+    Arrowhead
 } from './shapes';
 
 class Canvas extends Component {
@@ -49,6 +50,7 @@ class Canvas extends Component {
         super(props);
 
         this.renderDrawing = this.renderDrawing.bind(this);
+        this.defineArrows = this.defineArrows.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleDragStart = this.handleDragStart.bind(this);
@@ -72,8 +74,8 @@ class Canvas extends Component {
             const boundingBoxes = {};
             const svgElements = [...(this.svgRef.childNodes)];
             svgElements.map((element) => {
-                if (element.id) {
-                    boundingBoxes[element.id] = element.getBBox();
+                if (element.id && element.tagName !== 'marker') {
+                    boundingBoxes[element.id] = element.getBBox({ markers: true }); // https://bugs.chromium.org/p/chromium/issues/detail?id=280576
                 }
             });
             onBoundingBoxUpdate && onBoundingBoxUpdate(boundingBoxes);
@@ -180,6 +182,8 @@ class Canvas extends Component {
                 return <Line {...shapeProps} />;
             case 'text':
                 return <Text {...shapeProps} />;
+            case 'arrowhead':
+                return <Arrowhead {...shapeProps} />;
             default:
                 break;
         }
@@ -189,6 +193,13 @@ class Canvas extends Component {
         const { shapes } = this.props;
         return shapes.map((shape) => {
             return this.renderShape(shape);
+        });
+    }
+
+    defineArrows() {
+        const { arrows } = this.props;
+        return arrows.map((shape) => {
+            return <Arrowhead {...shape} />;
         });
     }
 
@@ -209,6 +220,7 @@ class Canvas extends Component {
                         ref={(ref) => { this.svgRef = ref; }}
                     >
                         <BackgroundLayerContainer />
+                        {this.defineArrows()}
                         {this.renderDrawing()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
