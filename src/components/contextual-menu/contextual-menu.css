@@ -6,25 +6,35 @@
   top: 43px;
   bottom: 0;
   transition: right 500ms ease-in-out;
+  color: #EBF1F5;
+  padding: 0;
+  margin: 0;
+}
+
+.contextual-menu h2 {
+  font-family: Catamaran, sans-serif;
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 0.7em;
 }
 
 .menu-column {
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: red;
 }
 
 .static-menu {
     display: flex;
-    flex: 0.15;
+    flex: 0.05;
     height: 80px;
     background-color: #202B33;
+    padding-bottom: 5px;
 }
 
 .dynamic-menu {
     display: flex;
-    flex: 0.80;
+    flex: 0.85;
     height: 80px;
     background-color: #30404D;
 }
@@ -47,5 +57,6 @@
 .hide-button {
     width: 30px;
     height: 30px;
-    background-color: #000000;
+    background-color: #182026;
+    border-radius: 50%;
 }
