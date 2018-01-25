@@ -7,6 +7,7 @@ class ContextualMenu extends Component {
     static propTypes = {
         selectedShape: PropTypes.object,
         editShape: PropTypes.func,
+        onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -32,6 +33,7 @@ class ContextualMenu extends Component {
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
+        this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleUngroupClick = this.handleUngroupClick.bind(this);
         this.handleMoveBackward = this.handleMoveBackward.bind(this);
@@ -70,6 +72,14 @@ class ContextualMenu extends Component {
 
     handleToggleGridSnapping(event) {
         this.props.onToggleGridSnapping();
+    }
+
+    handleAlignmentClick(event) {
+        let id = event.target.id;
+        if (!id) {
+            id = event.target.firstChild.id;
+        }
+        this.props.onAllignmentClick(id);
     }
 
     handleGroupClick() {
@@ -123,7 +133,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
-            } else if (selectedShape.type == 'ellipse') {
+            } else if (selectedShape.type === 'ellipse') {
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
             }
         }
@@ -164,23 +174,23 @@ class ContextualMenu extends Component {
                     </div>
                     <h2>Alignment</h2>
                     <div className="static-menu">
-                        <button onClick={this.handleGroupClick}>
-                            <img src="./assets/center-alignment.svg" alt="center-alignment" id="button-icon" />
+                        <button onClick={this.handleAlignmentClick}>
+                            <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
                         </button>
-                        <button onClick={this.handleUngroupClick}>
-                            <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="button-icon" />
+                        <button onClick={this.handleAlignmentClick}>
+                            <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="alignment-horizontal" />
                         </button>
-                        <button onClick={this.handleMoveForward}>
-                            <img src="./assets/left-alignment.svg" alt="left-alignment" id="button-icon" />
+                        <button onClick={this.handleAlignmentClick}>
+                            <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />
                         </button>
-                        <button onClick={this.handleMoveBackward}>
-                            <img src="./assets/right-alignment.svg" alt="right-alignment" id="button-icon" />
+                        <button onClick={this.handleAlignmentClick}>
+                            <img src="./assets/right-alignment.svg" alt="right-alignment" id="alignment-right" />
                         </button>
-                        <button onClick={this.handleSendToBack}>
-                            <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="button-icon" />
+                        <button onClick={this.handleAlignmentClick}>
+                            <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="alignment-bottom" />
                         </button>
-                        <button onClick={this.handleBringToFront}>
-                            <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="button-icon" />
+                        <button onClick={this.handleAlignmentClick}>
+                            <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
                         </button>
 
                     </div>
