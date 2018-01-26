@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import {
     editShape,
+    alignmentClick,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
@@ -35,6 +36,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         editShape: (shape) => {
             dispatch(editShape(shape));
+        },
+        onAllignmentClick: (id) => {
+            dispatch(alignmentClick(id));
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());

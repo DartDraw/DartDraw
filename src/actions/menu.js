@@ -9,6 +9,7 @@ export const REDO_CLICK = 'REDO_CLICK';
 export const ZOOM_IN = 'ZOOM_IN';
 export const ZOOM_OUT = 'ZOOM_OUT';
 export const CUSTOM_ZOOM = 'CUSTOM_ZOOM';
+export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
 export const MOVE_BACKWARD = 'MOVE_BACKWARD';
@@ -73,6 +74,10 @@ export function zoomOut() {
 
 export function customZoom(customScale) {
     return { type: CUSTOM_ZOOM, payload: { customScale } };
+}
+
+export function alignmentClick(id) {
+    return { type: ALIGNMENT_CHANGE, payload: { id } };
 }
 
 export function groupButtonClick() {
