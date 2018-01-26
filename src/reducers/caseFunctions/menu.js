@@ -201,9 +201,14 @@ export function removePalette(stateCopy, action) {
 }
 
 export function updateOpacity(stateCopy, action) {
-    console.log(action.payload);
+    // console.log(action.payload);
     // console.log("we are updating opacity hopefully");
     stateCopy.color.a = action.payload.opacity;
-    console.log(stateCopy.color);
+    // console.log(stateCopy.color);
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor.a = action.payload.opacity;
+    } else {
+        stateCopy.strokeColor.a = action.payload.opacity;
+    }
     return stateCopy;
 }

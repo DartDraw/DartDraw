@@ -7,3 +7,14 @@
   width: 30px;
   border-radius: 3px;
 }
+
+#color-input {
+  display: flex;
+  flex-flow: row nowrap;
+
+}
+
+#color-input input {
+  width: 30px;
+  margin: 5px;
+}
