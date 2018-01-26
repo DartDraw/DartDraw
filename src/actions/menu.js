@@ -24,7 +24,6 @@ export const SELECT_BUTTON = 'SELECT_BUTTON';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
-export const SET_RULER_BASE = 'SET_RULER_BASE';
 export const SET_RULER_EXPONENT = 'SET_RULER_EXPONENT';
 export const SET_UNIT_TYPE = 'SET_UNIT_TYPE';
 
@@ -134,10 +133,6 @@ export function toggleShowSubDivisions() {
 
 export function setUnitType(unitType) {
     return { type: SET_UNIT_TYPE, payload: { unitType } };
-}
-
-export function setRulerBase(base) {
-    return { type: SET_RULER_BASE, payload: { base } };
 }
 
 export function setRulerExponent(exponent) {

@@ -18,7 +18,6 @@ import {
     toggleShowRulers,
     toggleShowSubDivisions,
     setUnitType,
-    setRulerBase,
     setRulerExponent
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
@@ -28,7 +27,8 @@ const mapStateToProps = ({ drawingState }) => {
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: drawingState.scale,
-        ruler: drawingState.ruler
+        ruler: drawingState.ruler,
+        exponentList: [0, 1, 2, 3, 4, 5, 6]
     };
 };
 
@@ -88,10 +88,7 @@ const mapDispatchToProps = (dispatch) => {
         onSetUnitType: (unitType) => {
             dispatch(setUnitType(unitType));
         },
-        onSetRulerExponent: (base) => {
-            dispatch(setRulerBase(base));
-        },
-        onSetRulerBase: (exponent) => {
+        onSetRulerExponent: (exponent) => {
             dispatch(setRulerExponent(exponent));
         }
     };

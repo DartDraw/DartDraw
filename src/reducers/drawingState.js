@@ -46,10 +46,9 @@ const initialState = {
         showRulers: true
     },
     ruler: {
-        unitType: 'inch',
+        unitType: 'in',
         pixelWidth: 30,
-        base: 2,
-        exponent: 3,
+        exponent: 2,
         top: {
             ticks: [],
             labels: []
@@ -180,9 +179,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.TOGGLE_SHOW_SUBDIVISIONS:
             updatedState = grid.toggleShowSubDivisions(stateCopy, action, root);
             break;
-        case menuActions.SET_RULER_BASE:
-            updatedState = rulers.setRulerBase(stateCopy, action, root);
-            break;
+        // case menuActions.SET_RULER_BASE:
+        //     updatedState = rulers.setRulerBase(stateCopy, action, root);
+        //     break;
         case menuActions.SET_RULER_EXPONENT:
             updatedState = rulers.setRulerExponent(stateCopy, action, root);
             break;

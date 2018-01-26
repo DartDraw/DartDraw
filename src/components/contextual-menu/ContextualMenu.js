@@ -8,6 +8,7 @@ class ContextualMenu extends Component {
         selectedShape: PropTypes.object,
         scale: PropTypes.number,
         ruler: PropTypes.object,
+        exponentList: PropTypes.array,
         editShape: PropTypes.func,
         onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
@@ -26,8 +27,7 @@ class ContextualMenu extends Component {
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
         onSetUnitType: PropTypes.func,
-        onSetRulerExponent: PropTypes.func,
-        onSetRulerBase: PropTypes.func
+        onSetRulerExponent: PropTypes.func
     };
 
     constructor(props) {
@@ -37,8 +37,6 @@ class ContextualMenu extends Component {
         };
 
         this.tempScale = this.props.scale;
-        this.tempExponent = this.props.ruler.exponent;
-        this.tempBase = this.props.ruler.base;
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
@@ -53,8 +51,6 @@ class ContextualMenu extends Component {
         this.handleFlipVertical = this.handleFlipVertical.bind(this);
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
-        this.handleSubmitRulerBase = this.handleSubmitRulerBase.bind(this);
-        this.handleSubmitRulerExponent = this.handleSubmitRulerExponent.bind(this);
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleChangeCustomZoom = this.handleChangeCustomZoom.bind(this);
@@ -62,8 +58,8 @@ class ContextualMenu extends Component {
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSetUnitType = this.handleSetUnitType.bind(this);
-        this.handleSetRulerBase = this.handleSetRulerBase.bind(this);
         this.handleSetRulerExponent = this.handleSetRulerExponent.bind(this);
+        this.dropDownSelect = this.dropDownSelect.bind(this);
     }
 
     toggleMenu() {
@@ -155,30 +151,18 @@ class ContextualMenu extends Component {
         this.props.onSetUnitType(event.target.value);
     }
 
-    handleSetRulerBase(event) {
-        console.log(event.target.value);
-        console.log("^base^");
-        this.tempBase = event.target.value;
-    }
-
-    handleSubmitRulerBase(event) {
-        this.props.onSetRulerBase(this.tempBase);
-        event.preventDefault();
-    }
-
     handleSetRulerExponent(event) {
-        console.log(event.target.value);
-        console.log("^ex^");
-        this.tempExponent = event.target.value;
+        this.props.onSetRulerExponent(event.target.value);
     }
 
-    handleSubmitRulerExponent(event) {
-        this.props.onSetRulerExponent(this.tempExponent);
-        event.preventDefault();
+    dropDownSelect(exponent) {
+        return (
+            <option value={exponent}>{exponent}</option>
+        );
     }
 
     render() {
-        const { selectedShape, scale, ruler } = this.props;
+        const { selectedShape, scale, ruler, exponentList } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         if (selectedShape) {
@@ -257,15 +241,17 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleShowGrid} id="button-icon">G</button>
                         <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
                         <select value={ruler.unitType} onChange={this.handleSetUnitType}>
-                            <option value="inch">inch</option>
+                            <option value="in">{"in"}</option>
+                            <option value="ft">ft</option>
+                            <option value="m">m</option>
                             <option value="cm">cm</option>
+                            <option value="mm">mm</option>
+                            <option value="px">px</option>
+                            <option value="pt">pt</option>
                         </select>
-                        <form id="button-icon" onSubmit={this.handleSubmitRulerBase}>
-                            <input type="text" onChange={this.handleSetRulerBase} />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleSubmitRulerExponent}>
-                            <input type="text" onChange={this.handleSetRulerExponent} />
-                        </form>
+                        <select value={ruler.exponent} onChange={this.handleSetRulerExponent}>
+                            {exponentList.map(this.dropDownSelect)}
+                        </select>
                     </div>
                     <div className="zoom-menu">
                         <button onClick={this.handleZoomIn} id="button-icon">+</button>

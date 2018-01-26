@@ -11,7 +11,7 @@ export function zoomIn(stateCopy) {
     const { panX, panY } = setPan(stateCopy, newScale);
 
     stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, stateCopy.gridLines, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
 
     stateCopy.panX = panX;
     stateCopy.panY = panY;
@@ -27,7 +27,7 @@ export function zoomOut(stateCopy) {
     const { panX, panY } = setPan(stateCopy, newScale);
 
     stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, stateCopy.gridLines, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
 
     stateCopy.panX = panX;
     stateCopy.panY = panY;
@@ -44,7 +44,7 @@ export function zoomToCustom(stateCopy, action) {
     const { panX, panY } = setPan(stateCopy, scale);
 
     stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, stateCopy.gridLines, scale, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, stateCopy.canvasWidth, stateCopy.canvasHeight);
 
     stateCopy.panX = panX;
     stateCopy.panY = panY;
@@ -73,7 +73,7 @@ export function zoomToMarqueeBox(stateCopy) {
     panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
 
     stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, stateCopy.gridLines, scale, canvasWidth, canvasHeight);
+    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, canvasWidth, canvasHeight);
 
     return {
         ruler: stateCopy.ruler,

@@ -32,10 +32,6 @@ function menuState(state = initialState, action, root) {
             return menu.selectColor(stateCopy, action, root);
         case menuActions.ALIGNMENT_CHANGE:
             return menu.selectAlignment(stateCopy, action, root);
-        case menuActions.SET_GRID:
-            return grid.setGrid(stateCopy, action, root);
-        case menuActions.TOGGLE_GRID_SNAPPING:
-            return grid.toggleGridSnapping(stateCopy, action, root);
         default:
             return stateCopy;
     }
