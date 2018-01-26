@@ -199,3 +199,11 @@ export function removePalette(stateCopy, action) {
     }
     return stateCopy;
 }
+
+export function updateOpacity(stateCopy, action) {
+    console.log(action.payload);
+    // console.log("we are updating opacity hopefully");
+    stateCopy.color.a = action.payload.opacity;
+    console.log(stateCopy.color);
+    return stateCopy;
+}

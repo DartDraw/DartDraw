@@ -25,6 +25,7 @@ export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
+export const UPDATE_OPACITY = 'UPDATE_OPACITY';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -92,6 +93,10 @@ export function zoomOut() {
 
 export function customZoom(customScale) {
     return { type: CUSTOM_ZOOM, payload: { customScale } };
+}
+
+export function updateOpacity(opacity) {
+    return { type: UPDATE_OPACITY, payload: { opacity } };
 }
 
 export function groupButtonClick() {
