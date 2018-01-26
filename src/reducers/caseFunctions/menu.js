@@ -94,8 +94,56 @@ export function selectTool(stateCopy, action) {
 }
 
 export function selectButton(stateCopy, action) {
-    stateCopy.fillStrokeButton = action.payload.button;
+    console.log(action.payload.button.button);
+    console.log(action.payload.button.color);
+    // console.log(action.payload.color);
+    stateCopy.fillStrokeButton = action.payload.button.button;
+    stateCopy.color = action.payload.button.color;
     return stateCopy;
+}
+
+export function groupButtonClick(stateCopy, action, root) {
+    if (stateCopy.selected.length < 2) {
+        // need at least 2 shapes
+        return stateCopy;
+    }
+
+    const group = groupShapes(stateCopy.selected, stateCopy.shapes);
+
+    let toRemove = [];
+    stateCopy.shapes.allIds.map((id, index) => {
+        const i = stateCopy.selected.indexOf(id);
+        if (i > -1) {
+            toRemove.push(index);
+        }
+    });
+
+    // bring group to highest z-index
+    stateCopy.shapes.allIds[toRemove[toRemove.length - 1]] = group.id;
+    toRemove.pop();
+
+    for (let i = toRemove.length - 1; i >= 0; i--) {
+        stateCopy.shapes.allIds.splice(toRemove[i], 1);
+    }
+    stateCopy.shapes.byId[group.id] = group;
+    stateCopy.selected = [group.id];
+    return stateCopy;
+}
+
+export function ungroupButtonClick(stateCopy, action, root) {
+    stateCopy.selected = ungroupShapes(stateCopy.selected, stateCopy.shapes);
+    return stateCopy;
+}
+
+export function exportClick(stateCopy, action) {
+    generateEps(stateCopy);
+    return stateCopy;
+}
+
+// Color Functions
+
+function colorToString(colorObj) {
+    return "rgba(" + colorObj['r'] + "," + colorObj['g'] + "," + colorObj['b'] + "," + colorObj['a'] + ")";
 }
 
 export function selectColor(stateCopy, action) {
@@ -104,8 +152,8 @@ export function selectColor(stateCopy, action) {
     } else {
         stateCopy.strokeColor = action.payload.color;
     }
-    stateCopy.color = action.payload.color;
-
+    stateCopy.color = action.payload.color; // current color
+    console.log("current color: " + stateCopy.color);
     return stateCopy;
 }
 
@@ -150,46 +198,4 @@ export function removePalette(stateCopy, action) {
         delete stateCopy.palettes[palette];
     }
     return stateCopy;
-}
-
-export function groupButtonClick(stateCopy, action, root) {
-    if (stateCopy.selected.length < 2) {
-        // need at least 2 shapes
-        return stateCopy;
-    }
-
-    const group = groupShapes(stateCopy.selected, stateCopy.shapes);
-
-    let toRemove = [];
-    stateCopy.shapes.allIds.map((id, index) => {
-        const i = stateCopy.selected.indexOf(id);
-        if (i > -1) {
-            toRemove.push(index);
-        }
-    });
-
-    // bring group to highest z-index
-    stateCopy.shapes.allIds[toRemove[toRemove.length - 1]] = group.id;
-    toRemove.pop();
-
-    for (let i = toRemove.length - 1; i >= 0; i--) {
-        stateCopy.shapes.allIds.splice(toRemove[i], 1);
-    }
-    stateCopy.shapes.byId[group.id] = group;
-    stateCopy.selected = [group.id];
-    return stateCopy;
-}
-
-export function ungroupButtonClick(stateCopy, action, root) {
-    stateCopy.selected = ungroupShapes(stateCopy.selected, stateCopy.shapes);
-    return stateCopy;
-}
-
-export function exportClick(stateCopy, action) {
-    generateEps(stateCopy);
-    return stateCopy;
-}
-
-function colorToString(colorObj) {
-    return "rgba(" + colorObj['r'] + "," + colorObj['g'] + "," + colorObj['b'] + "," + colorObj['a'] + ")";
 }

@@ -93,8 +93,10 @@ class TopMenu extends Component {
         this.tempScale = event.target.value / 100.0;
     }
 
-    handleButtonSelect(button) {
-        this.props.onButtonSelect(button);
+    handleButtonSelect(color, button) {
+        // console.log(color);
+        // console.log(button);
+        this.props.onButtonSelect({color, button});
     }
 
     render() {
@@ -116,11 +118,11 @@ class TopMenu extends Component {
 
                 <form id="fill-toggle" >
                     <input type="radio" name="toggle" value="fill" id="fill" defaultChecked />
-                    <label htmlFor="fill" style={fillStyle} onClick={() => { this.handleButtonSelect("fill"); }} />
+                    <label htmlFor="fill" style={fillStyle} onClick={() => { this.handleButtonSelect(fillColor, "fill"); }} />
                     <p>Fill</p>
                     <span />
                     <input type="radio" name="toggle" value="stroke" id="stroke" />
-                    <label htmlFor="stroke" style={strokeStyle} onClick={() => { this.handleButtonSelect("stroke"); }} />
+                    <label htmlFor="stroke" style={strokeStyle} onClick={() => { this.handleButtonSelect(strokeColor, "stroke"); }} />
                     <p>Stroke</p>
                 </form>
                 <div id="color-palette">

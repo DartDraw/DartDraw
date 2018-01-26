@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
-import { CMYKMenu } from './color-layouts';
+import { ColorMenuContainer } from '../color-editor';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -131,8 +131,6 @@ class ContextualMenu extends Component {
             }
         }
 
-        colorLayout = <CMYKMenu currentColor={fillColor} />;
-
         return (
             <div className="contextual-menu" style={{ right: hidden ? -352 : 0 }}>
                 <div className="hide-button-column">
@@ -140,6 +138,7 @@ class ContextualMenu extends Component {
                 </div>
                 <div className="menu-column">
                     <h2>Object Manipulation</h2>
+
                     <div className="static-menu">
                         <button onClick={this.handleGroupClick}>
                             <img src="./assets/group.svg" alt="group" id="button-icon" />
@@ -187,13 +186,8 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleBringToFront}>
                             <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="button-icon" />
                         </button>
-
                     </div>
-                    <div className="static-menu">
-                        <h2>Color Editor</h2>
-                        <p>{this.props.fillColor.r}</p>
-                        { colorLayout}
-                    </div>
+                    <ColorMenuContainer />
                     <div className="dynamic-menu">
                         { menuLayout }
                     </div>

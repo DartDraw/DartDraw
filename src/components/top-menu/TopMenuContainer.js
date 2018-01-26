@@ -36,8 +36,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(selectColor(color));
         },
 
-        onButtonSelect: (button) => {
-            dispatch(selectButton(button));
+        onButtonSelect: (buttonInfo) => {
+            dispatch(selectButton(buttonInfo));
         },
         onPaletteSelect: (paletteName) => {
             dispatch(selectPalette(paletteName));

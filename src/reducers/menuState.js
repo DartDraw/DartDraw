@@ -4,7 +4,7 @@ import * as grid from './caseFunctions/grid';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
-    color: { r: 33, g: 150, b: 243, a: 1 },
+    color: {r: 33, g: 15, b: 243, a: 1},
     fillColor: {r: 33, g: 15, b: 243, a: 1},
     strokeColor: {r: 200, g: 0, b: 200, a: 1},
     toolType: '',
@@ -19,9 +19,6 @@ const initialState = {
     align: ['top', 'left'],
     centeredControl: false,
     rectangleRadius: {x: 50, y: 50},
-    toolType: '',
-    currentKeys: {},
-    color: { r: 33, g: 150, b: 243, a: 1 },
     currentPalette: 'Default',
     palettes: {
         'Default': {

@@ -1,0 +1,9 @@
+.color-editor {
+  height: 200px;
+}
+
+#current-color-display {
+  height: 30px;
+  width: 30px;
+  border-radius: 3px;
+}
