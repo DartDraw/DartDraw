@@ -1,53 +1,13 @@
 // https://github.com/Robbbb/VectorRuler/blob/master/rulerGenerator.js
 import { updateGrid } from './grid';
 
-const tickLengthMultiplier = 0.5;
+const tickLengthMultiplier = 0.75;
 const pixelsPerInch = 72;
 const pixelsPerPoint = 72;
-const pixelsPerCm = 72 / 2.54;
+const pixelsPerCm = 72 / 2;
 const labelOffset = 2;
 const minTickDistance = 10;
-const minLabelDistance = 10;
-
-export function setRulers(stateCopy) {
-    // const { ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight } = stateCopy;
-    //
-    // stateCopy.ruler = updateRulers(ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    // stateCopy.gridLines = updateGrid(stateCopy.ruler, gridPreferences, scale, canvasWidth, canvasHeight);
-    //
-    // return stateCopy;
-}
-
-export function updateRulers(ruler, scale, panX, panY, canvasWidth, canvasHeight) {
-    var pixelsPerUnit;
-    var unitBase;
-
-    if (
-        ruler.unitType === "in" ||
-        ruler.unitType === "ft"
-    ) {
-        pixelsPerUnit = pixelsPerInch * scale;
-        unitBase = 2;
-    } else if (ruler.unitType === "px") {
-        pixelsPerUnit = scale;
-        unitBase = 2;
-    } else if (ruler.unitType === "pt") {
-        pixelsPerUnit = pixelsPerPoint * scale;
-        unitBase = 2;
-    } else {
-        // m, cm, or mm
-        pixelsPerUnit = pixelsPerCm * scale;
-        unitBase = 10;
-    }
-
-    const xPanOffset = panX * scale;
-    const yPanOffset = panY * scale;
-
-    ruler.top = buildRuler(ruler, pixelsPerUnit, unitBase, window.innerWidth, xPanOffset);
-    ruler.left = buildRuler(ruler, pixelsPerUnit, unitBase, window.innerHeight, yPanOffset);
-
-    return ruler;
-}
+const minLabelDistance = 20;
 
 export function toggleShowRulers(stateCopy) {
     stateCopy.rulerPreferences.showRulers = !stateCopy.rulerPreferences.showRulers;
@@ -59,24 +19,76 @@ export function setUnitType(stateCopy, action) {
     const { unitType } = action.payload;
 
     stateCopy.ruler.unitType = unitType;
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, gridPreferences, scale, canvasWidth, canvasHeight);
 
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight);
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, gridPreferences, scale, canvasWidth, canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight);
+    stateCopy.ruler = r;
+    stateCopy.gridLines = g;
     return stateCopy;
 }
 
-export function setRulerExponent(stateCopy, action) {
+export function setUnitDivisions(stateCopy, action) {
     const { scale, panX, panY, gridPreferences, canvasWidth, canvasHeight } = stateCopy;
-    const { exponent } = action.payload;
+    const { unitDivisions } = action.payload;
 
-    stateCopy.ruler.exponent = exponent;
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, gridPreferences, scale, canvasWidth, canvasHeight);
+    stateCopy.ruler.unitDivisions = unitDivisions;
 
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight);
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, gridPreferences, scale, canvasWidth, canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight);
+    stateCopy.ruler = r;
+    stateCopy.gridLines = g;
     return stateCopy;
 }
 
-function buildRuler(ruler, pixelsPerUnit, unitBase, windowLength, panOffset) {
+export function setRulers(stateCopy) {
+    const { ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight } = stateCopy;
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, gridPreferences, scale, canvasWidth, canvasHeight);
+    const { r, g } = updateRulers(ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight);
+    stateCopy.ruler = r;
+    stateCopy.gridLines = g;
+    return stateCopy;
+}
+
+export function updateRulers(ruler, gridPreferences, scale, panX, panY, canvasWidth, canvasHeight) {
+    var pixelsPerUnit;
+    var subUnitBase;
+    var subUnitExponent;
+
+    const xPanOffset = panX * scale;
+    const yPanOffset = panY * scale;
+
+    if (ruler.unitType === "in" || ruler.unitType === "ft") {
+        pixelsPerUnit = pixelsPerInch * scale;
+    } else if (ruler.unitType === "px") {
+        pixelsPerUnit = scale;
+    } else if (ruler.unitType === "pt") {
+        pixelsPerUnit = pixelsPerPoint * scale;
+    } else { // m, cm, or mm
+        pixelsPerUnit = pixelsPerCm * scale;
+    }
+
+    if (getBaseLog(2, ruler.unitDivisions) % 1 === 0) {
+        subUnitBase = 2;
+    } else if (getBaseLog(10, ruler.unitDivisions) % 1 === 0) {
+        subUnitBase = 10;
+    } else {
+        subUnitBase = ruler.unitDivisions;
+    }
+
+    subUnitExponent = getBaseLog(subUnitBase, ruler.unitDivisions);
+
+    ruler.top = buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, window.innerWidth, xPanOffset);
+    ruler.left = buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, window.innerHeight, yPanOffset);
+    var gridLines = updateGrid(ruler, gridPreferences, pixelsPerUnit, subUnitBase, subUnitExponent, scale, canvasWidth, canvasHeight);
+
+    var r = ruler;
+    var g = gridLines;
+    return { r, g };
+}
+
+function buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, windowLength, panOffset) {
     const rulerLengthInUnits = Math.ceil((windowLength + panOffset) / pixelsPerUnit);
     var masterTickIndex = [];
     var result = {};
@@ -84,8 +96,8 @@ function buildRuler(ruler, pixelsPerUnit, unitBase, windowLength, panOffset) {
     result.labels = [];
 
     // loop thru each desired level of ticks, inches, halves, quarters, etc...
-    for (var exponentIndex = 0; exponentIndex <= ruler.exponent; exponentIndex++) {
-        const ticksPerUnit = Math.pow(unitBase, exponentIndex);
+    for (var exponentIndex = 0; exponentIndex <= subUnitExponent; exponentIndex++) {
+        const ticksPerUnit = Math.pow(subUnitBase, exponentIndex);
         const tickQty = rulerLengthInUnits * ticksPerUnit;
         const tickLength = ruler.pixelWidth * Math.pow(tickLengthMultiplier, exponentIndex);
         const tickSpacing = pixelsPerUnit / ticksPerUnit;
@@ -125,4 +137,11 @@ function buildRuler(ruler, pixelsPerUnit, unitBase, windowLength, panOffset) {
         }
     }
     return result;
+}
+
+function getBaseLog(x, y) {
+    if (x === 1) {
+        return 1;
+    }
+    return Math.log(y) / Math.log(x);
 }

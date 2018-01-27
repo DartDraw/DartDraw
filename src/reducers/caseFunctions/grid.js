@@ -1,6 +1,5 @@
 const minLineDistance = 10;
-const pixelsPerInch = 72;
-const pixelsPerCm = 72 / 2.54;
+const minLabelDistance = 20;
 
 export function setGrid(stateCopy) {
     const { ruler, scale, gridPreferences, canvasWidth, canvasHeight } = stateCopy;
@@ -10,54 +9,61 @@ export function setGrid(stateCopy) {
     return stateCopy;
 }
 
-export function updateGrid(ruler, gridPreferences, scale, canvasWidth, canvasHeight) {
-    var pixelsPerUnit;
-    var unitBase;
+export function updateGrid(ruler, gridPreferences, pixelsPerUnit, subUnitBase, subUnitExponent, scale, canvasWidth, canvasHeight) {
+    const maxDimension = Math.max(canvasWidth, canvasHeight);
+    const absolutePixelsPerUnit = pixelsPerUnit / scale;
+    const lineSpacing = absolutePixelsPerUnit / ruler.unitDivisions;
+    const lineQty = Math.ceil(maxDimension / lineSpacing);
 
-    if (
-        ruler.unitType === "m" ||
-        ruler.unitType === "cm" ||
-        ruler.unitType === "mm"
-    ) {
-        pixelsPerUnit = pixelsPerCm * scale;
-        unitBase = 10;
-    } else {
-        pixelsPerUnit = pixelsPerInch * scale;
-        unitBase = 2;
+    var result = {};
+    result.divisions = [];
+    result.subDivisions = [];
+
+    for (var line = 1; line <= lineQty; line++) {
+        if (line % ruler.unitDivisions === 0) {
+            result.divisions.push(line * lineSpacing);
+        } else {
+            result.subDivisions.push(line * lineSpacing);
+        }
     }
-    // 
+
     // const max = Math.max(canvasWidth, canvasHeight);
     //
     // var labelRender = 1;
     //
-    // if ((pixelsPerUnit * scale) < minLineDistance) {
-    //     labelRender = Math.ceil(minLineDistance / (pixelsPerUnit * scale));
+    // if ((pixelsPerUnit * scale) < minLabelDistance) {
+    //     labelRender = Math.ceil(minLabelDistance / (pixelsPerUnit * scale));
     // }
     //
-    var result = {};
+    // var result = {};
     // result.divisions = [];
     // result.subDivisions = [];
-    var subDivisions = pixelsPerUnit / Math.pow(unitBase, ruler.exponent);
-    result.snapTo = subDivisions;
+    // var subDivisions = pixelsPerUnit / ruler.unitDivisions;
+    // result.snapTo = subDivisions;
     //
     // while ((subDivisions * scale) < minLineDistance) {
-    //     subDivisions = subDivisions * unitBase;
+    //     subDivisions = subDivisions * subUnitBase;
     // }
     //
-    // for (var i = 0; i <= max; i += subDivisions) {
+    // if (subDivisions > pixelsPerUnit) {
+    //     subDivisions = pixelsPerUnit;
+    // }
+    //
+    // var intervals = Math.ceil(max / subDivisions);
+    //
+    // for (var i = 0; i <= intervals; i++) {
     //     if (i === 0) {
     //         continue; // don't render a gridline on 0
     //     }
     //
-    //     if (i % pixelsPerUnit === 0) {
-    //         if ((i / pixelsPerUnit) % labelRender === 0) {
-    //             result.divisions.push(i);
+    //     if ((i * subDivisions) % pixelsPerUnit === 0) {
+    //         if (((i * subDivisions) / pixelsPerUnit) % labelRender === 0) {
+    //             result.divisions.push(i * subDivisions);
     //         }
     //     } else {
-    //         result.subDivisions.push(i);
+    //         result.subDivisions.push(i * subDivisions);
     //     }
     // }
-    //
     return result;
 }
 

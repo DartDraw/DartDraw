@@ -47,8 +47,8 @@ const initialState = {
     },
     ruler: {
         unitType: 'in',
+        unitDivisions: 2,
         pixelWidth: 30,
-        exponent: 2,
         top: {
             ticks: [],
             labels: []
@@ -165,7 +165,7 @@ function drawingState(state = initialState, action, root) {
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         case menuActions.SET_GRID:
-            updatedState = grid.setGrid(stateCopy, action, root);
+            // updatedState = grid.setGrid(stateCopy, action, root);
             break;
         case menuActions.TOGGLE_GRID_SNAPPING:
             updatedState = grid.toggleGridSnapping(stateCopy, action, root);
@@ -179,11 +179,8 @@ function drawingState(state = initialState, action, root) {
         case menuActions.TOGGLE_SHOW_SUBDIVISIONS:
             updatedState = grid.toggleShowSubDivisions(stateCopy, action, root);
             break;
-        // case menuActions.SET_RULER_BASE:
-        //     updatedState = rulers.setRulerBase(stateCopy, action, root);
-        //     break;
         case menuActions.SET_RULER_EXPONENT:
-            updatedState = rulers.setRulerExponent(stateCopy, action, root);
+            updatedState = rulers.setUnitDivisions(stateCopy, action, root);
             break;
         case menuActions.SET_UNIT_TYPE:
             updatedState = rulers.setUnitType(stateCopy, action, root);

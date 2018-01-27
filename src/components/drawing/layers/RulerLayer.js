@@ -15,7 +15,7 @@ class RulerLayer extends Component {
 
     componentWillMount() {
         this.props.onSetRulers();
-        this.props.onSetGrid();
+        // this.props.onSetGrid();
     }
 
     renderHorizontalLabels() {

@@ -11,6 +11,7 @@ html, body, #root, #root > div {
 body {
     margin: 0;
     padding: 0;
+    background-color: #ebf1f5;
 }
 
 .App {
@@ -41,8 +42,7 @@ body {
 }
 
 .ruler {
-    /* display: flex; */
-    background-color: gray;
+    background-color: #5c7080;
 }
 
 #horizontal {

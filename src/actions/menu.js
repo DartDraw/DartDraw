@@ -135,6 +135,6 @@ export function setUnitType(unitType) {
     return { type: SET_UNIT_TYPE, payload: { unitType } };
 }
 
-export function setRulerExponent(exponent) {
-    return { type: SET_RULER_EXPONENT, payload: { exponent } };
+export function setUnitDivisions(unitDivisions) {
+    return { type: SET_RULER_EXPONENT, payload: { unitDivisions } };
 }

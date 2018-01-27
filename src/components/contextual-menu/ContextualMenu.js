@@ -8,7 +8,7 @@ class ContextualMenu extends Component {
         selectedShape: PropTypes.object,
         scale: PropTypes.number,
         ruler: PropTypes.object,
-        exponentList: PropTypes.array,
+        unitDivisions: PropTypes.array,
         editShape: PropTypes.func,
         onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
@@ -27,7 +27,7 @@ class ContextualMenu extends Component {
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
         onSetUnitType: PropTypes.func,
-        onSetRulerExponent: PropTypes.func
+        onSetUnitDivisions: PropTypes.func
     };
 
     constructor(props) {
@@ -37,6 +37,7 @@ class ContextualMenu extends Component {
         };
 
         this.tempScale = this.props.scale;
+        this.tempUnitDivisions = this.props.scale;
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
@@ -58,7 +59,8 @@ class ContextualMenu extends Component {
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSetUnitType = this.handleSetUnitType.bind(this);
-        this.handleSetRulerExponent = this.handleSetRulerExponent.bind(this);
+        this.handleSetUnitDivisions = this.handleSetUnitDivisions.bind(this);
+        this.handleChangeUnitDivisions = this.handleChangeUnitDivisions.bind(this);
         this.dropDownSelect = this.dropDownSelect.bind(this);
     }
 
@@ -151,18 +153,52 @@ class ContextualMenu extends Component {
         this.props.onSetUnitType(event.target.value);
     }
 
-    handleSetRulerExponent(event) {
-        this.props.onSetRulerExponent(event.target.value);
+    handleSetUnitDivisions(event) {
+        if (this.tempUnitDivisions === "") {
+            // do nothing
+        } else {
+            var input = parseInt(this.tempUnitDivisions);
+            input = Math.max(1, Math.min(input, 100));
+            this.tempUnitDivisions = input;
+            event.target.value = input;
+            this.props.onSetUnitDivisions(input);
+        }
+        event.preventDefault();
     }
 
-    dropDownSelect(exponent) {
+    handleChangeUnitDivisions(event) {
+        this.tempUnitDivisions = event.target.value;
+    }
+
+    dropDownSelect(unitDivisions) {
+        const { ruler } = this.props;
+        var strings = [];
+
+        switch (ruler.unitType) {
+            case "in":
+                strings = ["none", '1/2"', '1/4"', '1/8"', '1/16"', '1/32"', '1/64"'];
+                break;
+            case "ft":
+                strings = ["none", "1/2'", "1/4'", "1/8'", "1/16'", "1/32'", "1/64'"];
+                break;
+            case "cm":
+                strings = ["none", '1/10"', '1/100"', '1/1000"', "", "", ""];
+                break;
+            default:
+                break;
+        }
+
+        // <option value="small">$10 USD</option>
         return (
-            <option value={exponent}>{exponent}</option>
+            <option value={unitDivisions}>{strings[unitDivisions]}</option>
         );
+        // return (
+        //     <option value={unitDivisions}>{strings[unitDivisions]}</option>
+        // );
     }
 
     render() {
-        const { selectedShape, scale, ruler, exponentList } = this.props;
+        const { selectedShape, scale, ruler, unitDivisions } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         if (selectedShape) {
@@ -233,9 +269,6 @@ class ContextualMenu extends Component {
                         </button>
 
                     </div>
-                    <div className="dynamic-menu">
-                        { menuLayout }
-                    </div>
                     <div className="temp">
                         <button onClick={this.handleShowRulers} id="button-icon">R</button>
                         <button onClick={this.handleShowGrid} id="button-icon">G</button>
@@ -249,9 +282,13 @@ class ContextualMenu extends Component {
                             <option value="px">px</option>
                             <option value="pt">pt</option>
                         </select>
-                        <select value={ruler.exponent} onChange={this.handleSetRulerExponent}>
-                            {exponentList.map(this.dropDownSelect)}
-                        </select>
+                        <form id="button-icon" onSubmit={this.handleSetUnitDivisions}>
+                            <input
+                                value={this.tempUnitDivisions}
+                                onChange={this.handleChangeUnitDivisions}
+                                type="number"
+                            />
+                        </form>
                     </div>
                     <div className="zoom-menu">
                         <button onClick={this.handleZoomIn} id="button-icon">+</button>
@@ -260,6 +297,9 @@ class ContextualMenu extends Component {
                             {Math.round(scale * 100) + "%"} <input type="text" onChange={this.handleChangeCustomZoom} />
                         </form>
                     </div>
+                    <div className="dynamic-menu">
+                        { menuLayout }
+                    </div>
                 </div>
             </div>
         );
@@ -267,3 +307,7 @@ class ContextualMenu extends Component {
 }
 
 export default ContextualMenu;
+
+// <select value={ruler.unitDivisions} onChange={this.handleSetUnitDivisions}>
+//     {unitDivisionsList.map(this.dropDownSelect)}
+// </select>

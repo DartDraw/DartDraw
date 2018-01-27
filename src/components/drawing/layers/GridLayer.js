@@ -22,7 +22,6 @@ class GridLayer extends Component {
                         y2={canvasHeight}
                         vectorEffect="non-scaling-stroke"
                         stroke="black"
-                        strokeDasharray="2, 5"
                         strokeWidth="1"
                     />
                     <line
@@ -32,7 +31,6 @@ class GridLayer extends Component {
                         y2={line}
                         vectorEffect="non-scaling-stroke"
                         stroke="black"
-                        strokeDasharray="2, 5"
                         strokeWidth="1"
                     />
                 </g>

@@ -10,9 +10,11 @@ export function zoomIn(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
-
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    stateCopy.ruler = r;
+    stateCopy.gridLines = g;
     stateCopy.panX = panX;
     stateCopy.panY = panY;
     stateCopy.scale = newScale;
@@ -26,9 +28,11 @@ export function zoomOut(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
-
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    stateCopy.ruler = r;
+    stateCopy.gridLines = g;
     stateCopy.panX = panX;
     stateCopy.panY = panY;
     stateCopy.scale = newScale;
@@ -43,9 +47,11 @@ export function zoomToCustom(stateCopy, action) {
 
     const { panX, panY } = setPan(stateCopy, scale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, stateCopy.canvasWidth, stateCopy.canvasHeight);
-
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    stateCopy.ruler = r;
+    stateCopy.gridLines = g;
     stateCopy.panX = panX;
     stateCopy.panY = panY;
     stateCopy.scale = scale;
@@ -72,11 +78,12 @@ export function zoomToMarqueeBox(stateCopy) {
     panY = marqueeBox.y + (marqueeBox.height / 2) - (windowHeight / 2 / scale);
     panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, canvasWidth, canvasHeight);
-
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
+    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, canvasWidth, canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
     return {
-        ruler: stateCopy.ruler,
+        ruler: r,
+        gridLines: g,
         panX: panX,
         panY: panY,
         scale: scale
@@ -95,10 +102,11 @@ export function pan(stateCopy, draggableData) {
     var panY = stateCopy.panY - deltaY / scale;
     panY = clamp(panY, 0, canvasHeight - (window.innerHeight - 45) / scale);
 
-    stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-
+    // stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
+    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
     return {
-        ruler: stateCopy.ruler,
+        ruler: r,
+        gridLines: g,
         panX: panX,
         panY: panY
     };

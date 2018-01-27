@@ -132,8 +132,9 @@ export function drag(stateCopy, action, root) {
             stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);
             break;
         case "panTool":
-            const { ruler, panX, panY } = pan(stateCopy, draggableData);
+            const { ruler, gridLines, panX, panY } = pan(stateCopy, draggableData);
             stateCopy.ruler = ruler;
+            stateCopy.gridLines = gridLines;
             stateCopy.panX = panX;
             stateCopy.panY = panY;
             break;
@@ -193,8 +194,9 @@ export function dragStop(stateCopy, action, root) {
             break;
         case "zoomTool":
             if (stateCopy.marqueeBox.width !== 0 || stateCopy.marqueeBox.height !== 0) {
-                const { ruler, panX, panY, scale } = zoomToMarqueeBox(stateCopy);
+                const { ruler, gridLines, panX, panY, scale } = zoomToMarqueeBox(stateCopy);
                 stateCopy.ruler = ruler;
+                stateCopy.gridLines = gridLines;
                 stateCopy.panX = panX;
                 stateCopy.panY = panY;
                 stateCopy.scale = scale;
