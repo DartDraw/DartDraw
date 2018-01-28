@@ -25,8 +25,8 @@ class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
         selected: PropTypes.array,
-        canvasHeight: PropTypes.number,
-        canvasWidth: PropTypes.number,
+        canvasHeightInPixels: PropTypes.number,
+        canvasWidthInPixels: PropTypes.number,
         viewBox: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
@@ -193,7 +193,7 @@ class Canvas extends Component {
     }
 
     render() {
-        const { canvasHeight, canvasWidth, viewBox } = this.props;
+        const { canvasHeightInPixels, canvasWidthInPixels, viewBox } = this.props;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
@@ -203,8 +203,8 @@ class Canvas extends Component {
                     onStop={this.handleDragStop}
                 >
                     <svg className="Canvas"
-                        width={canvasWidth}
-                        height={canvasHeight}
+                        width={canvasWidthInPixels}
+                        height={canvasHeightInPixels}
                         viewBox={viewBox.join(' ')}
                         ref={(ref) => { this.svgRef = ref; }}
                     >

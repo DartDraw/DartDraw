@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 class RulerLayer extends Component {
     static propTypes = {
-        onSetRulers: PropTypes.func,
-        onSetGrid: PropTypes.func,
+        onSetGridRulers: PropTypes.func,
+        onSetCanvasSize: PropTypes.func,
         dir: PropTypes.string,
         ruler: PropTypes.object,
         rulerWidth: PropTypes.number,
@@ -14,8 +14,8 @@ class RulerLayer extends Component {
     };
 
     componentWillMount() {
-        this.props.onSetRulers();
-        // this.props.onSetGrid();
+        this.props.onSetGridRulers();
+        this.props.onSetCanvasSize(11, 8.5);
     }
 
     renderHorizontalLabels() {

@@ -21,8 +21,10 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeight: 850,
-    canvasWidth: 1000,
+    canvasHeightInUnits: 15,
+    canvasWidthInUnits: 15,
+    canvasHeightInPixels: 0,
+    canvasWidthInPixels: 0,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -108,8 +110,11 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
-        case canvasActions.SET_RULERS:
-            updatedState = rulers.setRulers(stateCopy, action, root);
+        case canvasActions.SET_GRID_RULERS:
+            updatedState = rulers.setGridRulers(stateCopy, action, root);
+            break;
+        case canvasActions.SET_CANVAS_SIZE:
+            updatedState = rulers.setCanvasSize(stateCopy, action, root);
             break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
@@ -164,9 +169,6 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.SET_GRID:
-            // updatedState = grid.setGrid(stateCopy, action, root);
-            break;
         case menuActions.TOGGLE_GRID_SNAPPING:
             updatedState = grid.toggleGridSnapping(stateCopy, action, root);
             break;

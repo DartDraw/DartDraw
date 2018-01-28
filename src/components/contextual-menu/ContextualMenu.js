@@ -8,7 +8,11 @@ class ContextualMenu extends Component {
         selectedShape: PropTypes.object,
         scale: PropTypes.number,
         ruler: PropTypes.object,
-        unitDivisions: PropTypes.array,
+        unitDivisions: PropTypes.number,
+        canvasWidthInPixels: PropTypes.number,
+        canvasHeightInPixels: PropTypes.number,
+        canvasWidthInUnits: PropTypes.number,
+        canvasHeightInUnits: PropTypes.number,
         editShape: PropTypes.func,
         onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
@@ -27,7 +31,8 @@ class ContextualMenu extends Component {
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
         onSetUnitType: PropTypes.func,
-        onSetUnitDivisions: PropTypes.func
+        onSetUnitDivisions: PropTypes.func,
+        onSetCanvasSize: PropTypes.func
     };
 
     constructor(props) {
@@ -37,7 +42,9 @@ class ContextualMenu extends Component {
         };
 
         this.tempScale = this.props.scale;
-        this.tempUnitDivisions = this.props.scale;
+        this.tempUnitDivisions = this.props.unitDivisions;
+        this.tempCanvasWidth = this.props.canvasWidthInUnits;
+        this.tempCanvasHeight = this.props.canvasHeightInUnits;
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
@@ -61,7 +68,9 @@ class ContextualMenu extends Component {
         this.handleSetUnitType = this.handleSetUnitType.bind(this);
         this.handleSetUnitDivisions = this.handleSetUnitDivisions.bind(this);
         this.handleChangeUnitDivisions = this.handleChangeUnitDivisions.bind(this);
-        this.dropDownSelect = this.dropDownSelect.bind(this);
+        this.handleSetCanvasSize = this.handleSetCanvasSize.bind(this);
+        this.handleChangeCanvasWidth = this.handleChangeCanvasWidth.bind(this);
+        this.handleChangeCanvasHeight = this.handleChangeCanvasHeight.bind(this);
     }
 
     toggleMenu() {
@@ -154,11 +163,40 @@ class ContextualMenu extends Component {
     }
 
     handleSetUnitDivisions(event) {
+        const { ruler } = this.props;
+        const minDivisions = 1;
+        var maxDivisions;
+
+        switch (ruler.unitType) {
+            case "in":
+                maxDivisions = 64;
+                break;
+            case "ft":
+                maxDivisions = 64;
+                break;
+            case "mm":
+                maxDivisions = 100;
+                break;
+            case "cm":
+                maxDivisions = 100;
+                break;
+            case "m":
+                maxDivisions = 100;
+                break;
+            case "px":
+                maxDivisions = 1;
+                break;
+            case "pt":
+                maxDivisions = 1;
+                break;
+            default:
+                break;
+        }
         if (this.tempUnitDivisions === "") {
             // do nothing
         } else {
             var input = parseInt(this.tempUnitDivisions);
-            input = Math.max(1, Math.min(input, 100));
+            input = Math.max(minDivisions, Math.min(input, maxDivisions));
             this.tempUnitDivisions = input;
             event.target.value = input;
             this.props.onSetUnitDivisions(input);
@@ -170,32 +208,46 @@ class ContextualMenu extends Component {
         this.tempUnitDivisions = event.target.value;
     }
 
-    dropDownSelect(unitDivisions) {
-        const { ruler } = this.props;
-        var strings = [];
-
-        switch (ruler.unitType) {
-            case "in":
-                strings = ["none", '1/2"', '1/4"', '1/8"', '1/16"', '1/32"', '1/64"'];
-                break;
-            case "ft":
-                strings = ["none", "1/2'", "1/4'", "1/8'", "1/16'", "1/32'", "1/64'"];
-                break;
-            case "cm":
-                strings = ["none", '1/10"', '1/100"', '1/1000"', "", "", ""];
-                break;
-            default:
-                break;
-        }
-
-        // <option value="small">$10 USD</option>
-        return (
-            <option value={unitDivisions}>{strings[unitDivisions]}</option>
-        );
-        // return (
-        //     <option value={unitDivisions}>{strings[unitDivisions]}</option>
-        // );
+    handleSetCanvasSize(event) {
+        console.log(event.target.id);
+        // this.props.onSetCanvasSize(this.tempCanvasWidth, this.tempCanvasHeight);
+        event.preventDefault();
     }
+
+    handleChangeCanvasWidth(event) {
+        this.tempCanvasWidth = event.target.value;
+    }
+
+    handleChangeCanvasHeight(event) {
+        this.tempCanvasHeight = event.target.value;
+    }
+
+    // dropDownSelect(unitDivisions) {
+    //     const { ruler } = this.props;
+    //     var strings = [];
+    //
+    //     switch (ruler.unitType) {
+    //         case "in":
+    //             strings = ["none", '1/2"', '1/4"', '1/8"', '1/16"', '1/32"', '1/64"'];
+    //             break;
+    //         case "ft":
+    //             strings = ["none", "1/2'", "1/4'", "1/8'", "1/16'", "1/32'", "1/64'"];
+    //             break;
+    //         case "cm":
+    //             strings = ["none", '1/10"', '1/100"', '1/1000"', "", "", ""];
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    //
+    //     // <option value="small">$10 USD</option>
+    //     return (
+    //         <option value={unitDivisions}>{strings[unitDivisions]}</option>
+    //     );
+    //     // return (
+    //     //     <option value={unitDivisions}>{strings[unitDivisions]}</option>
+    //     // );
+    // }
 
     render() {
         const { selectedShape, scale, ruler, unitDivisions } = this.props;
@@ -311,3 +363,19 @@ export default ContextualMenu;
 // <select value={ruler.unitDivisions} onChange={this.handleSetUnitDivisions}>
 //     {unitDivisionsList.map(this.dropDownSelect)}
 // </select>
+
+// <form id="button-icon" onSubmit={this.handleSetCanvasSize}>
+//     <input
+//         id="width"
+//         value={this.tempCanvasWidth}
+//         onChange={this.handleChangeCanvasWidth}
+//         type="number"
+//     />
+//     <input
+//         id="height"
+//         value={this.tempCanvasHeight}
+//         onChange={this.handleChangeCanvasHeight}
+//         type="number"
+//     />
+//     <input type="submit" value="resize" />
+// </form>

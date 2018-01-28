@@ -23,12 +23,16 @@ import {
 import ContextualMenu from './ContextualMenu';
 
 const mapStateToProps = ({ drawingState }) => {
-    const { shapes, selected, scale, ruler } = drawingState;
+    const { shapes, selected, scale, ruler, canvasWidthInPixels, canvasHeightInPixels, canvasWidthInUnits, canvasHeightInUnits } = drawingState;
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: scale,
         ruler: ruler,
-        unitDivisions: ruler.unitDivisions
+        unitDivisions: ruler.unitDivisions,
+        canvasWidthInPixels: canvasWidthInPixels,
+        canvasHeightInPixels: canvasHeightInPixels,
+        canvasWidthInUnits: canvasWidthInUnits,
+        canvasHeightInUnits: canvasHeightInUnits
     };
 };
 

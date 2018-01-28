@@ -1,70 +1,77 @@
-const minLineDistance = 10;
-const minLabelDistance = 20;
+import { minSubUnitDistance } from './rulers';
 
-export function setGrid(stateCopy) {
-    const { ruler, scale, gridPreferences, canvasWidth, canvasHeight } = stateCopy;
-
-    stateCopy.gridLines = updateGrid(ruler, gridPreferences, scale, canvasWidth, canvasHeight);
-
-    return stateCopy;
-}
-
-export function updateGrid(ruler, gridPreferences, pixelsPerUnit, subUnitBase, subUnitExponent, scale, canvasWidth, canvasHeight) {
-    const maxDimension = Math.max(canvasWidth, canvasHeight);
-    const absolutePixelsPerUnit = pixelsPerUnit / scale;
-    const lineSpacing = absolutePixelsPerUnit / ruler.unitDivisions;
-    const lineQty = Math.ceil(maxDimension / lineSpacing);
-
+export function buildGrid(ruler, pixelsPerUnit, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, canvasWidthInPixels, canvasHeightInPixels) {
+    const gridDimensionInUnits = Math.ceil(Math.max(canvasWidthInPixels, canvasHeightInPixels) / pixelsPerUnit);
+    var masterLineIndex = [];
     var result = {};
+
     result.divisions = [];
     result.subDivisions = [];
+    result.snapTo = pixelsPerUnit / ruler.unitDivisions;
 
-    for (var line = 1; line <= lineQty; line++) {
-        if (line % ruler.unitDivisions === 0) {
-            result.divisions.push(line * lineSpacing);
-        } else {
-            result.subDivisions.push(line * lineSpacing);
+    // loop thru each desired level of lines, inches, halves, quarters, etc...
+    for (var exponentIndex = 0; exponentIndex <= subUnitExponent; exponentIndex++) {
+        const linesPerUnit = Math.pow(subUnitBase, exponentIndex);
+        const lineQty = gridDimensionInUnits * linesPerUnit;
+        const lineSpacing = pixelsPerUnit / linesPerUnit;
+        var labelRender = 1;
+
+        if (exponentIndex === 0 && (lineSpacing * scale) < minWholeUnitDistance) {
+            labelRender = Math.ceil(minWholeUnitDistance / (lineSpacing * scale));
+        }
+
+        for (var i = 0; i <= lineQty; i++) {
+            var lineLoc = lineSpacing * i;
+
+            // if line location has already been rendered, skip it
+            if (masterLineIndex.indexOf(lineLoc) !== -1) {
+                continue;
+            }
+
+            masterLineIndex.push(lineLoc);
+
+            // if is a primary line, it needs a label
+            if (exponentIndex === 0) {
+                if (i % labelRender === 0) {
+                    result.divisions.push(lineLoc);
+                }
+                // else: do nothing
+            } else if ((lineSpacing * scale) >= minSubUnitDistance) {
+                result.subDivisions.push(lineLoc);
+            }
         }
     }
+    return result;
 
-    // const max = Math.max(canvasWidth, canvasHeight);
-    //
-    // var labelRender = 1;
-    //
-    // if ((pixelsPerUnit * scale) < minLabelDistance) {
-    //     labelRender = Math.ceil(minLabelDistance / (pixelsPerUnit * scale));
-    // }
+    // const maxDimension = Math.max(canvasWidthInPixels, canvasHeightInPixels);
+    // var lineSpacing = pixelsPerUnit / scale / ruler.unitDivisions;
     //
     // var result = {};
     // result.divisions = [];
     // result.subDivisions = [];
-    // var subDivisions = pixelsPerUnit / ruler.unitDivisions;
-    // result.snapTo = subDivisions;
     //
-    // while ((subDivisions * scale) < minLineDistance) {
-    //     subDivisions = subDivisions * subUnitBase;
+    // const labelRender = Math.ceil(minWholeUnitDistance / pixelsPerUnit);
+    // var i = 0;
+    //
+    // while (((lineSpacing * scale) < minSubUnitDistance) && lineSpacing) {
+    //     lineSpacing = lineSpacing * subUnitBase;
     // }
     //
-    // if (subDivisions > pixelsPerUnit) {
-    //     subDivisions = pixelsPerUnit;
-    // }
+    // const lineQty = Math.ceil(maxDimension / lineSpacing);
     //
-    // var intervals = Math.ceil(max / subDivisions);
-    //
-    // for (var i = 0; i <= intervals; i++) {
-    //     if (i === 0) {
-    //         continue; // don't render a gridline on 0
-    //     }
-    //
-    //     if ((i * subDivisions) % pixelsPerUnit === 0) {
-    //         if (((i * subDivisions) / pixelsPerUnit) % labelRender === 0) {
-    //             result.divisions.push(i * subDivisions);
+    // for (var line = 0; line <= lineQty; line++) {
+    //     if (line % ruler.unitDivisions === 0) {
+    //         if (i === labelRender) {
+    //             result.divisions.push(line * lineSpacing);
+    //             i = 0;
     //         }
+    //         i++;
     //     } else {
-    //         result.subDivisions.push(i * subDivisions);
+    //         result.subDivisions.push(line * lineSpacing);
     //     }
     // }
-    return result;
+    //
+    // return result;
 }
 
 export function toggleGridSnapping(stateCopy) {

@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import GridLayer from './GridLayer';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { canvasWidth, canvasHeight, gridLines, gridPreferences } = drawingState;
+    const { canvasWidthInPixels, canvasHeightInPixels, gridLines, gridPreferences } = drawingState;
     return {
-        canvasWidth: canvasWidth,
-        canvasHeight: canvasHeight,
+        canvasWidthInPixels: canvasWidthInPixels,
+        canvasHeightInPixels: canvasHeightInPixels,
         lines: gridLines,
         showGrid: gridPreferences.showGrid,
         showSubDivisions: gridPreferences.showSubDivisions

@@ -18,7 +18,6 @@ export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
-export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
@@ -109,10 +108,6 @@ export function flipHorizontal() {
 
 export function flipVertical() {
     return { type: FLIP_VERTICAL };
-}
-
-export function setGrid() {
-    return { type: SET_GRID };
 }
 
 export function toggleGridSnapping() {

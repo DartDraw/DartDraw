@@ -5,11 +5,11 @@ class epsRectangle {
 		this.produceEps = this.produceEps.bind(this);
 	}
 
-	produceEps(canvasHeight) {
+	produceEps(canvasHeightInPixels) {
 		var x1 = this.rectangle.x;
-		var y1 = canvasHeight - this.rectangle.y;
+		var y1 = canvasHeightInPixels - this.rectangle.y;
 		var x2 = this.rectangle.x + this.rectangle.width;
-		var y2 = canvasHeight - (this.rectangle.y + this.rectangle.height);
+		var y2 = canvasHeightInPixels - (this.rectangle.y + this.rectangle.height);
 
 		var str = this.rectangle.fill;
 		var rawRGB = str.substring(5, str.length-1);

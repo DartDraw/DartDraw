@@ -1,5 +1,4 @@
-import { updateRulers } from './rulers';
-import { updateGrid } from './grid';
+import { updateGridRulers } from './rulers';
 
 const minZoom = 0.125;
 const maxZoom = 16;
@@ -10,9 +9,7 @@ export function zoomIn(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    // stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateGridRulers(stateCopy.ruler, stateCopy.gridPreferences, newScale, panX, panY, stateCopy.canvasWidthInPixels, stateCopy.canvasHeightInPixels);
     stateCopy.ruler = r;
     stateCopy.gridLines = g;
     stateCopy.panX = panX;
@@ -28,9 +25,7 @@ export function zoomOut(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    // stateCopy.ruler = updateRulers(stateCopy.ruler, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, newScale, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, newScale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateGridRulers(stateCopy.ruler, stateCopy.gridPreferences, newScale, panX, panY, stateCopy.canvasWidthInPixels, stateCopy.canvasHeightInPixels);
     stateCopy.ruler = r;
     stateCopy.gridLines = g;
     stateCopy.panX = panX;
@@ -47,9 +42,7 @@ export function zoomToCustom(stateCopy, action) {
 
     const { panX, panY } = setPan(stateCopy, scale);
 
-    // stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, stateCopy.canvasWidth, stateCopy.canvasHeight);
-    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateGridRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidthInPixels, stateCopy.canvasHeightInPixels);
     stateCopy.ruler = r;
     stateCopy.gridLines = g;
     stateCopy.panX = panX;
@@ -60,7 +53,7 @@ export function zoomToCustom(stateCopy, action) {
 }
 
 export function zoomToMarqueeBox(stateCopy) {
-    const { marqueeBox, canvasWidth, canvasHeight } = stateCopy;
+    const { marqueeBox, canvasWidthInPixels, canvasHeightInPixels } = stateCopy;
     // The value 45 is the width menus.
     // Needs to change if menu changes.
     const windowWidth = window.innerWidth - 45;
@@ -73,14 +66,12 @@ export function zoomToMarqueeBox(stateCopy) {
     let panX, panY;
 
     panX = marqueeBox.x + (marqueeBox.width / 2) - (windowWidth / 2 / scale);
-    panX = clamp(panX, 0, canvasWidth - windowWidth / scale);
+    panX = clamp(panX, 0, canvasWidthInPixels - windowWidth / scale);
 
     panY = marqueeBox.y + (marqueeBox.height / 2) - (windowHeight / 2 / scale);
-    panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
+    panY = clamp(panY, 0, canvasHeightInPixels - windowHeight / scale);
 
-    // stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    // stateCopy.gridLines = updateGrid(stateCopy.ruler, stateCopy.gridPreferences, scale, canvasWidth, canvasHeight);
-    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateGridRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidthInPixels, stateCopy.canvasHeightInPixels);
     return {
         ruler: r,
         gridLines: g,
@@ -91,19 +82,18 @@ export function zoomToMarqueeBox(stateCopy) {
 }
 
 export function pan(stateCopy, draggableData) {
-    const { canvasWidth, canvasHeight, scale } = stateCopy;
+    const { canvasWidthInPixels, canvasHeightInPixels, scale } = stateCopy;
     const { deltaX, deltaY } = draggableData;
 
     // The value 45 is the width menus.
     // Needs to change if menu changes.
     var panX = stateCopy.panX - deltaX / scale;
-    panX = clamp(panX, 0, canvasWidth - (window.innerWidth - 45) / scale);
+    panX = clamp(panX, 0, canvasWidthInPixels - (window.innerWidth - 45) / scale);
 
     var panY = stateCopy.panY - deltaY / scale;
-    panY = clamp(panY, 0, canvasHeight - (window.innerHeight - 45) / scale);
+    panY = clamp(panY, 0, canvasHeightInPixels - (window.innerHeight - 45) / scale);
 
-    // stateCopy.ruler = updateRulers(stateCopy.ruler, scale, panX, panY, canvasWidth, canvasHeight);
-    const { r, g } = updateRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidth, stateCopy.canvasHeight);
+    const { r, g } = updateGridRulers(stateCopy.ruler, stateCopy.gridPreferences, scale, panX, panY, stateCopy.canvasWidthInPixels, stateCopy.canvasHeightInPixels);
     return {
         ruler: r,
         gridLines: g,
@@ -113,7 +103,7 @@ export function pan(stateCopy, draggableData) {
 }
 
 function setPan(stateCopy, newScale) {
-    var { canvasWidth, canvasHeight, panX, panY, scale } = stateCopy;
+    var { canvasWidthInPixels, canvasHeightInPixels, panX, panY, scale } = stateCopy;
 
     // The value 45 is the width menus.
     // Needs to change if menu changes.
@@ -121,20 +111,20 @@ function setPan(stateCopy, newScale) {
     const windowHeight = window.innerHeight - 45;
 
     // set panX
-    if ((windowWidth / scale) < canvasWidth) {
+    if ((windowWidth / scale) < canvasWidthInPixels) {
         panX = panX + (windowWidth / 2 / scale) - (windowWidth / 2 / newScale);
-    } else if ((windowWidth / newScale) < canvasWidth) {
-        panX = panX + (canvasWidth / 2) - (windowWidth / 2 / newScale);
+    } else if ((windowWidth / newScale) < canvasWidthInPixels) {
+        panX = panX + (canvasWidthInPixels / 2) - (windowWidth / 2 / newScale);
     }
-    panX = clamp(panX, 0, canvasWidth - windowWidth / newScale);
+    panX = clamp(panX, 0, canvasWidthInPixels - windowWidth / newScale);
 
     // set panY
-    if ((windowHeight / scale) < canvasHeight) {
+    if ((windowHeight / scale) < canvasHeightInPixels) {
         panY = panY + (windowHeight / 2 / scale) - (windowHeight / 2 / newScale);
-    } else if ((windowHeight / newScale) < canvasHeight) {
-        panY = panY + (canvasHeight / 2) - (windowHeight / 2 / newScale);
+    } else if ((windowHeight / newScale) < canvasHeightInPixels) {
+        panY = panY + (canvasHeightInPixels / 2) - (windowHeight / 2 / newScale);
     }
-    panY = clamp(panY, 0, canvasHeight - windowHeight / newScale);
+    panY = clamp(panY, 0, canvasHeightInPixels - windowHeight / newScale);
 
     return { panX, panY };
 }
