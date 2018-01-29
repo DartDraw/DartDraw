@@ -120,7 +120,16 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
         stroke: formatColor(fill),
         strokeWidth: 10,
         strokeDasharray: '1, 0',
-        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        arrowhead: {},
+        arrowId: uuidv1(),
+        arrowLength: 30,
+        arrowShown: 'yes'
+    };
+
+    const arrow = {
+        id: line.arrowId,
+        shapeId: line.id
     };
 
     if (gridSnapping) {
@@ -130,6 +139,10 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
 
     shapes.byId[line.id] = line;
     shapes.allIds.push(line.id);
+
+    shapes.byArrowId[arrow.id] = line;
+    shapes.allArrows.push(arrow.id);
+
     return shapes;
 }
 
@@ -459,6 +472,16 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
+
+        if (shape.type === 'line') {
+            for (let i = 0; i < shape.points.length; i += 2) {
+                let coords = transformPoint(shape.points[i], shape.points[i + 1], shape.transform[0].parameters);
+                shape.points[i] = coords.x;
+                shape.points[i + 1] = coords.y;
+            }
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
@@ -602,7 +625,9 @@ export function groupShapes(selected, shapes) {
     let group = {
         id: uuidv1(),
         type: "group",
-        members: []
+        members: [],
+        xSign: 1,
+        ySign: 1
     };
     shapes.allIds.map((id) => {
         if (selected.indexOf(id) > -1) {
@@ -642,7 +667,34 @@ export function ungroupShapes(selected, shapes) {
 
 function applyTransformation(shape, group) {
     shape.transform[0].parameters = multiplyMatrices(group.transform[0].parameters, shape.transform[0].parameters);
+
+    if (shape.type === 'line') {
+        for (let i = 0; i < shape.points.length; i += 2) {
+            let coords = transformPoint(shape.points[i], shape.points[i + 1], shape.transform[0].parameters);
+            shape.points[i] = coords.x;
+            shape.points[i + 1] = coords.y;
+        }
+        shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+    }
+
     return shape;
+}
+
+export function applyGroupTransformations(group, shapes) {
+    let members = [];
+
+    group.members.map((memberId) => {
+        if (shapes.byId[memberId].type === 'group') {
+            shapes.byId[memberId] = applyTransformation(shapes.byId[memberId], group);
+            shapes.byId[memberId].members = applyGroupTransformations(shapes.byId[memberId], shapes);
+            shapes.byId[memberId].transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        } else {
+            shapes.byId[memberId] = applyTransformation(shapes.byId[memberId], group);
+        }
+        members.push(memberId);
+    });
+
+    return members;
 }
 
 export function removeTransformation(shapes, selected) {
@@ -753,9 +805,12 @@ export function deleteShapes(shapes, selected) {
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
     panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftDirection, centeredControl) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
+    if (shapes.byId[shapeId].type === "group") {
+        handleIndex = determineGroupHandleIndex(handleIndex, shapes.byId[shapeId]);
+    }
 
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
-    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, draggableData, handleIndex,
+    let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, selectionBoxes, draggableData, handleIndex,
         panX, panY, scale, gridSnapping, minorGrid, shiftDirection);
     let scaledDeltaX = scaleXY.x;
     let scaledDeltaY = scaleXY.y;
@@ -769,6 +824,13 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
         let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
         let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+        if (shape.type === 'line' && shape.arrowShown === 'yes') {
+            coords0 = {x: selectionBoxes[id].handles[0].x, y: selectionBoxes[id].handles[0].y};
+            coords1 = {x: selectionBoxes[id].handles[1].x, y: selectionBoxes[id].handles[1].y};
+            coords2 = {x: selectionBoxes[id].handles[2].x, y: selectionBoxes[id].handles[2].y};
+            coords3 = {x: selectionBoxes[id].handles[3].x, y: selectionBoxes[id].handles[3].y};
+        }
 
         let newWidth = 0;
         let newHeight = 0;
@@ -915,8 +977,8 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let decomposed = decomposeMatrix(shapeMatrix);
 
-        if (sx === 0) sx = 0.000001;
-        if (sy === 0) sy = 0.000001;
+        if (sx === 0) sx = -0.000001;
+        if (sy === 0) sy = -0.000001;
 
         if (centeredControl) {
             let center = getCenter(boundingBox, shapeMatrix);
@@ -937,7 +999,65 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
         }
+
+        if (shape.type === 'line') {
+            for (let i = 0; i < shape.points.length; i += 2) {
+                let coords = transformPoint(shape.points[i], shape.points[i + 1], shape.transform[0].parameters);
+                shape.points[i] = coords.x;
+                shape.points[i + 1] = coords.y;
+            }
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
+        if (shape.type === 'group') {
+            if (sx < 0) { shape.xSign *= -1; }
+            if (sy < 0) { shape.ySign *= -1; }
+            shape.members = applyGroupTransformations(shape, shapes);
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
+    });
+
+    return shapes;
+}
+
+function determineGroupHandleIndex(handleIndex, shape) {
+    switch (handleIndex) {
+        case 0:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 2; }
+            if (shape.xSign < 0) { return 3; }
+            if (shape.ySign < 0) { return 1; }
+            return 0;
+        case 1:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 3; }
+            if (shape.xSign < 0) { return 2; }
+            if (shape.ySign < 0) { return 0; }
+            return 1;
+        case 2:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 0; }
+            if (shape.xSign < 0) { return 1; }
+            if (shape.ySign < 0) { return 3; }
+            return 2;
+        case 3:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 1; }
+            if (shape.xSign < 0) { return 0; }
+            if (shape.ySign < 0) { return 2; }
+            return 3;
+        default:
+            break;
+    }
+}
+
+export function resetShapeSigns(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        shape.xSign = 1;
+        shape.ySign = 1;
+        if (shape.type === 'group') {
+            shape.members = applyGroupTransformations(shape, shapes);
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
     });
 
     return shapes;
@@ -971,7 +1091,7 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
     return handleIndex;
 }
 
-function determineScale(shape, boundingBoxes, draggableData, handleIndex,
+function determineScale(shape, boundingBoxes, selectionBoxes, draggableData, handleIndex,
     panX, panY, scale, gridSnapping, minorGrid, shiftDirection) {
     let scaleXY = {};
 
@@ -994,6 +1114,13 @@ function determineScale(shape, boundingBoxes, draggableData, handleIndex,
     let coords1 = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
+
+    if (shape.type === 'line' && shape.arrowShown === 'yes') {
+        coords0 = {x: selectionBoxes[shape.id].handles[0].x, y: selectionBoxes[shape.id].handles[0].y};
+        coords1 = {x: selectionBoxes[shape.id].handles[1].x, y: selectionBoxes[shape.id].handles[1].y};
+        coords2 = {x: selectionBoxes[shape.id].handles[2].x, y: selectionBoxes[shape.id].handles[2].y};
+        coords3 = {x: selectionBoxes[shape.id].handles[3].x, y: selectionBoxes[shape.id].handles[3].y};
+    }
 
     if (gridSnapping) {
         mouseX = Math.round(mouseX / minorGrid) * minorGrid;
@@ -1069,6 +1196,10 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
 
 export function rotateShape(shapes, boundingBoxes, selected, draggableData,
     handleIndex, scale, shapeId, selectionBoxes, centeredControl) {
+    if (shapes.byId[shapeId].type === "group") {
+        handleIndex = determineGroupHandleIndex(handleIndex, shapes.byId[shapeId]);
+    }
+
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let degree = determineDegree(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes);
 
@@ -1113,6 +1244,16 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData,
         }
 
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree, cx, cy);
+
+        if (shape.type === 'line') {
+            for (let i = 0; i < shape.points.length; i += 2) {
+                let coords = transformPoint(shape.points[i], shape.points[i + 1], shape.transform[0].parameters);
+                shape.points[i] = coords.x;
+                shape.points[i + 1] = coords.y;
+            }
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;

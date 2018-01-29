@@ -37,6 +37,10 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         return formatShape(shapes.byId[id], shapes, scale);
     });
 
+    const arrowsArray = shapes.allArrows.map((id) => {
+        return formatShape(shapes.byId[shapes.byArrowId[id].id], shapes, scale);
+    });
+
     const propagateEventTools = [
         'rectangleTool',
         'ellipseTool',
@@ -51,6 +55,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         shapes: shapesArray,
+        arrows: arrowsArray,
         selected,
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,

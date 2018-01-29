@@ -53,12 +53,27 @@ class Group extends Component {
         return (
             <g id={id} transform={formatTransform(transform)}>
                 {React.Children.map(children, (child) => {
+                    if (child.props.className === 'line') {
+                        child = child.props.children[0];
+                    }
                     return React.cloneElement(child, {
                         onDragStart: this.handleDragStart,
                         onDrag: this.handleDrag,
                         onDragStop: this.handleDragStop,
                         onClick: this.handleClick
                     });
+                })}
+
+                // transparent lines
+                {React.Children.map(children, (child) => {
+                    if (child && child.props.className === 'line') {
+                        return React.cloneElement(child.props.children[1], {
+                            onDragStart: this.handleDragStart,
+                            onDrag: this.handleDrag,
+                            onDragStop: this.handleDragStop,
+                            onClick: this.handleClick
+                        });
+                    }
                 })}
             </g>
         );

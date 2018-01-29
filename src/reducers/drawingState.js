@@ -10,7 +10,9 @@ import { deepCopy } from './utilities/object';
 const initialState = {
     shapes: {
         byId: {},
-        allIds: []
+        allIds: [],
+        byArrowId: {},
+        allArrows: []
     },
     selected: [],
     boundingBoxes: {},
@@ -135,6 +137,7 @@ function drawingState(state = initialState, action, root) {
             return menu.exportClick(stateCopy);
         case menuActions.EDIT_SHAPE:
             updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
+            console.log(action.payload.shape);
             break;
         default: break;
     }
