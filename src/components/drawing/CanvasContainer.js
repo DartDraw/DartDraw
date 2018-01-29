@@ -38,7 +38,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     });
 
     const arrowsArray = shapes.allArrows.map((id) => {
-        return formatShape(shapes.byArrowId[id], shapes, scale);
+        return formatShape(shapes.byId[shapes.byArrowId[id].id], shapes, scale);
     });
 
     const propagateEventTools = [

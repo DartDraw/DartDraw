@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Path } from '.';
-
-import { formatPath } from '../../../utilities/shapes';
 
 class Arrowhead extends Component {
     static propTypes = {
@@ -17,10 +14,6 @@ class Arrowhead extends Component {
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
         fill: PropTypes.string,
-        transform: PropTypes.arrayOf(PropTypes.shape({
-            command: PropTypes.string,
-            parameters: PropTypes.arrayOf(PropTypes.number)
-        })),
         propagateEvents: PropTypes.bool
     }
 
@@ -38,36 +31,27 @@ class Arrowhead extends Component {
     }
 
     handleDragStart(id, draggableData) {
-        console.log(this.props);
         const { onDragStart } = this.props;
         onDragStart && onDragStart(this.props.id, draggableData);
     }
 
     handleDrag(id, draggableData) {
-        console.log(this.props);
         const { onDrag } = this.props;
         onDrag && onDrag(this.props.id, draggableData);
     }
 
     handleDragStop(id, draggableData) {
-        console.log(this.props);
         const { onDragStop } = this.props;
         onDragStop && onDragStop(this.props.id, draggableData);
     }
 
     handleClick(id, event) {
-        console.log(this.props);
         const { onClick } = this.props;
         onClick && onClick(this.props.id, event);
     }
 
     render() {
-        const { id, arrowId, points, stroke, strokeDasharray, propagateEvents } = this.props;
-
-        const svgProps = {
-            fill: stroke || 'none',
-            vectorEffect: "non-scaling-stroke"
-        };
+        const { arrowId, stroke, strokeDasharray } = this.props;
 
         return (
             <marker id={arrowId} key={arrowId + "_marker"} orient="auto" markerWidth="50" markerHeight="50"
@@ -76,7 +60,7 @@ class Arrowhead extends Component {
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
                 onClick={() => console.log("hi")}>
-                <polygon points="-2,0 -5,5 5,0 -5,-5" fill={stroke} strokeDasharray={strokeDasharray} vector-effect="non-scaling-stroke" />
+                <polygon points="-2,0 -5,5 5,0 -5,-5" fill={stroke} strokeDasharray={strokeDasharray} vectorEffect="non-scaling-stroke" />
             </marker>
         );
     }

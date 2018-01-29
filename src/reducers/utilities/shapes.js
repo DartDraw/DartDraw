@@ -625,7 +625,9 @@ export function groupShapes(selected, shapes) {
     let group = {
         id: uuidv1(),
         type: "group",
-        members: []
+        members: [],
+        xSign: 1,
+        ySign: 1
     };
     shapes.allIds.map((id) => {
         if (selected.indexOf(id) > -1) {
@@ -676,6 +678,23 @@ function applyTransformation(shape, group) {
     }
 
     return shape;
+}
+
+export function applyGroupTransformations(group, shapes) {
+    let members = [];
+
+    group.members.map((memberId) => {
+        if (shapes.byId[memberId].type === 'group') {
+            shapes.byId[memberId] = applyTransformation(shapes.byId[memberId], group);
+            shapes.byId[memberId].members = applyGroupTransformations(shapes.byId[memberId], shapes);
+            shapes.byId[memberId].transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        } else {
+            shapes.byId[memberId] = applyTransformation(shapes.byId[memberId], group);
+        }
+        members.push(memberId);
+    });
+
+    return members;
 }
 
 export function removeTransformation(shapes, selected) {
@@ -786,6 +805,9 @@ export function deleteShapes(shapes, selected) {
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,
     panX, panY, scale, shapeId, selectionBoxes, gridSnapping, minorGrid, shiftDirection, centeredControl) {
     if (typeof (shapes.byId[shapeId]) === "undefined") { shapeId = selected[0]; }
+    if (shapes.byId[shapeId].type === "group") {
+        handleIndex = determineGroupHandleIndex(handleIndex, shapes.byId[shapeId]);
+    }
 
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let scaleXY = determineScale(shapes.byId[shapeId], boundingBoxes, selectionBoxes, draggableData, handleIndex,
@@ -987,7 +1009,55 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
 
+        if (shape.type === 'group') {
+            if (sx < 0) { shape.xSign *= -1; }
+            if (sy < 0) { shape.ySign *= -1; }
+            shape.members = applyGroupTransformations(shape, shapes);
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
+
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
+    });
+
+    return shapes;
+}
+
+function determineGroupHandleIndex(handleIndex, shape) {
+    switch (handleIndex) {
+        case 0:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 2; }
+            if (shape.xSign < 0) { return 3; }
+            if (shape.ySign < 0) { return 1; }
+            return 0;
+        case 1:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 3; }
+            if (shape.xSign < 0) { return 2; }
+            if (shape.ySign < 0) { return 0; }
+            return 1;
+        case 2:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 0; }
+            if (shape.xSign < 0) { return 1; }
+            if (shape.ySign < 0) { return 3; }
+            return 2;
+        case 3:
+            if (shape.xSign < 0 && shape.ySign < 0) { return 1; }
+            if (shape.xSign < 0) { return 0; }
+            if (shape.ySign < 0) { return 2; }
+            return 3;
+        default:
+            break;
+    }
+}
+
+export function resetShapeSigns(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        shape.xSign = 1;
+        shape.ySign = 1;
+        if (shape.type === 'group') {
+            shape.members = applyGroupTransformations(shape, shapes);
+            shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+        }
     });
 
     return shapes;
@@ -1126,6 +1196,10 @@ function resizeTransform(transform1, sx, sy, cx, cy) {
 
 export function rotateShape(shapes, boundingBoxes, selected, draggableData,
     handleIndex, scale, shapeId, selectionBoxes, centeredControl) {
+    if (shapes.byId[shapeId].type === "group") {
+        handleIndex = determineGroupHandleIndex(handleIndex, shapes.byId[shapeId]);
+    }
+
     let handleCorner = determineHandleCorner(handleIndex, selectionBoxes, shapeId);
     let degree = determineDegree(shapes, boundingBoxes, selected, draggableData, handleIndex, scale, shapeId, selectionBoxes);
 
