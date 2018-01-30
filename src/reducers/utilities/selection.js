@@ -75,39 +75,6 @@ function pointInBox(box, p) {
     return 0;
 }
 
-export function updateTextInputs(selected, shapes, textInputs) {
-    Object.keys(textInputs).map((id) => {
-        const textInput = textInputs[id];
-        const shape = shapes.byId[textInput.shapeId];
-        if (shape) {
-            textInput.x = shape.x;
-            textInput.y = shape.y;
-            textInput.value = shape.text;
-            textInput.visible = (selected.indexOf(shape.id) > -1);
-        } else {
-            delete textInputs[id];
-        }
-    });
-    selected.map((id) => {
-        const shape = shapes.byId[id];
-        if (shape.type === 'text') {
-            const textInput = textInputs[id];
-            if (!textInput) {
-                textInputs[id] = {
-                    id: uuidv1(),
-                    shapeId: id,
-                    x: shape.x,
-                    y: shape.y,
-                    value: shape.text,
-                    visible: true
-                };
-            }
-        }
-    });
-
-    return textInputs;
-}
-
 export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingBoxes, mode) {
     const updatedSelectionBoxes = {};
     selected.map((id) => {

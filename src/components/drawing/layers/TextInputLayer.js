@@ -1,68 +1,70 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { TextInput } from '../shapes';
 
 class TextInputLayer extends Component {
     static propTypes = {
-        textInputs: PropTypes.shape({
-            id: PropTypes.shape({
-                id: PropTypes.string,
-                shapeId: PropTypes.string,
-                value: PropTypes.number,
-                x: PropTypes.number,
-                y: PropTypes.number
-            })
-        }),
-        onHandleTextInputChange: PropTypes.func,
-        onFocus: PropTypes.func,
-        onBlur: PropTypes.func
+        textObjects: PropTypes.array,
+        canvasWidth: PropTypes.number,
+        canvasHeight: PropTypes.number,
+        onShapeDragStart: PropTypes.func,
+        onShapeDrag: PropTypes.func,
+        onShapeDragStop: PropTypes.func,
+        onShapeClick: PropTypes.func,
+        onTextInputChange: PropTypes.func
     };
 
     constructor(props) {
         super(props);
 
+        this.handleShapeDragStart = this.handleShapeDragStart.bind(this);
+        this.handleShapeDrag = this.handleShapeDrag.bind(this);
+        this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
+        this.handleShapeClick = this.handleShapeClick.bind(this);
         this.handleTextInputChange = this.handleTextInputChange.bind(this);
-        this.handleFocus = this.handleFocus.bind(this);
-        this.handleBlur = this.handleBlur.bind(this);
     }
 
-    handleTextInputChange(event) {
-        const { onHandleTextInputChange } = this.props;
-        onHandleTextInputChange(event.target.id, event.target.value);
+    handleShapeDragStart(shapeId, draggableData) {
+        this.props.onShapeDragStart(shapeId, draggableData);
     }
 
-    handleFocus() {
-        const { onFocus } = this.props;
-        onFocus();
+    handleShapeDrag(shapeId, draggableData) {
+        this.props.onShapeDrag(shapeId, draggableData);
     }
 
-    handleBlur() {
-        const { onBlur } = this.props;
-        onBlur();
+    handleShapeDragStop(shapeId, draggableData) {
+        this.props.onShapeDragStop(shapeId, draggableData);
     }
 
-    renderInputs() {
-        const { textInputs } = this.props;
+    handleShapeClick(shapeId, event) {
+        this.props.onShapeClick(shapeId, event);
+    }
 
-        return Object.keys(textInputs).map(textInputId => {
-            const textInput = textInputs[textInputId];
-
-            return textInput.visible ? (
-                <input
-                    key={textInput.id}
-                    id={textInput.shapeId}
-                    type="text"
-                    value={textInput.value}
-                    onChange={this.handleTextInputChange}
-                    onFocus={this.handleFocus}
-                    onBlur={this.handleBlur}
-                    style={{position: 'absolute', top: textInput.y, left: textInput.x, pointerEvents: 'all'}}
-                />
-            ) : null;
-        });
+    handleTextInputChange(id, value, focused) {
+        const { onTextInputChange } = this.props;
+        onTextInputChange && onTextInputChange(id, value, focused);
     }
 
     render() {
-        return <div style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, pointerEvents: 'none'}}>{this.renderInputs()}</div>;
+        const { textObjects, canvasWidth, canvasHeight } = this.props;
+
+        const textInputs = textObjects.map(text => {
+            return (
+                <TextInput
+                    key={text.id}
+                    {...text}
+                    onClick={this.handleShapeClick}
+                    onDragStart={this.handleShapeDragStart}
+                    onDrag={this.handleShapeDrag}
+                    onDragStop={this.handleShapeDragStop}
+                    onChange={this.handleTextInputChange} />
+            );
+        });
+        return (
+            <div style={{ position: 'absolute', width: canvasWidth, height: canvasHeight, pointerEvents: 'none' }}>
+                {textInputs}
+            </div>
+        );
     }
 }
 
