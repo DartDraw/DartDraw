@@ -25,9 +25,9 @@ const initialState = {
     textInputFocused: false,
     canvasHeightInUnits: 8.5,
     canvasWidthInUnits: 11,
-    canvasHeightInPixels: 8.5 * 72,
-    canvasWidthInPixels: 11 * 72,
-    pixelsPerUnit: 72,
+    canvasHeightInPixels: 8.5 * 96,
+    canvasWidthInPixels: 11 * 96,
+    pixelsPerUnit: 96,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -53,7 +53,7 @@ const initialState = {
     ruler: {
         unitType: 'in',
         unitDivisions: 2,
-        pixelWidth: 30,
+        rulerWidth: 30,
         trackers: {
             x: 0,
             y: 0

@@ -41,11 +41,6 @@ class ContextualMenu extends Component {
             hidden: false
         };
 
-        this.tempScale = this.props.scale;
-        this.tempUnitDivisions = this.props.unitDivisions;
-        this.tempCanvasWidth = this.props.canvasWidthInUnits;
-        this.tempCanvasHeight = this.props.canvasHeightInUnits;
-
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
@@ -70,6 +65,13 @@ class ContextualMenu extends Component {
         this.handleChangeUnitDivisions = this.handleChangeUnitDivisions.bind(this);
         this.handleSetCanvasSize = this.handleSetCanvasSize.bind(this);
         this.handleChangeCanvasSize = this.handleChangeCanvasSize.bind(this);
+    }
+
+    componentDidUpdate() {
+        this.tempScale = this.props.scale;
+        this.tempUnitDivisions = this.props.unitDivisions;
+        this.tempCanvasWidth = this.props.canvasWidthInUnits;
+        this.tempCanvasHeight = this.props.canvasHeightInUnits;
     }
 
     toggleMenu() {
@@ -191,9 +193,7 @@ class ContextualMenu extends Component {
             default:
                 break;
         }
-        if (this.tempUnitDivisions === "") {
-            // do nothing
-        } else {
+        if (this.tempUnitDivisions !== "") {
             var input = parseInt(this.tempUnitDivisions);
             input = Math.max(minDivisions, Math.min(input, maxDivisions));
             this.tempUnitDivisions = input;
@@ -208,7 +208,9 @@ class ContextualMenu extends Component {
     }
 
     handleSetCanvasSize(event) {
-        this.props.onSetCanvasSize(this.tempCanvasWidth, this.tempCanvasHeight);
+        if (this.tempCanvasWidth !== "" || this.tempCanvasHeight !== "") {
+            this.props.onSetCanvasSize(parseInt(this.tempCanvasWidth), parseInt(this.tempCanvasHeight));
+        }
         event.preventDefault();
     }
 
