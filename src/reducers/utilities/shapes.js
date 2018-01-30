@@ -1092,13 +1092,8 @@ function determineHandle(handleCorner, selectionBoxes, shapeId, handleIndex) {
     return handleIndex;
 }
 
-<<<<<<< HEAD
-function determineScale(shape, boundingBoxes, draggableData, handleIndex,
-    panX, panY, scale, gridSnapping, snapTo, shiftDirection) {
-=======
 function determineScale(shape, boundingBoxes, selectionBoxes, draggableData, handleIndex,
-    panX, panY, scale, gridSnapping, minorGrid, shiftDirection) {
->>>>>>> eab8a927d6ba9e1a1eccf737c8a8732ae4b9d298
+    panX, panY, scale, gridSnapping, snapTo, shiftDirection) {
     let scaleXY = {};
 
     const { x, y, node } = draggableData;
