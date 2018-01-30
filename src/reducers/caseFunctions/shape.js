@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -19,13 +19,13 @@ export function click(stateCopy, action, root) {
                     selectMultiple = true;
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
-                console.log(stateCopy.shapes.byId[stateCopy.selected[0]].info);
                 if (!stateCopy.justDuplicated) {
                     stateCopy.duplicateOffset.x = stateCopy.gridLines.snapTo;
                     stateCopy.duplicateOffset.y = stateCopy.gridLines.snapTo;
                 }
             }
             stateCopy.editInProgress = false;
+            stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
             stateCopy.mode = "reshape";
@@ -94,6 +94,7 @@ export function dragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "selectTool":
             stateCopy.shapes = endMoveShape(stateCopy.shapes, stateCopy.selected);
+            stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
             break;
@@ -164,6 +165,10 @@ export function handleDrag(stateCopy, action, root) {
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case 'polygonTool':
+            break;
+        case 'selectTool':
+        case 'rotateTool':
+            stateCopy.shapes = resetShapeSigns(stateCopy.shapes, stateCopy.selected);
             break;
         default:
             stateCopy.editInProgress = false;

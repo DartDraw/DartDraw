@@ -12,7 +12,9 @@ import { deepCopy } from './utilities/object';
 const initialState = {
     shapes: {
         byId: {},
-        allIds: []
+        allIds: [],
+        byArrowId: {},
+        allArrows: []
     },
     selected: [],
     boundingBoxes: {},
