@@ -19,16 +19,35 @@ class epsRectangle {
 		var x3 = coords[3].x;
 		var y3 = canvasHeightInPixels - coords[3].y;
 
-		var str = this.rectangle.fill;
-		var rawRGB = str.substring(5, str.length-1);
-		var array = rawRGB.split(',');
+		var fillStr = this.rectangle.fill;
+		var fillRawRGB = fillStr.substring(5, fillStr.length-1);
+		var fillArray = fillRawRGB.split(',');
 
-		var r = parseInt(array[0], 10)/255;
-		var g = parseInt(array[1], 10)/255;
-		var b = parseInt(array[2], 10)/255;
+		var fillR = parseInt(fillArray[0], 10)/255;
+		var fillG = parseInt(fillArray[1], 10)/255;
+		var fillB = parseInt(fillArray[2], 10)/255;
+
+		var strokeStr = this.rectangle.stroke;
+		var strokeRawRGB = strokeStr.substring(5, strokeStr.length-1);
+		var strokeArray = strokeRawRGB.split(',');
+
+		var strokeR = parseInt(strokeArray[0], 10)/255;
+		var strokeG = parseInt(strokeArray[1], 10)/255;
+		var strokeB = parseInt(strokeArray[2], 10)/255;
+
+		var strokeWidth = this.rectangle.strokeWidth;
 
 		var drawingInfo = 
-`${r} ${g} ${b} setrgbcolor
+`newpath
+${x0} ${y0} moveto
+${x1} ${y1} lineto
+${x2} ${y2} lineto
+${x3} ${y3} lineto
+${x0} ${y0} lineto
+closepath
+${strokeR} ${strokeG} ${strokeB} setrgbcolor
+1 setlinewidth
+stroke
 newpath
 ${x0} ${y0} moveto
 ${x1} ${y1} lineto
@@ -36,8 +55,8 @@ ${x2} ${y2} lineto
 ${x3} ${y3} lineto
 ${x0} ${y0} lineto
 closepath
+${fillR} ${fillG} ${fillB} setrgbcolor
 fill
-
 `;
 
 		return drawingInfo;

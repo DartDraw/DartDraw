@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class IpcMiddleware extends Component {
     static propTypes = {
         onFileSave: PropTypes.func,
-        // onFileOpen: PropTypes.func
+        onFileOpen: PropTypes.func,
         onCanvasColorChange: PropTypes.func
     };
 
@@ -23,9 +23,9 @@ class IpcMiddleware extends Component {
             this.handleFileSave(event);
         });
 
-        // ipcRenderer.on('file-open', (event, data) => {
-        //     this.handleFileOpen(data);
-        // });
+        ipcRenderer.on('file-open', (event, data) => {
+            this.handleFileOpen(data);
+        });
 
         ipcRenderer.on('canvasColorChange', (event, color) => {
             this.handleCanvasColorChange(color);
@@ -37,8 +37,7 @@ class IpcMiddleware extends Component {
     }
 
     handleFileOpen(data) {
-        // this.props.onFileOpen();
-        return;
+        this.props.onFileOpen(data);
     }
 
     handleCanvasColorChange(color) {

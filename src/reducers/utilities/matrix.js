@@ -7,8 +7,6 @@ export function multiplyMatrices(m1, m2) {
     m1 = Matrix.from(...m1);
     m2 = Matrix.from(...m2);
     var m3 = m1.multiply(m2);
-    console.log(m3.decompose(true));
-    console.log(m3.decompose(false));
     return m3.toArray();
 }
 

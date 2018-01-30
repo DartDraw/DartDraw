@@ -10,6 +10,7 @@ class epsShape {
 		this.produceEps = this.produceEps.bind(this);
 		this.getCoords = this.getCoords.bind(this);
 		this.getParams = this.getParams.bind(this);
+		this.getStrokeWidth = this.getStrokeWidth.bind(this);
 	}
 
 	produceEps(canvasHeight) {
@@ -64,6 +65,27 @@ class epsShape {
 			case "ellipse":
 				var myEllipse = new epsEllipse(this.shape);
 				return myEllipse.getParams();
+			default:
+				return null;
+		}
+	}
+
+	getStrokeWidth() {
+		switch(this.shape.type) {
+			case "rectangle":
+				var myRectangle = new epsRectangle(this.shape);
+				return myRectangle.strokeWidth;
+			case "line":
+				var myLine = new epsLine(this.shape);
+				return myLine.strokeWidth;
+			case "ellipse":
+				var myEllipse = new epsEllipse(this.shape);
+				console.log("return ellipse strokeWidth");
+				console.log(myEllipse.strokeWidth);
+				return myEllipse.strokeWidth;
+			case "polygon":
+				var myPolygon = new epsPolygon(this.shape);
+				return myPolygon.strokeWidth;
 			default:
 				return null;
 		}
