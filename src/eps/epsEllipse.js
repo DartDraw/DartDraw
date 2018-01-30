@@ -12,19 +12,10 @@ class epsEllipse {
 	produceEps(canvasHeight) {
 		var m = JSON.parse(JSON.stringify(this.ellipse.transform[0].parameters));
 		var m2 = multiplyMatrices(m, [1,0,0,1,0,canvasHeight]);
-		// m = this.rotateTransform(m, -90, 0, 0);
-		// m = multiplyMatrices([1,0,0,1,0,canvasHeight - (2 * this.ellipse.cy)], m);
 		var tr = decomposedMatrix(this.ellipse.transform[0].parameters);
-		console.log(tr.rotate);
-		console.log(tr.skew);
 		var cx = this.ellipse.cx;
 		var cy = this.ellipse.cy;
 		var rx = this.ellipse.rx;
-
-		// var m0 = this.rectangle.transform[0].parameters[0];
-		// var m1 = this.rectangle.transform[0].parameters[1];
-		// var m2 = this.rectangle.transform[0].parameters[2];
-		// var m3 = this.rectangle.transform[0].parameters[3];
 
 		var str = this.ellipse.fill;
 		var rawRGB = str.substring(5, str.length-1);

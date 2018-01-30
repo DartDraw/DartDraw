@@ -5,6 +5,7 @@
   "main": "electron.js",
   "dependencies": {
     "electron-window-manager": "^1.0.4",
+    "draft-js": "^0.10.4",
     "eslint": "4.7.1",
     "eslint-config-semistandard": "11.0.0",
     "eslint-config-standard": "10.2.1",

@@ -2,17 +2,15 @@ import epsShape from './epsShape';
 import boundingBox from './boundingBox';
 
 export function generateEps(stateCopy) {
-	console.log("made it to export/exportEps");
 	var drawing = '';
-	var myBoundingBox = new boundingBox(stateCopy.canvasHeight);
+	var myBoundingBox = new boundingBox(stateCopy.canvasHeightInPixels);
 
 	for (var i = 0; i < stateCopy.shapes.allIds.length; i++) {
 		var id = stateCopy.shapes.allIds[i];
-		console.log(id);
 		var shape = stateCopy.shapes.byId[id];
 
 		var myShape = new epsShape(shape);
-		drawing = drawing + myShape.produceEps(stateCopy.canvasHeight);
+		drawing = drawing + myShape.produceEps(stateCopy.canvasHeightInPixels);
 		myBoundingBox.updateBoundsIfNecessary(shape);
 	}
 
@@ -57,8 +55,7 @@ ${drawing}
 		fs.writeFile(filename, epsTemplate, (err) => {
 		    if(err){
 		        alert("An error ocurred creating the file "+ err.message)
-		    }
-		                
+		    }      
 		    alert("The file has been succesfully saved");
 		});
 	});

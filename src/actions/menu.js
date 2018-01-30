@@ -1,5 +1,7 @@
+export const EDIT_SHAPE = 'EDIT_SHAPE';
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
+export const MOUSE_MOVE = 'MOUSE_MOVE';
 export const SELECT_TOOL = 'SELECT_TOOL';
 export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
@@ -8,6 +10,7 @@ export const REDO_CLICK = 'REDO_CLICK';
 export const ZOOM_IN = 'ZOOM_IN';
 export const ZOOM_OUT = 'ZOOM_OUT';
 export const CUSTOM_ZOOM = 'CUSTOM_ZOOM';
+export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
 export const MOVE_BACKWARD = 'MOVE_BACKWARD';
@@ -16,11 +19,19 @@ export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
-export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
 export const FILE_OPEN = 'FILE_OPEN';
 export const FILE_SAVE = 'FILE_SAVE';
+export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
+export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
+export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
+export const SET_RULER_EXPONENT = 'SET_RULER_EXPONENT';
+export const SET_UNIT_TYPE = 'SET_UNIT_TYPE';
+
+export function editShape(shape) {
+    return { type: EDIT_SHAPE, payload: { shape } };
+}
 
 export function keyDown(keyCode) {
     return { type: KEY_DOWN, payload: { keyCode } };
@@ -28,6 +39,10 @@ export function keyDown(keyCode) {
 
 export function keyUp(keyCode) {
     return { type: KEY_UP, payload: { keyCode } };
+}
+
+export function mouseMove(mouseX, mouseY) {
+    return { type: MOUSE_MOVE, payload: { mouseX, mouseY } };
 }
 
 export function selectTool(toolType) {
@@ -66,6 +81,10 @@ export function customZoom(customScale) {
     return { type: CUSTOM_ZOOM, payload: { customScale } };
 }
 
+export function alignmentClick(id) {
+    return { type: ALIGNMENT_CHANGE, payload: { id } };
+}
+
 export function groupButtonClick() {
     return { type: GROUP_BUTTON_CLICK };
 }
@@ -98,10 +117,6 @@ export function flipVertical() {
     return { type: FLIP_VERTICAL };
 }
 
-export function setGrid(unitType, majorGrid, minorGrid) {
-    return { type: SET_GRID, payload: { unitType, majorGrid, minorGrid } };
-}
-
 export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
 }
@@ -112,4 +127,24 @@ export function fileSave(data) {
 
 export function fileOpen() {
     return { type: FILE_OPEN };
+}
+
+export function toggleShowRulers() {
+    return { type: TOGGLE_SHOW_RULER };
+}
+
+export function toggleShowGrid() {
+    return { type: TOGGLE_SHOW_GRID };
+}
+
+export function toggleShowSubDivisions() {
+    return { type: TOGGLE_SHOW_SUBDIVISIONS };
+}
+
+export function setUnitType(unitType) {
+    return { type: SET_UNIT_TYPE, payload: { unitType } };
+}
+
+export function setUnitDivisions(unitDivisions) {
+    return { type: SET_RULER_EXPONENT, payload: { unitDivisions } };
 }

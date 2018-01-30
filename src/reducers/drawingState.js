@@ -6,12 +6,16 @@ import * as file from './caseFunctions/file';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
+import * as rulers from './caseFunctions/rulers';
+import * as grid from './caseFunctions/grid';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
     shapes: {
         byId: {},
-        allIds: []
+        allIds: [],
+        byArrowId: {},
+        allArrows: []
     },
     selected: [],
     boundingBoxes: {},
@@ -20,9 +24,12 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeight: 850,
-    canvasWidth: 1000,
     canvasFill: 'white',
+    canvasHeightInUnits: 8.5,
+    canvasWidthInUnits: 11,
+    canvasHeightInPixels: 8.5 * 96,
+    canvasWidthInPixels: 11 * 96,
+    pixelsPerUnit: 96,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -31,7 +38,37 @@ const initialState = {
     duplicateOffset: {x: 0, y: 0},
     shiftDirection: null,
     past: [],
-    future: []
+    future: [],
+    gridSnapping: false,
+    gridPreferences: {
+        showSubDivisions: true,
+        showGrid: true
+    },
+    gridLines: {
+        divisions: null,
+        subDivisions: null,
+        snapTo: null
+    },
+    rulerPreferences: {
+        showRulers: true
+    },
+    ruler: {
+        unitType: 'in',
+        unitDivisions: 2,
+        rulerWidth: 30,
+        trackers: {
+            x: 0,
+            y: 0
+        },
+        top: {
+            ticks: [],
+            labels: []
+        },
+        left: {
+            ticks: [],
+            labels: []
+        }
+    }
 };
 
 function setBackgroundColor(stateCopy, action) {
@@ -40,29 +77,6 @@ function setBackgroundColor(stateCopy, action) {
     return stateCopy;
 
 }
-
-// function openFile(stateCopy, action) {
-//     var newState = JSON.parse(action.payload.data);
-//     console.log(newState);
-//     var newDrawingState = newState.drawingState;
-//     stateCopy.shapes = newDrawingState.shapes;
-//     stateCopy.selected = newDrawingState.selected;
-//     stateCopy.boundingBoxes = newDrawingState.boundingBoxes;
-//     stateCopy.selectionBoxes = newDrawingState.selectionBoxes;
-//     stateCopy.marqueeBox = newDrawingState.marqueeBox;
-//     stateCopy.lastSavedShapes = newDrawingState.lastSavedShapes;
-//     stateCopy.editInProgress = newDrawingState.editInProgress;
-//     stateCopy.canvasHeight = newDrawingState.canvasHeight;
-//     stateCopy.canvasWidth = newDrawingState.canvasWidth;
-//     stateCopy.canvasFill = newDrawingState.canvasFill;
-//     stateCopy.scale = newDrawingState.scale;
-//     stateCopy.panX = newDrawingState.panX;
-//     stateCopy.panY = newDrawingState.panY;
-//     stateCopy.past = newDrawingState.past;
-//     stateCopy.future = newDrawingState.future;
-
-//     return stateCopy;
-// }
 
 function drawingState(state = initialState, action, root) {
     const stateCopy = deepCopy(state);
@@ -106,15 +120,17 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
             break;
-        case canvasActions.TOGGLE_TEXT_INPUT_FOCUS:
-            updatedState.textInputFocused = action.payload.textInputFocused;
-            break;
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
         case canvasActions.CANVAS_COLOR_CHANGE:
-            console.log(action.payload);
             updatedState = canvas.canvasColorChange(stateCopy, action, root);
+        case canvasActions.SET_GRID_RULERS:
+            updatedState = rulers.setGridRulers(stateCopy, action, root);
+            break;
+        case canvasActions.SET_CANVAS_SIZE:
+            updatedState = rulers.setCanvasSize(stateCopy, action, root);
+            break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -141,6 +157,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.KEY_UP:
             updatedState = shape.keyUp(stateCopy, action, root);
+            break;
+        case menuActions.MOUSE_MOVE:
+            updatedState = rulers.mouseMove(stateCopy, action, root);
             break;
         case menuActions.SELECT_TOOL:
             updatedState = shape.selectTool(stateCopy, action, root);
@@ -169,12 +188,29 @@ function drawingState(state = initialState, action, root) {
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         case menuActions.FILE_SAVE:
-            console.log(stateCopy);
             file.fileSave(root, action);
             return stateCopy;
-        // case menuActions.FILE_OPEN:
-        //     file.fileOpen();
-        //     return stateCopy;
+        case menuActions.FILE_OPEN:
+            file.fileOpen(stateCopy, action);
+            return stateCopy;
+        case menuActions.TOGGLE_GRID_SNAPPING:
+            updatedState = grid.toggleGridSnapping(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_SHOW_GRID:
+            updatedState = grid.toggleShowGrid(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_SHOW_RULER:
+            updatedState = rulers.toggleShowRulers(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_SHOW_SUBDIVISIONS:
+            updatedState = grid.toggleShowSubDivisions(stateCopy, action, root);
+            break;
+        case menuActions.SET_RULER_EXPONENT:
+            updatedState = rulers.setUnitDivisions(stateCopy, action, root);
+            break;
+        case menuActions.SET_UNIT_TYPE:
+            updatedState = rulers.setUnitType(stateCopy, action, root);
+            break;
         default: break;
     }
 
@@ -191,7 +227,6 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
-                console.log(action.type, root.menuState);
             }
         }
     }

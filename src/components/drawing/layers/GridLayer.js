@@ -3,28 +3,80 @@ import PropTypes from 'prop-types';
 
 class GridLayer extends Component {
     static propTypes = {
-        scale: PropTypes.number,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        majorGrid: PropTypes.number,
-        minorGrid: PropTypes.number
+        canvasWidthInPixels: PropTypes.number,
+        canvasHeightInPixels: PropTypes.number,
+        lines: PropTypes.object,
+        showGrid: PropTypes.bool,
+        showSubDivisions: PropTypes.bool
     };
 
+    renderMajorLines() {
+        const { canvasWidthInPixels, canvasHeightInPixels, lines } = this.props;
+        return lines.divisions.map((line) => {
+            return (
+                <g>
+                    <line
+                        x1={line}
+                        y1="0"
+                        x2={line}
+                        y2={canvasHeightInPixels}
+                        vectorEffect="non-scaling-stroke"
+                        stroke="black"
+                        strokeWidth="1"
+                    />
+                    <line
+                        x1="0"
+                        y1={line}
+                        x2={canvasWidthInPixels}
+                        y2={line}
+                        vectorEffect="non-scaling-stroke"
+                        stroke="black"
+                        strokeWidth="1"
+                    />
+                </g>
+            );
+        });
+    }
+
+    renderMinorLines() {
+        const { canvasWidthInPixels, canvasHeightInPixels, lines, showSubDivisions } = this.props;
+        return lines.subDivisions.map((line) => {
+            return (
+                <g display={showSubDivisions ? "" : "none"}>
+                    <line
+                        x1={line}
+                        y1="0"
+                        x2={line}
+                        y2={canvasHeightInPixels}
+                        vectorEffect="non-scaling-stroke"
+                        stroke="black"
+                        strokeDasharray="1, 5"
+                        strokeWidth="0.5"
+                    />
+                    <line
+                        x1="0"
+                        y1={line}
+                        x2={canvasWidthInPixels}
+                        y2={line}
+                        vectorEffect="non-scaling-stroke"
+                        stroke="black"
+                        strokeDasharray="1, 5"
+                        strokeWidth="0.5"
+                    />
+                </g>
+            );
+        });
+    }
+
     render() {
-        const { scale, width, height, majorGrid, minorGrid } = this.props;
+        const { showGrid } = this.props;
         return (
-            <g>
-                <defs>
-                    <pattern id="smallGrid" width={minorGrid} height={minorGrid} patternUnits="userSpaceOnUse">
-                        <path d={"M " + minorGrid + " 0 L 0 0 0 " + minorGrid} fill="none" stroke="#adadad" strokeWidth={0.5 / scale} />
-                    </pattern>
-                    <pattern id="grid" width={majorGrid} height={majorGrid} patternUnits="userSpaceOnUse">
-                        <rect width={majorGrid} height={majorGrid} fill="url(#smallGrid)" />
-                        <path d={"M " + majorGrid + " 0 L 0 0 0 " + majorGrid} fill="none" stroke="#adadad" strokeWidth={1 / scale} />
-                    </pattern>
-                </defs>
-                <rect width={width} height={height} fill="url(#grid)" pointerEvents="none" />
-            </g>
+            <svg className="grid"
+                display={showGrid ? "" : "none"}
+            >
+                {this.renderMajorLines()}
+                {this.renderMinorLines()}
+            </svg>
         );
     }
 }

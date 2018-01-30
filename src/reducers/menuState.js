@@ -1,6 +1,5 @@
 import * as menuActions from '../actions/menu';
 import * as menu from './caseFunctions/menu';
-import * as grid from './caseFunctions/grid';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -8,12 +7,8 @@ const initialState = {
     fillColor: {r: 33, g: 15, b: 243, a: 1},
     strokeColor: {r: 200, g: 0, b: 200, a: 1},
     toolType: '',
-    fillStrokeButton: '',
+    fillStrokeButton: 'fill',
     currentKeys: {},
-    gridSnapping: false,
-    unitType: 'inch',
-    majorGrid: 100,
-    minorGrid: 50,
     copied: false,
     pasted: false,
     align: ['top', 'left'],
@@ -35,10 +30,8 @@ function menuState(state = initialState, action, root) {
             return menu.selectButton(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
             return menu.selectColor(stateCopy, action, root);
-        case menuActions.SET_GRID:
-            return grid.setGrid(stateCopy, action, root);
-        case menuActions.TOGGLE_GRID_SNAPPING:
-            return grid.toggleGridSnapping(stateCopy, action, root);
+        case menuActions.ALIGNMENT_CHANGE:
+            return menu.selectAlignment(stateCopy, action, root);
         default:
             return stateCopy;
     }

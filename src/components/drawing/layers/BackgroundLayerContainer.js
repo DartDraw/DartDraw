@@ -18,12 +18,12 @@ import BackgroundLayer from './BackgroundLayer';
 // const backgroundColor = '#ffffff';
 
 const mapStateToProps = ({ drawingState }) => {
-    const { canvasWidth, canvasHeight, canvasFill } = drawingState;
+    const { canvasWidthInPixels, canvasHeightInPixels, canvasFill } = drawingState;
     return {
-        width: canvasWidth,
-        height: canvasHeight,
+        width: canvasWidthInPixels,
+        height: canvasHeightInPixels,
         fill: canvasFill
-    };
+    }
 };
 
 export default connect(

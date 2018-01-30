@@ -4,18 +4,6 @@ import {
     undoClick,
     redoClick,
     selectColor,
-    zoomIn,
-    zoomOut,
-    customZoom,
-    groupButtonClick,
-    ungroupButtonClick,
-    moveBackward,
-    moveForward,
-    sendToBack,
-    flipHorizontal,
-    flipVertical,
-    bringToFront,
-    toggleGridSnapping,
     selectButton
 } from './../../actions/menu';
 
@@ -35,44 +23,8 @@ const mapDispatchToProps = (dispatch) => {
         onRedoClick: () => {
             dispatch(redoClick());
         },
-        onGroupClick: () => {
-            dispatch(groupButtonClick());
-        },
-        onUngroupClick: () => {
-            dispatch(ungroupButtonClick());
-        },
-        onMoveBackward: () => {
-            dispatch(moveBackward());
-        },
-        onMoveForward: () => {
-            dispatch(moveForward());
-        },
-        onSendToBack: () => {
-            dispatch(sendToBack());
-        },
-        onBringToFront: () => {
-            dispatch(bringToFront());
-        },
-        onFlipHorizontal: () => {
-            dispatch(flipHorizontal());
-        },
-        onFlipVertical: () => {
-            dispatch(flipVertical());
-        },
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
-        },
-        onZoomIn: () => {
-            dispatch(zoomIn());
-        },
-        onZoomOut: () => {
-            dispatch(zoomOut());
-        },
-        onCustomZoom: (customScale) => {
-            dispatch(customZoom(customScale));
-        },
-        onToggleGridSnapping: () => {
-            dispatch(toggleGridSnapping());
         },
         onButtonSelect: (button) => {
             dispatch(selectButton(button));

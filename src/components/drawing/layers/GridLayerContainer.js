@@ -2,14 +2,13 @@ import { connect } from 'react-redux';
 import GridLayer from './GridLayer';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { canvasWidth, canvasHeight, scale } = drawingState;
-    const { majorGrid, minorGrid } = menuState;
+    const { canvasWidthInPixels, canvasHeightInPixels, gridLines, gridPreferences } = drawingState;
     return {
-        scale: scale,
-        width: canvasWidth,
-        height: canvasHeight,
-        majorGrid: majorGrid,
-        minorGrid: minorGrid
+        canvasWidthInPixels: canvasWidthInPixels,
+        canvasHeightInPixels: canvasHeightInPixels,
+        lines: gridLines,
+        showGrid: gridPreferences.showGrid,
+        showSubDivisions: gridPreferences.showSubDivisions
     };
 };
 

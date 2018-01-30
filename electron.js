@@ -46,10 +46,12 @@ const template = [
                             return;
                         } else {
                             let win;
-                            for (filename in filenames) {
+                            var numFiles = filenames.length;
+                            for (var i = 0; i < numFiles; i++) {
+                                let filename = filenames[i];
                                 win = createWindow();
-                                win.once('ready-to-show', () => {
-                                    fs.readFile(filename, (err, data) => {
+                                win.object.webContents.on('dom-ready', () => {
+                                    fs.readFile(filename, 'utf8', (err, data) => {
                                         win.object.send('file-open', data);
                                     });
                                 });
@@ -161,51 +163,11 @@ const canvasItem = new MenuItem(
                         click() {
                             canvasColor = '#000000';
                             windowManager.getCurrent().object.send('canvasColorChange', 'black');
-                            
-                            // testWin = new BrowserWindow({width: 800, height: 600});
-                            // testWin.focus();
-
-                            // // and load the index.html of the app.
-                            // testWin.loadURL('http://localhost:3000');
-
-                            // // Open the DevTools.
-                            // testWin.webContents.openDevTools();
-
-                            // testWin.on('did-finish-load', () => {
-                            //     testWin.webContents.send('loaded-from-file', 'hello!!!');
-                            // });
-
-                            // // Emitted when the window is closed.
-                            // testWin.on('closed', function() {
-                            //     // Dereference the window object, usually you would store windows
-                            //     // in an array if your app supports multi windows, this is the time
-                            //     // when you should delete the corresponding element.
-                            //     testWin = null;
-                            // });
-                            // ipcMain.on('loaded-from-file', (event, arg) => {
-                            //     console.log(arg);
-                            // });
                         }},
                     {label: 'White',
                         click() {
                             canvasColor = '#ffffff';
                             windowManager.getCurrent().object.send('canvasColorChange', 'white');
-                            // var secondaryWindow = new BrowserWindow({width: 800, height: 600});
-                            // secondaryWindow.focus();
-
-                            // // and load the index.html of the app.
-                            // secondaryWindow.loadURL('http://localhost:3000');
-
-                            // // Open the DevTools.
-                            // secondaryWindow.webContents.openDevTools();
-
-                            // // Emitted when the window is closed.
-                            // secondaryWindow.on('closed', function() {
-                            //     // Dereference the window object, usually you would store windows
-                            //     // in an array if your app supports multi windows, this is the time
-                            //     // when you should delete the corresponding element.
-                            //     secondaryWindow = null;
-                            // });
                         }},
                     {type: 'separator'},
                     {label: 'Custom...'}

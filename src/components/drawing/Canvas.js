@@ -18,15 +18,18 @@ import {
     Path,
     Arc,
     Line,
-    Text
+    TransparentLine,
+    Text,
+    Arrowhead
 } from './shapes';
 
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
+        arrows: PropTypes.array,
         selected: PropTypes.array,
-        canvasHeight: PropTypes.number,
-        canvasWidth: PropTypes.number,
+        canvasHeightInPixels: PropTypes.number,
+        canvasWidthInPixels: PropTypes.number,
         viewBox: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
@@ -49,6 +52,7 @@ class Canvas extends Component {
         super(props);
 
         this.renderDrawing = this.renderDrawing.bind(this);
+        this.renderArrows = this.renderArrows.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleDragStart = this.handleDragStart.bind(this);
@@ -72,8 +76,11 @@ class Canvas extends Component {
             const boundingBoxes = {};
             const svgElements = [...(this.svgRef.childNodes)];
             svgElements.map((element) => {
-                if (element.id) {
-                    boundingBoxes[element.id] = element.getBBox();
+                if (element.className.baseVal === 'line') {
+                    element = element.childNodes[0];
+                }
+                if (element.id && element.tagName !== 'marker') {
+                    boundingBoxes[element.id] = element.getBBox({ markers: true }); // https://bugs.chromium.org/p/chromium/issues/detail?id=280576
                 }
             });
             onBoundingBoxUpdate && onBoundingBoxUpdate(boundingBoxes);
@@ -177,7 +184,17 @@ class Canvas extends Component {
             case 'freehandPath':
                 return <FreehandPath {...shapeProps} />;
             case 'line':
-                return <Line {...shapeProps} />;
+                let line = {
+                    points: shapeProps.points,
+                    id: shapeProps.id,
+                    key: shapeProps.id + "_transparent"
+                };
+
+                return (
+                    <g className="line">
+                        <Line {...shapeProps} />
+                        <TransparentLine {...line} />
+                    </g>);
             case 'text':
                 return <Text {...shapeProps} />;
             default:
@@ -192,29 +209,37 @@ class Canvas extends Component {
         });
     }
 
+    renderArrows() {
+        const { arrows } = this.props;
+        return arrows.map((shape) => {
+            return <Arrowhead {...shape} />;
+        });
+    }
+
     render() {
-        const { canvasHeight, canvasWidth, viewBox } = this.props;
+        const { canvasHeightInPixels, canvasWidthInPixels, viewBox } = this.props;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
+                <TextInputLayerContainer />
                 <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
                 >
                     <svg className="Canvas"
-                        width={canvasWidth}
-                        height={canvasHeight}
+                        width={canvasWidthInPixels}
+                        height={canvasHeightInPixels}
                         viewBox={viewBox.join(' ')}
                         ref={(ref) => { this.svgRef = ref; }}
                     >
                         <BackgroundLayerContainer />
+                        {this.renderArrows()}
                         {this.renderDrawing()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
                     </svg>
                 </Draggable>
-                <TextInputLayerContainer />
             </div>
         );
     }

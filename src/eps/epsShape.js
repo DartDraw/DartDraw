@@ -1,6 +1,7 @@
 import epsRectangle from './epsRectangle';
 import epsLine from './epsLine';
 import epsEllipse from './epsEllipse';
+import epsPolygon from './epsPolygon';
 
 class epsShape {
 
@@ -8,6 +9,7 @@ class epsShape {
 		this.shape = shape;
 		this.produceEps = this.produceEps.bind(this);
 		this.getCoords = this.getCoords.bind(this);
+		this.getParams = this.getParams.bind(this);
 	}
 
 	produceEps(canvasHeight) {
@@ -23,6 +25,10 @@ class epsShape {
 			case "ellipse":
 				var myEllipse = new epsEllipse(this.shape);
 				var drawing = myEllipse.produceEps(canvasHeight);
+				break;
+			case "polygon":
+				var myPolygon = new epsPolygon(this.shape);
+				var drawing = myPolygon.produceEps(canvasHeight);
 				break;
 			default:
 				var drawing = '';
@@ -45,6 +51,19 @@ class epsShape {
 			case "ellipse":
 				var myEllipse = new epsEllipse(this.shape);
 				break;
+			case "polygon":
+				var myPolygon = new epsPolygon(this.shape);
+				return myPolygon.getCoords();
+			default:
+				return null;
+		}
+	}
+
+	getParams() {
+		switch(this.shape.type) {
+			case "ellipse":
+				var myEllipse = new epsEllipse(this.shape);
+				return myEllipse.getParams();
 			default:
 				return null;
 		}

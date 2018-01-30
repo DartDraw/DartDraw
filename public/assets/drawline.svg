@@ -8,7 +8,7 @@
         <g id="Artboard-2" transform="translate(-276.000000, -171.000000)">
             <g id="Group-2" transform="translate(274.000000, 169.000000)">
                 <rect id="Rectangle-18" x="0" y="0" width="16" height="16"></rect>
-                <path d="M3,3 L13,13" id="Line" stroke="#979797" stroke-width="2" stroke-linecap="round"></path>
+                <path d="M3,3 L13,13" id="Line" stroke="#EBF1F5" stroke-width="2" stroke-linecap="round"></path>
             </g>
         </g>
     </g>

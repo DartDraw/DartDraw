@@ -8,21 +8,16 @@ class epsRectangle {
 		this.getCoords = this.getCoords.bind(this);
 	}
 
-	produceEps(canvasHeight) {
+	produceEps(canvasHeightInPixels) {
 		var coords = this.getCoords();
 		var x0 = coords[0].x;
-		var y0 = canvasHeight - coords[0].y;
+		var y0 = canvasHeightInPixels - coords[0].y;
 		var x1 = coords[1].x;
-		var y1 = canvasHeight - coords[1].y;
+		var y1 = canvasHeightInPixels - coords[1].y;
 		var x2 = coords[2].x;
-		var y2 = canvasHeight - coords[2].y;
+		var y2 = canvasHeightInPixels - coords[2].y;
 		var x3 = coords[3].x;
-		var y3 = canvasHeight - coords[3].y;
-
-		// var m0 = this.rectangle.transform[0].parameters[0];
-		// var m1 = this.rectangle.transform[0].parameters[1];
-		// var m2 = this.rectangle.transform[0].parameters[2];
-		// var m3 = this.rectangle.transform[0].parameters[3];
+		var y3 = canvasHeightInPixels - coords[3].y;
 
 		var str = this.rectangle.fill;
 		var rawRGB = str.substring(5, str.length-1);
