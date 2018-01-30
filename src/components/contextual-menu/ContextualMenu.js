@@ -69,8 +69,7 @@ class ContextualMenu extends Component {
         this.handleSetUnitDivisions = this.handleSetUnitDivisions.bind(this);
         this.handleChangeUnitDivisions = this.handleChangeUnitDivisions.bind(this);
         this.handleSetCanvasSize = this.handleSetCanvasSize.bind(this);
-        this.handleChangeCanvasWidth = this.handleChangeCanvasWidth.bind(this);
-        this.handleChangeCanvasHeight = this.handleChangeCanvasHeight.bind(this);
+        this.handleChangeCanvasSize = this.handleChangeCanvasSize.bind(this);
     }
 
     toggleMenu() {
@@ -209,17 +208,16 @@ class ContextualMenu extends Component {
     }
 
     handleSetCanvasSize(event) {
-        console.log(event.target.id);
-        // this.props.onSetCanvasSize(this.tempCanvasWidth, this.tempCanvasHeight);
+        this.props.onSetCanvasSize(this.tempCanvasWidth, this.tempCanvasHeight);
         event.preventDefault();
     }
 
-    handleChangeCanvasWidth(event) {
-        this.tempCanvasWidth = event.target.value;
-    }
-
-    handleChangeCanvasHeight(event) {
-        this.tempCanvasHeight = event.target.value;
+    handleChangeCanvasSize(event) {
+        if (event.target.name === "width") {
+            this.tempCanvasWidth = event.target.value;
+        } else {
+            this.tempCanvasHeight = event.target.value;
+        }
     }
 
     // dropDownSelect(unitDivisions) {
@@ -250,7 +248,7 @@ class ContextualMenu extends Component {
     // }
 
     render() {
-        const { selectedShape, scale, ruler, unitDivisions } = this.props;
+        const { selectedShape, scale, ruler } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         if (selectedShape) {
@@ -341,6 +339,21 @@ class ContextualMenu extends Component {
                                 type="number"
                             />
                         </form>
+                        <form id="button-icon" onSubmit={this.handleSetCanvasSize}>
+                            <input
+                                name="width"
+                                value={this.tempCanvasWidth}
+                                onChange={this.handleChangeCanvasSize}
+                                type="number"
+                            />
+                            <input
+                                name="height"
+                                value={this.tempCanvasHeight}
+                                onChange={this.handleChangeCanvasSize}
+                                type="number"
+                            />
+                            <input type="submit" value="resize" />
+                        </form>
                     </div>
                     <div className="zoom-menu">
                         <button onClick={this.handleZoomIn} id="button-icon">+</button>
@@ -363,19 +376,3 @@ export default ContextualMenu;
 // <select value={ruler.unitDivisions} onChange={this.handleSetUnitDivisions}>
 //     {unitDivisionsList.map(this.dropDownSelect)}
 // </select>
-
-// <form id="button-icon" onSubmit={this.handleSetCanvasSize}>
-//     <input
-//         id="width"
-//         value={this.tempCanvasWidth}
-//         onChange={this.handleChangeCanvasWidth}
-//         type="number"
-//     />
-//     <input
-//         id="height"
-//         value={this.tempCanvasHeight}
-//         onChange={this.handleChangeCanvasHeight}
-//         type="number"
-//     />
-//     <input type="submit" value="resize" />
-// </form>

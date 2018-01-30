@@ -5,6 +5,7 @@ import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCo
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
+import { mouseMoveHelper } from '../caseFunctions/rulers';
 
 export function dragStart(stateCopy, action, root) {
     const prevEditState = stateCopy.editInProgress;
@@ -103,6 +104,7 @@ export function drag(stateCopy, action, root) {
     const { draggableData } = action.payload;
     let shiftSelected = 16 in root.menuState.currentKeys;
     stateCopy.shiftDirection = shiftSelected ? "diagonal" : null;
+    stateCopy.ruler = mouseMoveHelper(stateCopy.ruler, draggableData.x, draggableData.y);
     switch (root.menuState.toolType) {
         case "rectangleTool":
         case "roundedRectangleTool":

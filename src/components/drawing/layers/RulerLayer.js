@@ -15,7 +15,6 @@ class RulerLayer extends Component {
 
     componentWillMount() {
         this.props.onSetGridRulers();
-        this.props.onSetCanvasSize(11, 8.5);
     }
 
     renderHorizontalLabels() {
@@ -77,9 +76,11 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { showRulers, rulerWidth, dir, width, height } = this.props;
+        const { ruler, showRulers, rulerWidth, dir, width, height } = this.props;
+        var trackerLoc = 0;
         switch (dir) {
             case "horizontal":
+                trackerLoc = Math.max(0, Math.min(ruler.trackers.x - 45 - rulerWidth, width));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -89,9 +90,17 @@ class RulerLayer extends Component {
                     >
                         {this.renderHorizontalTicks()}
                         {this.renderHorizontalLabels()}
+                        <line
+                            x1={trackerLoc}
+                            y1={0}
+                            x2={trackerLoc}
+                            y2={rulerWidth}
+                            stroke="#ebf1f5"
+                        />
                     </svg>
                 );
             case "vertical":
+                trackerLoc = Math.max(0, Math.min(ruler.trackers.y - 45 - rulerWidth, height));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -101,6 +110,13 @@ class RulerLayer extends Component {
                     >
                         {this.renderVerticalTicks()}
                         {this.renderVerticalLabels()}
+                        <line
+                            x1={0}
+                            y1={trackerLoc}
+                            x2={rulerWidth}
+                            y2={trackerLoc}
+                            stroke="#ebf1f5"
+                        />
                     </svg>
                 );
             default: break;

@@ -1,7 +1,6 @@
 // https://github.com/Robbbb/VectorRuler/blob/master/rulerGenerator.js
 import { buildGrid } from './grid';
 
-const tickLengthMultiplier = 0.75;
 const pixelsPerInch = 72;
 const pixelsPerPoint = 72;
 const pixelsPerCm = 72 / 2;
@@ -13,15 +12,29 @@ export function toggleShowRulers(stateCopy) {
     return stateCopy;
 }
 
+export function mouseMove(stateCopy, action) {
+    const { mouseX, mouseY } = action.payload;
+    stateCopy.ruler = mouseMoveHelper(stateCopy.ruler, mouseX, mouseY);
+
+    return stateCopy;
+}
+
+export function mouseMoveHelper(ruler, mouseX, mouseY) {
+    ruler.trackers.x = mouseX;
+    ruler.trackers.y = mouseY;
+
+    return ruler;
+}
+
 export function setUnitType(stateCopy, action) {
     const { scale, panX, panY, gridPreferences, canvasWidthInPixels, canvasHeightInPixels } = stateCopy;
     const { unitType } = action.payload;
 
     stateCopy.ruler.unitType = unitType;
 
-    const { r, g } = updateGridRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels);
-    stateCopy.ruler = r;
-    stateCopy.gridLines = g;
+    const { ruler, gridLines } = updateGridRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels);
+    stateCopy.ruler = ruler;
+    stateCopy.gridLines = gridLines;
     return stateCopy;
 }
 
@@ -31,9 +44,9 @@ export function setUnitDivisions(stateCopy, action) {
 
     stateCopy.ruler.unitDivisions = unitDivisions;
 
-    const { r, g } = updateGridRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels);
-    stateCopy.ruler = r;
-    stateCopy.gridLines = g;
+    const { ruler, gridLines } = updateGridRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels);
+    stateCopy.ruler = ruler;
+    stateCopy.gridLines = gridLines;
     return stateCopy;
 }
 
@@ -63,11 +76,11 @@ export function setCanvasSize(stateCopy, action) {
 }
 
 export function setGridRulers(stateCopy) {
-    const { ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels } = stateCopy;
+    const { gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels } = stateCopy;
 
-    const { r, g } = updateGridRulers(ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels);
-    stateCopy.ruler = r;
-    stateCopy.gridLines = g;
+    const { ruler, gridLines } = updateGridRulers(stateCopy.ruler, gridPreferences, scale, panX, panY, canvasWidthInPixels, canvasHeightInPixels);
+    stateCopy.ruler = ruler;
+    stateCopy.gridLines = gridLines;
     return stateCopy;
 }
 
@@ -75,6 +88,7 @@ export function updateGridRulers(ruler, gridPreferences, scale, panX, panY, canv
     var pixelsPerUnit;
     var subUnitBase;
     var subUnitExponent;
+    var tickLengthMultiplier = 0.75;
 
     const xPanOffset = panX * scale;
     const yPanOffset = panY * scale;
@@ -95,6 +109,7 @@ export function updateGridRulers(ruler, gridPreferences, scale, panX, panY, canv
         subUnitBase = 10;
     } else {
         subUnitBase = ruler.unitDivisions;
+        tickLengthMultiplier = 0.5;
     }
 
     subUnitExponent = getBaseLog(subUnitBase, ruler.unitDivisions);
@@ -105,18 +120,15 @@ export function updateGridRulers(ruler, gridPreferences, scale, panX, panY, canv
     const tickQty = rulerLengthInUnits * subUnitBase;
     const minWholeUnitDistance = 10 * tickQty.toString().length;
     // ruler.pixelWidth = Math.max(minWholeUnitDistance, 30);
-    console.log(tickQty, tickQty.toString().length);
 
-    ruler.top = buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, xPanOffset);
-    ruler.left = buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, yPanOffset);
+    ruler.top = buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, xPanOffset);
+    ruler.left = buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, yPanOffset);
     var gridLines = buildGrid(ruler, pixelsPerUnit / scale, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, canvasWidthInPixels, canvasHeightInPixels);
 
-    var r = ruler;
-    var g = gridLines;
-    return { r, g };
+    return { ruler, gridLines };
 }
 
-function buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, panOffset) {
+function buildRuler(ruler, pixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, panOffset) {
     var masterTickIndex = [];
     var result = {};
     result.ticks = [];

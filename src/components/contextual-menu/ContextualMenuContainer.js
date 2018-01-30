@@ -20,6 +20,7 @@ import {
     setUnitType,
     setUnitDivisions
 } from '../../actions/menu';
+import { setCanvasSize } from '../../actions/canvas';
 import ContextualMenu from './ContextualMenu';
 
 const mapStateToProps = ({ drawingState }) => {
@@ -94,6 +95,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetUnitDivisions: (unitDivisions) => {
             dispatch(setUnitDivisions(unitDivisions));
+        },
+        onSetCanvasSize: (width, height) => {
+            dispatch(setCanvasSize(width, height));
         }
     };
 };

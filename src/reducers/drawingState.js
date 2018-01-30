@@ -23,10 +23,11 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeightInUnits: 15,
-    canvasWidthInUnits: 15,
-    canvasHeightInPixels: 0,
-    canvasWidthInPixels: 0,
+    canvasHeightInUnits: 8.5,
+    canvasWidthInUnits: 11,
+    canvasHeightInPixels: 8.5 * 72,
+    canvasWidthInPixels: 11 * 72,
+    pixelsPerUnit: 72,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -53,6 +54,10 @@ const initialState = {
         unitType: 'in',
         unitDivisions: 2,
         pixelWidth: 30,
+        trackers: {
+            x: 0,
+            y: 0
+        },
         top: {
             ticks: [],
             labels: []
@@ -144,6 +149,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.KEY_UP:
             updatedState = shape.keyUp(stateCopy, action, root);
+            break;
+        case menuActions.MOUSE_MOVE:
+            updatedState = rulers.mouseMove(stateCopy, action, root);
             break;
         case menuActions.SELECT_TOOL:
             updatedState = shape.selectTool(stateCopy, action, root);

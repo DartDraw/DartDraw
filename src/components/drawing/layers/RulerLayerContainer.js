@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import RulerLayer from './RulerLayer';
-import { setGridRulers, setCanvasSize } from './../../../actions/canvas';
+import { setGridRulers } from './../../../actions/canvas';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { rulerPreferences, ruler, canvasWidthInPixels, canvasHeightInPixels, scale } = drawingState;
@@ -16,9 +16,6 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onSetGridRulers: () => {
             dispatch(setGridRulers());
-        },
-        onSetCanvasSize: (width, height) => {
-            dispatch(setCanvasSize(width, height));
         }
     };
 };
