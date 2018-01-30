@@ -106,6 +106,56 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
     return shapes;
 }
 
+export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const bezier = {
+        id: uuidv1(),
+        type: 'bezier',
+        points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
+            (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
+        fill: formatColor(fill),
+        stroke: formatColor(stroke),
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        strokeWidth: 5
+    };
+
+    if (gridSnapping) {
+        bezier.points[0] = Math.round(bezier.points[0] / minorGrid) * minorGrid;
+        bezier.points[1] = Math.round(bezier.points[1] / minorGrid) * minorGrid;
+    }
+
+    shapes.byId[bezier.id] = bezier;
+    shapes.allIds.push(bezier.id);
+    return shapes;
+}
+
+export function addBezierPoint(shapes, selected, action, panX, panY, scale, gridSnapping, minorGrid) {
+    const { draggableData } = action.payload;
+    const { x, y, node } = draggableData;
+
+    const bezier = shapes.byId[selected[0]];
+    console.log(selected);
+    let xCoord = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
+    let yCoord = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
+
+    if (gridSnapping) {
+        xCoord = (Math.round(xCoord / minorGrid) * minorGrid);
+        yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
+    }
+
+    if (Math.abs(xCoord - bezier.points[0]) < (5 / scale) &&
+          Math.abs(yCoord - bezier.points[1]) < (5 / scale)) {
+        bezier.closed = true;
+    }
+
+    bezier.points.push(xCoord);
+    bezier.points.push(yCoord);
+
+    return shapes;
+}
+
 export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
@@ -149,7 +199,6 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, m
 export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
-
     const arc = {
         id: uuidv1(),
         type: "arc",

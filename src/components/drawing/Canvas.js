@@ -177,6 +177,8 @@ class Canvas extends Component {
                 return <Polygon {...shapeProps} />;
             case 'polyline':
                 return <Polyline {...shapeProps} />;
+            case 'bezier':
+                return <Polyline {...shapeProps} />;
             case 'arc':
                 return <Arc {...shapeProps} />;
             case 'path':

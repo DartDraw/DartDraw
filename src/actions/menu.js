@@ -1,6 +1,7 @@
 export const EDIT_SHAPE = 'EDIT_SHAPE';
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
+export const MOUSE_MOVE = 'MOUSE_MOVE';
 export const SELECT_TOOL = 'SELECT_TOOL';
 export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
@@ -32,6 +33,10 @@ export function keyDown(keyCode) {
 
 export function keyUp(keyCode) {
     return { type: KEY_UP, payload: { keyCode } };
+}
+
+export function mouseMove(x, y) {
+    return { type: MOUSE_MOVE, payload: { x, y } };
 }
 
 export function selectTool(toolType) {

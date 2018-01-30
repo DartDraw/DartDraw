@@ -362,7 +362,8 @@ export function keyUp(stateCopy, action, root) {
 }
 
 export function selectTool(stateCopy, action, root) {
-    if (root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') {
+    if ((root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') ||
+        (root.menuState.toolType === 'bezierTool' && action.toolType !== 'bezierTool')) {
         stateCopy.editInProgress = false;
     }
     return stateCopy;

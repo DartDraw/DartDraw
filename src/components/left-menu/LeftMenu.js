@@ -69,6 +69,9 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("textTool")}>
                         <img src="./assets/text.svg" alt="rect" id="button-icon" />
                     </button>
+                    <button onClick={() => this.handleToolSelect("bezierTool")}>
+                        <img src="" alt="bez" id="button-icon" />
+                    </button>
                 </div>
             </div>
         );

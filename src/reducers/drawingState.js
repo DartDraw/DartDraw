@@ -165,7 +165,7 @@ function drawingState(state = initialState, action, root) {
     }
 
     if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
-        if (root.menuState.toolType !== 'polygonTool') {
+        if (root.menuState.toolType !== 'polygonTool' && root.menuState.toolType !== 'bezierTool') {
             stateCopy.mode = '';
             stateCopy.selected = [];
             stateCopy.selectionBoxes = [];
