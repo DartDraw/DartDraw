@@ -1,6 +1,7 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
+import { EditorState, ContentState } from 'draft-js';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, snapTo, rectangleRadius) {
     const { draggableData } = action.payload;
@@ -207,15 +208,16 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, s
 
     const text = {
         id: uuidv1(),
+        editorState: EditorState.createWithContent(ContentState.createFromText('hello')),
         type: 'text',
         text: '',
         x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
-        width: 0,
-        height: 0,
+        width: 120,
+        height: 30,
         fontFamily: 'helvetica',
-        fontSize: '24px',
-        lineHeight: '24px',
+        fontSize: '24',
+        lineHeight: '24',
         fontStyle: 'normal',
         textAlign: 'left',
         textDecoration: 'none',
@@ -380,12 +382,14 @@ export function endMoveShape(shapes, selected) {
 
 function getAlignedCoord(shape, selectionBox, boundingBox, align) {
     const coords = {};
-    coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
-    coords[1] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-    coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-    coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
+    const x = shape.type === 'text' ? shape.x : boundingBox.x;
+    const y = shape.type === 'text' ? shape.y : boundingBox.y;
+    coords[0] = transformPoint(x + boundingBox.width, y, shape.transform[0].parameters);
+    coords[1] = transformPoint(x + boundingBox.width, y + boundingBox.height, shape.transform[0].parameters);
+    coords[2] = transformPoint(x, y + boundingBox.height, shape.transform[0].parameters);
+    coords[3] = transformPoint(x, y, shape.transform[0].parameters);
 
-    let center = getCenter(boundingBox, shape.transform[0].parameters);
+    let center = getCenter({x, y, width: boundingBox.width, height: boundingBox.height}, shape.transform[0].parameters);
     let allXs = [coords[0].x, coords[1].x, coords[2].x, coords[3].x];
     let allYs = [coords[0].y, coords[1].y, coords[2].y, coords[3].y];
 
@@ -466,12 +470,22 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
                 let newX = Math.round((shape.xOffset + shape.dragX) / snapTo) * snapTo;
                 let newY = Math.round((shape.yOffset + shape.dragY) / snapTo) * snapTo;
 
-                let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
-                shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+                if (shape.type === 'text') {
+                    shape.x = Math.round((shape.dragX) / snapTo) * snapTo - coord.x;
+                    shape.y = Math.round((shape.dragY) / snapTo) * snapTo - coord.y;
+                } else {
+                    let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
+                    shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+                }
             }
         } else {
-            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
-            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+            if (shape.type === 'text') {
+                shape.x = shape.x + scaledDeltaX;
+                shape.y = shape.y + scaledDeltaY;
+            } else {
+                let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+                shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
+            }
         }
 
         if (shape.type === 'line') {

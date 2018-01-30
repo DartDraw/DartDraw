@@ -181,9 +181,9 @@ export function handleDragStop(stateCopy, action, root) {
 }
 
 export function textInputChange(stateCopy, action, root) {
-    const { shapeId, value } = action.payload;
-    stateCopy.textInputs[shapeId].value = value;
+    const { shapeId, value, focused } = action.payload;
     stateCopy.shapes.byId[shapeId].text = value;
+    stateCopy.shapes.byId[shapeId].focused = focused;
     return stateCopy;
 }
 
@@ -236,15 +236,22 @@ export function flipHorizontal(stateCopy, action, root) {
 }
 
 export function keyDown(stateCopy, action, root) {
+    // No keyboard shortcuts during text focus
+    const shapeIds = stateCopy.shapes.allIds;
+    for (let i = 0; i < shapeIds.length; i++) {
+        const id = shapeIds[i];
+        if (stateCopy.shapes.byId[id].focused) {
+            return stateCopy;
+        }
+    }
+
     const { keyCode } = action.payload;
     let commandSelected = 91 in root.menuState.currentKeys;
     switch (keyCode) {
         case 8:
-            if (!stateCopy.textInputFocused) {
-                stateCopy.lastSavedShapes = root.drawingState.shapes;
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.selected = [];
-            }
+            stateCopy.lastSavedShapes = root.drawingState.shapes;
+            stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+            stateCopy.selected = [];
             break;
         case 13: // finish reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
@@ -353,6 +360,14 @@ export function keyDown(stateCopy, action, root) {
 }
 
 export function keyUp(stateCopy, action, root) {
+    // No keyboard shortcuts during text focus
+    const shapeIds = stateCopy.shapes.allIds;
+    for (let i = 0; i < shapeIds.length; i++) {
+        const id = shapeIds[i];
+        if (stateCopy.shapes.byId[id].focused) {
+            return stateCopy;
+        }
+    }
     const { keyCode } = action.payload;
     switch (keyCode) {
         case 16:

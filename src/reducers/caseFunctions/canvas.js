@@ -1,7 +1,7 @@
 import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addFreehandPath,
     addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
     resizeTextBoundingBox } from '../utilities/shapes';
-import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
+import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
@@ -220,6 +220,5 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.boundingBoxes = boundingBoxes;
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
-    stateCopy.textInputs = updateTextInputs(stateCopy.selected, stateCopy.shapes, stateCopy.textInputs);
     return stateCopy;
 }
