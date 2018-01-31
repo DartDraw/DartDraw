@@ -144,6 +144,7 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
         type: 'bezier',
         points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
+        controlPoints: [{}],
         fill: formatColor(fill),
         stroke: formatColor(stroke),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
@@ -157,6 +158,9 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
 
     bezier.points.push(bezier.points[0]);
     bezier.points.push(bezier.points[1]);
+
+    bezier.controlPoints.push({x: bezier.points[0], y: bezier.points[1]});
+    bezier.controlPoints.push({x: bezier.points[0], y: bezier.points[1]});
 
     shapes.byId[bezier.id] = bezier;
     shapes.allIds.push(bezier.id);
@@ -186,14 +190,16 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
+    bezier.controlPoints.push({x: xCoord, y: yCoord});
+    bezier.controlPoints.push({x: xCoord, y: yCoord});
 
     if (!bezier.closed) {
         // temp point
         bezier.points.push(xCoord);
         bezier.points.push(yCoord);
+        bezier.controlPoints.push({x: xCoord, y: yCoord});
+        bezier.controlPoints.push({x: xCoord, y: yCoord});
     }
-
-    console.log(bezier);
     return shapes;
 }
 
@@ -213,7 +219,15 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
+    bezier.controlPoints[bezier.controlPoints.length - 2] = {x: xCoord, y: yCoord};
+    bezier.controlPoints[bezier.controlPoints.length - 1] = {x: xCoord, y: yCoord};
 
+    if (bezier.points.length > 4) {
+        let p1 = { x: bezier.points[bezier.points.length - 4], y: bezier.points[bezier.points.length - 3] };
+        let p3 = { x: bezier.points[bezier.points.length - 6], y: bezier.points[bezier.points.length - 5] };
+        let p2 = { x: xCoord, y: yCoord };
+        // console.log((Math.atan2(p3.y - p1.y, p3.x - p1.x) - Math.atan2(p2.y - p1.y, p2.x - p1.x)) * 180 / Math.PI);
+    }
     return shapes;
 }
 

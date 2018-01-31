@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatPoints, formatTransform } from '../../../utilities/shapes';
+import { formatCurve, formatTransform } from '../../../utilities/shapes';
 
 class Bezier extends Component {
     static propTypes = {
@@ -13,6 +13,7 @@ class Bezier extends Component {
         width: PropTypes.number,
         height: PropTypes.number,
         points: PropTypes.arrayOf(PropTypes.number),
+        controlPoints: PropTypes.arrayOf(PropTypes.object),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -60,6 +61,7 @@ class Bezier extends Component {
         const {
             id,
             points,
+            controlPoints,
             stroke,
             strokeWidth,
             fill,
@@ -73,7 +75,7 @@ class Bezier extends Component {
             strokeWidth,
             fill,
             transform: formatTransform(transform),
-            points: formatPoints(points),
+            d: formatCurve(points, controlPoints),
             vectorEffect: "non-scaling-stroke"
         };
 
@@ -86,7 +88,7 @@ class Bezier extends Component {
                 onClick={this.handleClick}
                 propagateEvents={propagateEvents}
             >
-                <polyline {...svgProps} />
+                <path {...svgProps} />
             </Shape>
         );
     }

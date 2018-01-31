@@ -38,3 +38,16 @@ export function formatPoints(points) {
     }
     return formattedP;
 }
+
+export function formatCurve(points, controlPoints) {
+    if (!points || !controlPoints) {
+        return '';
+    }
+    let formattedC = 'M ' + points[0] + ', ' + points[1];
+
+    for (let i = 2; i < points.length; i += 2) {
+        let cIndex = i / 2;
+        formattedC = formattedC + ' C ' + controlPoints[cIndex].x + ', ' + controlPoints[cIndex].y + ' ' + controlPoints[cIndex + 1].x + ', ' + controlPoints[cIndex + 1].y + ' ' + points[i] + ', ' + points[i + 1];
+    }
+    return formattedC;
+}
