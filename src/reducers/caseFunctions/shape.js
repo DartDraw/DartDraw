@@ -28,6 +28,7 @@ export function click(stateCopy, action, root) {
             stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
+        case 'bezierTool':
             stateCopy.mode = "reshape";
             break;
         default:
@@ -97,6 +98,7 @@ export function dragStop(stateCopy, action, root) {
             stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
+        case 'bezierTool':
             break;
         default:
             stateCopy.editInProgress = false;
@@ -165,6 +167,7 @@ export function handleDrag(stateCopy, action, root) {
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case 'polygonTool':
+        case 'bezierTool':
             break;
         case 'selectTool':
         case 'rotateTool':

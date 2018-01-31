@@ -155,6 +155,9 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
         bezier.points[1] = Math.round(bezier.points[1] / minorGrid) * minorGrid;
     }
 
+    bezier.points.push(bezier.points[0]);
+    bezier.points.push(bezier.points[1]);
+
     shapes.byId[bezier.id] = bezier;
     shapes.allIds.push(bezier.id);
     return shapes;
@@ -176,11 +179,40 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     if (Math.abs(xCoord - bezier.points[0]) < (5 / scale) &&
           Math.abs(yCoord - bezier.points[1]) < (5 / scale)) {
+        xCoord = bezier.points[0];
+        yCoord = bezier.points[1];
         bezier.closed = true;
     }
 
-    bezier.points.push(xCoord);
-    bezier.points.push(yCoord);
+    bezier.points[bezier.points.length - 2] = xCoord;
+    bezier.points[bezier.points.length - 1] = yCoord;
+
+    if (!bezier.closed) {
+        // temp point
+        bezier.points.push(xCoord);
+        bezier.points.push(yCoord);
+    }
+
+    console.log(bezier);
+    return shapes;
+}
+
+export function addTempBezierPoint(shapes, selected, action, offset, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y } = action.payload;
+
+    const bezier = shapes.byId[selected[0]];
+    if (!bezier || bezier.closed) { return shapes; }
+
+    let xCoord = (x + (panX * scale) - offset.x) / scale;
+    let yCoord = (y + (panY * scale) - offset.y) / scale;
+
+    if (gridSnapping) {
+        xCoord = (Math.round(xCoord / minorGrid) * minorGrid);
+        yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
+    }
+
+    bezier.points[bezier.points.length - 2] = xCoord;
+    bezier.points[bezier.points.length - 1] = yCoord;
 
     return shapes;
 }

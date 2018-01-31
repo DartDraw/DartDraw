@@ -45,6 +45,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         'rectangleTool',
         'ellipseTool',
         'polygonTool',
+        'bezierTool',
         'arcTool',
         'freehandPathTool',
         'lineTool',

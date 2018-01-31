@@ -159,9 +159,13 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
         case 'reshape':
             selectionBox.height = 0;
             selectionBox.width = 0;
-            for (let i = 0; i < selectionBox.handles.length; i++) {
-                selectionBox.handles[i].x = shape.points[i * 2];
-                selectionBox.handles[i].y = shape.points[i * 2 + 1];
+            for (let i = 0; i < shape.points.length / 2; i++) {
+                if (selectionBox.handles[i]) {
+                    selectionBox.handles[i].x = shape.points[i * 2];
+                    selectionBox.handles[i].y = shape.points[i * 2 + 1];
+                } else {
+                    selectionBox.handles.push({ id: uuidv1(), index: i + 1, x: shape.points[i * 2], y: shape.points[i * 2 + 1] });
+                }
             }
             return selectionBox;
         default:
@@ -236,6 +240,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
             return {
                 id: uuidv1(),
                 shapeId: shape.id,
+                shapeType: shape.type,
                 type: 'selectionBox',
                 x,
                 y,
@@ -269,6 +274,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
             const box = {
                 id: uuidv1(),
                 shapeId: shape.id,
+                shapeType: shape.type,
                 type: 'selectionBox',
                 x,
                 y,

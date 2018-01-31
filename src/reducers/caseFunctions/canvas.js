@@ -1,6 +1,6 @@
 import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addTempPolygonPoint, addLine, addFreehandPath,
     addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
-    resizeTextBoundingBox, addBezier, addBezierPoint } from '../utilities/shapes';
+    resizeTextBoundingBox, addBezier, addBezierPoint, addTempBezierPoint } from '../utilities/shapes';
 import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
@@ -242,6 +242,9 @@ export function mouseMove(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "polygonTool":
             stateCopy.shapes = addTempPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        case "bezierTool":
+            stateCopy.shapes = addTempBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
             break;
         default:
             break;
