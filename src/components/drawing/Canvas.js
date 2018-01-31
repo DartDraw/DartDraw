@@ -20,7 +20,8 @@ import {
     Line,
     TransparentLine,
     Text,
-    Arrowhead
+    Arrowhead,
+    Bezier
 } from './shapes';
 
 class Canvas extends Component {
@@ -177,6 +178,8 @@ class Canvas extends Component {
                 return <Polygon {...shapeProps} />;
             case 'polyline':
                 return <Polyline {...shapeProps} />;
+            case 'bezier':
+                return <Bezier {...shapeProps} />;
             case 'arc':
                 return <Arc {...shapeProps} />;
             case 'path':

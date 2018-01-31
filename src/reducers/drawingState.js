@@ -98,6 +98,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.FLIP_HORIZONTAL:
             updatedState = shape.flipHorizontal(stateCopy, action, root);
             break;
+        case menuActions.MOUSE_MOVE:
+            updatedState = canvas.mouseMove(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
             break;
@@ -132,7 +135,6 @@ function drawingState(state = initialState, action, root) {
             return menu.exportClick(stateCopy);
         case menuActions.EDIT_SHAPE:
             updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
-            console.log(action.payload.shape);
             break;
         default: break;
     }
@@ -160,7 +162,7 @@ function drawingState(state = initialState, action, root) {
     }
 
     if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
-        if (root.menuState.toolType !== 'polygonTool') {
+        if (root.menuState.toolType !== 'polygonTool' && root.menuState.toolType !== 'bezierTool') {
             stateCopy.mode = '';
             stateCopy.selected = [];
             stateCopy.selectionBoxes = [];

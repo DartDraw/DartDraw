@@ -8,7 +8,8 @@ import { ContextualMenuContainer } from './components/contextual-menu';
 class App extends Component {
     static propTypes = {
         onKeyDown: PropTypes.func,
-        onKeyUp: PropTypes.func
+        onKeyUp: PropTypes.func,
+        onMouseMove: PropTypes.func
     }
 
     constructor(props) {
@@ -16,6 +17,7 @@ class App extends Component {
 
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
     }
 
     componentDidMount() {
@@ -32,12 +34,18 @@ class App extends Component {
         onKeyUp && onKeyUp(e.nativeEvent.keyCode);
     }
 
+    handleMouseMove(e) {
+        const { onMouseMove } = this.props;
+        onMouseMove({x: e.clientX, y: e.clientY});
+    }
+
     render() {
         return (
             <div className="App"
                 ref={el => { this.app = el; }}
                 onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
+                onMouseMove={this.handleMouseMove}
                 tabIndex={-1}
             >
                 <TopMenuContainer />

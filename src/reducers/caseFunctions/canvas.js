@@ -1,14 +1,14 @@
-import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addFreehandPath,
+import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addTempPolygonPoint, addLine, addFreehandPath,
     addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
-    resizeTextBoundingBox } from '../utilities/shapes';
-import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners } from '../utilities/selection';
+    resizeTextBoundingBox, addBezier, addBezierPoint, addTempBezierPoint } from '../utilities/shapes';
+import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
 
 export function dragStart(stateCopy, action, root) {
     const prevEditState = stateCopy.editInProgress;
-    if (root.menuState.toolType !== "polygonTool") {
+    if (root.menuState.toolType !== "polygonTool" && root.menuState.toolType !== "bezierTool") {
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     }
     stateCopy.editInProgress = true;
@@ -37,6 +37,7 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "polygonTool":
+            stateCopy.offset = { x: action.payload.draggableData.node.getBoundingClientRect().left, y: action.payload.draggableData.node.getBoundingClientRect().left };
             if (!prevEditState) {
                 stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
@@ -48,6 +49,25 @@ export function dragStart(stateCopy, action, root) {
             } else {
                 stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
                 if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+                    stateCopy.mode = '';
+                    stateCopy.selected = [];
+                    stateCopy.editInProgress = false;
+                }
+            }
+            break;
+        case "bezierTool":
+            stateCopy.offset = { x: action.payload.draggableData.node.getBoundingClientRect().left, y: action.payload.draggableData.node.getBoundingClientRect().left };
+            if (!prevEditState) {
+                stateCopy.mode = 'reshape';
+                stateCopy.lastSavedShapes = root.drawingState.shapes;
+                stateCopy.shapes = addBezier(stateCopy.shapes, action, root.menuState.fillColor,
+                    root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                shapeIds = stateCopy.shapes.allIds;
+                addedShapeId = shapeIds[shapeIds.length - 1];
+                stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
+            } else {
+                stateCopy.shapes = addBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                if (stateCopy.shapes.byId[stateCopy.selected[0]].closed) {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
                     stateCopy.editInProgress = false;
@@ -203,7 +223,7 @@ export function dragStop(stateCopy, action, root) {
             break;
     }
 
-    if (root.menuState.toolType !== "polygonTool") {
+    if (root.menuState.toolType !== "polygonTool" && root.menuState.toolType !== "bezierTool") {
         stateCopy.editInProgress = false;
     }
     return stateCopy;
@@ -214,5 +234,19 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.boundingBoxes = boundingBoxes;
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
+    return stateCopy;
+}
+
+export function mouseMove(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        case "polygonTool":
+            stateCopy.shapes = addTempPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        case "bezierTool":
+            stateCopy.shapes = addTempBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        default:
+            break;
+    }
     return stateCopy;
 }
