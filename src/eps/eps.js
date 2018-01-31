@@ -4,7 +4,7 @@ import boundingBox from './boundingBox';
 export function generateEps(stateCopy) {
 	console.log("made it to export/exportEps");
 	var drawing = '';
-	var myBoundingBox = new boundingBox(stateCopy.canvasHeightInPixels);
+	var myBoundingBox = new boundingBox(stateCopy.canvasHeight);
 
 	for (var i = 0; i < stateCopy.shapes.allIds.length; i++) {
 		var id = stateCopy.shapes.allIds[i];
@@ -12,7 +12,7 @@ export function generateEps(stateCopy) {
 		var shape = stateCopy.shapes.byId[id];
 
 		var myShape = new epsShape(shape);
-		drawing = drawing + myShape.produceEps(stateCopy.canvasHeightInPixels);
+		drawing = drawing + myShape.produceEps(stateCopy.canvasHeight);
 		myBoundingBox.updateBoundsIfNecessary(shape);
 	}
 

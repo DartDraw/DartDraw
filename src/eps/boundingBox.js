@@ -1,11 +1,11 @@
 class boundingBox {
 
-	constructor(canvasHeightInPixels) {
+	constructor(canvasHeight) {
 		this.llx = Infinity;
 		this.lly = Infinity;
 		this.urx = -Infinity;
 		this.ury = -Infinity;
-		this.canvasHeightInPixels = canvasHeightInPixels;
+		this.canvasHeight = canvasHeight;
 		this.updateBoundsIfNecessary = this.updateBoundsIfNecessary.bind(this);
 	}
 
@@ -32,11 +32,11 @@ class boundingBox {
 				if ((shape.x + shape.width) > this.urx) {
 					this.urx = shape.x + shape.width;
 				}
-				if ((this.canvasHeightInPixels - shape.y - shape.height) < this.lly) {
-					this.lly = this.canvasHeightInPixels - shape.y - shape.height;
+				if ((this.canvasHeight - shape.y - shape.height) < this.lly) {
+					this.lly = this.canvasHeight - shape.y - shape.height;
 				}
-				if ((this.canvasHeightInPixels - shape.y) > this.ury) {
-					this.ury = this.canvasHeightInPixels - shape.y;
+				if ((this.canvasHeight - shape.y) > this.ury) {
+					this.ury = this.canvasHeight - shape.y;
 				} 
 				break;
 

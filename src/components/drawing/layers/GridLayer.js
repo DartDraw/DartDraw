@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 
 class GridLayer extends Component {
     static propTypes = {
-        canvasWidthInPixels: PropTypes.number,
-        canvasHeightInPixels: PropTypes.number,
+        canvasWidth: PropTypes.number,
+        canvasHeight: PropTypes.number,
         lines: PropTypes.object,
         showGrid: PropTypes.bool,
         showSubDivisions: PropTypes.bool
     };
 
     renderMajorLines() {
-        const { canvasWidthInPixels, canvasHeightInPixels, lines } = this.props;
+        const { canvasWidth, canvasHeight, lines } = this.props;
         return lines.divisions.map((line) => {
             return (
                 <g>
@@ -19,7 +19,7 @@ class GridLayer extends Component {
                         x1={line}
                         y1="0"
                         x2={line}
-                        y2={canvasHeightInPixels}
+                        y2={canvasHeight}
                         vectorEffect="non-scaling-stroke"
                         stroke="black"
                         strokeWidth="1"
@@ -27,7 +27,7 @@ class GridLayer extends Component {
                     <line
                         x1="0"
                         y1={line}
-                        x2={canvasWidthInPixels}
+                        x2={canvasWidth}
                         y2={line}
                         vectorEffect="non-scaling-stroke"
                         stroke="black"
@@ -39,7 +39,7 @@ class GridLayer extends Component {
     }
 
     renderMinorLines() {
-        const { canvasWidthInPixels, canvasHeightInPixels, lines, showSubDivisions } = this.props;
+        const { canvasWidth, canvasHeight, lines, showSubDivisions } = this.props;
         return lines.subDivisions.map((line) => {
             return (
                 <g display={showSubDivisions ? "" : "none"}>
@@ -47,7 +47,7 @@ class GridLayer extends Component {
                         x1={line}
                         y1="0"
                         x2={line}
-                        y2={canvasHeightInPixels}
+                        y2={canvasHeight}
                         vectorEffect="non-scaling-stroke"
                         stroke="black"
                         strokeDasharray="1, 5"
@@ -56,7 +56,7 @@ class GridLayer extends Component {
                     <line
                         x1="0"
                         y1={line}
-                        x2={canvasWidthInPixels}
+                        x2={canvasWidth}
                         y2={line}
                         vectorEffect="non-scaling-stroke"
                         stroke="black"

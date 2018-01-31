@@ -42,7 +42,7 @@ class SelectionLayer extends Component {
             let width = 10 / scale;
             let height = 10 / scale;
 
-            if (selectionBox.handles.length > 4) {
+            if (selectionBox.shapeType === 'line' && selectionBox.handles.length > 4) {
                 if (i < 4) {
                     width = 0;
                     height = 0;

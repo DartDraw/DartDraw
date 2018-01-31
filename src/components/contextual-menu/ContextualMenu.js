@@ -7,12 +7,11 @@ class ContextualMenu extends Component {
     static propTypes = {
         selectedShape: PropTypes.object,
         scale: PropTypes.number,
-        ruler: PropTypes.object,
+        unitType: PropTypes.string,
         unitDivisions: PropTypes.number,
-        canvasWidthInPixels: PropTypes.number,
-        canvasHeightInPixels: PropTypes.number,
-        canvasWidthInUnits: PropTypes.number,
-        canvasHeightInUnits: PropTypes.number,
+        canvasWidth: PropTypes.number,
+        canvasHeight: PropTypes.number,
+        pixelsPerUnit: PropTypes.number,
         editShape: PropTypes.func,
         onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
@@ -41,6 +40,11 @@ class ContextualMenu extends Component {
             hidden: false
         };
 
+        this.tempScale = this.props.scale * 100;
+        this.tempUnitDivisions = this.props.unitDivisions;
+        this.tempCanvasWidth = this.props.canvasWidth / this.props.pixelsPerUnit;
+        this.tempCanvasHeight = this.props.canvasHeight / this.props.pixelsPerUnit;
+
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
@@ -67,13 +71,6 @@ class ContextualMenu extends Component {
         this.handleChangeCanvasSize = this.handleChangeCanvasSize.bind(this);
     }
 
-    componentDidUpdate() {
-        this.tempScale = this.props.scale;
-        this.tempUnitDivisions = this.props.unitDivisions;
-        this.tempCanvasWidth = this.props.canvasWidthInUnits;
-        this.tempCanvasHeight = this.props.canvasHeightInUnits;
-    }
-
     toggleMenu() {
         const { hidden } = this.state;
         this.setState({
@@ -84,15 +81,6 @@ class ContextualMenu extends Component {
     handleEdit(shape) {
         const { editShape } = this.props;
         editShape && editShape(shape);
-    }
-
-    handleChangeCustomZoom(event) {
-        this.tempScale = event.target.value / 100.0;
-    }
-
-    handleSubmitCustomZoom(event) {
-        this.props.onCustomZoom(this.tempScale);
-        event.preventDefault();
     }
 
     handleToggleGridSnapping(event) {
@@ -159,47 +147,57 @@ class ContextualMenu extends Component {
         this.props.onShowSubDivisions();
     }
 
+    handleChangeCustomZoom(event) {
+        this.tempScale = event.target.value;
+    }
+
+    handleSubmitCustomZoom(event) {
+        this.props.onCustomZoom(this.tempScale / 100.0);
+        event.preventDefault();
+    }
+
     handleSetUnitType(event) {
         this.props.onSetUnitType(event.target.value);
     }
 
     handleSetUnitDivisions(event) {
-        const { ruler } = this.props;
-        const minDivisions = 1;
-        var maxDivisions;
-
-        switch (ruler.unitType) {
-            case "in":
-                maxDivisions = 64;
-                break;
-            case "ft":
-                maxDivisions = 64;
-                break;
-            case "mm":
-                maxDivisions = 100;
-                break;
-            case "cm":
-                maxDivisions = 100;
-                break;
-            case "m":
-                maxDivisions = 100;
-                break;
-            case "px":
-                maxDivisions = 1;
-                break;
-            case "pt":
-                maxDivisions = 1;
-                break;
-            default:
-                break;
-        }
-        if (this.tempUnitDivisions !== "") {
-            var input = parseInt(this.tempUnitDivisions);
-            input = Math.max(minDivisions, Math.min(input, maxDivisions));
-            this.tempUnitDivisions = input;
-            event.target.value = input;
-            this.props.onSetUnitDivisions(input);
-        }
+        // const { ruler } = this.props;
+        // const minDivisions = 1;
+        // var maxDivisions;
+        //
+        // switch (ruler.unitType) {
+        //     case "in":
+        //         maxDivisions = 64;
+        //         break;
+        //     case "ft":
+        //         maxDivisions = 64;
+        //         break;
+        //     case "mm":
+        //         maxDivisions = 100;
+        //         break;
+        //     case "cm":
+        //         maxDivisions = 100;
+        //         break;
+        //     case "m":
+        //         maxDivisions = 100;
+        //         break;
+        //     case "px":
+        //         maxDivisions = 1;
+        //         break;
+        //     case "pt":
+        //         maxDivisions = 1;
+        //         break;
+        //     default:
+        //         break;
+        // }
+        // if (unitDivisions !== "") {
+        //     var input = parseInt(unitDivisions);
+        //     input = Math.max(minDivisions, Math.min(input, maxDivisions));
+        //     unitDivisions = input;
+        //     event.target.value = input;
+        //     this.props.onSetUnitDivisions(input);
+        // }
+        this.props.onSetUnitDivisions(parseInt(this.tempUnitDivisions));
         event.preventDefault();
     }
 
@@ -209,8 +207,9 @@ class ContextualMenu extends Component {
 
     handleSetCanvasSize(event) {
         if (this.tempCanvasWidth !== "" || this.tempCanvasHeight !== "") {
-            this.props.onSetCanvasSize(parseInt(this.tempCanvasWidth), parseInt(this.tempCanvasHeight));
+            this.props.onSetCanvasSize(parseFloat(this.tempCanvasWidth), parseFloat(this.tempCanvasHeight));
         }
+        console.log(this.tempCanvasWidth, this.tempCanvasHeight);
         event.preventDefault();
     }
 
@@ -220,37 +219,11 @@ class ContextualMenu extends Component {
         } else {
             this.tempCanvasHeight = event.target.value;
         }
+        console.log(event.target.value);
     }
 
-    // dropDownSelect(unitDivisions) {
-    //     const { ruler } = this.props;
-    //     var strings = [];
-    //
-    //     switch (ruler.unitType) {
-    //         case "in":
-    //             strings = ["none", '1/2"', '1/4"', '1/8"', '1/16"', '1/32"', '1/64"'];
-    //             break;
-    //         case "ft":
-    //             strings = ["none", "1/2'", "1/4'", "1/8'", "1/16'", "1/32'", "1/64'"];
-    //             break;
-    //         case "cm":
-    //             strings = ["none", '1/10"', '1/100"', '1/1000"', "", "", ""];
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    //
-    //     // <option value="small">$10 USD</option>
-    //     return (
-    //         <option value={unitDivisions}>{strings[unitDivisions]}</option>
-    //     );
-    //     // return (
-    //     //     <option value={unitDivisions}>{strings[unitDivisions]}</option>
-    //     // );
-    // }
-
     render() {
-        const { selectedShape, scale, ruler } = this.props;
+        const { scale, selectedShape, unitType } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         if (selectedShape) {
@@ -325,7 +298,7 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleShowRulers} id="button-icon">R</button>
                         <button onClick={this.handleShowGrid} id="button-icon">G</button>
                         <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
-                        <select value={ruler.unitType} onChange={this.handleSetUnitType}>
+                        <select value={unitType} onChange={this.handleSetUnitType}>
                             <option value="in">{"in"}</option>
                             <option value="ft">ft</option>
                             <option value="m">m</option>
@@ -335,33 +308,50 @@ class ContextualMenu extends Component {
                             <option value="pt">pt</option>
                         </select>
                         <form id="button-icon" onSubmit={this.handleSetUnitDivisions}>
-                            <input
-                                value={this.tempUnitDivisions}
-                                onChange={this.handleChangeUnitDivisions}
-                                type="number"
-                            />
+                            <label>
+                                divisions:
+                                <input
+                                    value={this.tempUnitDivisions}
+                                    onChange={this.handleChangeUnitDivisions}
+                                    type="number"
+                                />
+                            </label>
                         </form>
                         <form id="button-icon" onSubmit={this.handleSetCanvasSize}>
-                            <input
-                                name="width"
-                                value={this.tempCanvasWidth}
-                                onChange={this.handleChangeCanvasSize}
-                                type="number"
-                            />
-                            <input
-                                name="height"
-                                value={this.tempCanvasHeight}
-                                onChange={this.handleChangeCanvasSize}
-                                type="number"
-                            />
-                            <input type="submit" value="resize" />
+                            <label>
+                                width:
+                                <input
+                                    name="width"
+                                    value={this.tempCanvasWidth}
+                                    onChange={this.handleChangeCanvasSize}
+                                    type="number"
+                                    step="0.01"
+                                />
+                            </label>
+                        </form>
+                        <form id="button-icon" onSubmit={this.handleSetCanvasSize}>
+                            <label>
+                                height:
+                                <input
+                                    name="height"
+                                    value={this.tempCanvasHeight}
+                                    onChange={this.handleChangeCanvasSize}
+                                    type="number"
+                                    step="0.01"
+                                />
+                            </label>
                         </form>
                     </div>
                     <div className="zoom-menu">
                         <button onClick={this.handleZoomIn} id="button-icon">+</button>
                         <button onClick={this.handleZoomOut} id="button-icon">-</button>
                         <form id="button-icon" onSubmit={this.handleSubmitCustomZoom}>
-                            {Math.round(scale * 100) + "%"} <input type="text" onChange={this.handleChangeCustomZoom} />
+                            {Math.round(scale * 100) + "%"}
+                            <input
+                                value={this.tempScale}
+                                onChange={this.handleChangeCustomZoom}
+                                type="number"
+                            />
                         </form>
                     </div>
                     <div className="dynamic-menu">

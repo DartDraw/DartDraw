@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import BackgroundLayer from './BackgroundLayer';
 
 const mapStateToProps = ({ drawingState }) => {
-    const { canvasWidthInPixels, canvasHeightInPixels } = drawingState;
+    const { canvasWidth, canvasHeight } = drawingState;
     return {
-        width: canvasWidthInPixels,
-        height: canvasHeightInPixels,
+        width: canvasWidth,
+        height: canvasHeight,
         fill: 'white'
     };
 };

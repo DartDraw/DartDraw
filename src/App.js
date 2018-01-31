@@ -36,7 +36,8 @@ class App extends Component {
     }
 
     handleMouseMove(e) {
-        this.props.onMouseMove(e.screenX, e.screenY);
+        const { onMouseMove } = this.props;
+        onMouseMove({x: e.clientX, y: e.clientY});
     }
 
     render() {

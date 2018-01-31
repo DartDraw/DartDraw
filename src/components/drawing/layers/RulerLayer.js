@@ -7,7 +7,6 @@ class RulerLayer extends Component {
         onSetCanvasSize: PropTypes.func,
         dir: PropTypes.string,
         ruler: PropTypes.object,
-        rulerWidth: PropTypes.number,
         width: PropTypes.number,
         height: PropTypes.number,
         showRulers: PropTypes.bool
@@ -18,12 +17,12 @@ class RulerLayer extends Component {
     }
 
     renderHorizontalLabels() {
-        const { ruler, rulerWidth } = this.props;
-        return ruler.top.labels.map((label) => {
+        const { ruler } = this.props;
+        return ruler.horizontal.labels.map((label) => {
             return (
                 <text
                     x={label[1]}
-                    y={rulerWidth - label[0]}
+                    y={ruler.width - label[0]}
                     textAnchor="start"
                     alignmentBaseline="hanging"
                 >{label[2]}</text>
@@ -32,11 +31,11 @@ class RulerLayer extends Component {
     }
 
     renderVerticalLabels() {
-        const { ruler, rulerWidth } = this.props;
-        return ruler.left.labels.map((label) => {
+        const { ruler } = this.props;
+        return ruler.vertical.labels.map((label) => {
             return (
                 <text
-                    x={rulerWidth - label[0]}
+                    x={ruler.width - label[0]}
                     y={label[1]}
                     textAnchor="start"
                     alignmentBaseline="hanging"
@@ -46,14 +45,14 @@ class RulerLayer extends Component {
     }
 
     renderHorizontalTicks() {
-        const { ruler, rulerWidth } = this.props;
-        return ruler.top.ticks.map((tick) => {
+        const { ruler } = this.props;
+        return ruler.horizontal.ticks.map((tick) => {
             return (
                 <line
                     x1={tick[1]}
-                    y1={rulerWidth}
+                    y1={ruler.width}
                     x2={tick[1]}
-                    y2={rulerWidth - tick[0]}
+                    y2={ruler.width - tick[0]}
                     stroke="black"
                 />
             );
@@ -61,13 +60,13 @@ class RulerLayer extends Component {
     }
 
     renderVerticalTicks() {
-        const { ruler, rulerWidth } = this.props;
-        return ruler.left.ticks.map((tick) => {
+        const { ruler } = this.props;
+        return ruler.vertical.ticks.map((tick) => {
             return (
                 <line
-                    x1={rulerWidth}
+                    x1={ruler.width}
                     y1={tick[1]}
-                    x2={rulerWidth - tick[0]}
+                    x2={ruler.width - tick[0]}
                     y2={tick[1]}
                     stroke="black"
                 />
@@ -76,16 +75,16 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { ruler, showRulers, rulerWidth, dir, width, height } = this.props;
+        const { ruler, showRulers, dir, width, height } = this.props;
         var trackerLoc = 0;
         switch (dir) {
             case "horizontal":
-                trackerLoc = Math.max(0, Math.min(ruler.trackers.x - 45 - rulerWidth, width));
+                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.x - 45 - ruler.width, width));
                 return (
                     <svg className="ruler"
                         id={dir}
                         width={width}
-                        height={rulerWidth}
+                        height={ruler.width}
                         display={showRulers ? "flex" : "none"}
                     >
                         {this.renderHorizontalTicks()}
@@ -94,17 +93,17 @@ class RulerLayer extends Component {
                             x1={trackerLoc}
                             y1={0}
                             x2={trackerLoc}
-                            y2={rulerWidth}
+                            y2={ruler.width}
                             stroke="#ebf1f5"
                         />
                     </svg>
                 );
             case "vertical":
-                trackerLoc = Math.max(0, Math.min(ruler.trackers.y - 45 - rulerWidth, height));
+                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.y - 45 - ruler.width, height));
                 return (
                     <svg className="ruler"
                         id={dir}
-                        width={rulerWidth}
+                        width={ruler.width}
                         height={height}
                         display={showRulers ? "flex" : "none"}
                     >
@@ -113,7 +112,7 @@ class RulerLayer extends Component {
                         <line
                             x1={0}
                             y1={trackerLoc}
-                            x2={rulerWidth}
+                            x2={ruler.width}
                             y2={trackerLoc}
                             stroke="#ebf1f5"
                         />

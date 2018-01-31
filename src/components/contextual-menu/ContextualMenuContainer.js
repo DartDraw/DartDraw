@@ -24,16 +24,15 @@ import { setCanvasSize } from '../../actions/canvas';
 import ContextualMenu from './ContextualMenu';
 
 const mapStateToProps = ({ drawingState }) => {
-    const { shapes, selected, scale, ruler, canvasWidthInPixels, canvasHeightInPixels, canvasWidthInUnits, canvasHeightInUnits } = drawingState;
+    const { shapes, selected, scale, ruler, canvasWidth, canvasHeight } = drawingState;
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: scale,
-        ruler: ruler,
+        unitType: ruler.unitType,
         unitDivisions: ruler.unitDivisions,
-        canvasWidthInPixels: canvasWidthInPixels,
-        canvasHeightInPixels: canvasHeightInPixels,
-        canvasWidthInUnits: canvasWidthInUnits,
-        canvasHeightInUnits: canvasHeightInUnits
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        pixelsPerUnit: ruler.pixelsPerUnit
     };
 };
 

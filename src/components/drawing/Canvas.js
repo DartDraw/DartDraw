@@ -20,7 +20,8 @@ import {
     Line,
     TransparentLine,
     Text,
-    Arrowhead
+    Arrowhead,
+    Bezier
 } from './shapes';
 
 class Canvas extends Component {
@@ -28,8 +29,8 @@ class Canvas extends Component {
         shapes: PropTypes.array,
         arrows: PropTypes.array,
         selected: PropTypes.array,
-        canvasHeightInPixels: PropTypes.number,
-        canvasWidthInPixels: PropTypes.number,
+        canvasHeight: PropTypes.number,
+        canvasWidth: PropTypes.number,
         viewBox: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
@@ -177,6 +178,8 @@ class Canvas extends Component {
                 return <Polygon {...shapeProps} />;
             case 'polyline':
                 return <Polyline {...shapeProps} />;
+            case 'bezier':
+                return <Bezier {...shapeProps} />;
             case 'arc':
                 return <Arc {...shapeProps} />;
             case 'path':
@@ -217,7 +220,7 @@ class Canvas extends Component {
     }
 
     render() {
-        const { canvasHeightInPixels, canvasWidthInPixels, viewBox } = this.props;
+        const { canvasHeight, canvasWidth, viewBox } = this.props;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
@@ -228,8 +231,8 @@ class Canvas extends Component {
                     onStop={this.handleDragStop}
                 >
                     <svg className="Canvas"
-                        width={canvasWidthInPixels}
-                        height={canvasHeightInPixels}
+                        width={canvasWidth}
+                        height={canvasHeight}
                         viewBox={viewBox.join(' ')}
                         ref={(ref) => { this.svgRef = ref; }}
                     >

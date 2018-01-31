@@ -6,7 +6,6 @@ import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import * as rulers from './caseFunctions/rulers';
-import * as grid from './caseFunctions/grid';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -23,11 +22,8 @@ const initialState = {
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeightInUnits: 8.5,
-    canvasWidthInUnits: 11,
-    canvasHeightInPixels: 8.5 * 96,
-    canvasWidthInPixels: 11 * 96,
-    pixelsPerUnit: 96,
+    canvasHeight: 816,
+    canvasWidth: 1056,
     textInputs: {},
     scale: 1,
     panX: 0,
@@ -37,32 +33,21 @@ const initialState = {
     shiftDirection: null,
     past: [],
     future: [],
-    gridSnapping: false,
-    gridPreferences: {
-        showSubDivisions: true,
-        showGrid: true
-    },
     gridLines: {
-        divisions: null,
-        subDivisions: null,
-        snapTo: null
-    },
-    rulerPreferences: {
-        showRulers: true
+        divisions: [],
+        subDivisions: []
     },
     ruler: {
         unitType: 'in',
         unitDivisions: 2,
-        rulerWidth: 30,
-        trackers: {
-            x: 0,
-            y: 0
-        },
-        top: {
+        width: 30,
+        mouseCoords: {x: 0, y: 0},
+        pixelsPerUnit: 96,
+        horizontal: {
             ticks: [],
             labels: []
         },
-        left: {
+        vertical: {
             ticks: [],
             labels: []
         }
@@ -141,14 +126,14 @@ function drawingState(state = initialState, action, root) {
         case menuActions.FLIP_HORIZONTAL:
             updatedState = shape.flipHorizontal(stateCopy, action, root);
             break;
+        case menuActions.MOUSE_MOVE:
+            updatedState = canvas.mouseMove(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
             break;
         case menuActions.KEY_UP:
             updatedState = shape.keyUp(stateCopy, action, root);
-            break;
-        case menuActions.MOUSE_MOVE:
-            updatedState = rulers.mouseMove(stateCopy, action, root);
             break;
         case menuActions.SELECT_TOOL:
             updatedState = shape.selectTool(stateCopy, action, root);
@@ -176,18 +161,6 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.TOGGLE_GRID_SNAPPING:
-            updatedState = grid.toggleGridSnapping(stateCopy, action, root);
-            break;
-        case menuActions.TOGGLE_SHOW_GRID:
-            updatedState = grid.toggleShowGrid(stateCopy, action, root);
-            break;
-        case menuActions.TOGGLE_SHOW_RULER:
-            updatedState = rulers.toggleShowRulers(stateCopy, action, root);
-            break;
-        case menuActions.TOGGLE_SHOW_SUBDIVISIONS:
-            updatedState = grid.toggleShowSubDivisions(stateCopy, action, root);
-            break;
         case menuActions.SET_RULER_EXPONENT:
             updatedState = rulers.setUnitDivisions(stateCopy, action, root);
             break;
@@ -221,7 +194,7 @@ function drawingState(state = initialState, action, root) {
     }
 
     if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
-        if (root.menuState.toolType !== 'polygonTool') {
+        if (root.menuState.toolType !== 'polygonTool' && root.menuState.toolType !== 'bezierTool') {
             stateCopy.mode = '';
             stateCopy.selected = [];
             stateCopy.selectionBoxes = [];

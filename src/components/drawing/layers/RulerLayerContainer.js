@@ -3,13 +3,13 @@ import RulerLayer from './RulerLayer';
 import { setGridRulers } from './../../../actions/canvas';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { rulerPreferences, ruler, canvasWidthInPixels, canvasHeightInPixels, scale } = drawingState;
+    const { ruler, canvasWidth, canvasHeight, scale } = drawingState;
+    const { showRulers } = menuState;
     return {
         ruler: ruler,
-        rulerWidth: ruler.rulerWidth,
-        width: Math.min(canvasWidthInPixels * scale, window.innerWidth - ruler.rulerWidth - 45),
-        height: Math.min(canvasHeightInPixels * scale, window.innerHeight - ruler.rulerWidth - 45),
-        showRulers: rulerPreferences.showRulers
+        width: Math.min(canvasWidth * scale, window.innerWidth - ruler.width - 45),
+        height: Math.min(canvasHeight * scale, window.innerHeight - ruler.width - 45),
+        showRulers: showRulers
     };
 };
 const mapDispatchToProps = (dispatch) => {

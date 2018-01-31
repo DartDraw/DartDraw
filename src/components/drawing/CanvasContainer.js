@@ -31,7 +31,7 @@ function formatShape(shape, shapes, scale) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, canvasHeightInPixels, canvasWidthInPixels, scale } = drawingState;
+    const { shapes, selected, canvasHeight, canvasWidth, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes, scale);
@@ -45,6 +45,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         'rectangleTool',
         'ellipseTool',
         'polygonTool',
+        'bezierTool',
         'arcTool',
         'freehandPathTool',
         'lineTool',
@@ -57,9 +58,9 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         shapes: shapesArray,
         arrows: arrowsArray,
         selected,
-        canvasHeightInPixels: canvasHeightInPixels * scale,
-        canvasWidthInPixels: canvasWidthInPixels * scale,
-        viewBox: [drawingState.panX, drawingState.panY, canvasWidthInPixels, canvasHeightInPixels],
+        canvasHeight: canvasHeight * scale,
+        canvasWidth: canvasWidth * scale,
+        viewBox: [drawingState.panX, drawingState.panY, canvasWidth, canvasHeight],
         propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };

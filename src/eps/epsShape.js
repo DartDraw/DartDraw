@@ -7,11 +7,11 @@ class epsShape {
 		this.produceEps = this.produceEps.bind(this);
 	}
 
-	produceEps(canvasHeightInPixels) {
+	produceEps(canvasHeight) {
 		switch(this.shape.type) {
 			case "rectangle":
 				var myRectangle = new epsRectangle(this.shape);
-				var drawing = myRectangle.produceEps(canvasHeightInPixels);
+				var drawing = myRectangle.produceEps(canvasHeight);
 				break;
 			default:
 				var drawing = '';
