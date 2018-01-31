@@ -1,4 +1,4 @@
-import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addLine, addFreehandPath,
+import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addTempPolygonPoint, addLine, addFreehandPath,
     addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
     resizeTextBoundingBox, addBezier, addBezierPoint } from '../utilities/shapes';
 import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
@@ -37,6 +37,7 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "polygonTool":
+            stateCopy.offset = { x: action.payload.draggableData.node.getBoundingClientRect().left, y: action.payload.draggableData.node.getBoundingClientRect().left };
             if (!prevEditState) {
                 stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
@@ -55,8 +56,7 @@ export function dragStart(stateCopy, action, root) {
             }
             break;
         case "bezierTool":
-            console.log(action.payload.draggableData.node);
-            console.log('BEZIER', action.payload.draggableData.node.getBoundingClientRect().left, action.payload.draggableData.node.getBoundingClientRect().left);
+            stateCopy.offset = { x: action.payload.draggableData.node.getBoundingClientRect().left, y: action.payload.draggableData.node.getBoundingClientRect().left };
             if (!prevEditState) {
                 stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
@@ -235,5 +235,16 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
     stateCopy.textInputs = updateTextInputs(stateCopy.selected, stateCopy.shapes, stateCopy.textInputs);
+    return stateCopy;
+}
+
+export function mouseMove(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        case "polygonTool":
+            stateCopy.shapes = addTempPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            break;
+        default:
+            break;
+    }
     return stateCopy;
 }

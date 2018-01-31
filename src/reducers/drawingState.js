@@ -103,6 +103,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.FLIP_HORIZONTAL:
             updatedState = shape.flipHorizontal(stateCopy, action, root);
             break;
+        case menuActions.MOUSE_MOVE:
+            updatedState = canvas.mouseMove(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
             break;
@@ -137,7 +140,6 @@ function drawingState(state = initialState, action, root) {
             return menu.exportClick(stateCopy);
         case menuActions.EDIT_SHAPE:
             updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
-            console.log(action.payload.shape);
             break;
         default: break;
     }

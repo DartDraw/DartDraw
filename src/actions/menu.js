@@ -35,8 +35,8 @@ export function keyUp(keyCode) {
     return { type: KEY_UP, payload: { keyCode } };
 }
 
-export function mouseMove(x, y) {
-    return { type: MOUSE_MOVE, payload: { x, y } };
+export function mouseMove(coord) {
+    return { type: MOUSE_MOVE, payload: coord };
 }
 
 export function selectTool(toolType) {

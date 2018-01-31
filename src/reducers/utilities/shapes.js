@@ -74,6 +74,9 @@ export function addPolygon(shapes, action, fill, stroke, panX, panY, scale, grid
         polygon.points[1] = Math.round(polygon.points[1] / minorGrid) * minorGrid;
     }
 
+    polygon.points.push(polygon.points[0]);
+    polygon.points.push(polygon.points[1]);
+
     shapes.byId[polygon.id] = polygon;
     shapes.allIds.push(polygon.id);
     return shapes;
@@ -100,8 +103,34 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
         polygon.type = 'polygon';
     }
 
-    polygon.points.push(xCoord);
-    polygon.points.push(yCoord);
+    polygon.points[polygon.points.length - 2] = xCoord;
+    polygon.points[polygon.points.length - 1] = yCoord;
+
+    if (polygon.type !== 'polygon') {
+        // temp point
+        polygon.points.push(xCoord);
+        polygon.points.push(yCoord);
+    }
+
+    return shapes;
+}
+
+export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY, scale, gridSnapping, minorGrid) {
+    const { x, y } = action.payload;
+
+    const polygon = shapes.byId[selected[0]];
+    if (!polygon || polygon.type === 'polygon') { return shapes; }
+
+    let xCoord = (x + (panX * scale) - offset.x) / scale;
+    let yCoord = (y + (panY * scale) - offset.y) / scale;
+
+    if (gridSnapping) {
+        xCoord = (Math.round(xCoord / minorGrid) * minorGrid);
+        yCoord = (Math.round(yCoord / minorGrid) * minorGrid);
+    }
+
+    polygon.points[polygon.points.length - 2] = xCoord;
+    polygon.points[polygon.points.length - 1] = yCoord;
 
     return shapes;
 }
@@ -136,7 +165,7 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
     const { x, y, node } = draggableData;
 
     const bezier = shapes.byId[selected[0]];
-    console.log(selected);
+
     let xCoord = (x + (panX * scale) - node.getBoundingClientRect().left) / scale;
     let yCoord = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
