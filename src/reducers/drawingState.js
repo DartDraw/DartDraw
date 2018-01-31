@@ -20,10 +20,8 @@ const initialState = {
     marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
-    textInputFocused: false,
     canvasHeight: 850,
     canvasWidth: 1000,
-    textInputs: {},
     scale: 1,
     panX: 0,
     panY: 0,
@@ -75,9 +73,6 @@ function drawingState(state = initialState, action, root) {
             break;
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
-            break;
-        case canvasActions.TOGGLE_TEXT_INPUT_FOCUS:
-            updatedState.textInputFocused = action.payload.textInputFocused;
             break;
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);

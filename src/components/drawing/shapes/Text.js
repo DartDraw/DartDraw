@@ -6,10 +6,12 @@ import { formatTransform } from '../../../utilities/shapes';
 class Text extends Component {
     static propTypes = {
         id: PropTypes.string,
+        selected: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
+        onChange: PropTypes.func,
         text: PropTypes.string,
         x: PropTypes.number,
         y: PropTypes.number,
@@ -24,13 +26,6 @@ class Text extends Component {
         lineHeight: PropTypes.string,
         fill: PropTypes.string,
         stroke: PropTypes.string,
-        tspans: PropTypes.arrayOf(PropTypes.shape({
-            indices: PropTypes.arrayOf(PropTypes.shape({
-                first: PropTypes.number,
-                last: PropTypes.number
-            })),
-            style: PropTypes.object
-        })),
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
@@ -72,39 +67,70 @@ class Text extends Component {
     }
 
     render() {
-        const { id, x, y, width, height, fontFamily, fontSize, fontWeight, fontStyle, textAlign, textDecoration, lineHeight, fill, tspans, transform, propagateEvents, text } = this.props;
-        const svgProps = {
+        const {
             id,
-            transform: formatTransform(transform)
+            selected,
+            x,
+            y,
+            width,
+            height,
+            transform,
+            text,
+            fontFamily,
+            fontSize,
+            fontWeight,
+            fontStyle,
+            textAlign,
+            textDecoration,
+            lineHeight,
+            fill,
+            stroke,
+            propagateEvents
+        } = this.props;
+        const normalizedX = width < 0 ? x + width : x;
+        const normalizedY = height < 0 ? y + height : y;
+        const normalizedWidth = Math.abs(width);
+        const normalizedHeight = Math.abs(height);
+        const styleProps = {
+            width: normalizedWidth,
+            height: normalizedHeight,
+            fontFamily,
+            fontSize: fontSize + 'px',
+            fontWeight,
+            fontStyle,
+            textAlign,
+            textDecoration,
+            lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+            color: fill,
+            stroke
         };
 
-        const element = tspans ? tspans.map(tspan => {
-            return (
-                <tspan style={tspan.style}>
-                    {text.slice(tspan.indices.first, tspan.indices.last)}
-                </tspan>
-            );
-        }) : text;
-
         return (
-            <Shape
-                id={id}
-                onDragStart={this.handleDragStart}
-                onDrag={this.handleDrag}
-                onDragStop={this.handleDragStop}
-                onClick={this.handleClick}
-                propagateEvents={propagateEvents}
-            >
-                <foreignObject
-                    {...svgProps}
-                    x={width < 0 ? x + width : x}
-                    y={height < 0 ? y + height : y}
-                    width={Math.abs(width)}
-                    height={Math.abs(height)}
-                >
-                    <div style={{color: fill, fontFamily, fontSize, fontWeight, fontStyle, textAlign, textDecoration, lineHeight}}>{element}</div>
+            <g id={id}>
+                <foreignObject x={normalizedX} y={normalizedY} width={normalizedWidth} height={normalizedHeight}>
+                    <div style={styleProps}>
+                        {text}
+                    </div>
                 </foreignObject>
-            </Shape>
+                {selected &&
+                    <Shape
+                        id={id}
+                        onDragStart={this.handleDragStart}
+                        onDrag={this.handleDrag}
+                        onDragStop={this.handleDragStop}
+                        onClick={this.handleClick}
+                        propagateEvents={propagateEvents}
+                    >
+                        <rect
+                            width={14}
+                            height={14}
+                            x={normalizedX + Math.abs(width) / 2 - 7}
+                            y={normalizedY - 15}
+                        />
+                    </Shape>
+                }
+            </g>
+
         );
     }
 }

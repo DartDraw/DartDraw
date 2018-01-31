@@ -234,7 +234,6 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.boundingBoxes = boundingBoxes;
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
-    stateCopy.textInputs = updateTextInputs(stateCopy.selected, stateCopy.shapes, stateCopy.textInputs);
     return stateCopy;
 }
 

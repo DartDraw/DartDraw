@@ -224,6 +224,7 @@ class Canvas extends Component {
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
+                <TextInputLayerContainer />
                 <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}
@@ -242,7 +243,6 @@ class Canvas extends Component {
                         <SelectionLayerContainer />
                     </svg>
                 </Draggable>
-                <TextInputLayerContainer />
             </div>
         );
     }
