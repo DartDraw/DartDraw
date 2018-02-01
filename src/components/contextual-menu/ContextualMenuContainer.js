@@ -10,17 +10,13 @@ import {
     flipHorizontal,
     flipVertical,
     bringToFront,
-    toggleGridSnapping,
-    zoomIn,
-    zoomOut,
     customZoom,
+    toggleGridSnapping,
     toggleShowGrid,
     toggleShowRulers,
     toggleShowSubDivisions,
-    setUnitType,
-    setUnitDivisions
+    setRulerGrid
 } from '../../actions/menu';
-import { setCanvasSize } from '../../actions/canvas';
 import ContextualMenu from './ContextualMenu';
 
 const mapStateToProps = ({ drawingState }) => {
@@ -30,9 +26,8 @@ const mapStateToProps = ({ drawingState }) => {
         scale: scale,
         unitType: ruler.unitType,
         unitDivisions: ruler.unitDivisions,
-        canvasWidth: canvasWidth,
-        canvasHeight: canvasHeight,
-        pixelsPerUnit: ruler.pixelsPerUnit
+        canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
+        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit
     };
 };
 
@@ -71,12 +66,6 @@ const mapDispatchToProps = (dispatch) => {
         onToggleGridSnapping: () => {
             dispatch(toggleGridSnapping());
         },
-        onZoomIn: () => {
-            dispatch(zoomIn());
-        },
-        onZoomOut: () => {
-            dispatch(zoomOut());
-        },
         onCustomZoom: (customScale) => {
             dispatch(customZoom(customScale));
         },
@@ -89,14 +78,8 @@ const mapDispatchToProps = (dispatch) => {
         onShowSubDivisions: () => {
             dispatch(toggleShowSubDivisions());
         },
-        onSetUnitType: (unitType) => {
-            dispatch(setUnitType(unitType));
-        },
-        onSetUnitDivisions: (unitDivisions) => {
-            dispatch(setUnitDivisions(unitDivisions));
-        },
-        onSetCanvasSize: (width, height) => {
-            dispatch(setCanvasSize(width, height));
+        onSetRulerGrid: (canvasSpecs) => {
+            dispatch(setRulerGrid(canvasSpecs));
         }
     };
 };

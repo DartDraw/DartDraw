@@ -14,8 +14,6 @@ export const HANDLE_DRAG = 'HANDLE_DRAG';
 export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
 export const TEXT_INPUT_CHANGE = 'TEXT__INPUT_CHANGE';
 export const UPDATE_BOUNDING_BOXES = 'UPDATE_BOUNDING_BOXES';
-export const SET_GRID_RULERS = 'SET_GRID_RULERS';
-export const SET_CANVAS_SIZE = 'SET_CANVAS_SIZE';
 
 export function canvasDrag(draggableData) {
     return { type: CANVAS_DRAG, payload: { draggableData } };
@@ -79,12 +77,4 @@ export function textInputChange(shapeId, value, focused) {
 
 export function updateBoundingBoxes(boundingBoxes) {
     return { type: UPDATE_BOUNDING_BOXES, payload: { boundingBoxes } };
-}
-
-export function setGridRulers() {
-    return { type: SET_GRID_RULERS };
-}
-
-export function setCanvasSize(width, height) {
-    return { type: SET_CANVAS_SIZE, payload: { width, height } };
 }

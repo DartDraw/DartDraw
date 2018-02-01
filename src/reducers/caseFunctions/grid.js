@@ -1,4 +1,4 @@
-import { minSubUnitDistance } from './rulers';
+import { minTickDistance } from './rulers';
 
 export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, canvasWidth, canvasHeight) {
     const gridDimensionInUnits = Math.ceil(Math.max(canvasWidth, canvasHeight) / ruler.pixelsPerUnit);
@@ -9,7 +9,7 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
     result.divisions = [];
     result.subDivisions = [];
     result.gridSnapInterval = ruler.pixelsPerUnit / ruler.unitDivisions;
-    console.log(result.gridSnapInterval, ruler.pixelsPerUnit, ruler.unitDivisions);
+    // console.log(result.gridSnapInterval, ruler.pixelsPerUnit, ruler.unitDivisions);
 
     // loop thru each desired level of lines, inches, halves, quarters, etc...
     for (var exponentIndex = 0; exponentIndex <= subUnitExponent; exponentIndex++) {
@@ -53,11 +53,11 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
             if (exponentIndex === 0) {
                 if (i % labelInterval === 0) {
                     result.divisions.push(lineLoc);
-                } else if ((lineSpacing * scale) >= minSubUnitDistance && !renderSubDivisions) {
+                } else if ((lineSpacing * scale) >= minTickDistance && !renderSubDivisions) {
                     result.subDivisions.push(lineLoc);
                 }
                 // else: do nothing
-            } else if ((lineSpacing * scale) >= minSubUnitDistance && renderSubDivisions) {
+            } else if ((lineSpacing * scale) >= minTickDistance && renderSubDivisions) {
                 result.subDivisions.push(lineLoc);
             }
         }

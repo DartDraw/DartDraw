@@ -7,8 +7,6 @@ export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
-export const ZOOM_IN = 'ZOOM_IN';
-export const ZOOM_OUT = 'ZOOM_OUT';
 export const CUSTOM_ZOOM = 'CUSTOM_ZOOM';
 export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
@@ -24,8 +22,7 @@ export const SELECT_BUTTON = 'SELECT_BUTTON';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
-export const SET_RULER_EXPONENT = 'SET_RULER_EXPONENT';
-export const SET_UNIT_TYPE = 'SET_UNIT_TYPE';
+export const SET_RULER_GRID = 'SET_RULER_GRID';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -65,14 +62,6 @@ export function undoClick() {
 
 export function redoClick() {
     return { type: REDO_CLICK };
-}
-
-export function zoomIn() {
-    return { type: ZOOM_IN };
-}
-
-export function zoomOut() {
-    return { type: ZOOM_OUT };
 }
 
 export function customZoom(customScale) {
@@ -131,10 +120,6 @@ export function toggleShowSubDivisions() {
     return { type: TOGGLE_SHOW_SUBDIVISIONS };
 }
 
-export function setUnitType(unitType) {
-    return { type: SET_UNIT_TYPE, payload: { unitType } };
-}
-
-export function setUnitDivisions(unitDivisions) {
-    return { type: SET_RULER_EXPONENT, payload: { unitDivisions } };
+export function setRulerGrid(canvasSpecs) {
+    return { type: SET_RULER_GRID, payload: canvasSpecs };
 }

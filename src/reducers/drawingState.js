@@ -99,12 +99,12 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
-        case canvasActions.SET_GRID_RULERS:
-            updatedState = rulers.setGridRulers(stateCopy, action, root);
-            break;
-        case canvasActions.SET_CANVAS_SIZE:
-            updatedState = rulers.setCanvasSize(stateCopy, action, root);
-            break;
+        // case canvasActions.SET_GRID_RULERS:
+        //     updatedState = rulers.setGridRulers(stateCopy, action, root);
+        //     break;
+        // case canvasActions.SET_CANVAS_SIZE:
+        //     updatedState = rulers.setCanvasSize(stateCopy, action, root);
+        //     break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -150,22 +150,13 @@ function drawingState(state = initialState, action, root) {
         case menuActions.REDO_CLICK:
             updatedState = menu.redoClick(stateCopy, action, root);
             break;
-        case menuActions.ZOOM_IN:
-            updatedState = zoom.zoomIn(stateCopy, action, root);
-            break;
-        case menuActions.ZOOM_OUT:
-            updatedState = zoom.zoomOut(stateCopy, action, root);
-            break;
         case menuActions.CUSTOM_ZOOM:
             updatedState = zoom.zoomToCustom(stateCopy, action, root);
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.SET_RULER_EXPONENT:
-            updatedState = rulers.setUnitDivisions(stateCopy, action, root);
-            break;
-        case menuActions.SET_UNIT_TYPE:
-            updatedState = rulers.setUnitType(stateCopy, action, root);
+        case menuActions.SET_RULER_GRID:
+            updatedState = rulers.setRulerGrid(stateCopy, action, root);
             break;
         default: break;
     }
