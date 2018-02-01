@@ -48,7 +48,7 @@ export function dragStart(stateCopy, action, root) {
                 addedShapeId = shapeIds[shapeIds.length - 1];
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
-                stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
                 if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
@@ -77,28 +77,28 @@ export function dragStart(stateCopy, action, root) {
             break;
         case "lineTool":
             stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "arcTool":
             stateCopy.shapes = addArc(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "freehandPathTool":
             stateCopy.shapes = addFreehandPath(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "textTool":
             stateCopy.shapes = addText(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
@@ -130,25 +130,25 @@ export function drag(stateCopy, action, root) {
         case "roundedRectangleTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                 stateCopy.selected, draggableData, 1, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, null, null, stateCopy.gridSnapping, root.menuState.gridSnapInterval,
+                stateCopy.scale, null, null, root.menuState.gridSnapping, root.menuState.gridSnapInterval,
                 stateCopy.shiftDirection, root.menuState.centeredControl);
             break;
         case "ellipseTool":
             stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.selected,
                 draggableData, 1, stateCopy.panX, stateCopy.panY, stateCopy.scale, null, null,
-                stateCopy.gridSnapping, root.menuState.gridSnapInterval, stateCopy.shiftDirection, root.menuState.centeredControl);
+                root.menuState.gridSnapping, root.menuState.gridSnapInterval, stateCopy.shiftDirection, root.menuState.centeredControl);
             break;
         case "lineTool":
             stateCopy.shapes = moveLineAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval, root.menuState.centeredControl);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval, root.menuState.centeredControl);
             break;
         case "freehandPathTool":
             stateCopy.shapes = addFreehandPathPoint(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
             break;
         case "arcTool":
             stateCopy.shapes = moveArcAnchor(stateCopy.shapes, stateCopy.selected, draggableData, stateCopy.panX, stateCopy.panY,
-                stateCopy.scale, stateCopy.gridSnapping, root.menuState.gridSnapInterval);
+                stateCopy.scale, root.menuState.gridSnapping, root.menuState.gridSnapInterval);
             break;
         case "textTool":
             stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected, draggableData, 1, stateCopy.scale);

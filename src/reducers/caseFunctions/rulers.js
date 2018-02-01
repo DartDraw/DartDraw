@@ -21,48 +21,41 @@ export function setMouseTrackers(ruler, x, y) {
 }
 
 export function setUnitType(stateCopy, action) {
-    const { canvasWidth, canvasHeight } = stateCopy;
     const { unitType } = action.payload;
+    const { canvasWidth, canvasHeight } = stateCopy;
 
     stateCopy.ruler.unitType = unitType;
 
-    var newWidth = canvasWidth;
-    var newHeight = canvasHeight;
-
     switch (unitType) {
         case "in":
-            newWidth = newWidth / pixelsPerInch;
-            newHeight = newHeight / pixelsPerInch;
+            stateCopy.ruler.pixelsPerUnit = pixelsPerInch;
             break;
         case "ft":
-            newWidth = newWidth / pixelsPerInch / 12;
-            newHeight = newHeight / pixelsPerInch / 12;
+            stateCopy.ruler.pixelsPerUnit = pixelsPerInch * 12;
             break;
         case "mm":
-            newWidth = newWidth / pixelsPerCm * 10;
-            newHeight = newHeight / pixelsPerCm * 10;
+            stateCopy.ruler.pixelsPerUnit = pixelsPerCm / 10;
             break;
         case "cm":
-            newWidth = newWidth / pixelsPerCm;
-            newHeight = newHeight / pixelsPerCm;
+            stateCopy.ruler.pixelsPerUnit = pixelsPerCm;
             break;
         case "m":
-            newWidth = newWidth / pixelsPerCm / 10;
-            newHeight = newHeight / pixelsPerCm / 10;
+            stateCopy.ruler.pixelsPerUnit = pixelsPerCm * 100;
             break;
         case "px":
+            stateCopy.ruler.pixelsPerUnit = 1;
             break;
         case "pt":
-            newWidth = newWidth / pixelsPerPoint;
-            newHeight = newHeight / pixelsPerPoint;
+            stateCopy.ruler.pixelsPerUnit = pixelsPerPoint;
             break;
         default:
             break;
     }
 
-    console.log(newWidth, newHeight);
+    var widthInUnits = canvasWidth / stateCopy.ruler.pixelsPerUnit;
+    var heightInUnits = canvasHeight / stateCopy.ruler.pixelsPerUnit;
 
-    stateCopy = setCanvasSizeHelper(stateCopy, newWidth, newHeight);
+    stateCopy = setCanvasSizeHelper(stateCopy, widthInUnits, heightInUnits);
 
     return stateCopy;
 }
@@ -88,39 +81,10 @@ export function setCanvasSize(stateCopy, action) {
 }
 
 function setCanvasSizeHelper(stateCopy, width, height) {
-    const { unitType } = stateCopy.ruler;
-
-    var pixelsPerUnit;
-
-    switch (unitType) {
-        case "in":
-            pixelsPerUnit = pixelsPerInch;
-            break;
-        case "ft":
-            pixelsPerUnit = pixelsPerInch * 12;
-            break;
-        case "mm":
-            pixelsPerUnit = pixelsPerCm / 10;
-            break;
-        case "cm":
-            pixelsPerUnit = pixelsPerCm;
-            break;
-        case "m":
-            pixelsPerUnit = pixelsPerCm * 10;
-            break;
-        case "px":
-            pixelsPerUnit = 1;
-            break;
-        case "pt":
-            pixelsPerUnit = pixelsPerPoint;
-            break;
-        default:
-            break;
-    }
+    const { pixelsPerUnit } = stateCopy.ruler;
 
     stateCopy.canvasWidth = width * pixelsPerUnit;
     stateCopy.canvasHeight = height * pixelsPerUnit;
-    stateCopy.ruler.pixelsPerUnit = pixelsPerUnit;
     stateCopy.panX = 0;
     stateCopy.panY = 0;
 
@@ -163,11 +127,10 @@ export function updateGridRulers(ruler, scale, panX, panY, canvasWidth, canvasHe
     const tickQty = rulerLengthInUnits * subUnitBase;
     const minWholeUnitDistance = 10 * tickQty.toString().length;
 
-    ruler.horizontal = buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, yPanOffset);
-    ruler.vertical = buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, xPanOffset);
+    ruler.horizontal = buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, xPanOffset);
+    ruler.vertical = buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minWholeUnitDistance, rulerLengthInUnits, tickLengthMultiplier, yPanOffset);
     var gridLines = buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, canvasWidth, canvasHeight);
 
-    console.log(ruler, gridLines);
     return { ruler, gridLines };
 }
 
@@ -205,6 +168,19 @@ function buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, mi
 
             if (labelInterval > 1) {
                 renderDivisions = false;
+                // var labelInterval2 = Math.ceil(minSubUnitDistance / tickSpacing);
+                // var scalingFactor2 = 1;
+                //
+                // while (labelInterval2 > intervalArray[intervalArray.length - 1] * scalingFactor2) {
+                //     scalingFactor2 *= 10;
+                // }
+                //
+                // for (let i = 0; i < intervalArray.length; i++) {
+                //     if (labelInterval2 < (intervalArray[i] * scalingFactor2)) {
+                //         labelInterval2 = intervalArray[i] * scalingFactor2;
+                //         break;
+                //     }
+                // }
             }
         }
 
@@ -230,7 +206,7 @@ function buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, mi
                 if (i % labelInterval === 0) {
                     result.labels.push([tickLength - labelOffset, tickLoc + labelOffset, i]);
                     result.ticks.push([tickLength, tickLoc]);
-                } else if (!renderDivisions) {
+                } else if (tickSpacing >= minSubUnitDistance && !renderDivisions) {
                     result.ticks.push([tickLength * 0.5, tickLoc]);
                 }
                 // else: do nothing

@@ -20,7 +20,7 @@ const initialState = {
     showRulers: true,
     showSubDivisions: true,
     showGrid: true,
-    gridSnapInterval: null
+    gridSnapInterval: 48
 };
 
 function menuState(state = initialState, action, root) {

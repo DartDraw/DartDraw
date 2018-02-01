@@ -209,7 +209,6 @@ class ContextualMenu extends Component {
         if (this.tempCanvasWidth !== "" || this.tempCanvasHeight !== "") {
             this.props.onSetCanvasSize(parseFloat(this.tempCanvasWidth), parseFloat(this.tempCanvasHeight));
         }
-        console.log(this.tempCanvasWidth, this.tempCanvasHeight);
         event.preventDefault();
     }
 
@@ -219,7 +218,6 @@ class ContextualMenu extends Component {
         } else {
             this.tempCanvasHeight = event.target.value;
         }
-        console.log(event.target.value);
     }
 
     render() {
