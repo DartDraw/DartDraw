@@ -8,78 +8,103 @@ class RulerLayer extends Component {
         ruler: PropTypes.object,
         width: PropTypes.number,
         height: PropTypes.number,
+        widthInUnits: PropTypes.number,
+        heightInUnits: PropTypes.number,
         showRulers: PropTypes.bool
     };
 
     componentWillMount() {
+        const { ruler, widthInUnits, heightInUnits } = this.props;
         this.props.onSetRulerGrid({
-            unitType: 'in',
-            width: 11,
-            height: 8.5,
-            unitDivisions: 2
+            unitType: ruler.unitType,
+            width: widthInUnits,
+            height: heightInUnits,
+            unitDivisions: ruler.unitDivisions
         });
     }
 
-    renderHorizontalLabels() {
-        const { ruler } = this.props;
-        return ruler.horizontal.labels.map((label) => {
-            var offset = 3;
-            if (label.final) { offset = -3; }
-            return (
-                <text
-                    x={label.loc + offset}
-                    y={3}
-                    textAnchor={label.final ? "end" : "start"}
-                    dominantBaseline="hanging"
-                >{label.num}</text>
-            );
+    buildLabel(num, x, y, textAnchor, dominantBaseline) {
+        return (
+            <text
+                x={x}
+                y={y}
+                textAnchor={textAnchor}
+                dominantBaseline={dominantBaseline}
+            >{num}</text>
+        );
+    }
+
+    buildTick(x1, y1, x2, y2) {
+        return (
+            <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="black"
+            />
+        );
+    }
+
+    buildTracker(x1, y1, x2, y2) {
+        return (
+            <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="#ebf1f5"
+            />
+        );
+    }
+
+    renderLabels(labels) {
+        const { dir } = this.props;
+        var offset = 3;
+
+        return labels.map((label) => {
+            var x, y, textAnchor, dominantBaseline;
+            switch (dir) {
+                case "horizontal":
+                    x = label.loc + (label.final ? -offset : offset);
+                    y = offset;
+                    textAnchor = label.final ? "end" : "start";
+                    dominantBaseline = "hanging";
+                    break;
+                case "vertical":
+                    x = offset;
+                    y = label.loc + (label.final ? -offset : offset);
+                    textAnchor = "start";
+                    dominantBaseline = label.final ? "baseline" : "hanging";
+                    break;
+                default: break;
+            }
+
+            return (this.buildLabel(label.num, x, y, textAnchor, dominantBaseline));
         });
     }
 
-    renderVerticalLabels() {
-        const { ruler } = this.props;
-        console.log(ruler.vertical.labels);
-        return ruler.vertical.labels.map((label) => {
-            var offset = 3;
-            if (label.final) { offset = -offset; }
-            return (
-                <text
-                    x={3}
-                    y={label.loc + offset}
-                    textAnchor="start"
-                    dominantBaseline={label.final ? "" : "hanging"}
-                >{label.num}</text>
-            );
-        });
-    }
+    renderTicks(ticks) {
+        const { dir, ruler } = this.props;
+        var x1, y1, x2, y2;
+        return ticks.map((tick) => {
+            switch (dir) {
+                case "horizontal":
+                    x1 = tick.loc;
+                    y1 = ruler.width;
+                    x2 = tick.loc;
+                    y2 = ruler.width - tick.length;
+                    break;
+                case "vertical":
+                    x1 = ruler.width;
+                    y1 = tick.loc;
+                    x2 = ruler.width - tick.length;
+                    y2 = tick.loc;
+                    break;
+                default: break;
+            }
 
-    renderHorizontalTicks() {
-        const { ruler } = this.props;
-        return ruler.horizontal.ticks.map((tick) => {
-            return (
-                <line
-                    x1={tick.loc}
-                    y1={ruler.width}
-                    x2={tick.loc}
-                    y2={ruler.width - tick.length}
-                    stroke="black"
-                />
-            );
-        });
-    }
-
-    renderVerticalTicks() {
-        const { ruler } = this.props;
-        return ruler.vertical.ticks.map((tick) => {
-            return (
-                <line
-                    x1={ruler.width}
-                    y1={tick.loc}
-                    x2={ruler.width - tick.length}
-                    y2={tick.loc}
-                    stroke="black"
-                />
-            );
+            return (this.buildTick(x1, y1, x2, y2));
         });
     }
 
@@ -97,15 +122,9 @@ class RulerLayer extends Component {
                         style={{paddingLeft: ruler.width}}
                         display={showRulers ? "flex" : "none"}
                     >
-                        {this.renderHorizontalTicks()}
-                        {this.renderHorizontalLabels()}
-                        <line
-                            x1={trackerLoc}
-                            y1={0}
-                            x2={trackerLoc}
-                            y2={ruler.width}
-                            stroke="#ebf1f5"
-                        />
+                        {this.renderTicks(ruler.horizontal.ticks)}
+                        {this.renderLabels(ruler.horizontal.labels)}
+                        {this.buildTracker(trackerLoc, 0, trackerLoc, ruler.width)}
                     </svg>
                 );
             case "vertical":
@@ -117,15 +136,9 @@ class RulerLayer extends Component {
                         height={height}
                         display={showRulers ? "flex" : "none"}
                     >
-                        {this.renderVerticalTicks()}
-                        {this.renderVerticalLabels()}
-                        <line
-                            x1={0}
-                            y1={trackerLoc}
-                            x2={ruler.width}
-                            y2={trackerLoc}
-                            stroke="#ebf1f5"
-                        />
+                        {this.renderTicks(ruler.vertical.ticks)}
+                        {this.renderLabels(ruler.vertical.labels)}
+                        {this.buildTracker(0, trackerLoc, ruler.width, trackerLoc)}
                     </svg>
                 );
             default: break;

@@ -34,10 +34,7 @@ const initialState = {
     shiftDirection: null,
     past: [],
     future: [],
-    gridLines: {
-        divisions: [],
-        subDivisions: []
-    },
+    gridLines: [],
     ruler: {
         unitType: 'in',
         unitDivisions: 2,

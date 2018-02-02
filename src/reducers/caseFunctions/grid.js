@@ -16,11 +16,9 @@ export function toggleShowSubDivisions(stateCopy) {
 export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, minSubUnitDistance, canvasWidth, canvasHeight) {
     const gridDimensionInUnits = Math.ceil(Math.max(canvasWidth, canvasHeight) / ruler.pixelsPerUnit);
     var masterLineIndex = [];
-    var result = {};
     var renderSubDivisions = true;
+    var result = [];
 
-    result.divisions = [];
-    result.subDivisions = [];
     result.gridSnapInterval = ruler.pixelsPerUnit / ruler.unitDivisions;
 
     // loop thru each desired level of lines, inches, halves, quarters, etc...
@@ -64,13 +62,12 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
             // if is a primary line, it needs a label
             if (exponentIndex === 0) {
                 if (i % labelInterval === 0) {
-                    result.divisions.push(lineLoc);
+                    result.push({loc: lineLoc, major: true});
                 } else if ((lineSpacing * scale) >= minSubUnitDistance && !renderSubDivisions) {
-                    result.subDivisions.push(lineLoc);
+                    result.push({loc: lineLoc, major: false});
                 }
-                // else: do nothing
             } else if ((lineSpacing * scale) >= minSubUnitDistance && renderSubDivisions) {
-                result.subDivisions.push(lineLoc);
+                result.push({loc: lineLoc, major: false});
             }
         }
     }

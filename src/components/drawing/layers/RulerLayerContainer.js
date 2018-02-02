@@ -9,6 +9,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         ruler: ruler,
         width: Math.min(canvasWidth * scale, window.innerWidth - ruler.width - 45),
         height: Math.min(canvasHeight * scale, window.innerHeight - ruler.width - 45),
+        widthInUnits: canvasWidth / ruler.pixelsPerUnit,
+        heightInUnits: canvasHeight / ruler.pixelsPerUnit,
         showRulers: showRulers
     };
 };

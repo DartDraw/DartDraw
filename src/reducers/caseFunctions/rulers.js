@@ -5,8 +5,6 @@ const pixelsPerInch = 96;
 const pixelsPerPoint = 72;
 const pixelsPerCm = pixelsPerInch / 2.54;
 
-const labelOffset = 2;
-
 export function toggleShowRulers(stateCopy) {
     stateCopy.showRulers = !stateCopy.showRulers;
     return stateCopy;

@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -10,61 +11,32 @@ class GridLayer extends Component {
         showSubDivisions: PropTypes.bool
     };
 
-    renderMajorLines() {
-        const { canvasWidth, canvasHeight, lines } = this.props;
-        return lines.divisions.map((line) => {
-            return (
-                <g>
-                    <line
-                        x1={line}
-                        y1="0"
-                        x2={line}
-                        y2={canvasHeight}
-                        vectorEffect="non-scaling-stroke"
-                        stroke="black"
-                        strokeWidth="1"
-                    />
-                    <line
-                        x1="0"
-                        y1={line}
-                        x2={canvasWidth}
-                        y2={line}
-                        vectorEffect="non-scaling-stroke"
-                        stroke="black"
-                        strokeWidth="1"
-                    />
-                </g>
-            );
-        });
+    buildGridLine(x1, y1, x2, y2, isMajor) {
+        return (
+            <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                vectorEffect="non-scaling-stroke"
+                stroke={isMajor ? "black" : "gray"}
+                strokeWidth={isMajor ? "1" : "0.5"}
+                strokeDasharray="1, 5"
+            />
+        );
     }
 
-    renderMinorLines() {
+    renderMajorLines() {
         const { canvasWidth, canvasHeight, lines, showSubDivisions } = this.props;
-        return lines.subDivisions.map((line) => {
-            return (
-                <g display={showSubDivisions ? "" : "none"}>
-                    <line
-                        x1={line}
-                        y1="0"
-                        x2={line}
-                        y2={canvasHeight}
-                        vectorEffect="non-scaling-stroke"
-                        stroke="black"
-                        strokeDasharray="1, 5"
-                        strokeWidth="0.5"
-                    />
-                    <line
-                        x1="0"
-                        y1={line}
-                        x2={canvasWidth}
-                        y2={line}
-                        vectorEffect="non-scaling-stroke"
-                        stroke="black"
-                        strokeDasharray="1, 5"
-                        strokeWidth="0.5"
-                    />
-                </g>
-            );
+        return lines.map((line) => {
+            if (showSubDivisions || line.major) {
+                return (
+                    <g>
+                        {this.buildGridLine(line.loc, 0, line.loc, canvasHeight, line.major)}
+                        {this.buildGridLine(0, line.loc, canvasWidth, line.loc, line.major)}
+                    </g>
+                );
+            }
         });
     }
 
@@ -75,7 +47,6 @@ class GridLayer extends Component {
                 display={showGrid ? "" : "none"}
             >
                 {this.renderMajorLines()}
-                {this.renderMinorLines()}
             </svg>
         );
     }
