@@ -145,7 +145,7 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
         type: 'bezier',
         points: [(x + (panX * scale) - node.getBoundingClientRect().left) / scale,
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
-        controlPoints: [{}],
+        controlPoints: {},
         fill: formatColor(fill),
         stroke: formatColor(stroke),
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
@@ -160,8 +160,8 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
     bezier.points.push(bezier.points[0]);
     bezier.points.push(bezier.points[1]);
 
-    bezier.controlPoints.push({x: bezier.points[0], y: bezier.points[1]});
-    bezier.controlPoints.push({x: bezier.points[0], y: bezier.points[1]});
+    bezier.controlPoints[1] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
+    bezier.controlPoints[2] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
 
     shapes.byId[bezier.id] = bezier;
     shapes.allIds.push(bezier.id);
@@ -191,15 +191,12 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
-    bezier.controlPoints.push({x: xCoord, y: yCoord});
-    bezier.controlPoints.push({x: xCoord, y: yCoord});
 
     if (!bezier.closed) {
         // temp point
         bezier.points.push(xCoord);
         bezier.points.push(yCoord);
-        bezier.controlPoints.push({x: xCoord, y: yCoord});
-        bezier.controlPoints.push({x: xCoord, y: yCoord});
+        bezier.controlPoints[bezier.points.length / 2] = [ {x: xCoord, y: yCoord}, {x: xCoord, y: yCoord} ];
     }
     return shapes;
 }
@@ -220,14 +217,20 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
-    bezier.controlPoints[bezier.controlPoints.length - 2] = {x: xCoord, y: yCoord};
-    bezier.controlPoints[bezier.controlPoints.length - 1] = {x: xCoord, y: yCoord};
+    bezier.controlPoints[(bezier.points.length - 2) / 2] = [ {x: xCoord, y: yCoord}, {x: xCoord, y: yCoord} ];
 
     if (bezier.points.length > 4) {
         let p1 = { x: bezier.points[bezier.points.length - 4], y: bezier.points[bezier.points.length - 3] };
         let p3 = { x: bezier.points[bezier.points.length - 6], y: bezier.points[bezier.points.length - 5] };
         let p2 = { x: xCoord, y: yCoord };
-        // console.log((Math.atan2(p3.y - p1.y, p3.x - p1.x) - Math.atan2(p2.y - p1.y, p2.x - p1.x)) * 180 / Math.PI);
+        let rotateAngle = (Math.PI - (Math.atan2(p3.y - p1.y, p3.x - p1.x) - Math.atan2(p2.y - p1.y, p2.x - p1.x))) / 2;
+        let rotateMatrix1 = rotateTransform([1, 0, 0, 1, 0, 0], -rotateAngle, p1.x, p1.y);
+        let referencePoint1 = transformPoint(p2.x, p2.y, rotateMatrix1);
+        let rotateMatrix2 = rotateTransform([1, 0, 0, 1, 0, 0], Math.PI, p1.x, p1.y);
+        let referencePoint2 = transformPoint(referencePoint1.x, referencePoint1.y, rotateMatrix2);
+        //  console.log(referencePoint);
+        bezier.controlPoints[(bezier.points.length - 2) / 2][0] = {x: referencePoint1.x, y: referencePoint1.y};
+        bezier.controlPoints[(bezier.points.length - 2) / 2 - 1][0] = {x: referencePoint2.x, y: referencePoint2.y};
     }
     return shapes;
 }
@@ -846,6 +849,18 @@ export function removeTransformation(shapes, selected) {
                     let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
                     shape.points[i] = coords.x;
                     shape.points[i + 1] = coords.y;
+                }
+                shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
+                break;
+            case 'bezier':
+                for (let i = 0; i < shape.points.length; i += 2) {
+                    let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
+                    shape.points[i] = coords.x;
+                    shape.points[i + 1] = coords.y;
+                    if (shape.controlPoints[i / 2]) {
+                        shape.controlPoints[i / 2][0] = transformPoint(shape.controlPoints[i / 2][0].x, shape.controlPoints[i / 2][0].y, shapeMatrix);
+                        shape.controlPoints[i / 2][1] = transformPoint(shape.controlPoints[i / 2][1].x, shape.controlPoints[i / 2][1].y, shapeMatrix);
+                    }
                 }
                 shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;

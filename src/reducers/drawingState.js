@@ -71,6 +71,11 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.HANDLE_DRAG_STOP:
             updatedState = shape.handleDragStop(stateCopy, action, root);
             break;
+        case canvasActions.CONTROL_DRAG_START:
+        case canvasActions.CONTROL_DRAG:
+        case canvasActions.CONTROL_DRAG_STOP:
+            console.log("contorl drag");
+            break;
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
             break;

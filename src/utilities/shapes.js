@@ -43,11 +43,14 @@ export function formatCurve(points, controlPoints) {
     if (!points || !controlPoints) {
         return '';
     }
+    console.log(points, controlPoints);
     let formattedC = 'M ' + points[0] + ', ' + points[1];
 
     for (let i = 2; i < points.length; i += 2) {
         let cIndex = i / 2;
-        formattedC = formattedC + ' C ' + controlPoints[cIndex].x + ', ' + controlPoints[cIndex].y + ' ' + controlPoints[cIndex + 1].x + ', ' + controlPoints[cIndex + 1].y + ' ' + points[i] + ', ' + points[i + 1];
+        console.log(cIndex);
+        formattedC = formattedC + ' C ' + controlPoints[cIndex][0].x + ', ' + controlPoints[cIndex][0].y + ' ' + controlPoints[cIndex][1].x + ', ' + controlPoints[cIndex][1].y + ' ' + points[i] + ', ' + points[i + 1];
     }
+    console.log(formattedC);
     return formattedC;
 }

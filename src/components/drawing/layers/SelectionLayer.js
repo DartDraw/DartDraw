@@ -10,7 +10,10 @@ class SelectionLayer extends Component {
         propagateEvents: PropTypes.bool,
         onHandleDragStart: PropTypes.func,
         onHandleDrag: PropTypes.func,
-        onHandleDragStop: PropTypes.func
+        onHandleDragStop: PropTypes.func,
+        onControlDragStart: PropTypes.func,
+        onControlDrag: PropTypes.func,
+        onControlDragStop: PropTypes.func
     };
 
     constructor(props) {
@@ -19,6 +22,9 @@ class SelectionLayer extends Component {
         this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
         this.handleHandleDrag = this.handleHandleDrag.bind(this);
         this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
+        this.handleControlDragStart = this.handleControlDragStart.bind(this);
+        this.handleControlDrag = this.handleControlDrag.bind(this);
+        this.handleControlDragStop = this.handleControlDragStop.bind(this);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -31,6 +37,18 @@ class SelectionLayer extends Component {
 
     handleHandleDragStop(shapeId, handleIndex, draggableData) {
         this.props.onHandleDragStop(shapeId, handleIndex, draggableData);
+    }
+
+    handleControlDragStart(shapeId, handleIndex, draggableData) {
+        this.props.onControlDragStart(shapeId, handleIndex, draggableData);
+    }
+
+    handleControlDrag(shapeId, handleIndex, draggableData) {
+        this.props.onControlDrag(shapeId, handleIndex, draggableData);
+    }
+
+    handleControlDragStop(shapeId, handleIndex, draggableData) {
+        this.props.onControlDragStop(shapeId, handleIndex, draggableData);
     }
 
     renderHandles(selectionBox) {
@@ -69,6 +87,42 @@ class SelectionLayer extends Component {
         });
     }
 
+    renderControls(selectionBox) {
+        const { propagateEvents, scale } = this.props;
+        return selectionBox.handles.map((handle, i) => {
+            const { id, index } = handle;
+            const x = handle.x - 5 / scale;
+            const y = handle.y - 5 / scale;
+            let width = 10 / scale;
+            let height = 10 / scale;
+
+            if (selectionBox.shapeType === 'line' && selectionBox.handles.length > 4) {
+                if (i < 4) {
+                    width = 0;
+                    height = 0;
+                }
+            }
+
+            return (
+                <Handle
+                    key={id}
+                    id={id}
+                    shapeId={selectionBox.shapeId}
+                    index={index}
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    strokeWidth={2}
+                    onDragStart={this.handleContrDragStart}
+                    onDrag={this.handleContrDrag}
+                    onDragStop={this.handleContrDragStop}
+                    propagateEvents={propagateEvents}
+                />
+            );
+        });
+    }
+
     renderSelectionBoxes() {
         const { selectionBoxes, propagateEvents } = this.props;
         return selectionBoxes.map(selectionBox => {
@@ -87,6 +141,7 @@ class SelectionLayer extends Component {
                         propagateEvents={propagateEvents}
                     />
                     {this.renderHandles(selectionBox)}
+                    {this.renderControls(selectionBox)}
                 </g>
             );
         });
