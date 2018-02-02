@@ -213,6 +213,28 @@ export function updateOpacity(stateCopy, action) {
     return stateCopy;
 }
 
-export function colorUpdate(colorPart, newValue) {
+export function colorUpdate(stateCopy, action) {
+    console.log("color change");
+    let colorPart = action.payload.colorPart;
+    let newValue = action.payload.newValue;
+    // action: colorPart and newValue
+    if (colorPart === "R") {
+        stateCopy.color.r = Number(newValue);
+    } else if (colorPart === "G") {
+        stateCopy.color.g = Number(newValue);
+    } else if (colorPart === "B") {
+        stateCopy.color.b = Number(newValue);
+    }
 
+    console.log(stateCopy);
+    // if (!stateCopy.editInProgress) {
+    //     console.log(stateCopy.shapes.byId[stateCopy.selected[0]]);
+    // }
+
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor = stateCopy.color;
+    } else {
+        stateCopy.strokeColor = stateCopy.color;
+    }
+    return stateCopy;
 }

@@ -7,7 +7,7 @@ class ColorMenu extends Component {
         fillColor: PropTypes.object,
         currentColor: PropTypes.object,
         onUpdateOpacity: PropTypes.func,
-        colorUpdate: PropTypes.func
+        onColorUpdate: PropTypes.func
     };
 
     constructor(props) {
@@ -45,7 +45,7 @@ class ColorMenu extends Component {
 
     handleColorUpdate(colorPart, event) {
         let newValue = event.target.value;
-        this.props.colorUpdate(colorPart, newValue);
+        this.props.onColorUpdate(colorPart, newValue);
         console.log(event.target.value);
         console.log(colorPart);
     }
@@ -66,8 +66,8 @@ class ColorMenu extends Component {
                 <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
                 <div id="color-input">
                     <p>R: <input type="text" defaultValue={fillColor.r} onChange={(e) => { this.handleColorUpdate("R", e); }} /> </p>
-                    <p>G: <input type="text" defaultValue={fillColor.g} /> </p>
-                    <p>B: <input type="text" defaultValue={fillColor.b} /> </p>
+                    <p>G: <input type="text" defaultValue={fillColor.g} onChange={(e) => { this.handleColorUpdate("G", e); }} /> </p>
+                    <p>B: <input type="text" defaultValue={fillColor.b} onChange={(e) => { this.handleColorUpdate("B", e); }} /> </p>
                 </div>
             </div>
         );
