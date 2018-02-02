@@ -164,8 +164,6 @@ export function updateGridRulers(stateCopy, scale, panX, panY) {
     const pixelsPerDigit = 10;
     const minLabelDistance = 2 * canvasWidthInUnits.toString().length * pixelsPerDigit;
 
-    console.log(minLabelDistance);
-
     if (minLabelDistance > ruler.width) {
         ruler.width = minLabelDistance;
     }

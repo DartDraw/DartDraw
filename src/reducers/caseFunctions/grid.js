@@ -59,9 +59,8 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
 
             masterLineIndex.push(lineLoc);
 
-            // if is a primary line, it needs a label
             if (exponentIndex === 0) {
-                if (i % labelInterval === 0) {
+                if (i % labelInterval === 0 && i !== 0) {
                     result.push({loc: lineLoc, major: true});
                 } else if ((lineSpacing * scale) >= minSubUnitDistance && !renderSubDivisions) {
                     result.push({loc: lineLoc, major: false});

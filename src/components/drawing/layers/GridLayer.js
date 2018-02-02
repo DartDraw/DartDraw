@@ -6,7 +6,7 @@ class GridLayer extends Component {
     static propTypes = {
         canvasWidth: PropTypes.number,
         canvasHeight: PropTypes.number,
-        lines: PropTypes.object,
+        lines: PropTypes.array,
         showGrid: PropTypes.bool,
         showSubDivisions: PropTypes.bool
     };
@@ -31,7 +31,7 @@ class GridLayer extends Component {
         return lines.map((line) => {
             if (showSubDivisions || line.major) {
                 return (
-                    <g>
+                    <g key={line.loc} >
                         {this.buildGridLine(line.loc, 0, line.loc, canvasHeight, line.major)}
                         {this.buildGridLine(0, line.loc, canvasWidth, line.loc, line.major)}
                     </g>

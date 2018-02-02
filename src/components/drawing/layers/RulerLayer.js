@@ -23,9 +23,10 @@ class RulerLayer extends Component {
         });
     }
 
-    buildLabel(num, x, y, textAnchor, dominantBaseline) {
+    buildLabel(num, x, y, textAnchor, dominantBaseline, key) {
         return (
             <text
+                key={key}
                 x={x}
                 y={y}
                 textAnchor={textAnchor}
@@ -34,9 +35,10 @@ class RulerLayer extends Component {
         );
     }
 
-    buildTick(x1, y1, x2, y2) {
+    buildTick(x1, y1, x2, y2, key) {
         return (
             <line
+                key={key}
                 x1={x1}
                 y1={y1}
                 x2={x2}
@@ -80,7 +82,7 @@ class RulerLayer extends Component {
                 default: break;
             }
 
-            return (this.buildLabel(label.num, x, y, textAnchor, dominantBaseline));
+            return (this.buildLabel(label.num, x, y, textAnchor, dominantBaseline, label.loc));
         });
     }
 
@@ -104,7 +106,7 @@ class RulerLayer extends Component {
                 default: break;
             }
 
-            return (this.buildTick(x1, y1, x2, y2));
+            return (this.buildTick(x1, y1, x2, y2, tick.loc));
         });
     }
 
