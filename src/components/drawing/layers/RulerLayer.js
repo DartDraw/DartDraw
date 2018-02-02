@@ -23,27 +23,32 @@ class RulerLayer extends Component {
     renderHorizontalLabels() {
         const { ruler } = this.props;
         return ruler.horizontal.labels.map((label) => {
+            var offset = 3;
+            if (label.final) { offset = -3; }
             return (
                 <text
-                    x={label[1]}
-                    y={ruler.width - label[0]}
-                    textAnchor="start"
-                    alignmentBaseline="hanging"
-                >{label[2]}</text>
+                    x={label.loc + offset}
+                    y={3}
+                    textAnchor={label.final ? "end" : "start"}
+                    dominantBaseline="hanging"
+                >{label.num}</text>
             );
         });
     }
 
     renderVerticalLabels() {
         const { ruler } = this.props;
+        console.log(ruler.vertical.labels);
         return ruler.vertical.labels.map((label) => {
+            var offset = 3;
+            if (label.final) { offset = -offset; }
             return (
                 <text
-                    x={ruler.width - label[0]}
-                    y={label[1]}
+                    x={3}
+                    y={label.loc + offset}
                     textAnchor="start"
-                    alignmentBaseline="hanging"
-                >{label[2]}</text>
+                    dominantBaseline={label.final ? "" : "hanging"}
+                >{label.num}</text>
             );
         });
     }
@@ -53,10 +58,10 @@ class RulerLayer extends Component {
         return ruler.horizontal.ticks.map((tick) => {
             return (
                 <line
-                    x1={tick[1]}
+                    x1={tick.loc}
                     y1={ruler.width}
-                    x2={tick[1]}
-                    y2={ruler.width - tick[0]}
+                    x2={tick.loc}
+                    y2={ruler.width - tick.length}
                     stroke="black"
                 />
             );
@@ -69,9 +74,9 @@ class RulerLayer extends Component {
             return (
                 <line
                     x1={ruler.width}
-                    y1={tick[1]}
-                    x2={ruler.width - tick[0]}
-                    y2={tick[1]}
+                    y1={tick.loc}
+                    x2={ruler.width - tick.length}
+                    y2={tick.loc}
                     stroke="black"
                 />
             );

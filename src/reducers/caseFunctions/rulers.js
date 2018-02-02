@@ -157,11 +157,16 @@ export function updateGridRulers(stateCopy, scale, panX, panY) {
     var subUnitExponent = getBaseLog(subUnitBase, ruler.unitDivisions);
     var scaledPixelsPerUnit = ruler.pixelsPerUnit * scale;
 
-    const canvasWidthInUnits = Math.ceil((Math.max(window.innerWidth, canvasWidth) + xPanOffset) / scaledPixelsPerUnit);
-    const canvasHeightInUnits = Math.ceil((Math.max(window.innerHeight, canvasHeight) + yPanOffset) / scaledPixelsPerUnit);
+    // const canvasWidthInUnits = Math.ceil((Math.max(window.innerWidth, canvasWidth) + xPanOffset) / scaledPixelsPerUnit);
+    // const canvasHeightInUnits = Math.ceil((Math.max(window.innerHeight, canvasHeight) + yPanOffset) / scaledPixelsPerUnit);
+    const canvasWidthInUnits = canvasWidth / ruler.pixelsPerUnit;
+    const canvasHeightInUnits = canvasHeight / ruler.pixelsPerUnit;
 
     // need to account for the number of digits in the labels
-    const minLabelDistance = 9 * Math.max(canvasHeightInUnits, canvasWidthInUnits).toString().length;
+    const pixelsPerDigit = 10;
+    const minLabelDistance = 2 * canvasWidthInUnits.toString().length * pixelsPerDigit;
+
+    console.log(minLabelDistance);
 
     if (minLabelDistance > ruler.width) {
         ruler.width = minLabelDistance;
@@ -176,7 +181,7 @@ export function updateGridRulers(stateCopy, scale, panX, panY) {
 }
 
 function buildRuler(rulerWidth, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, minTickDistance, canvasInUnits, panOffset) {
-    var multiplier = (subUnitExponent === 1) ? 0.5 : 0.75;
+    const multiplier = (subUnitExponent === 1) ? 0.5 : 0.75;
     var masterTickIndex = [];
 
     var result = addWholeUnits(rulerWidth, scaledPixelsPerUnit, minLabelDistance, minTickDistance, canvasInUnits, panOffset);
@@ -201,7 +206,7 @@ function buildRuler(rulerWidth, scaledPixelsPerUnit, subUnitBase, subUnitExponen
 
             masterTickIndex.push(tickLoc);
 
-            result.ticks.push([tickLength, tickLoc]);
+            result.ticks.push({loc: tickLoc, length: tickLength});
         }
     }
     //
@@ -298,6 +303,7 @@ function addWholeUnits(rulerWidth, scaledPixelsPerUnit, minLabelDistance, minTic
     var labelInterval = 1;
     var tickInterval = 1;
     var scalingFactor = 1;
+    const multiplier = 0.5;
     const intervalArray = [2, 2.5, 5, 10];
     const divisionArrray = [2, 4, 5, 10];
 
@@ -338,6 +344,7 @@ function addWholeUnits(rulerWidth, scaledPixelsPerUnit, minLabelDistance, minTic
             tickInterval = labelInterval;
         }
     }
+    var finalLabel = false;
 
     for (let i = 0; i <= canvasInUnits; i++) {
         var tickLoc = scaledPixelsPerUnit * i - panOffset;
@@ -348,10 +355,13 @@ function addWholeUnits(rulerWidth, scaledPixelsPerUnit, minLabelDistance, minTic
 
         // if is a primary tick, it needs a label
         if (i % labelInterval === 0) {
-            ruler.labels.push([rulerWidth - labelOffset, tickLoc + labelOffset, i]);
-            ruler.ticks.push([rulerWidth, tickLoc]);
+            if ((i + labelInterval) > canvasInUnits && i !== 0) {
+                finalLabel = true;
+            }
+            ruler.labels.push({loc: tickLoc, num: i, final: finalLabel});
+            ruler.ticks.push({loc: tickLoc, length: rulerWidth});
         } else if (i % tickInterval === 0) {
-            ruler.ticks.push([rulerWidth * 0.5, tickLoc]);
+            ruler.ticks.push({loc: tickLoc, length: rulerWidth * multiplier});
         }
     }
 

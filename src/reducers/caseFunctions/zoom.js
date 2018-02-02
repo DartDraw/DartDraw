@@ -56,8 +56,8 @@ export function zoomToMarqueeBox(stateCopy) {
     const { marqueeBox, canvasWidth, canvasHeight } = stateCopy;
     // The value 45 is the width menus.
     // Needs to change if menu changes.
-    const windowWidth = window.innerWidth - 45;
-    const windowHeight = window.innerHeight - 45;
+    const windowWidth = window.innerWidth - stateCopy.ruler.width - 45;
+    const windowHeight = window.innerHeight - stateCopy.ruler.width - 45;
 
     const zoomRatioX = Math.abs(windowWidth / marqueeBox.width);
     const zoomRatioY = Math.abs(windowHeight / marqueeBox.height);
@@ -88,13 +88,14 @@ export function pan(stateCopy, draggableData) {
     // The value 45 is the width menus.
     // Needs to change if menu changes.
     var panX = stateCopy.panX - deltaX / scale;
-    panX = clamp(panX, 0, canvasWidth - (window.innerWidth - 45) / scale);
+    panX = clamp(panX, 0, canvasWidth - (window.innerWidth - stateCopy.ruler.width - 45) / scale);
 
     var panY = stateCopy.panY - deltaY / scale;
-    panY = clamp(panY, 0, canvasHeight - (window.innerHeight - 45) / scale);
+    panY = clamp(panY, 0, canvasHeight - (window.innerHeight - stateCopy.ruler.width - 45) / scale);
 
     var { ruler, gridLines } = updateGridRulers(stateCopy, scale, panX, panY);
     ruler = setMouseTrackers(ruler, draggableData.x, draggableData.y);
+
     return {
         ruler: ruler,
         gridLines: gridLines,
@@ -108,8 +109,8 @@ function setPan(stateCopy, newScale) {
 
     // The value 45 is the width menus.
     // Needs to change if menu changes.
-    const windowWidth = window.innerWidth - 45;
-    const windowHeight = window.innerHeight - 45;
+    const windowWidth = window.innerWidth - stateCopy.ruler.width - 45;
+    const windowHeight = window.innerHeight - stateCopy.ruler.width - 45;
 
     // set panX
     if ((windowWidth / scale) < canvasWidth) {
