@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Rectangle, Handle } from '../shapes';
+import { Rectangle, Handle, Control } from '../shapes';
 
 class SelectionLayer extends Component {
     static propTypes = {
@@ -89,22 +89,15 @@ class SelectionLayer extends Component {
 
     renderControls(selectionBox) {
         const { propagateEvents, scale } = this.props;
-        return selectionBox.handles.map((handle, i) => {
-            const { id, index } = handle;
-            const x = handle.x - 5 / scale;
-            const y = handle.y - 5 / scale;
+        return selectionBox.controls.map((control, i) => {
+            const { id, index } = control;
+            const x = control.x - 5 / scale;
+            const y = control.y - 5 / scale;
             let width = 10 / scale;
             let height = 10 / scale;
 
-            if (selectionBox.shapeType === 'line' && selectionBox.handles.length > 4) {
-                if (i < 4) {
-                    width = 0;
-                    height = 0;
-                }
-            }
-
             return (
-                <Handle
+                <Control
                     key={id}
                     id={id}
                     shapeId={selectionBox.shapeId}
@@ -114,9 +107,9 @@ class SelectionLayer extends Component {
                     width={width}
                     height={height}
                     strokeWidth={2}
-                    onDragStart={this.handleContrDragStart}
-                    onDrag={this.handleContrDrag}
-                    onDragStop={this.handleContrDragStop}
+                    onDragStart={this.handleControlDragStart}
+                    onDrag={this.handleControlDrag}
+                    onDragStop={this.handleControlDragStop}
                     propagateEvents={propagateEvents}
                 />
             );

@@ -25,22 +25,22 @@ class Control extends Component {
     constructor(props) {
         super(props);
 
-        this.handleDragStart = this.handleDragStart.bind(this);
-        this.handleDrag = this.handleDrag.bind(this);
-        this.handleDragStop = this.handleDragStop.bind(this);
+        this.controlDragStart = this.controlDragStart.bind(this);
+        this.controlDrag = this.controlDrag.bind(this);
+        this.controlDragStop = this.controlDragStop.bind(this);
     }
 
-    handleDragStart(id, draggableData) {
+    controlDragStart(id, draggableData) {
         const { shapeId, index, onDragStart } = this.props;
         onDragStart && onDragStart(shapeId, index, draggableData);
     }
 
-    handleDrag(id, draggableData) {
+    controlDrag(id, draggableData) {
         const { shapeId, index, onDrag } = this.props;
         onDrag && onDrag(shapeId, index, draggableData);
     }
 
-    handleDragStop(id, draggableData) {
+    controlDragStop(id, draggableData) {
         const { shapeId, index, onDragStop } = this.props;
         onDragStop && onDragStop(shapeId, index, draggableData);
     }
@@ -56,9 +56,9 @@ class Control extends Component {
                 stroke='rgba(69, 63, 80, 0.9)'
                 fill='rgba(255, 255, 255, 1)'
                 vectorEffect="non-scaling-stroke"
-                onDragStart={this.handleDragStart}
-                onDrag={this.handleDrag}
-                onDragStop={this.handleDragStop}
+                onDragStart={this.controlDragStart}
+                onDrag={this.controlDrag}
+                onDragStop={this.controlDragStop}
                 propagateEvents={propagateEvents}
             />
         );
