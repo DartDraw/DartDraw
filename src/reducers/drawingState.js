@@ -18,6 +18,7 @@ const initialState = {
     selected: [],
     boundingBoxes: {},
     selectionBoxes: {},
+    mouseCoords: {x: 0, y: 0},
     marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
@@ -39,7 +40,6 @@ const initialState = {
         unitType: 'in',
         unitDivisions: 2,
         width: 30,
-        mouseCoords: {x: 0, y: 0},
         pixelsPerUnit: 96,
         horizontal: {
             ticks: [],
@@ -97,12 +97,6 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
             break;
-        // case canvasActions.SET_GRID_RULERS:
-        //     updatedState = rulers.setGridRulers(stateCopy, action, root);
-        //     break;
-        // case canvasActions.SET_CANVAS_SIZE:
-        //     updatedState = rulers.setCanvasSize(stateCopy, action, root);
-        //     break;
         case menuActions.SELECT_COLOR:
             updatedState = shape.setColor(stateCopy, action, root);
             break;
@@ -148,8 +142,8 @@ function drawingState(state = initialState, action, root) {
         case menuActions.REDO_CLICK:
             updatedState = menu.redoClick(stateCopy, action, root);
             break;
-        case menuActions.CUSTOM_ZOOM:
-            updatedState = zoom.zoomToCustom(stateCopy, action, root);
+        case menuActions.SET_CUSTOM_ZOOM:
+            updatedState = zoom.setCustomZoom(stateCopy, action, root);
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);

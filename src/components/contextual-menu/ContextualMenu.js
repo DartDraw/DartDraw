@@ -22,16 +22,11 @@ class ContextualMenu extends Component {
         onFlipHorizontal: PropTypes.func,
         onFlipVertical: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
-        onCustomZoom: PropTypes.func,
-        // onZoomIn: PropTypes.func,
-        // onZoomOut: PropTypes.func,
+        onSetCustomZoom: PropTypes.func,
         onShowGrid: PropTypes.func,
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
         onSetRulerGrid: PropTypes.func
-        // onSetUnitType: PropTypes.func,
-        // onSetUnitDivisions: PropTypes.func,
-        // onSetCanvasSize: PropTypes.func
     };
 
     constructor(props) {
@@ -52,19 +47,13 @@ class ContextualMenu extends Component {
         this.handleFlipHorizontal = this.handleFlipHorizontal.bind(this);
         this.handleFlipVertical = this.handleFlipVertical.bind(this);
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
-        this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
-        // this.handleChangeCustomZoom = this.handleChangeCustomZoom.bind(this);
         this.handleShowGrid = this.handleShowGrid.bind(this);
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
-        this.handleSetRulerGrid = this.handleSetRulerGrid.bind(this);
-        // this.handleSetUnitType = this.handleSetUnitType.bind(this);
-        // this.handleSetUnitDivisions = this.handleSetUnitDivisions.bind(this);
-        // this.handleChangeUnitDivisions = this.handleChangeUnitDivisions.bind(this);
-        // this.handleSetCanvasSize = this.handleSetCanvasSize.bind(this);
-        // this.handleChangeCanvasSize = this.handleChangeCanvasSize.bind(this);
+        this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
+        this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
     }
 
     toggleMenu() {
@@ -124,11 +113,11 @@ class ContextualMenu extends Component {
     }
 
     handleZoomIn() {
-        this.props.onCustomZoom(this.props.scale * 2);
+        this.props.onSetCustomZoom(this.props.scale * 2);
     }
 
     handleZoomOut() {
-        this.props.onCustomZoom(this.props.scale / 2);
+        this.props.onSetCustomZoom(this.props.scale / 2);
     }
 
     handleShowRulers() {
@@ -143,89 +132,20 @@ class ContextualMenu extends Component {
         this.props.onShowSubDivisions();
     }
 
-    // handleChangeCustomZoom(event) {
-    //     this.tempScale = event.target.value;
-    // }
-
     handleSubmitCustomZoom(event) {
-        this.props.onCustomZoom(parseInt(document.getElementById("scale").value) / 100.0);
+        this.props.onSetCustomZoom(parseInt((document.getElementById("scale").value) / 100.0), 10);
         event.preventDefault();
     }
 
-    // handleSetUnitType(event) {
-    //     this.props.onSetUnitType(event.target.value);
-    //     event.preventDefault();
-    // }
-
-    handleSetRulerGrid(event) {
+    handleSubmitRulerGrid(event) {
         this.props.onSetRulerGrid({
             unitType: document.getElementById("unitType").value,
             width: parseFloat(document.getElementById("width").value),
             height: parseFloat(document.getElementById("height").value),
-            unitDivisions: parseInt(document.getElementById("unitDivisions").value)
+            unitDivisions: parseInt(document.getElementById("unitDivisions").value, 10)
         });
         event.preventDefault();
     }
-
-    // handleSetUnitDivisions(event) {
-        // const { ruler } = this.props;
-        // const minDivisions = 1;
-        // var maxDivisions;
-        //
-        // switch (ruler.unitType) {
-        //     case "in":
-        //         maxDivisions = 64;
-        //         break;
-        //     case "ft":
-        //         maxDivisions = 64;
-        //         break;
-        //     case "mm":
-        //         maxDivisions = 100;
-        //         break;
-        //     case "cm":
-        //         maxDivisions = 100;
-        //         break;
-        //     case "m":
-        //         maxDivisions = 100;
-        //         break;
-        //     case "px":
-        //         maxDivisions = 1;
-        //         break;
-        //     case "pt":
-        //         maxDivisions = 1;
-        //         break;
-        //     default:
-        //         break;
-        // }
-        // if (unitDivisions !== "") {
-        //     var input = parseInt(unitDivisions);
-        //     input = Math.max(minDivisions, Math.min(input, maxDivisions));
-        //     unitDivisions = input;
-        //     event.target.value = input;
-        //     this.props.onSetUnitDivisions(input);
-        // }
-    //     this.props.onSetUnitDivisions(parseInt(this.tempUnitDivisions));
-    //     event.preventDefault();
-    // }
-
-    // handleChangeUnitDivisions(event) {
-    //     this.tempUnitDivisions = event.target.value;
-    // }
-    //
-    // handleSetCanvasSize(event) {
-    //     if (this.tempCanvasWidth !== "" || this.tempCanvasHeight !== "") {
-    //         this.props.onSetCanvasSize(parseFloat(this.tempCanvasWidth), parseFloat(this.tempCanvasHeight));
-    //     }
-    //     event.preventDefault();
-    // }
-    //
-    // handleChangeCanvasSize(event) {
-    //     if (event.target.name === "width") {
-    //         this.tempCanvasWidth = event.target.value;
-    //     } else {
-    //         this.tempCanvasHeight = event.target.value;
-    //     }
-    // }
 
     render() {
         const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
@@ -305,7 +225,7 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
                     </div>
                     <div className="ruler-menu">
-                        <form id="button-icon" onSubmit={this.handleSetRulerGrid}>
+                        <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
                             <select
                                 id="unitType"
                                 defaultValue={unitType}
@@ -360,7 +280,3 @@ class ContextualMenu extends Component {
 }
 
 export default ContextualMenu;
-
-// <select value={ruler.unitDivisions} onChange={this.handleSetUnitDivisions}>
-//     {unitDivisionsList.map(this.dropDownSelect)}
-// </select>

@@ -10,7 +10,7 @@ import {
     flipHorizontal,
     flipVertical,
     bringToFront,
-    customZoom,
+    setCustomZoom,
     toggleGridSnapping,
     toggleShowGrid,
     toggleShowRulers,
@@ -66,8 +66,8 @@ const mapDispatchToProps = (dispatch) => {
         onToggleGridSnapping: () => {
             dispatch(toggleGridSnapping());
         },
-        onCustomZoom: (customScale) => {
-            dispatch(customZoom(customScale));
+        onSetCustomZoom: (customScale) => {
+            dispatch(setCustomZoom(customScale));
         },
         onShowGrid: () => {
             dispatch(toggleShowGrid());

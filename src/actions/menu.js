@@ -7,7 +7,7 @@ export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
-export const CUSTOM_ZOOM = 'CUSTOM_ZOOM';
+export const SET_CUSTOM_ZOOM = 'SET_CUSTOM_ZOOM';
 export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
@@ -64,8 +64,8 @@ export function redoClick() {
     return { type: REDO_CLICK };
 }
 
-export function customZoom(customScale) {
-    return { type: CUSTOM_ZOOM, payload: { customScale } };
+export function setCustomZoom(customScale) {
+    return { type: SET_CUSTOM_ZOOM, payload: { customScale } };
 }
 
 export function alignmentClick(id) {

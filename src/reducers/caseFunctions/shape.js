@@ -3,7 +3,6 @@ import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMo
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
-import { setMouseTrackers } from './rulers';
 
 import * as menu from './menu';
 
@@ -53,7 +52,8 @@ export function drag(stateCopy, action, root) {
 
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
 
-    stateCopy.ruler = setMouseTrackers(stateCopy.ruler, action.payload.draggableData.x, action.payload.draggableData.y);
+    stateCopy.mouseCoords.x = action.payload.draggableData.x;
+    stateCopy.mouseCoords.y = action.payload.draggableData.y;
 
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;

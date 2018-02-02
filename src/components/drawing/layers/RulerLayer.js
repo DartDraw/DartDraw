@@ -6,6 +6,7 @@ class RulerLayer extends Component {
         onSetRulerGrid: PropTypes.func,
         dir: PropTypes.string,
         ruler: PropTypes.object,
+        mouseCoords: PropTypes.object,
         width: PropTypes.number,
         height: PropTypes.number,
         widthInUnits: PropTypes.number,
@@ -111,11 +112,11 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { ruler, showRulers, dir, width, height } = this.props;
+        const { ruler, mouseCoords, showRulers, dir, width, height } = this.props;
         var trackerLoc = 0;
         switch (dir) {
             case "horizontal":
-                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.x - ruler.width - 45, width));
+                trackerLoc = Math.max(0, Math.min(mouseCoords.x - ruler.width - 45, width));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -130,7 +131,7 @@ class RulerLayer extends Component {
                     </svg>
                 );
             case "vertical":
-                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.y - ruler.width - 45, height));
+                trackerLoc = Math.max(0, Math.min(mouseCoords.y - ruler.width - 45, height));
                 return (
                     <svg className="ruler"
                         id={dir}
