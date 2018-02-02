@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import {
-    updateOpacity
+    updateOpacity,
+    colorUpdate
 } from '../../actions/menu';
 import ColorMenu from './ColorMenu';
 
@@ -18,6 +19,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onUpdateOpacity: (opacity) => {
             dispatch(updateOpacity(opacity));
+        },
+        onColorUpdate: (colorPart, newValue) => {
+            dispatch(colorUpdate(colorPart, newValue));
         }
     };
 };

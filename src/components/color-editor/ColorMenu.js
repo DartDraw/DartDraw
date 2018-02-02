@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './color-menu.css';
-import OpacityEditor from './OpacityEditor';
 
 class ColorMenu extends Component {
     static propTypes = {
         fillColor: PropTypes.object,
         currentColor: PropTypes.object,
-        onUpdateOpacity: PropTypes.func
+        onUpdateOpacity: PropTypes.func,
+        colorUpdate: PropTypes.func
     };
 
     constructor(props) {
@@ -19,6 +19,7 @@ class ColorMenu extends Component {
         this.showColorInfo = this.showColorInfo.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleColorUpdate = this.handleColorUpdate.bind(this);
     }
 
     handleUpdate(event) {
@@ -42,11 +43,19 @@ class ColorMenu extends Component {
         event.preventDefault();
     }
 
+    handleColorUpdate(colorPart, event) {
+        let newValue = event.target.value;
+        this.props.colorUpdate(colorPart, newValue);
+        console.log(event.target.value);
+        console.log(colorPart);
+    }
+
     render() {
         const { fillColor, currentColor } = this.props;
         const currentColorStyle = {
             backgroundColor: `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         };
+
         return (
             <div className="color-editor">
                 <h1>Color Editor</h1>
@@ -56,9 +65,9 @@ class ColorMenu extends Component {
                 </form>
                 <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
                 <div id="color-input">
-                    <p>R: <input type="text" value={fillColor.r} onChange={this.handleUpdateR} /> </p>
-                    <p>G: <input type="text" value={fillColor.g} /> </p>
-                    <p>B: <input type="text" value={fillColor.b} /> </p>
+                    <p>R: <input type="text" defaultValue={fillColor.r} onChange={(e) => { this.handleColorUpdate("R", e); }} /> </p>
+                    <p>G: <input type="text" defaultValue={fillColor.g} /> </p>
+                    <p>B: <input type="text" defaultValue={fillColor.b} /> </p>
                 </div>
             </div>
         );

@@ -52,6 +52,8 @@ function menuState(state = initialState, action, root) {
             return grid.toggleGridSnapping(stateCopy, action, root);
         case menuActions.UPDATE_OPACITY:
             return menu.updateOpacity(stateCopy, action);
+        case menuActions.COLOR_UPDATE:
+            return menu.colorUpdate(stateCopy, action);
         default:
             return stateCopy;
     }

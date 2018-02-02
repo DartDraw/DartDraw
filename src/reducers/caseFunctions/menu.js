@@ -212,3 +212,7 @@ export function updateOpacity(stateCopy, action) {
     }
     return stateCopy;
 }
+
+export function colorUpdate(colorPart, newValue) {
+
+}
