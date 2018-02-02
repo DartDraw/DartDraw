@@ -21,7 +21,6 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
     };
 
     if (gridSnapping) {
-        console.log(gridSnapInterval);
         rectangle.x = Math.round(rectangle.x / gridSnapInterval) * gridSnapInterval;
         rectangle.y = Math.round(rectangle.y / gridSnapInterval) * gridSnapInterval;
     }

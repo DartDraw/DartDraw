@@ -219,6 +219,9 @@ class ContextualMenu extends Component {
                         </button>
 
                     </div>
+                    <div className="dynamic-menu">
+                        { menuLayout }
+                    </div>
                     <div className="temp">
                         <button onClick={this.handleShowRulers} id="button-icon">R</button>
                         <button onClick={this.handleShowGrid} id="button-icon">G</button>
@@ -269,9 +272,6 @@ class ContextualMenu extends Component {
                                 type="number"
                             />
                         </form>
-                    </div>
-                    <div className="dynamic-menu">
-                        { menuLayout }
                     </div>
                 </div>
             </div>

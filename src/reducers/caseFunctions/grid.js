@@ -71,34 +71,4 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
         }
     }
     return result;
-
-    // const maxDimension = Math.max(canvasWidth, canvasHeight);
-    // var lineSpacing = pixelsPerUnit / scale / ruler.unitDivisions;
-    //
-    // var result = {};
-    // result.divisions = [];
-    // result.subDivisions = [];
-    //
-    // const labelRender = Math.ceil(minWholeUnitDistance / pixelsPerUnit);
-    // var i = 0;
-    //
-    // while (((lineSpacing * scale) < minSubUnitDistance) && lineSpacing) {
-    //     lineSpacing = lineSpacing * subUnitBase;
-    // }
-    //
-    // const lineQty = Math.ceil(maxDimension / lineSpacing);
-    //
-    // for (var line = 0; line <= lineQty; line++) {
-    //     if (line % ruler.unitDivisions === 0) {
-    //         if (i === labelRender) {
-    //             result.divisions.push(line * lineSpacing);
-    //             i = 0;
-    //         }
-    //         i++;
-    //     } else {
-    //         result.subDivisions.push(line * lineSpacing);
-    //     }
-    // }
-    //
-    // return result;
 }
