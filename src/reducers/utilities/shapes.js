@@ -1,7 +1,6 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
-import { EditorState, ContentState } from 'draft-js';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval, rectangleRadius) {
     const { draggableData } = action.payload;
@@ -332,9 +331,10 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, g
 
     const text = {
         id: uuidv1(),
-        editorState: EditorState.createWithContent(ContentState.createFromText('hello')),
         type: 'text',
         text: '',
+        tspans: [],
+        selectionRange: [0, 0],
         x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         width: 120,

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Select } from '../../shared';
 import './menu-layouts.css';
 
 class TextMenu extends Component {
     static propTypes = {
         text: PropTypes.object,
-        onEdit: PropTypes.func
+        onEdit: PropTypes.func,
+        onEditText: PropTypes.func
     };
 
     constructor(props) {
@@ -21,73 +23,62 @@ class TextMenu extends Component {
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleXChange = this.handleXChange.bind(this);
         this.handleYChange = this.handleYChange.bind(this);
-
     }
 
-    handleFontFamilyChange(event) {
-        const { text, onEdit } = this.props;
-        const newText = Object.assign({}, text, { fontFamily: event.target.value });
-        onEdit && onEdit(newText);
+    handleFontFamilyChange(value) {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({ id: text.id, fontFamily: value });
     }
 
     handleFontSizeChange(event) {
-        const { text, onEdit } = this.props;
-        const newText = Object.assign({}, text, { fontSize: event.target.value });
-        onEdit && onEdit(newText);
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({ id: text.id, fontSize: event.target.value });
     }
 
-    handleFontStyleChange(event){
-        const { text, onEdit } = this.props;
-        const newText = Object.assign({}, text, { fontStyle: event.target.value });
-        onEdit && onEdit(newText);
+    handleFontStyleChange(event) {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({ id: text.id, fontStyle: event.target.value });
     }
 
-    handleTextAlignChange(event){
+    handleTextAlignChange(event) {
         const { text, onEdit } = this.props;
-        const newText = Object.assign({}, text, { textAlign: event.target.value});
-        onEdit && onEdit(newText);
+        onEdit && onEdit({ ...text, textAlign: event.target.value });
     }
 
-    handleTextDecorationChange(event){
-        const { text, onEdit } = this.props;
-        const newText = Object.assign({}, text, { textDecoration: event.target.value});
-        onEdit && onEdit(newText);
+    handleTextDecorationChange(event) {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({ id: text.id, textDecoration: event.target.value });
     }
 
-    handleFontWeightChange(event){
-        const { text, onEdit } = this.props;
-        const newText = Object.assign({}, text, { fontWeight: event.target.value });
-        onEdit && onEdit(newText);
+    handleFontWeightChange(event) {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({ id: text.id, fontWeight: event.target.value });
     }
 
     handleWidthChange(event) {
-        const { rectangle, onEdit } = this.props;
-        const newRectangle = Object.assign({}, rectangle, { width: event.target.value });
-        onEdit && onEdit(newRectangle);
+        const { text, onEdit } = this.props;
+        onEdit && onEdit({ ...text, width: event.target.value });
     }
 
     handleHeightChange(event) {
-        const { rectangle, onEdit } = this.props;
-        const newRectangle = Object.assign({}, rectangle, { height: event.target.value });
-        onEdit && onEdit(newRectangle);
+        const { text, onEdit } = this.props;
+        onEdit && onEdit({ ...text, height: event.target.value });
     }
 
     handleXChange(event) {
-        const { rectangle, onEdit } = this.props;
-        const newRectangle = Object.assign({}, rectangle, { x: event.target.value });
-        onEdit && onEdit(newRectangle);
+        const { text, onEdit } = this.props;
+        onEdit && onEdit({ ...text, x: event.target.value });
     }
 
     handleYChange(event) {
-        const { rectangle, onEdit } = this.props;
-        const newRectangle = Object.assign({}, rectangle, { y: event.target.value });
-        onEdit && onEdit(newRectangle);
+        const { text, onEdit } = this.props;
+        onEdit && onEdit({ ...text, y: event.target.value });
     }
 
     render() {
         return (
             <div className="text-menu">
-                <select value={this.props.text.fontFamily} onChange={this.handleFontFamilyChange}>
+                <Select value={this.props.text.fontFamily} onChange={this.handleFontFamilyChange}>
                     <option value="helvetica">Helvetica</option>
                     <option value="arial">Arial</option>
                     <option value="times new roman">Times New Roman</option>
@@ -98,7 +89,7 @@ class TextMenu extends Component {
                     <option value="georgia">Georgia</option>
                     <option value="garamond">Garamond</option>
                     <option value="comic sans ms">Comic Sans</option>
-                </select>
+                </Select>
                 <select value={this.props.text.fontSize} onChange={this.handleFontSizeChange}>
                     <option value={5}>5</option>
                     <option value={12}>12</option>
@@ -130,8 +121,6 @@ class TextMenu extends Component {
                 <input value={this.props.text.y} />
                 <input value={this.props.text.width} />
                 <input value={this.props.text.height} />
-
-
             </div>
         );
     }

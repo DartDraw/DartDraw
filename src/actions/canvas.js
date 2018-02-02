@@ -91,8 +91,8 @@ export function addPointDragStop(shapeId, handleIndex, draggableData) {
     return { type: ADD_POINT_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
 }
 
-export function textInputChange(shapeId, value, focused) {
-    return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value, focused } };
+export function textInputChange(shapeId, value, focused, selectionRange) {
+    return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value, focused, selectionRange } };
 }
 
 export function updateBoundingBoxes(boundingBoxes) {
