@@ -30,6 +30,7 @@ const initialState = {
     panY: 0,
     pasteOffset: {x: 0, y: 0},
     duplicateOffset: {x: 0, y: 0},
+    offset: {x: 0, y: 0},
     shiftDirection: null,
     past: [],
     future: [],

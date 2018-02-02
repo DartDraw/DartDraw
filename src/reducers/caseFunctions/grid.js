@@ -1,6 +1,19 @@
-import { minTickDistance } from './rulers';
+export function toggleGridSnapping(stateCopy) {
+    stateCopy.gridSnapping = !stateCopy.gridSnapping;
+    return stateCopy;
+}
 
-export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, canvasWidth, canvasHeight) {
+export function toggleShowGrid(stateCopy) {
+    stateCopy.showGrid = !stateCopy.showGrid;
+    return stateCopy;
+}
+
+export function toggleShowSubDivisions(stateCopy) {
+    stateCopy.showSubDivisions = !stateCopy.showSubDivisions;
+    return stateCopy;
+}
+
+export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, minSubUnitDistance, canvasWidth, canvasHeight) {
     const gridDimensionInUnits = Math.ceil(Math.max(canvasWidth, canvasHeight) / ruler.pixelsPerUnit);
     var masterLineIndex = [];
     var result = {};
@@ -9,7 +22,6 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
     result.divisions = [];
     result.subDivisions = [];
     result.gridSnapInterval = ruler.pixelsPerUnit / ruler.unitDivisions;
-    // console.log(result.gridSnapInterval, ruler.pixelsPerUnit, ruler.unitDivisions);
 
     // loop thru each desired level of lines, inches, halves, quarters, etc...
     for (var exponentIndex = 0; exponentIndex <= subUnitExponent; exponentIndex++) {
@@ -53,11 +65,11 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
             if (exponentIndex === 0) {
                 if (i % labelInterval === 0) {
                     result.divisions.push(lineLoc);
-                } else if ((lineSpacing * scale) >= minTickDistance && !renderSubDivisions) {
+                } else if ((lineSpacing * scale) >= minSubUnitDistance && !renderSubDivisions) {
                     result.subDivisions.push(lineLoc);
                 }
                 // else: do nothing
-            } else if ((lineSpacing * scale) >= minTickDistance && renderSubDivisions) {
+            } else if ((lineSpacing * scale) >= minSubUnitDistance && renderSubDivisions) {
                 result.subDivisions.push(lineLoc);
             }
         }
@@ -93,19 +105,4 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
     // }
     //
     // return result;
-}
-
-export function toggleGridSnapping(stateCopy) {
-    stateCopy.gridSnapping = !stateCopy.gridSnapping;
-    return stateCopy;
-}
-
-export function toggleShowGrid(stateCopy) {
-    stateCopy.showGrid = !stateCopy.showGrid;
-    return stateCopy;
-}
-
-export function toggleShowSubDivisions(stateCopy) {
-    stateCopy.showSubDivisions = !stateCopy.showSubDivisions;
-    return stateCopy;
 }

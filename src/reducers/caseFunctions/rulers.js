@@ -6,7 +6,6 @@ const pixelsPerPoint = 72;
 const pixelsPerCm = pixelsPerInch / 2.54;
 
 const labelOffset = 2;
-export const minTickDistance = 9;
 
 export function toggleShowRulers(stateCopy) {
     stateCopy.showRulers = !stateCopy.showRulers;
@@ -106,10 +105,10 @@ export function setRulerGrid(stateCopy, action) {
     stateCopy.canvasWidth = width * stateCopy.ruler.pixelsPerUnit;
     stateCopy.canvasHeight = height * stateCopy.ruler.pixelsPerUnit;
 
-    var panX = 0;
-    var panY = 0;
+    stateCopy.panX = 0;
+    stateCopy.panY = 0;
 
-    const { ruler, gridLines } = updateGridRulers(stateCopy, stateCopy.scale, panX, panY);
+    const { ruler, gridLines } = updateGridRulers(stateCopy, stateCopy.scale, stateCopy.panX, stateCopy.panY);
 
     stateCopy.ruler = ruler;
     stateCopy.gridLines = gridLines;
@@ -140,12 +139,12 @@ export function setRulerGrid(stateCopy, action) {
 
 export function updateGridRulers(stateCopy, scale, panX, panY) {
     var { ruler, canvasWidth, canvasHeight } = stateCopy;
-    var subUnitBase;
-    var subUnitExponent;
-    var scaledPixelsPerUnit = ruler.pixelsPerUnit * scale;
 
     const xPanOffset = panX * scale;
     const yPanOffset = panY * scale;
+    const minTickDistance = 15;
+
+    var subUnitBase;
 
     if (getBaseLog(2, ruler.unitDivisions) % 1 === 0) {
         subUnitBase = 2;
@@ -155,89 +154,53 @@ export function updateGridRulers(stateCopy, scale, panX, panY) {
         subUnitBase = ruler.unitDivisions;
     }
 
-    subUnitExponent = getBaseLog(subUnitBase, ruler.unitDivisions);
+    var subUnitExponent = getBaseLog(subUnitBase, ruler.unitDivisions);
+    var scaledPixelsPerUnit = ruler.pixelsPerUnit * scale;
 
-    // const rulerLengthInUnits = Math.ceil((Math.max(window.innerWidth, canvasWidth) + xPanOffset) / scaledPixelsPerUnit);
-    const canvasWidthInUnits = Math.ceil(canvasWidth / ruler.pixelsPerUnit);
-    const canvasHeightInUnits = Math.ceil(canvasHeight / ruler.pixelsPerUnit);
+    const canvasWidthInUnits = Math.ceil((Math.max(window.innerWidth, canvasWidth) + xPanOffset) / scaledPixelsPerUnit);
+    const canvasHeightInUnits = Math.ceil((Math.max(window.innerHeight, canvasHeight) + yPanOffset) / scaledPixelsPerUnit);
 
     // need to account for the number of digits in the labels
-    // const tickQty = canvasInUnits * subUnitBase;
-    const minLabelDistance = 10 * Math.max(canvasHeightInUnits, canvasWidthInUnits).toString().length;
+    const minLabelDistance = 9 * Math.max(canvasHeightInUnits, canvasWidthInUnits).toString().length;
 
-    ruler.horizontal = buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, canvasWidthInUnits, xPanOffset);
-    ruler.vertical = buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, canvasHeightInUnits, yPanOffset);
-    const gridLines = buildGrid(ruler, scale, subUnitBase, subUnitExponent, minLabelDistance, canvasWidth, canvasHeight);
+    if (minLabelDistance > ruler.width) {
+        ruler.width = minLabelDistance;
+    }
+
+    ruler.horizontal = buildRuler(ruler.width, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, minTickDistance, canvasWidthInUnits, xPanOffset);
+    ruler.vertical = buildRuler(ruler.width, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, minTickDistance, canvasHeightInUnits, yPanOffset);
+
+    const gridLines = buildGrid(ruler, scale, subUnitBase, subUnitExponent, minLabelDistance, minTickDistance, canvasWidth, canvasHeight);
 
     return { ruler, gridLines };
 }
 
-function buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, canvasInUnits, panOffset) {
-    var result = {};
-    result.ticks = [];
-    result.labels = [];
+function buildRuler(rulerWidth, scaledPixelsPerUnit, subUnitBase, subUnitExponent, minLabelDistance, minTickDistance, canvasInUnits, panOffset) {
+    var multiplier = (subUnitExponent === 1) ? 0.5 : 0.75;
+    var masterTickIndex = [];
 
-    var labelInterval = 1;
-    var tickInterval = 1;
-    var scalingFactor = 1;
-    const intervalArray = [2, 2.5, 5, 10];
-    const divisionArrray = [2, 4, 5, 10];
+    var result = addWholeUnits(rulerWidth, scaledPixelsPerUnit, minLabelDistance, minTickDistance, canvasInUnits, panOffset);
 
-    if (scaledPixelsPerUnit < minLabelDistance) {
-        labelInterval = Math.ceil(minLabelDistance / scaledPixelsPerUnit);
+    for (var exponentIndex = 1; exponentIndex <= subUnitExponent; exponentIndex++) {
+        const ticksPerUnit = Math.pow(subUnitBase, exponentIndex);
+        const tickQty = canvasInUnits * ticksPerUnit;
+        const tickLength = rulerWidth * Math.pow(multiplier, exponentIndex);
+        const tickSpacing = scaledPixelsPerUnit / ticksPerUnit;
 
-        while (labelInterval > intervalArray[intervalArray.length - 1] * scalingFactor) {
-            scalingFactor *= 10;
+        if (tickSpacing < minTickDistance) {
+            break;
         }
 
-        for (let i = 0; i < intervalArray.length; i++) {
-            if (labelInterval < (intervalArray[i] * scalingFactor)) {
-                labelInterval = intervalArray[i] * scalingFactor;
-                if (labelInterval !== 2.5) {
-                    break;
-                }
+        for (let i = 0; i <= tickQty; i++) {
+            var tickLoc = tickSpacing * i - panOffset;
+
+            // if tick location is off the ruler OR if it's already been rendered
+            if (tickLoc < 0 || i % ticksPerUnit === 0 || masterTickIndex.indexOf(tickLoc) !== -1) {
+                continue;
             }
-        }
-    }
 
-    if (scaledPixelsPerUnit < minTickDistance) {
-        scalingFactor = 1;
-        tickInterval = Math.ceil(minTickDistance / scaledPixelsPerUnit);
+            masterTickIndex.push(tickLoc);
 
-        while (tickInterval > intervalArray[intervalArray.length - 1] * scalingFactor) {
-            scalingFactor *= 10;
-        }
-
-        for (let i = 0; i < intervalArray.length; i++) {
-            if (tickInterval < (intervalArray[i] * scalingFactor)) {
-                tickInterval = intervalArray[i] * scalingFactor;
-                console.log(labelInterval, tickInterval, labelInterval / tickInterval);
-                if (tickInterval !== 2.5) {
-                    console.log(divisionArrray.indexOf(labelInterval / tickInterval));
-                    break;
-                }
-            }
-        }
-        if (divisionArrray.indexOf(labelInterval / tickInterval) === -1) {
-            tickInterval = labelInterval;
-        }
-    }
-
-    for (let i = 0; i <= canvasInUnits; i++) {
-        var tickLoc = scaledPixelsPerUnit * i - panOffset;
-        var tickLength;
-
-        if (tickLoc < 0) {
-            continue;
-        }
-
-        // if is a primary tick, it needs a label
-        if (i % labelInterval === 0) {
-            tickLength = ruler.width;
-            result.labels.push([tickLength - labelOffset, tickLoc + labelOffset, i]);
-            result.ticks.push([tickLength, tickLoc]);
-        } else if (i % tickInterval === 0) {
-            tickLength = ruler.width * 0.75;
             result.ticks.push([tickLength, tickLoc]);
         }
     }
@@ -325,6 +288,74 @@ function buildRuler(ruler, scaledPixelsPerUnit, subUnitBase, subUnitExponent, mi
     //     }
     // }
     return result;
+}
+
+function addWholeUnits(rulerWidth, scaledPixelsPerUnit, minLabelDistance, minTickDistance, canvasInUnits, panOffset) {
+    var ruler = {};
+    ruler.ticks = [];
+    ruler.labels = [];
+
+    var labelInterval = 1;
+    var tickInterval = 1;
+    var scalingFactor = 1;
+    const intervalArray = [2, 2.5, 5, 10];
+    const divisionArrray = [2, 4, 5, 10];
+
+    if (scaledPixelsPerUnit < minLabelDistance) {
+        labelInterval = Math.ceil(minLabelDistance / scaledPixelsPerUnit);
+
+        while (labelInterval > intervalArray[intervalArray.length - 1] * scalingFactor) {
+            scalingFactor *= 10;
+        }
+
+        for (let i = 0; i < intervalArray.length; i++) {
+            if (labelInterval < (intervalArray[i] * scalingFactor)) {
+                labelInterval = intervalArray[i] * scalingFactor;
+                if (labelInterval !== 2.5) {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (scaledPixelsPerUnit < minTickDistance) {
+        scalingFactor = 1;
+        tickInterval = Math.ceil(minTickDistance / scaledPixelsPerUnit);
+
+        while (tickInterval > intervalArray[intervalArray.length - 1] * scalingFactor) {
+            scalingFactor *= 10;
+        }
+
+        for (let i = 0; i < intervalArray.length; i++) {
+            if (tickInterval < (intervalArray[i] * scalingFactor)) {
+                tickInterval = intervalArray[i] * scalingFactor;
+                if (tickInterval !== 2.5 && divisionArrray.indexOf(labelInterval / tickInterval) === -1) {
+                    break;
+                }
+            }
+        }
+        if (divisionArrray.indexOf(labelInterval / tickInterval) === -1) {
+            tickInterval = labelInterval;
+        }
+    }
+
+    for (let i = 0; i <= canvasInUnits; i++) {
+        var tickLoc = scaledPixelsPerUnit * i - panOffset;
+
+        if (tickLoc < 0) {
+            continue;
+        }
+
+        // if is a primary tick, it needs a label
+        if (i % labelInterval === 0) {
+            ruler.labels.push([rulerWidth - labelOffset, tickLoc + labelOffset, i]);
+            ruler.ticks.push([rulerWidth, tickLoc]);
+        } else if (i % tickInterval === 0) {
+            ruler.ticks.push([rulerWidth * 0.5, tickLoc]);
+        }
+    }
+
+    return ruler;
 }
 
 function getBaseLog(x, y) {

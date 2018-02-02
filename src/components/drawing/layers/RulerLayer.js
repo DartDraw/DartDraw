@@ -83,12 +83,13 @@ class RulerLayer extends Component {
         var trackerLoc = 0;
         switch (dir) {
             case "horizontal":
-                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.x - 45 - ruler.width, width));
+                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.x - ruler.width - 45, width));
                 return (
                     <svg className="ruler"
                         id={dir}
                         width={width}
                         height={ruler.width}
+                        style={{paddingLeft: ruler.width}}
                         display={showRulers ? "flex" : "none"}
                     >
                         {this.renderHorizontalTicks()}
@@ -103,7 +104,7 @@ class RulerLayer extends Component {
                     </svg>
                 );
             case "vertical":
-                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.y - 45 - ruler.width, height));
+                trackerLoc = Math.max(0, Math.min(ruler.mouseCoords.y - ruler.width - 45, height));
                 return (
                     <svg className="ruler"
                         id={dir}
