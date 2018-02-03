@@ -1,7 +1,7 @@
 import { addRectangle, addEllipse, addPolygon, addPolygonPoint, addTempPolygonPoint, addLine, addFreehandPath,
     addArc, addText, removeShape, resizeShape, moveLineAnchor, moveArcAnchor, addFreehandPathPoint,
     resizeTextBoundingBox, addBezier, addBezierPoint, addTempBezierPoint } from '../utilities/shapes';
-import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners, updateTextInputs } from '../utilities/selection';
+import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCorners } from '../utilities/selection';
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';

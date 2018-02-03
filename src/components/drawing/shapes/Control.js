@@ -52,6 +52,8 @@ class Control extends Component {
             <Ellipse
                 id={id}
                 {...ellipseProps}
+                height={height}
+                width={width}
                 strokeWidth={strokeWidth}
                 stroke='rgba(69, 63, 80, 0.9)'
                 fill='rgba(255, 255, 255, 1)'

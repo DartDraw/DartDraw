@@ -186,6 +186,8 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
           Math.abs(yCoord - bezier.points[1]) < (5 / scale)) {
         xCoord = bezier.points[0];
         yCoord = bezier.points[1];
+        bezier.controlPoints[bezier.points.length / 2][0] = bezier.controlPoints[bezier.points.length / 2][0];
+        delete bezier.controlPoints[bezier.points.length / 2];
         bezier.closed = true;
     }
 
@@ -227,10 +229,9 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
         let rotateMatrix1 = rotateTransform([1, 0, 0, 1, 0, 0], -rotateAngle, p1.x, p1.y);
         let referencePoint1 = transformPoint(p2.x, p2.y, rotateMatrix1);
         let rotateMatrix2 = rotateTransform([1, 0, 0, 1, 0, 0], Math.PI, p1.x, p1.y);
-        let referencePoint2 = transformPoint(referencePoint1.x, referencePoint1.y, rotateMatrix2);
-        //  console.log(referencePoint);
+        let referencePoint2 = transformPoint(p2.x, p2.y, rotateMatrix2);
         bezier.controlPoints[(bezier.points.length - 2) / 2][0] = {x: referencePoint1.x, y: referencePoint1.y};
-        bezier.controlPoints[(bezier.points.length - 2) / 2 - 1][0] = {x: referencePoint2.x, y: referencePoint2.y};
+        bezier.controlPoints[(bezier.points.length - 2) / 2 - 1][1] = {x: referencePoint2.x, y: referencePoint2.y};
     }
     return shapes;
 }
@@ -937,11 +938,57 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
                 }
 
                 break;
+            case 'bezier':
+                let deltaX = mouseX - shape.points[handleIndex * 2];
+                let deltaY = mouseY - shape.points[handleIndex * 2 + 1];
+
+                shape.points[handleIndex * 2] = mouseX;
+                shape.points[handleIndex * 2 + 1] = mouseY;
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = mouseX;
+                    shape.points[shape.points.length - 1] = mouseY;
+                }
+
+                if (handleIndex === (shape.points.length / 2) - 1) {
+                    shape.points[0] = mouseX;
+                    shape.points[1] = mouseY;
+                }
+
+                shape.controlPoints[handleIndex][0].x += deltaX;
+                shape.controlPoints[handleIndex][1].x += deltaX;
+
+                shape.controlPoints[handleIndex][0].y += deltaY;
+                shape.controlPoints[handleIndex][1].y += deltaY;
+
+                break;
             default:
                 break;
         }
     });
     return shapes;
+}
+
+export function moveControl(shapes, selected, draggableData, handleIndex, panX, panY, scale) {
+    const { x, y, node } = draggableData;
+
+    let offsetLeft = 0;
+    let offsetTop = 0;
+
+    if (node) {
+        offsetLeft = node.parentNode.parentNode.parentNode.getBoundingClientRect().left;
+        offsetTop = node.parentNode.parentNode.parentNode.getBoundingClientRect().top;
+    }
+
+    let mouseX = (x + (panX * scale) - offsetLeft) / scale;
+    let mouseY = (y + (panY * scale) - offsetTop) / scale;
+
+    let shape = shapes.byId[selected[0]];
+    if (shape.type === 'bezier') {
+        let i1 = parseInt(handleIndex / 2);
+        let i2 = 0 + handleIndex % 2;
+        shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
+    }
 }
 
 export function deleteShapes(shapes, selected) {

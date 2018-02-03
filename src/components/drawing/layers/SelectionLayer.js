@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Rectangle, Handle, Control } from '../shapes';
+import { Rectangle, Handle, Control, Line } from '../shapes';
 
 class SelectionLayer extends Component {
     static propTypes = {
@@ -89,10 +89,11 @@ class SelectionLayer extends Component {
 
     renderControls(selectionBox) {
         const { propagateEvents, scale } = this.props;
+        if (!selectionBox.controls) return;
         return selectionBox.controls.map((control, i) => {
             const { id, index } = control;
-            const x = control.x - 5 / scale;
-            const y = control.y - 5 / scale;
+            const x2 = control.x2 / scale;
+            const y2 = control.y2 / scale;
             let width = 10 / scale;
             let height = 10 / scale;
 
@@ -102,14 +103,37 @@ class SelectionLayer extends Component {
                     id={id}
                     shapeId={selectionBox.shapeId}
                     index={index}
-                    x={x}
-                    y={y}
+                    x={x2}
+                    y={y2}
                     width={width}
                     height={height}
                     strokeWidth={2}
                     onDragStart={this.handleControlDragStart}
                     onDrag={this.handleControlDrag}
                     onDragStop={this.handleControlDragStop}
+                    propagateEvents={propagateEvents}
+                />
+            );
+        });
+    }
+
+    renderControlLines(selectionBox) {
+        const { propagateEvents } = this.props;
+        if (!selectionBox.controls) return;
+
+        return selectionBox.controls.map((control, i) => {
+            const { id, index } = control;
+
+            return (
+                <Line
+                    key={id}
+                    id={id}
+                    shapeId={selectionBox.shapeId}
+                    index={index}
+                    points={[control.x1, control.y1, control.x2, control.y2]}
+                    arrowLength={0}
+                    strokeWidth={2}
+                    stroke={"black"}
                     propagateEvents={propagateEvents}
                 />
             );
@@ -133,8 +157,10 @@ class SelectionLayer extends Component {
                         fill='none'
                         propagateEvents={propagateEvents}
                     />
+                    {this.renderControlLines(selectionBox)}
                     {this.renderHandles(selectionBox)}
                     {this.renderControls(selectionBox)}
+
                 </g>
             );
         });
