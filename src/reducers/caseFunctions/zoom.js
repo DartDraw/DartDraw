@@ -9,7 +9,8 @@ export function zoomIn(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, newScale, panX, panY);
+    const updateGrid = true;
+    const { ruler, gridLines } = updateRulerGrid(stateCopy, newScale, panX, panY, updateGrid);
     stateCopy.ruler = ruler;
     stateCopy.gridLines = gridLines;
     stateCopy.panX = panX;
@@ -25,7 +26,8 @@ export function zoomOut(stateCopy) {
 
     const { panX, panY } = setPan(stateCopy, newScale);
 
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, newScale, panX, panY);
+    const updateGrid = true;
+    const { ruler, gridLines } = updateRulerGrid(stateCopy, newScale, panX, panY, updateGrid);
     stateCopy.ruler = ruler;
     stateCopy.gridLines = gridLines;
     stateCopy.panX = panX;
@@ -42,7 +44,8 @@ export function setCustomZoom(stateCopy, action) {
 
     const { panX, panY } = setPan(stateCopy, scale);
 
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY);
+    const updateGrid = true;
+    const { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY, updateGrid);
     stateCopy.ruler = ruler;
     stateCopy.gridLines = gridLines;
     stateCopy.panX = panX;
@@ -71,7 +74,8 @@ export function zoomToMarqueeBox(stateCopy) {
     panY = marqueeBox.y + (marqueeBox.height / 2) - (windowHeight / 2 / scale);
     panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
 
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY);
+    const updateGrid = true;
+    const { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY, updateGrid);
     return {
         ruler: ruler,
         gridLines: gridLines,
@@ -93,7 +97,8 @@ export function pan(stateCopy, draggableData) {
     var panY = stateCopy.panY - deltaY / scale;
     panY = clamp(panY, 0, canvasHeight - (window.innerHeight - stateCopy.ruler.width - 45) / scale);
 
-    var { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY);
+    const updateGrid = true;
+    var { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY, updateGrid);
 
     return {
         ruler: ruler,

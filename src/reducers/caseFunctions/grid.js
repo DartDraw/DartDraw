@@ -13,7 +13,8 @@ export function toggleShowSubDivisions(stateCopy) {
     return stateCopy;
 }
 
-export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, minSubUnitDistance, canvasWidth, canvasHeight) {
+export function buildGrid(ruler, hi, hello, scale, subUnitBase, subUnitExponent, minWholeUnitDistance, minSubUnitDistance, canvasWidth, canvasHeight) {
+    console.log("building the grid");
     const gridDimensionInUnits = Math.ceil(Math.max(canvasWidth, canvasHeight) / ruler.pixelsPerUnit);
     var masterLineIndex = [];
     var renderSubDivisions = true;
@@ -24,7 +25,7 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
     // loop thru each desired level of lines, inches, halves, quarters, etc...
     for (var exponentIndex = 0; exponentIndex <= subUnitExponent; exponentIndex++) {
         const linesPerUnit = Math.pow(subUnitBase, exponentIndex);
-        const lineQty = gridDimensionInUnits * linesPerUnit;
+        const lineQty = (hello - hi) * linesPerUnit;
         const lineSpacing = ruler.pixelsPerUnit / linesPerUnit;
         var labelInterval = 1;
         const intervalArray = [2, 2.5, 5, 10];
@@ -50,7 +51,7 @@ export function buildGrid(ruler, scale, subUnitBase, subUnitExponent, minWholeUn
         }
 
         for (var i = 0; i <= lineQty; i++) {
-            var lineLoc = lineSpacing * i;
+            var lineLoc = lineSpacing * i + (ruler.pixelsPerUnit * hi);
 
             // if line location has already been rendered, skip it
             if (masterLineIndex.indexOf(lineLoc) !== -1) {

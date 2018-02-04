@@ -46,7 +46,6 @@ class App extends Component {
                 ref={el => { this.app = el; }}
                 onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
-                onMouseMove={this.handleMouseMove}
                 tabIndex={-1}
             >
                 <TopMenuContainer />

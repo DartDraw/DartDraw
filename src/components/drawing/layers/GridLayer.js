@@ -7,6 +7,7 @@ class GridLayer extends Component {
         canvasWidth: PropTypes.number,
         canvasHeight: PropTypes.number,
         lines: PropTypes.array,
+        scale: PropTypes.number,
         showGrid: PropTypes.bool,
         showSubDivisions: PropTypes.bool
     };
@@ -27,13 +28,13 @@ class GridLayer extends Component {
     }
 
     renderMajorLines() {
-        const { canvasWidth, canvasHeight, lines, showSubDivisions } = this.props;
+        const { canvasWidth, canvasHeight, lines, showSubDivisions, scale } = this.props;
         return lines.map((line) => {
             if (showSubDivisions || line.major) {
                 return (
                     <g key={line.loc} >
-                        {this.buildGridLine(line.loc, 0, line.loc, canvasHeight, line.major)}
-                        {this.buildGridLine(0, line.loc, canvasWidth, line.loc, line.major)}
+                        {this.buildGridLine(line.loc / scale, 0, line.loc / scale, canvasHeight, true)}
+                        {this.buildGridLine(0, line.loc / scale, canvasWidth, line.loc / scale, true)}
                     </g>
                 );
             }
@@ -42,6 +43,7 @@ class GridLayer extends Component {
 
     render() {
         const { showGrid } = this.props;
+        console.log("rendering grid");
         return (
             <svg className="grid"
                 display={showGrid ? "" : "none"}
