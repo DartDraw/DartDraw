@@ -154,10 +154,16 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
             }
 
             if (shape.type === 'arc') {
-                selectionBox.controls[0].x2 = shape.points[0];
-                selectionBox.controls[0].y2 = shape.points[1];
-                selectionBox.controls[1].x2 = shape.points[2];
-                selectionBox.controls[1].y2 = shape.points[3];
+                const matrix = shape.transform[0].parameters;
+                let p1 = transformPoint(shape.points[0], shape.points[1], matrix);
+                let p2 = transformPoint(shape.points[2], shape.points[3], matrix);
+
+                selectionBox.controls[0].x2 = p1.x;
+                selectionBox.controls[0].y2 = p1.y;
+                selectionBox.controls[1].x2 = p2.x;
+                selectionBox.controls[1].y2 = p2.y;
+
+                selectionBox.handles = [];
             }
 
             return selectionBox;
@@ -250,18 +256,26 @@ function generateSelectionBox(shape, boundingBox, mode) {
             }
 
             if (shape.type === 'arc') {
+                const matrix = shape.transform[0].parameters;
+                let c = transformPoint(shape.center.x, shape.center.y, matrix);
+
+                let p1 = transformPoint(shape.points[0], shape.points[1], matrix);
+                let p2 = transformPoint(shape.points[2], shape.points[3], matrix);
+
                 controls.push({id: uuidv1(),
                     index: 0,
-                    x1: shape.center.x,
-                    y1: shape.center.y,
-                    x2: shape.points[0],
-                    y2: shape.points[1]});
+                    x1: c.x,
+                    y1: c.y,
+                    x2: p1.x,
+                    y2: p1.y});
                 controls.push({id: uuidv1(),
                     index: 1,
-                    x1: shape.center.x,
-                    y1: shape.center.y,
-                    x2: shape.points[2],
-                    y2: shape.points[3]});
+                    x1: c.x,
+                    y1: c.y,
+                    x2: p2.x,
+                    y2: p2.y});
+
+                handles = [];
             }
 
             return {

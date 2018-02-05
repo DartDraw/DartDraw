@@ -906,13 +906,6 @@ export function removeTransformation(shapes, selected) {
                 shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;
             case 'arc':
-                for (let i = 0; i < shape.points.length; i += 2) {
-                    let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
-                    shape.points[i] = coords.x;
-                    shape.points[i + 1] = coords.y;
-                    shape.center = transformPoint(shape.center.x, shape.center.y, shapeMatrix);
-                }
-
                 let rxSign = Math.sign(shape.rx);
                 let rySign = Math.sign(shape.ry);
 
@@ -920,11 +913,28 @@ export function removeTransformation(shapes, selected) {
 
                 if (decomposed.skewX !== 0) {
                     let unrotatedMatrix = rotateTransform(shapeMatrix, -decomposed.skewY, 0, 0);
+
+                    for (let i = 0; i < shape.points.length; i += 2) {
+                        let coords = transformPoint(shape.points[i], shape.points[i + 1], unrotatedMatrix);
+                        shape.points[i] = coords.x;
+                        shape.points[i + 1] = coords.y;
+                    }
+                    shape.center = transformPoint(shape.center.x, shape.center.y, unrotatedMatrix);
+
                     shape.rx = (transformPoint(0, 0, unrotatedMatrix).x - transformPoint(shape.rx, 0, unrotatedMatrix).x);
                     shape.ry = (transformPoint(0, 0, unrotatedMatrix).y - transformPoint(0, shape.ry, unrotatedMatrix).y);
+                    shape.transform[0].parameters = rotateTransform([1, 0, 0, 1, 0, 0], decomposed.skewY, 0, 0);
                 } else {
+                    for (let i = 0; i < shape.points.length; i += 2) {
+                        let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
+                        shape.points[i] = coords.x;
+                        shape.points[i + 1] = coords.y;
+                    }
+                    shape.center = transformPoint(shape.center.x, shape.center.y, shapeMatrix);
+
                     shape.rx = (transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x);
                     shape.ry = (transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y);
+                    shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 }
 
                 if (!((Math.sign(shape.rx) === rxSign && Math.sign(shape.ry) === rySign) ||
@@ -933,7 +943,6 @@ export function removeTransformation(shapes, selected) {
                 }
 
                 console.log(shape.center);
-                shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;
             default:
                 break;
