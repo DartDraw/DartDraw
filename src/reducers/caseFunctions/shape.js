@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -176,6 +176,33 @@ export function handleDragStop(stateCopy, action, root) {
         default:
             stateCopy.editInProgress = false;
             break;
+    }
+    return stateCopy;
+}
+
+export function controlDragStart(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        default: break;
+    }
+    return stateCopy;
+}
+
+export function controlDrag(stateCopy, action, root) {
+    const { draggableData, handleIndex } = action.payload;
+
+    if (stateCopy.mode === 'reshape') {
+        stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+            stateCopy.panX, stateCopy.panY, stateCopy.scale);
+        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+
+        return stateCopy;
+    }
+    return stateCopy;
+}
+
+export function controlDragStop(stateCopy, action, root) {
+    switch (stateCopy.mode) {
+        default: break;
     }
     return stateCopy;
 }

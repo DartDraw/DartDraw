@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Rectangle, Handle } from '../shapes';
+import { Rectangle, Handle, Control, Line } from '../shapes';
 
 class SelectionLayer extends Component {
     static propTypes = {
@@ -10,7 +10,10 @@ class SelectionLayer extends Component {
         propagateEvents: PropTypes.bool,
         onHandleDragStart: PropTypes.func,
         onHandleDrag: PropTypes.func,
-        onHandleDragStop: PropTypes.func
+        onHandleDragStop: PropTypes.func,
+        onControlDragStart: PropTypes.func,
+        onControlDrag: PropTypes.func,
+        onControlDragStop: PropTypes.func
     };
 
     constructor(props) {
@@ -19,6 +22,9 @@ class SelectionLayer extends Component {
         this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
         this.handleHandleDrag = this.handleHandleDrag.bind(this);
         this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
+        this.handleControlDragStart = this.handleControlDragStart.bind(this);
+        this.handleControlDrag = this.handleControlDrag.bind(this);
+        this.handleControlDragStop = this.handleControlDragStop.bind(this);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -31,6 +37,18 @@ class SelectionLayer extends Component {
 
     handleHandleDragStop(shapeId, handleIndex, draggableData) {
         this.props.onHandleDragStop(shapeId, handleIndex, draggableData);
+    }
+
+    handleControlDragStart(shapeId, handleIndex, draggableData) {
+        this.props.onControlDragStart(shapeId, handleIndex, draggableData);
+    }
+
+    handleControlDrag(shapeId, handleIndex, draggableData) {
+        this.props.onControlDrag(shapeId, handleIndex, draggableData);
+    }
+
+    handleControlDragStop(shapeId, handleIndex, draggableData) {
+        this.props.onControlDragStop(shapeId, handleIndex, draggableData);
     }
 
     renderHandles(selectionBox) {
@@ -69,6 +87,59 @@ class SelectionLayer extends Component {
         });
     }
 
+    renderControls(selectionBox) {
+        const { propagateEvents, scale } = this.props;
+        if (!selectionBox.controls) return;
+        return selectionBox.controls.map((control, i) => {
+            const { id, index } = control;
+            const x2 = control.x2 / scale;
+            const y2 = control.y2 / scale;
+            let width = 10 / scale;
+            let height = 10 / scale;
+
+            return (
+                <Control
+                    key={id}
+                    id={id}
+                    shapeId={selectionBox.shapeId}
+                    index={index}
+                    x={x2}
+                    y={y2}
+                    width={width}
+                    height={height}
+                    strokeWidth={2}
+                    onDragStart={this.handleControlDragStart}
+                    onDrag={this.handleControlDrag}
+                    onDragStop={this.handleControlDragStop}
+                    propagateEvents={propagateEvents}
+                />
+            );
+        });
+    }
+
+    renderControlLines(selectionBox) {
+        const { propagateEvents } = this.props;
+        if (!selectionBox.controls) return;
+
+        return selectionBox.controls.map((control, i) => {
+            const { id, index } = control;
+
+            return (
+                <Line
+                    key={id}
+                    id={id}
+                    shapeId={selectionBox.shapeId}
+                    index={index}
+                    points={[control.x1, control.y1, control.x2, control.y2]}
+                    arrowLength={0}
+                    strokeWidth={2}
+                    stroke={"black"}
+                    propagateEvents={propagateEvents}
+                />
+            );
+        });
+    }
+
     renderSelectionBoxes() {
         const { selectionBoxes, propagateEvents } = this.props;
         return selectionBoxes.map(selectionBox => {
@@ -86,7 +157,10 @@ class SelectionLayer extends Component {
                         fill='none'
                         propagateEvents={propagateEvents}
                     />
+                    {this.renderControlLines(selectionBox)}
                     {this.renderHandles(selectionBox)}
+                    {this.renderControls(selectionBox)}
+
                 </g>
             );
         });
