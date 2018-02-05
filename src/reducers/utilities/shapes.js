@@ -871,8 +871,16 @@ export function removeTransformation(shapes, selected) {
                 let rxSign = Math.sign(shape.rx);
                 let rySign = Math.sign(shape.ry);
 
-                shape.rx = (transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x);
-                shape.ry = (transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y);
+                let decomposed = decomposeMatrix(shapeMatrix);
+
+                if (decomposed.skewX !== 0) {
+                    let unrotatedMatrix = rotateTransform(shapeMatrix, -decomposed.skewY, 0, 0);
+                    shape.rx = (transformPoint(0, 0, unrotatedMatrix).x - transformPoint(shape.rx, 0, unrotatedMatrix).x);
+                    shape.ry = (transformPoint(0, 0, unrotatedMatrix).y - transformPoint(0, shape.ry, unrotatedMatrix).y);
+                } else {
+                    shape.rx = (transformPoint(0, 0, shapeMatrix).x - transformPoint(shape.rx, 0, shapeMatrix).x);
+                    shape.ry = (transformPoint(0, 0, shapeMatrix).y - transformPoint(0, shape.ry, shapeMatrix).y);
+                }
 
                 if (!((Math.sign(shape.rx) === rxSign && Math.sign(shape.ry) === rySign) ||
                         (Math.sign(shape.rx) !== rxSign && Math.sign(shape.ry) !== rySign))) {
