@@ -3,6 +3,7 @@ export {default as Polygon} from './Polygon';
 export {default as Polyline} from './Polyline';
 export {default as Group} from './Group';
 export {default as Handle} from './Handle';
+export {default as Control} from './Control';
 export {default as Line} from './Line';
 export {default as TransparentLine} from './TransparentLine';
 export {default as FreehandPath} from './FreehandPath';
