@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
+    flipShape, editArcAngle, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -379,6 +379,8 @@ export function keyDown(stateCopy, action, root) {
             stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
+        case 54:
+            stateCopy.shapes.byId[stateCopy.selected[0]] = editArcAngle(stateCopy.shapes.byId[stateCopy.selected[0]], stateCopy.shapes.byId[stateCopy.selected[0]].startAngle, 3 * Math.PI / 2);
         default:
             break;
     }

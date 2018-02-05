@@ -153,6 +153,13 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
                 }
             }
 
+            if (shape.type === 'arc') {
+                selectionBox.controls[0].x2 = shape.points[0];
+                selectionBox.controls[0].y2 = shape.points[1];
+                selectionBox.controls[1].x2 = shape.points[2];
+                selectionBox.controls[1].y2 = shape.points[3];
+            }
+
             return selectionBox;
         default:
             let handle0, handle1, handle2, handle3;
@@ -240,6 +247,21 @@ function generateSelectionBox(shape, boundingBox, mode) {
                         x2: shape.controlPoints[cIndex][1].x,
                         y2: shape.controlPoints[cIndex][1].y});
                 }
+            }
+
+            if (shape.type === 'arc') {
+                controls.push({id: uuidv1(),
+                    index: 0,
+                    x1: shape.center.x,
+                    y1: shape.center.y,
+                    x2: shape.points[0],
+                    y2: shape.points[1]});
+                controls.push({id: uuidv1(),
+                    index: 1,
+                    x1: shape.center.x,
+                    y1: shape.center.y,
+                    x2: shape.points[2],
+                    y2: shape.points[3]});
             }
 
             return {
