@@ -1047,6 +1047,13 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
         let i2 = 0 + handleIndex % 2;
         shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
     }
+    if (shape.type === 'arc') {
+        let angle = Math.atan2(mouseY - shape.center.y, mouseX - shape.center.x) - Math.atan2(shape.points[1] - shape.center.y, shape.points[0] - shape.centr.x);
+        console.log(angle);
+        //  let i1 = parseInt(handleIndex / 2);
+        //  let i2 = 0 + handleIndex % 2;
+        //  shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
+    }
 }
 
 export function deleteShapes(shapes, selected) {
