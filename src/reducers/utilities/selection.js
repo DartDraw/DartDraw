@@ -88,6 +88,8 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
 
         if (selectionBox && selectionBox.mode === mode) {
             if (shape.type !== 'text') {
+                // updatedSelectionBoxes[id] = generateSelectionBox(shape, boundingBox, mode);
+
                 updatedSelectionBoxes[id] = updateSelectionBox(shape, selectionBox, boundingBox, mode);
             } else {
                 updatedSelectionBoxes[id] = updateSelectionBox(

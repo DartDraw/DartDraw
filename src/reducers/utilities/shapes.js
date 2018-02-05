@@ -160,8 +160,9 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
     bezier.points.push(bezier.points[0]);
     bezier.points.push(bezier.points[1]);
 
-    bezier.controlPoints[1] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
-    bezier.controlPoints[2] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
+    bezier.controlPoints[0] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
+    bezier.controlPoints[1] = [{x: bezier.points[2], y: bezier.points[3]}, {x: bezier.points[2], y: bezier.points[3]}];
+    bezier.controlPoints[2] = [{x: bezier.points[2], y: bezier.points[3]}, {x: bezier.points[2], y: bezier.points[3]}];
 
     shapes.byId[bezier.id] = bezier;
     shapes.allIds.push(bezier.id);
@@ -184,9 +185,8 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     if (Math.abs(xCoord - bezier.points[0]) < (5 / scale) &&
           Math.abs(yCoord - bezier.points[1]) < (5 / scale)) {
-        xCoord = bezier.points[0];
-        yCoord = bezier.points[1];
-        bezier.controlPoints[bezier.points.length / 2][0] = bezier.controlPoints[bezier.points.length / 2][0];
+        bezier.controlPoints[bezier.points.length / 2 - 1][0] = bezier.controlPoints[0][0];
+        delete bezier.controlPoints[0];
         delete bezier.controlPoints[bezier.points.length / 2];
         bezier.closed = true;
     }
@@ -219,20 +219,15 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
-    bezier.controlPoints[(bezier.points.length - 2) / 2] = [ {x: xCoord, y: yCoord}, {x: xCoord, y: yCoord} ];
 
-    if (bezier.points.length > 4) {
-        let p1 = { x: bezier.points[bezier.points.length - 4], y: bezier.points[bezier.points.length - 3] };
-        let p3 = { x: bezier.points[bezier.points.length - 6], y: bezier.points[bezier.points.length - 5] };
-        let p2 = { x: xCoord, y: yCoord };
-        let rotateAngle = (Math.PI - (Math.atan2(p3.y - p1.y, p3.x - p1.x) - Math.atan2(p2.y - p1.y, p2.x - p1.x))) / 2;
-        let rotateMatrix1 = rotateTransform([1, 0, 0, 1, 0, 0], -rotateAngle, p1.x, p1.y);
-        let referencePoint1 = transformPoint(p2.x, p2.y, rotateMatrix1);
-        let rotateMatrix2 = rotateTransform([1, 0, 0, 1, 0, 0], Math.PI, p1.x, p1.y);
-        let referencePoint2 = transformPoint(p2.x, p2.y, rotateMatrix2);
-        bezier.controlPoints[(bezier.points.length - 2) / 2][0] = {x: referencePoint1.x, y: referencePoint1.y};
-        bezier.controlPoints[(bezier.points.length - 2) / 2 - 1][1] = {x: referencePoint2.x, y: referencePoint2.y};
-    }
+    let l = Math.sqrt((xCoord - bezier.points[bezier.points.length - 4]) ** 2 + (yCoord - bezier.points[bezier.points.length - 3]) ** 2);
+    let endX = (1 - (l - 50) / l) * xCoord + (l - 50) / l * bezier.points[bezier.points.length - 4];
+    let endY = (1 - (l - 50) / l) * yCoord + (l - 50) / l * bezier.points[bezier.points.length - 3];
+    bezier.controlPoints[(bezier.points.length) / 2 - 2][0] = {x: endX, y: endY};
+
+    endX = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 4] + (l - 50) / l * xCoord;
+    endY = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 3] + (l - 50) / l * yCoord;
+    bezier.controlPoints[(bezier.points.length) / 2 - 1][1] = {x: endX, y: endY};
     return shapes;
 }
 

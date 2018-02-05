@@ -103,6 +103,7 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "selectTool":
+            if (stateCopy.mode === 'reshape') { return stateCopy; }
             if (!(16 in root.menuState.currentKeys)) {
                 stateCopy.selected = selectShape([], null);
             }

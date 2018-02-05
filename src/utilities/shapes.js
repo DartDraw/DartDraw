@@ -48,7 +48,7 @@ export function formatCurve(points, controlPoints) {
 
     for (let i = 2; i < points.length; i += 2) {
         let p1 = i / 2 - 1;
-        if (p1 < 1) p1 = points.length / 2 - 1;
+        if (p1 < 1 && !controlPoints[0]) p1 = points.length / 2 - 1;
         let p2 = i / 2;
         if (p2 >= points.length / 2) p2 = 1;
         formattedC = formattedC + ' C ' + controlPoints[p1][0].x + ', ' + controlPoints[p1][0].y + ' ' + controlPoints[p2][1].x + ', ' + controlPoints[p2][1].y + ' ' + points[i] + ', ' + points[i + 1];
