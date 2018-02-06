@@ -1,6 +1,7 @@
 import * as menuActions from '../actions/menu';
 import * as menu from './caseFunctions/menu';
 import * as grid from './caseFunctions/grid';
+import * as rulers from './caseFunctions/rulers';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -10,10 +11,6 @@ const initialState = {
     toolType: '',
     fillStrokeButton: 'fill',
     currentKeys: {},
-    gridSnapping: false,
-    unitType: 'inch',
-    majorGrid: 100,
-    minorGrid: 50,
     copied: false,
     pasted: false,
     align: ['top', 'left'],
@@ -29,7 +26,11 @@ const initialState = {
             'type': 'HEX',
             'colors': ["rgba(255,0,0,1)", "rgba(0,0,255,1)", "rgba(255,255,0,1)"]
         }
-    }
+    },
+    gridSnapping: false,
+    showRulers: true,
+    showSubDivisions: true,
+    showGrid: true
 };
 
 function menuState(state = initialState, action, root) {
@@ -46,14 +47,20 @@ function menuState(state = initialState, action, root) {
             return menu.selectButton(stateCopy, action, root);
         case menuActions.SELECT_COLOR:
             return menu.selectColor(stateCopy, action, root);
-        case menuActions.SET_GRID:
-            return grid.setGrid(stateCopy, action, root);
+        case menuActions.ALIGNMENT_CHANGE:
+            return menu.selectAlignment(stateCopy, action, root);
         case menuActions.TOGGLE_GRID_SNAPPING:
             return grid.toggleGridSnapping(stateCopy, action, root);
         case menuActions.UPDATE_OPACITY:
             return menu.updateOpacity(stateCopy, action);
         case menuActions.COLOR_UPDATE:
             return menu.colorUpdate(stateCopy, action);
+        case menuActions.TOGGLE_SHOW_GRID:
+            return grid.toggleShowGrid(stateCopy, action, root);
+        case menuActions.TOGGLE_SHOW_SUBDIVISIONS:
+            return grid.toggleShowSubDivisions(stateCopy, action, root);
+        case menuActions.TOGGLE_SHOW_RULER:
+            return rulers.toggleShowRulers(stateCopy, action, root);
         default:
             return stateCopy;
     }

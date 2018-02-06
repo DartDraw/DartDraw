@@ -1,23 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatPath, formatTransform } from '../../../utilities/shapes';
+import { formatCurve, formatTransform } from '../../../utilities/shapes';
 
-class Path extends Component {
+class Bezier extends Component {
     static propTypes = {
         id: PropTypes.string,
-        arrowId: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        d: PropTypes.arrayOf(PropTypes.shape({
-            command: PropTypes.string,
-            parameters: PropTypes.arrayOf(PropTypes.number)
-        })),
+        width: PropTypes.number,
+        height: PropTypes.number,
+        points: PropTypes.arrayOf(PropTypes.number),
+        controlPoints: PropTypes.object,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
-        strokeDasharray: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -60,22 +58,26 @@ class Path extends Component {
     }
 
     render() {
-        const { id, arrowId, d, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
-        const svgProps = {
+        const {
             id,
-            d: formatPath(d),
+            points,
+            controlPoints,
             stroke,
             strokeWidth,
-            strokeDasharray,
-            fill: fill || 'none',
-            transform: formatTransform(transform),
-            vectorEffect: "non-scaling-stroke",
-            markerEnd: "url(#" + arrowId + ")"
-        };
+            fill,
+            transform,
+            propagateEvents
+        } = this.props;
 
-        if (arrowId) {
-            svgProps.markerEnd = "url(#" + arrowId + ")";
-        }
+        const svgProps = {
+            id,
+            stroke,
+            strokeWidth,
+            fill,
+            transform: formatTransform(transform),
+            d: formatCurve(points, controlPoints),
+            vectorEffect: "non-scaling-stroke"
+        };
 
         return (
             <Shape
@@ -92,4 +94,4 @@ class Path extends Component {
     }
 }
 
-export default Path;
+export default Bezier;

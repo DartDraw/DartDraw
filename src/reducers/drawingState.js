@@ -5,31 +5,51 @@ import * as canvas from './caseFunctions/canvas';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
+import * as rulers from './caseFunctions/rulers';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
     shapes: {
         byId: {},
-        allIds: []
+        allIds: [],
+        byArrowId: {},
+        allArrows: []
     },
     selected: [],
     boundingBoxes: {},
     selectionBoxes: {},
+    mouseCoords: {x: 0, y: 0},
     marqueeBox: null,
     lastSavedShapes: {},
     editInProgress: false,
     textInputFocused: false,
-    canvasHeight: 850,
-    canvasWidth: 1000,
+    canvasHeight: 816,
+    canvasWidth: 1056,
     textInputs: {},
     scale: 1,
     panX: 0,
     panY: 0,
     pasteOffset: {x: 0, y: 0},
     duplicateOffset: {x: 0, y: 0},
+    offset: {x: 0, y: 0},
     shiftDirection: null,
     past: [],
-    future: []
+    future: [],
+    gridSnapInterval: 48,
+    ruler: {
+        unitType: 'in',
+        unitDivisions: 2,
+        width: 30,
+        pixelsPerUnit: 96,
+        horizontal: {
+            ticks: [],
+            labels: []
+        },
+        vertical: {
+            ticks: [],
+            labels: []
+        }
+    }
 };
 
 function drawingState(state = initialState, action, root) {
@@ -71,11 +91,17 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.HANDLE_DRAG_STOP:
             updatedState = shape.handleDragStop(stateCopy, action, root);
             break;
+        case canvasActions.CONTROL_DRAG_START:
+            updatedState = shape.controlDragStart(stateCopy, action, root);
+            break;
+        case canvasActions.CONTROL_DRAG:
+            updatedState = shape.controlDrag(stateCopy, action, root);
+            break;
+        case canvasActions.CONTROL_DRAG_STOP:
+            updatedState = shape.controlDragStop(stateCopy, action, root);
+            break;
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
-            break;
-        case canvasActions.TOGGLE_TEXT_INPUT_FOCUS:
-            updatedState.textInputFocused = action.payload.textInputFocused;
             break;
         case canvasActions.UPDATE_BOUNDING_BOXES:
             updatedState = canvas.handleBoundingBoxUpdate(stateCopy, action, root);
@@ -101,6 +127,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.FLIP_HORIZONTAL:
             updatedState = shape.flipHorizontal(stateCopy, action, root);
             break;
+        case menuActions.MOUSE_MOVE:
+            updatedState = canvas.mouseMove(stateCopy, action, root);
+            break;
         case menuActions.KEY_DOWN:
             updatedState = shape.keyDown(stateCopy, action, root);
             break;
@@ -122,19 +151,13 @@ function drawingState(state = initialState, action, root) {
         case menuActions.REDO_CLICK:
             updatedState = menu.redoClick(stateCopy, action, root);
             break;
-        case menuActions.ZOOM_IN:
-            updatedState = zoom.zoomIn(stateCopy, action, root);
-            break;
-        case menuActions.ZOOM_OUT:
-            updatedState = zoom.zoomOut(stateCopy, action, root);
-            break;
-        case menuActions.CUSTOM_ZOOM:
-            updatedState = zoom.zoomToCustom(stateCopy, action, root);
+        case menuActions.SET_CUSTOM_ZOOM:
+            updatedState = zoom.setCustomZoom(stateCopy, action, root);
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.EDIT_SHAPE:
-            updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
+        case menuActions.SET_RULER_GRID:
+            updatedState = rulers.setRulerGrid(stateCopy, action, root);
             break;
         default: break;
     }
@@ -162,7 +185,7 @@ function drawingState(state = initialState, action, root) {
     }
 
     if (root.menuState && root.menuState.toolType !== 'selectTool' && stateCopy.mode === 'reshape') {
-        if (root.menuState.toolType !== 'polygonTool') {
+        if (root.menuState.toolType !== 'polygonTool' && root.menuState.toolType !== 'bezierTool') {
             stateCopy.mode = '';
             stateCopy.selected = [];
             stateCopy.selectionBoxes = [];

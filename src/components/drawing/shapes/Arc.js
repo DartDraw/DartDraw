@@ -12,6 +12,8 @@ class Arc extends Component {
         points: PropTypes.arrayOf(PropTypes.number),
         rx: PropTypes.number,
         ry: PropTypes.number,
+        largeArc: PropTypes.number,
+        flipArc: PropTypes.bool,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -56,13 +58,17 @@ class Arc extends Component {
     }
 
     render() {
-        const { id, points, rx, ry, stroke, strokeWidth, transform, propagateEvents } = this.props;
+        const { id, points, rx, ry, stroke, largeArc, flipArc, strokeWidth, transform, propagateEvents } = this.props;
         const svgProps = {
-            d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'A', parameters: [rx, ry, 0, 0, 1, points[2], points[3]]}],
+            d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'A', parameters: [rx, ry, 0, largeArc, 1, points[2], points[3]]}],
             stroke,
             strokeWidth,
             transform
         };
+
+        if (flipArc) {
+            svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'A', parameters: [rx, ry, 0, -largeArc + 1, 0, points[2], points[3]]}];
+        }
 
         return (
             <Path

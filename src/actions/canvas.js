@@ -12,8 +12,10 @@ export const GROUP_CLICK = 'GROUP_CLICK';
 export const HANDLE_DRAG_START = 'HANDLE_DRAG_START';
 export const HANDLE_DRAG = 'HANDLE_DRAG';
 export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
-export const TEXT_INPUT_CHANGE = 'TEXT_INPUT_CHANGE';
-export const TOGGLE_TEXT_INPUT_FOCUS = 'TOGGLE_TEXT_INPUT_FOCUS';
+export const CONTROL_DRAG_START = 'CONTROL_DRAG_START';
+export const CONTROL_DRAG = 'CONTROL_DRAG';
+export const CONTROL_DRAG_STOP = 'CONTROL_DRAG_STOP';
+export const TEXT_INPUT_CHANGE = 'TEXT__INPUT_CHANGE';
 export const UPDATE_BOUNDING_BOXES = 'UPDATE_BOUNDING_BOXES';
 
 export function canvasDrag(draggableData) {
@@ -72,12 +74,20 @@ export function handleDragStop(shapeId, handleIndex, draggableData) {
     return { type: HANDLE_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
 }
 
-export function textInputChange(shapeId, value) {
-    return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value } };
+export function controlDragStart(shapeId, handleIndex, draggableData) {
+    return { type: CONTROL_DRAG_START, payload: { shapeId, handleIndex, draggableData } };
 }
 
-export function toggleTextInputFocus(textInputFocused) {
-    return { type: TOGGLE_TEXT_INPUT_FOCUS, payload: { textInputFocused } };
+export function controlDrag(shapeId, handleIndex, draggableData) {
+    return { type: CONTROL_DRAG, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function controlDragStop(shapeId, handleIndex, draggableData) {
+    return { type: CONTROL_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function textInputChange(shapeId, value, focused) {
+    return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value, focused } };
 }
 
 export function updateBoundingBoxes(boundingBoxes) {

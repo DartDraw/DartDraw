@@ -100,11 +100,11 @@ class TextMenu extends Component {
                     <option value="comic sans ms">Comic Sans</option>
                 </select>
                 <select value={this.props.text.fontSize} onChange={this.handleFontSizeChange}>
-                    <option value="5px">5</option>
-                    <option value="12px">12</option>
-                    <option value="24px">24</option>
-                    <option value="72px">72</option>
-                    <option value="100px">100</option>
+                    <option value={5}>5</option>
+                    <option value={12}>12</option>
+                    <option value={24}>24</option>
+                    <option value={72}>72</option>
+                    <option value={100}>100</option>
                 </select>
                 <select value={this.props.text.fontStyle} onChange={this.handleFontStyleChange}>
                     <option value="normal">normal</option>

@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import {
     editShape,
+    alignmentClick,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
@@ -9,18 +10,24 @@ import {
     flipHorizontal,
     flipVertical,
     bringToFront,
+    setCustomZoom,
     toggleGridSnapping,
-    zoomIn,
-    zoomOut,
-    customZoom
+    toggleShowGrid,
+    toggleShowRulers,
+    toggleShowSubDivisions,
+    setRulerGrid
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected } = drawingState;
+    const { shapes, selected, scale, ruler, canvasWidth, canvasHeight } = drawingState;
     return {
         selectedShape: shapes.byId[selected[0]],
-        scale: drawingState.scale,
+        scale: scale,
+        unitType: ruler.unitType,
+        unitDivisions: ruler.unitDivisions,
+        canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
+        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
         fillColor: menuState.fillColor
     };
 };
@@ -29,6 +36,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         editShape: (shape) => {
             dispatch(editShape(shape));
+        },
+        onAllignmentClick: (id) => {
+            dispatch(alignmentClick(id));
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());
@@ -57,14 +67,20 @@ const mapDispatchToProps = (dispatch) => {
         onToggleGridSnapping: () => {
             dispatch(toggleGridSnapping());
         },
-        onZoomIn: () => {
-            dispatch(zoomIn());
+        onSetCustomZoom: (customScale) => {
+            dispatch(setCustomZoom(customScale));
         },
-        onZoomOut: () => {
-            dispatch(zoomOut());
+        onShowGrid: () => {
+            dispatch(toggleShowGrid());
         },
-        onCustomZoom: (customScale) => {
-            dispatch(customZoom(customScale));
+        onShowRulers: () => {
+            dispatch(toggleShowRulers());
+        },
+        onShowSubDivisions: () => {
+            dispatch(toggleShowSubDivisions());
+        },
+        onSetRulerGrid: (canvasSpecs) => {
+            dispatch(setRulerGrid(canvasSpecs));
         }
     };
 };
