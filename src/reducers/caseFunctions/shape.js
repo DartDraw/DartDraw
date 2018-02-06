@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, editArcAngle, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -379,8 +379,11 @@ export function keyDown(stateCopy, action, root) {
             stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
-        case 54:
-            stateCopy.shapes.byId[stateCopy.selected[0]] = editArcAngle(stateCopy.shapes.byId[stateCopy.selected[0]], stateCopy.shapes.byId[stateCopy.selected[0]].startAngle, 3 * Math.PI / 2);
+        case 54: // TEMP Hard Coded Arc Flip
+            if (stateCopy.selected.length > 0 && stateCopy.shapes.byId[stateCopy.selected[0]].type === 'arc') {
+                stateCopy.shapes.byId[stateCopy.selected[0]].flipArc = !stateCopy.shapes.byId[stateCopy.selected[0]].flipArc;
+            }
+            break;
         default:
             break;
     }
