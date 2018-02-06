@@ -175,7 +175,6 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
-                console.log(action.type, root.menuState);
             }
         }
     }
