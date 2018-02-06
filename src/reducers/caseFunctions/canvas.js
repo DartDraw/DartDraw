@@ -61,12 +61,12 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.mode = 'reshape';
                 stateCopy.lastSavedShapes = root.drawingState.shapes;
                 stateCopy.shapes = addBezier(stateCopy.shapes, action, root.menuState.fillColor,
-                    root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                    root.menuState.strokeColor, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnappingInterval);
                 shapeIds = stateCopy.shapes.allIds;
                 addedShapeId = shapeIds[shapeIds.length - 1];
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
-                stateCopy.shapes = addBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+                stateCopy.shapes = addBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnappingInterval);
                 if (stateCopy.shapes.byId[stateCopy.selected[0]].closed) {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
@@ -252,10 +252,10 @@ export function mouseMove(stateCopy, action, root) {
 
     switch (root.menuState.toolType) {
         case "polygonTool":
-            stateCopy.shapes = addTempPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            stateCopy.shapes = addTempPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnappingInterval);
             break;
         case "bezierTool":
-            stateCopy.shapes = addTempBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            stateCopy.shapes = addTempBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.offset, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnappingInterval);
             break;
         default:
             break;
