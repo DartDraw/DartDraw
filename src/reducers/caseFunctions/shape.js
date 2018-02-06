@@ -193,6 +193,9 @@ export function controlDragStart(stateCopy, action, root) {
 export function controlDrag(stateCopy, action, root) {
     const { draggableData, handleIndex } = action.payload;
 
+    stateCopy.mouseCoords.x = draggableData.x;
+    stateCopy.mouseCoords.y = draggableData.y;
+
     if (stateCopy.mode === 'reshape') {
         stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
             stateCopy.panX, stateCopy.panY, stateCopy.scale);
