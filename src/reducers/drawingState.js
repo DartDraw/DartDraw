@@ -159,6 +159,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
             break;
+        case menuActions.SET_RULER_GRID:
+            updatedState = rulers.setRulerGrid(stateCopy, action, root);
+            break;
         default: break;
     }
 

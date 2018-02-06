@@ -67,7 +67,7 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
                 stateCopy.shapes = addBezierPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
-                if (stateCopy.shapes.byId[stateCopy.selected[0]].closed) {
+                if (stateCopy.shapes.byId[stateCopy.selected[0]].closed || stateCopy.shapes.byId[stateCopy.selected[0]].open) {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
                     stateCopy.editInProgress = false;
