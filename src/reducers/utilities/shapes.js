@@ -116,7 +116,7 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
     return shapes;
 }
 
-export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY, scale, gridSnapping, gridSnappingInterval) {
+export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { x, y } = action.payload;
 
     const polygon = shapes.byId[selected[0]];
@@ -126,8 +126,8 @@ export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY
     let yCoord = (y + (panY * scale) - offset.y) / scale;
 
     if (gridSnapping) {
-        xCoord = (Math.round(xCoord / gridSnappingInterval) * gridSnappingInterval);
-        yCoord = (Math.round(yCoord / gridSnappingInterval) * gridSnappingInterval);
+        xCoord = (Math.round(xCoord / gridSnapInterval) * gridSnapInterval);
+        yCoord = (Math.round(yCoord / gridSnapInterval) * gridSnapInterval);
     }
 
     polygon.points[polygon.points.length - 2] = xCoord;
@@ -136,7 +136,7 @@ export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY
     return shapes;
 }
 
-export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnappingInterval) {
+export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -153,8 +153,8 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
     };
 
     if (gridSnapping) {
-        bezier.points[0] = Math.round(bezier.points[0] / gridSnappingInterval) * gridSnappingInterval;
-        bezier.points[1] = Math.round(bezier.points[1] / gridSnappingInterval) * gridSnappingInterval;
+        bezier.points[0] = Math.round(bezier.points[0] / gridSnapInterval) * gridSnapInterval;
+        bezier.points[1] = Math.round(bezier.points[1] / gridSnapInterval) * gridSnapInterval;
     }
 
     bezier.points.push(bezier.points[0]);
@@ -169,7 +169,7 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
     return shapes;
 }
 
-export function addBezierPoint(shapes, selected, action, panX, panY, scale, gridSnapping, gridSnappingInterval) {
+export function addBezierPoint(shapes, selected, action, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -179,8 +179,8 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
     let yCoord = (y + (panY * scale) - node.getBoundingClientRect().top) / scale;
 
     if (gridSnapping) {
-        xCoord = (Math.round(xCoord / gridSnappingInterval) * gridSnappingInterval);
-        yCoord = (Math.round(yCoord / gridSnappingInterval) * gridSnappingInterval);
+        xCoord = (Math.round(xCoord / gridSnapInterval) * gridSnapInterval);
+        yCoord = (Math.round(yCoord / gridSnapInterval) * gridSnapInterval);
     }
 
     if (Math.abs(xCoord - bezier.points[0]) < (5 / scale) &&
@@ -203,7 +203,7 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
     return shapes;
 }
 
-export function addTempBezierPoint(shapes, selected, action, offset, panX, panY, scale, gridSnapping, gridSnappingInterval) {
+export function addTempBezierPoint(shapes, selected, action, offset, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { x, y } = action.payload;
 
     const bezier = shapes.byId[selected[0]];
@@ -213,8 +213,8 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     let yCoord = (y + (panY * scale) - offset.y) / scale;
 
     if (gridSnapping) {
-        xCoord = (Math.round(xCoord / gridSnappingInterval) * gridSnappingInterval);
-        yCoord = (Math.round(yCoord / gridSnappingInterval) * gridSnappingInterval);
+        xCoord = (Math.round(xCoord / gridSnapInterval) * gridSnapInterval);
+        yCoord = (Math.round(yCoord / gridSnapInterval) * gridSnapInterval);
     }
 
     bezier.points[bezier.points.length - 2] = xCoord;
