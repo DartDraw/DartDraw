@@ -1,59 +1,45 @@
-export function zoomIn(stateCopy) {
-    const scaleFactor = 2;
-    const newScale = stateCopy.scale * scaleFactor;
+import { updateRulerGrid } from './rulers';
 
-    const { panX, panY } = setPan(stateCopy, newScale);
-
-    stateCopy.panX = panX;
-    stateCopy.panY = panY;
-    stateCopy.scale = newScale;
-
-    return stateCopy;
-}
-
-export function zoomOut(stateCopy) {
-    const scaleFactor = 0.5;
-    const newScale = stateCopy.scale * scaleFactor;
-
-    const { panX, panY } = setPan(stateCopy, newScale);
-
-    stateCopy.panX = panX;
-    stateCopy.panY = panY;
-    stateCopy.scale = newScale;
-
-    return stateCopy;
-}
-
-export function zoomToCustom(stateCopy, action) {
+export function setCustomZoom(stateCopy, action) {
     const { customScale } = action.payload;
 
-    const { panX, panY } = setPan(stateCopy, customScale);
+    var scale = constrainScale(customScale);
 
+    const { panX, panY } = setPan(stateCopy, scale);
+
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
     stateCopy.panX = panX;
     stateCopy.panY = panY;
-    stateCopy.scale = customScale;
+    stateCopy.scale = scale;
 
     return stateCopy;
 }
 
-export function zoomToMarqueeBox(marqueeBox, canvasWidth, canvasHeight) {
-    // The values 38 and 43 are the widths and heights of the menus.
+export function zoomToMarqueeBox(stateCopy) {
+    const { marqueeBox, canvasWidth, canvasHeight } = stateCopy;
+    // The value 45 is the width menus.
     // Needs to change if menu changes.
-    const windowWidth = window.innerWidth - 38;
-    const windowHeight = window.innerHeight - 43;
+    const windowWidth = window.innerWidth - stateCopy.ruler.width - 45;
+    const windowHeight = window.innerHeight - stateCopy.ruler.width - 45;
 
     const zoomRatioX = Math.abs(windowWidth / marqueeBox.width);
     const zoomRatioY = Math.abs(windowHeight / marqueeBox.height);
-    const scale = Math.min(zoomRatioX, zoomRatioY);
+    const scale = constrainScale(Math.min(zoomRatioX, zoomRatioY));
 
     let panX, panY;
 
     panX = marqueeBox.x + (marqueeBox.width / 2) - (windowWidth / 2 / scale);
+    panX = clamp(panX, 0, canvasWidth - windowWidth / scale);
+
     panY = marqueeBox.y + (marqueeBox.height / 2) - (windowHeight / 2 / scale);
+    panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
+
+    const ruler = updateRulerGrid(stateCopy, scale, panX, panY);
 
     return {
-        panX: clamp(panX, 0, canvasWidth - windowWidth / scale),
-        panY: clamp(panY, 0, canvasHeight - windowHeight / scale),
+        ruler: ruler,
+        panX: panX,
+        panY: panY,
         scale: scale
     };
 }
@@ -62,24 +48,30 @@ export function pan(stateCopy, draggableData) {
     const { canvasWidth, canvasHeight, scale } = stateCopy;
     const { deltaX, deltaY } = draggableData;
 
-    // The values 38 and 43 are the widths and heights of the menus.
+    // The value 45 is the width menus.
     // Needs to change if menu changes.
     var panX = stateCopy.panX - deltaX / scale;
+    panX = clamp(panX, 0, canvasWidth - (window.innerWidth - stateCopy.ruler.width - 45) / scale);
+
     var panY = stateCopy.panY - deltaY / scale;
+    panY = clamp(panY, 0, canvasHeight - (window.innerHeight - stateCopy.ruler.width - 45) / scale);
+
+    const ruler = updateRulerGrid(stateCopy, scale, panX, panY);
 
     return {
-        panX: clamp(panX, 0, canvasWidth - (window.innerWidth - 38) / scale),
-        panY: clamp(panY, 0, canvasHeight - (window.innerHeight - 43) / scale)
+        ruler: ruler,
+        panX: panX,
+        panY: panY
     };
 }
 
-function setPan(stateCopy, newScale) {
+export function setPan(stateCopy, newScale) {
     var { canvasWidth, canvasHeight, panX, panY, scale } = stateCopy;
 
-    // The values 38 and 43 are the widths and heights of the menus.
+    // The value 45 is the width menus.
     // Needs to change if menu changes.
-    const windowWidth = window.innerWidth - 38;
-    const windowHeight = window.innerHeight - 43;
+    const windowWidth = window.innerWidth - stateCopy.ruler.width - 45;
+    const windowHeight = window.innerHeight - stateCopy.ruler.width - 45;
 
     // set panX
     if ((windowWidth / scale) < canvasWidth) {
@@ -98,6 +90,21 @@ function setPan(stateCopy, newScale) {
     panY = clamp(panY, 0, canvasHeight - windowHeight / newScale);
 
     return { panX, panY };
+}
+
+function constrainScale(scale) {
+    const minZoom = 0.1;
+    const maxZoom = 24;
+
+    if (scale > maxZoom) {
+        scale = maxZoom;
+        console.error("Maximum zoom level reached.");
+    } else if (scale < minZoom) {
+        scale = minZoom;
+        console.error("Minimum zoom level reached.");
+    }
+
+    return scale;
 }
 
 function clamp(num, min, max) {

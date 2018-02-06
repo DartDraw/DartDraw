@@ -7,9 +7,7 @@ export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
-export const ZOOM_IN = 'ZOOM_IN';
-export const ZOOM_OUT = 'ZOOM_OUT';
-export const CUSTOM_ZOOM = 'CUSTOM_ZOOM';
+export const SET_CUSTOM_ZOOM = 'SET_CUSTOM_ZOOM';
 export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
@@ -19,9 +17,12 @@ export const SEND_BACK = 'SEND_BACK';
 export const BRING_FRONT = 'BRING_FRONT';
 export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
-export const SET_GRID = 'SET_GRID';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
+export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
+export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
+export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
+export const SET_RULER_GRID = 'SET_RULER_GRID';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -63,16 +64,8 @@ export function redoClick() {
     return { type: REDO_CLICK };
 }
 
-export function zoomIn() {
-    return { type: ZOOM_IN };
-}
-
-export function zoomOut() {
-    return { type: ZOOM_OUT };
-}
-
-export function customZoom(customScale) {
-    return { type: CUSTOM_ZOOM, payload: { customScale } };
+export function setCustomZoom(customScale) {
+    return { type: SET_CUSTOM_ZOOM, payload: { customScale } };
 }
 
 export function alignmentClick(id) {
@@ -111,10 +104,22 @@ export function flipVertical() {
     return { type: FLIP_VERTICAL };
 }
 
-export function setGrid(unitType, majorGrid, minorGrid) {
-    return { type: SET_GRID, payload: { unitType, majorGrid, minorGrid } };
-}
-
 export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
+}
+
+export function toggleShowRulers() {
+    return { type: TOGGLE_SHOW_RULER };
+}
+
+export function toggleShowGrid() {
+    return { type: TOGGLE_SHOW_GRID };
+}
+
+export function toggleShowSubDivisions() {
+    return { type: TOGGLE_SHOW_SUBDIVISIONS };
+}
+
+export function setRulerGrid(canvasSpecs) {
+    return { type: SET_RULER_GRID, payload: canvasSpecs };
 }

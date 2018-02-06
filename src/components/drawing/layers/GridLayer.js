@@ -1,30 +1,69 @@
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class GridLayer extends Component {
     static propTypes = {
+        canvasWidth: PropTypes.number,
+        canvasHeight: PropTypes.number,
+        ruler: PropTypes.object,
+        panX: PropTypes.number,
+        panY: PropTypes.number,
         scale: PropTypes.number,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        majorGrid: PropTypes.number,
-        minorGrid: PropTypes.number
+        showGrid: PropTypes.bool,
+        showSubDivisions: PropTypes.bool
     };
 
-    render() {
-        const { scale, width, height, majorGrid, minorGrid } = this.props;
+    buildGridLine(x1, y1, x2, y2, isMajor) {
         return (
-            <g>
-                <defs>
-                    <pattern id="smallGrid" width={minorGrid} height={minorGrid} patternUnits="userSpaceOnUse">
-                        <path d={"M " + minorGrid + " 0 L 0 0 0 " + minorGrid} fill="none" stroke="#adadad" strokeWidth={0.5 / scale} />
-                    </pattern>
-                    <pattern id="grid" width={majorGrid} height={majorGrid} patternUnits="userSpaceOnUse">
-                        <rect width={majorGrid} height={majorGrid} fill="url(#smallGrid)" />
-                        <path d={"M " + majorGrid + " 0 L 0 0 0 " + majorGrid} fill="none" stroke="#adadad" strokeWidth={1 / scale} />
-                    </pattern>
-                </defs>
-                <rect width={width} height={height} fill="url(#grid)" pointerEvents="none" />
-            </g>
+            <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                vectorEffect="non-scaling-stroke"
+                stroke={isMajor ? "black" : "gray"}
+                strokeWidth={isMajor ? "1" : "0.5"}
+                strokeDasharray="1, 5"
+            />
+        );
+    }
+
+    renderVerticalLines() {
+        const { canvasWidth, showSubDivisions, ruler, scale, panY } = this.props;
+        return ruler.vertical.ticks.map((line) => {
+            if ((showSubDivisions || line.major) && line.loc !== 0) {
+                return (
+                    <g key={line.loc} >
+                        {this.buildGridLine(0, line.loc / scale + panY, canvasWidth, line.loc / scale + panY, line.major)}
+                    </g>
+                );
+            }
+        });
+    }
+
+    renderHorizontalLines() {
+        const { canvasHeight, showSubDivisions, ruler, scale, panX } = this.props;
+        return ruler.horizontal.ticks.map((line) => {
+            if ((showSubDivisions || line.major) && line.loc !== 0) {
+                return (
+                    <g key={line.loc} >
+                        {this.buildGridLine(line.loc / scale + panX, 0, line.loc / scale + panX, canvasHeight, line.major)}
+                    </g>
+                );
+            }
+        });
+    }
+
+    render() {
+        const { showGrid } = this.props;
+        return (
+            <svg className="grid"
+                display={showGrid ? "" : "none"}
+            >
+                {this.renderHorizontalLines()}
+                {this.renderVerticalLines()}
+            </svg>
         );
     }
 }

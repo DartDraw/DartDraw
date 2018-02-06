@@ -21,7 +21,6 @@ class TopMenu extends Component {
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleChangeComplete = this.handleChangeComplete.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.handleButtonSelect = this.handleButtonSelect.bind(this);
     }
 
@@ -35,10 +34,6 @@ class TopMenu extends Component {
 
     handleChangeComplete(color, event) {
         this.props.onColorSelect(color.rgb);
-    }
-
-    handleChange(event) {
-        this.tempScale = event.target.value / 100.0;
     }
 
     handleButtonSelect(button) {

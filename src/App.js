@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
+import { RulerLayerContainer } from './components/drawing/layers';
 import { ContextualMenuContainer } from './components/contextual-menu';
 
 class App extends Component {
@@ -49,9 +50,15 @@ class App extends Component {
                 tabIndex={-1}
             >
                 <TopMenuContainer />
-                <div className="mainBody">
+                <div className="outerBody">
                     <LeftMenuContainer />
-                    <CanvasContainer />
+                    <div className="middleBody">
+                        <RulerLayerContainer dir="horizontal" />
+                        <div className="innerBody">
+                            <RulerLayerContainer dir="vertical" />
+                            <CanvasContainer />
+                        </div>
+                    </div>
                 </div>
                 <ContextualMenuContainer />
             </div>

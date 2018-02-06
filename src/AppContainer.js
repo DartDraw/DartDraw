@@ -10,8 +10,8 @@ const mapDispatchToProps = (dispatch) => {
         onKeyUp: (keyCode) => {
             dispatch(keyUp(keyCode));
         },
-        onMouseMove: (keyCode) => {
-            dispatch(mouseMove(keyCode));
+        onMouseMove: (coord) => {
+            dispatch(mouseMove(coord));
         }
     };
 };

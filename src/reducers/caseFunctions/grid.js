@@ -1,16 +1,14 @@
-export function setGrid(stateCopy, action) {
-    const { unitType, majorGrid, minorGrid } = action.payload;
-
-    // NEED LOGIC TO CONVERT FROM UNIT TYPE TO CANONICAL TYPE
-
-    stateCopy.unitType = unitType;
-    stateCopy.majorGrid = majorGrid;
-    stateCopy.minorGrid = minorGrid;
-
+export function toggleGridSnapping(stateCopy) {
+    stateCopy.gridSnapping = !stateCopy.gridSnapping;
     return stateCopy;
 }
 
-export function toggleGridSnapping(stateCopy) {
-    stateCopy.gridSnapping = !stateCopy.gridSnapping;
+export function toggleShowGrid(stateCopy) {
+    stateCopy.showGrid = !stateCopy.showGrid;
+    return stateCopy;
+}
+
+export function toggleShowSubDivisions(stateCopy) {
+    stateCopy.showSubDivisions = !stateCopy.showSubDivisions;
     return stateCopy;
 }
