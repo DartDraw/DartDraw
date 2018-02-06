@@ -189,12 +189,22 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
         delete bezier.controlPoints[0];
         delete bezier.controlPoints[bezier.points.length / 2];
         bezier.closed = true;
+        xCoord = bezier.points[0];
+        yCoord = bezier.points[1];
+    }
+
+    if ((Math.abs(xCoord - bezier.points[bezier.points.length - 4]) < (5 / scale) &&
+          Math.abs(yCoord - bezier.points[bezier.points.length - 3]) < (5 / scale))) {
+        delete bezier.controlPoints[bezier.points.length / 2];
+        bezier.points.pop();
+        bezier.points.pop();
+        bezier.open = true;
     }
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
 
-    if (!bezier.closed) {
+    if (!bezier.closed && !bezier.open) {
         // temp point
         bezier.points.push(xCoord);
         bezier.points.push(yCoord);
@@ -207,7 +217,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     const { x, y } = action.payload;
 
     const bezier = shapes.byId[selected[0]];
-    if (!bezier || bezier.closed) { return shapes; }
+    if (!bezier || bezier.closed || bezier.open) { return shapes; }
 
     let xCoord = (x + (panX * scale) - offset.x) / scale;
     let yCoord = (y + (panY * scale) - offset.y) / scale;
@@ -223,7 +233,9 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     let l = Math.sqrt((xCoord - bezier.points[bezier.points.length - 4]) ** 2 + (yCoord - bezier.points[bezier.points.length - 3]) ** 2);
     let endX = (1 - (l - 50) / l) * xCoord + (l - 50) / l * bezier.points[bezier.points.length - 4];
     let endY = (1 - (l - 50) / l) * yCoord + (l - 50) / l * bezier.points[bezier.points.length - 3];
-    bezier.controlPoints[(bezier.points.length) / 2 - 2][0] = {x: endX, y: endY};
+    if (bezier.controlPoints[(bezier.points.length) / 2 - 2]) {
+        bezier.controlPoints[(bezier.points.length) / 2 - 2][0] = {x: endX, y: endY};
+    }
 
     endX = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 4] + (l - 50) / l * xCoord;
     endY = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 3] + (l - 50) / l * yCoord;
@@ -865,7 +877,6 @@ export function removeTransformation(shapes, selected) {
                 shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;
             case 'arc':
-                console.log("HERE");
                 let rxSign = Math.sign(shape.rx);
                 let rySign = Math.sign(shape.ry);
 
@@ -884,7 +895,6 @@ export function removeTransformation(shapes, selected) {
                     shape.rx = (transformPoint(0, 0, unrotatedMatrix).x - transformPoint(shape.rx, 0, unrotatedMatrix).x);
                     shape.ry = (transformPoint(0, 0, unrotatedMatrix).y - transformPoint(0, shape.ry, unrotatedMatrix).y);
                     shape.transform[0].parameters = rotateTransform([1, 0, 0, 1, 0, 0], decomposed.skewY, 0, 0);
-                    console.log(decomposed.skewY, shape.rx, shape.ry);
                 } else {
                     for (let i = 0; i < shape.points.length; i += 2) {
                         let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
@@ -963,12 +973,12 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
                 shape.points[handleIndex * 2] = mouseX;
                 shape.points[handleIndex * 2 + 1] = mouseY;
 
-                if (handleIndex === 0) {
+                if (handleIndex === 0 && !shape.open) {
                     shape.points[shape.points.length - 2] = mouseX;
                     shape.points[shape.points.length - 1] = mouseY;
                 }
 
-                if (handleIndex === (shape.points.length / 2) - 1) {
+                if (handleIndex === (shape.points.length / 2) - 1 && !shape.open) {
                     shape.points[0] = mouseX;
                     shape.points[1] = mouseY;
                 }
