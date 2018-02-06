@@ -283,8 +283,10 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
         ry: 0,
         stroke: formatColor(fill),
         strokeWidth: 10,
+        largeArc: 0,
         startAngle: 0,
         sweepAngle: Math.PI / 2,
+        flipArc: false,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
@@ -299,38 +301,6 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, mi
     shapes.byId[arc.id] = arc;
     shapes.allIds.push(arc.id);
     return shapes;
-}
-
-export function editArcAngle(arc, startAngle, sweepAngle) {
-    // 0 degrees, no path
-    if (!sweepAngle) return arc;
-
-    // mod angles to 360 degrees
-    startAngle %= 2 * Math.PI;
-    sweepAngle %= 2 * Math.PI;
-
-    // If arc is 360 degrees, the sweep angle is 0 due to mod
-    let isClosed = (sweepAngle === 0);
-
-    // If closed, we'll need to use 2 arcs with an angle of 180 degrees
-    if (isClosed) {
-        sweepAngle = Math.PI;
-    }
-
-    // Make angle positive to simplify large arc flag
-    if (sweepAngle < 0) {
-        sweepAngle += 2 * Math.PI;
-    }
-
-    arc.largeArc = sweepAngle > Math.PI ? 1 : 0;
-
-    arc.points[0] = arc.center.x + arc.rx * Math.sin(startAngle);
-    arc.points[1] = arc.center.y - arc.ry * Math.cos(startAngle);
-
-    arc.points[2] = arc.center.x + arc.rx * Math.sin(startAngle + sweepAngle);
-    arc.points[3] = arc.center.y - arc.ry * Math.cos(startAngle + sweepAngle);
-
-    return arc;
 }
 
 export function addFreehandPath(shapes, action, fill, panX, panY, scale, gridSnapping, minorGrid) {
@@ -440,17 +410,6 @@ export function moveArcAnchor(shapes, selected, draggableData, panX, panY, scale
             arc.center = {x: arc.points[0], y: arc.points[3]};
         } else {
             arc.center = {x: arc.points[2], y: arc.points[1]};
-        }
-
-        console.log(arc.rx, arc.ry);
-        if (arc.rx >= 0 && arc.ry >= 0) {
-            arc.startAngle = 0;
-        } else if (arc.rx <= 0 && arc.ry >= 0) {
-            arc.startAngle = Math.PI / 2;
-        } else if (arc.rx <= 0 && arc.ry <= 0) {
-            arc.startAngle = Math.PI;
-        } else {
-            arc.startAngle = 3 * Math.PI / 2;
         }
     });
 
@@ -906,6 +865,7 @@ export function removeTransformation(shapes, selected) {
                 shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
                 break;
             case 'arc':
+                console.log("HERE");
                 let rxSign = Math.sign(shape.rx);
                 let rySign = Math.sign(shape.ry);
 
@@ -924,6 +884,7 @@ export function removeTransformation(shapes, selected) {
                     shape.rx = (transformPoint(0, 0, unrotatedMatrix).x - transformPoint(shape.rx, 0, unrotatedMatrix).x);
                     shape.ry = (transformPoint(0, 0, unrotatedMatrix).y - transformPoint(0, shape.ry, unrotatedMatrix).y);
                     shape.transform[0].parameters = rotateTransform([1, 0, 0, 1, 0, 0], decomposed.skewY, 0, 0);
+                    console.log(decomposed.skewY, shape.rx, shape.ry);
                 } else {
                     for (let i = 0; i < shape.points.length; i += 2) {
                         let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
@@ -942,7 +903,6 @@ export function removeTransformation(shapes, selected) {
                     shape.points = [shape.points[2], shape.points[3], shape.points[0], shape.points[1]];
                 }
 
-                console.log(shape.center);
                 break;
             default:
                 break;
@@ -1048,12 +1008,28 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
         shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
     }
     if (shape.type === 'arc') {
-        let angle = Math.atan2(mouseY - shape.center.y, mouseX - shape.center.x) - Math.atan2(shape.points[1] - shape.center.y, shape.points[0] - shape.centr.x);
-        console.log(angle);
-        //  let i1 = parseInt(handleIndex / 2);
-        //  let i2 = 0 + handleIndex % 2;
-        //  shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
+        const matrix = shape.transform[0].parameters;
+        let c = transformPoint(shape.center.x, shape.center.y, matrix);
+        let angle = Math.atan2(mouseY - c.y, mouseX - c.x);
+        let rx = Math.abs(shape.rx);
+        let ry = Math.abs(shape.ry);
+
+        if (handleIndex === 1) {
+            shape.points[2] = shape.center.x + rx * Math.cos(angle);
+            shape.points[3] = shape.center.y + ry * Math.sin(angle);
+        } else {
+            shape.points[0] = shape.center.x + rx * Math.cos(angle);
+            shape.points[1] = shape.center.y + ry * Math.sin(angle);
+        }
+
+        let finalAngle = Math.atan2(shape.points[3] - shape.center.y, shape.points[2] - shape.center.x) - Math.atan2(shape.points[1] - shape.center.y, shape.points[0] - shape.center.x);
+        if (finalAngle < 0) {
+            finalAngle += 2 * Math.PI;
+        }
+
+        shape.largeArc = finalAngle > Math.PI ? 1 : 0;
     }
+    return shapes;
 }
 
 export function deleteShapes(shapes, selected) {
