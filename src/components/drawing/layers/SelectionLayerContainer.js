@@ -1,11 +1,12 @@
 import { connect } from 'react-redux';
 import SelectionLayer from './SelectionLayer';
-import { handleDragStart, handleDrag, handleDragStop } from '../../../actions/canvas';
+import { handleDragStart, handleDrag, handleDragStop, controlDragStart, controlDrag, controlDragStop } from '../../../actions/canvas';
 
 const propagateEventTools = [
     'rectangleTool',
     'ellipseTool',
     'polygonTool',
+    'bezierTool',
     'arcTool',
     'freehandPathTool',
     'lineTool',
@@ -39,6 +40,15 @@ const mapDispatchToProps = (dispatch) => {
         },
         onHandleDragStop: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStop(shapeId, handleIndex, draggableData));
+        },
+        onControlDragStart: (shapeId, handleIndex, draggableData) => {
+            dispatch(controlDragStart(shapeId, handleIndex, draggableData));
+        },
+        onControlDrag: (shapeId, handleIndex, draggableData) => {
+            dispatch(controlDrag(shapeId, handleIndex, draggableData));
+        },
+        onControlDragStop: (shapeId, handleIndex, draggableData) => {
+            dispatch(controlDragStop(shapeId, handleIndex, draggableData));
         }
     };
 };

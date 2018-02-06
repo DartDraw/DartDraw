@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -19,15 +19,16 @@ export function click(stateCopy, action, root) {
                     selectMultiple = true;
                 }
                 stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, selectMultiple, shiftSelected);
-                console.log(stateCopy.shapes.byId[stateCopy.selected[0]].info);
                 if (!stateCopy.justDuplicated) {
-                    stateCopy.duplicateOffset.x = root.menuState.minorGrid;
-                    stateCopy.duplicateOffset.y = root.menuState.minorGrid;
+                    stateCopy.duplicateOffset.x = stateCopy.gridSnapInterval;
+                    stateCopy.duplicateOffset.y = stateCopy.gridSnapInterval;
                 }
             }
             stateCopy.editInProgress = false;
+            stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
+        case 'bezierTool':
             stateCopy.mode = "reshape";
             break;
         default:
@@ -50,6 +51,9 @@ export function drag(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
 
     action.payload.draggableData.node = action.payload.draggableData.node.parentNode;
+
+    stateCopy.mouseCoords.x = action.payload.draggableData.x;
+    stateCopy.mouseCoords.y = action.payload.draggableData.y;
 
     if (!stateCopy.editInProgress) {
         stateCopy.editInProgress = true;
@@ -74,7 +78,7 @@ export function drag(stateCopy, action, root) {
 
                 stateCopy.shapes = moveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                     stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                    root.menuState.minorGrid, root.menuState.align, stateCopy.shiftDirection);
+                    stateCopy.gridSnapInterval, root.menuState.align, stateCopy.shiftDirection);
 
                 if (stateCopy.justDuplicated) {
                     stateCopy.duplicateOffset.x += action.payload.draggableData.deltaX / stateCopy.scale;
@@ -94,8 +98,10 @@ export function dragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case "selectTool":
             stateCopy.shapes = endMoveShape(stateCopy.shapes, stateCopy.selected);
+            stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
             break;
         case 'polygonTool':
+        case 'bezierTool':
             break;
         default:
             stateCopy.editInProgress = false;
@@ -103,8 +109,8 @@ export function dragStop(stateCopy, action, root) {
     }
 
     if (!stateCopy.justDuplicated) {
-        stateCopy.duplicateOffset.x = root.menuState.minorGrid;
-        stateCopy.duplicateOffset.y = root.menuState.minorGrid;
+        stateCopy.duplicateOffset.x = stateCopy.gridSnapInterval;
+        stateCopy.duplicateOffset.y = stateCopy.gridSnapInterval;
     }
     stateCopy.justDuplicated = false;
     return stateCopy;
@@ -129,7 +135,7 @@ export function handleDrag(stateCopy, action, root) {
 
     if (stateCopy.mode === 'reshape') {
         stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, root.menuState.minorGrid);
+            stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
         return stateCopy;
     }
 
@@ -145,7 +151,7 @@ export function handleDrag(stateCopy, action, root) {
                     stateCopy.shapes = resizeShape(stateCopy.shapes, stateCopy.boundingBoxes,
                         stateCopy.selected, draggableData, handleIndex, stateCopy.panX, stateCopy.panY,
                         stateCopy.scale, shapeId, stateCopy.selectionBoxes, root.menuState.gridSnapping,
-                        root.menuState.minorGrid, stateCopy.shiftDirection, root.menuState.centeredControl);
+                        stateCopy.gridSnapInterval, stateCopy.shiftDirection, root.menuState.centeredControl);
                 } else {
                     stateCopy.shapes = resizeTextBoundingBox(stateCopy.shapes, stateCopy.selected,
                         draggableData, handleIndex, stateCopy.scale);
@@ -164,6 +170,11 @@ export function handleDrag(stateCopy, action, root) {
 export function handleDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case 'polygonTool':
+        case 'bezierTool':
+            break;
+        case 'selectTool':
+        case 'rotateTool':
+            stateCopy.shapes = resetShapeSigns(stateCopy.shapes, stateCopy.selected);
             break;
         default:
             stateCopy.editInProgress = false;
@@ -172,10 +183,37 @@ export function handleDragStop(stateCopy, action, root) {
     return stateCopy;
 }
 
+export function controlDragStart(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        default: break;
+    }
+    return stateCopy;
+}
+
+export function controlDrag(stateCopy, action, root) {
+    const { draggableData, handleIndex } = action.payload;
+
+    if (stateCopy.mode === 'reshape') {
+        stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+            stateCopy.panX, stateCopy.panY, stateCopy.scale);
+        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+
+        return stateCopy;
+    }
+    return stateCopy;
+}
+
+export function controlDragStop(stateCopy, action, root) {
+    switch (stateCopy.mode) {
+        default: break;
+    }
+    return stateCopy;
+}
+
 export function textInputChange(stateCopy, action, root) {
-    const { shapeId, value } = action.payload;
-    stateCopy.textInputs[shapeId].value = value;
+    const { shapeId, value, focused } = action.payload;
     stateCopy.shapes.byId[shapeId].text = value;
+    stateCopy.shapes.byId[shapeId].focused = focused;
     return stateCopy;
 }
 
@@ -228,15 +266,22 @@ export function flipHorizontal(stateCopy, action, root) {
 }
 
 export function keyDown(stateCopy, action, root) {
+    // No keyboard shortcuts during text focus
+    const shapeIds = stateCopy.shapes.allIds;
+    for (let i = 0; i < shapeIds.length; i++) {
+        const id = shapeIds[i];
+        if (stateCopy.shapes.byId[id].focused) {
+            return stateCopy;
+        }
+    }
+
     const { keyCode } = action.payload;
     let commandSelected = 91 in root.menuState.currentKeys;
     switch (keyCode) {
         case 8:
-            if (!stateCopy.textInputFocused) {
-                stateCopy.lastSavedShapes = root.drawingState.shapes;
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.selected = [];
-            }
+            stateCopy.lastSavedShapes = root.drawingState.shapes;
+            stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+            stateCopy.selected = [];
             break;
         case 13: // finish reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
@@ -249,7 +294,7 @@ export function keyDown(stateCopy, action, root) {
         case 39:
         case 40:
             stateCopy.shapes = keyboardMoveShape(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, root.menuState.minorGrid, root.menuState.align);
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes, root.menuState.gridSnapping, stateCopy.gridSnapInterval, root.menuState.align);
             break;
         case 67: // copy
             if (commandSelected && !root.menuState.copied) {
@@ -304,14 +349,14 @@ export function keyDown(stateCopy, action, root) {
         case 86: // paste
             if (commandSelected && !root.menuState.pasted && stateCopy.toCopy) {
                 if (stateCopy.justCopied) {
-                    stateCopy.pasteOffset.x += root.menuState.minorGrid;
-                    stateCopy.pasteOffset.y += root.menuState.minorGrid;
+                    stateCopy.pasteOffset.x += stateCopy.gridSnapInterval;
+                    stateCopy.pasteOffset.y += stateCopy.gridSnapInterval;
                     stateCopy.justCopied = false;
                 }
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toCopy, stateCopy.pasteOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
-                stateCopy.pasteOffset.x += root.menuState.minorGrid;
-                stateCopy.pasteOffset.y += root.menuState.minorGrid;
+                stateCopy.pasteOffset.x += stateCopy.gridSnapInterval;
+                stateCopy.pasteOffset.y += stateCopy.gridSnapInterval;
             }
             break;
         case 50: // TEMP RESIZE X
@@ -337,6 +382,11 @@ export function keyDown(stateCopy, action, root) {
             stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
+        case 54: // TEMP Hard Coded Arc Flip
+            if (stateCopy.selected.length > 0 && stateCopy.shapes.byId[stateCopy.selected[0]].type === 'arc') {
+                stateCopy.shapes.byId[stateCopy.selected[0]].flipArc = !stateCopy.shapes.byId[stateCopy.selected[0]].flipArc;
+            }
+            break;
         default:
             break;
     }
@@ -345,6 +395,14 @@ export function keyDown(stateCopy, action, root) {
 }
 
 export function keyUp(stateCopy, action, root) {
+    // No keyboard shortcuts during text focus
+    const shapeIds = stateCopy.shapes.allIds;
+    for (let i = 0; i < shapeIds.length; i++) {
+        const id = shapeIds[i];
+        if (stateCopy.shapes.byId[id].focused) {
+            return stateCopy;
+        }
+    }
     const { keyCode } = action.payload;
     switch (keyCode) {
         case 16:
@@ -357,7 +415,8 @@ export function keyUp(stateCopy, action, root) {
 }
 
 export function selectTool(stateCopy, action, root) {
-    if (root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') {
+    if ((root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') ||
+        (root.menuState.toolType === 'bezierTool' && action.toolType !== 'bezierTool')) {
         stateCopy.editInProgress = false;
     }
     return stateCopy;
