@@ -136,16 +136,31 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
             }
             if (shape.controlPoints && selectionBox.controls.length > 0) {
                 let index = 0;
-                for (let j = 2; j < shape.points.length; j += 2) {
-                    selectionBox.controls[index].x1 = shape.points[j];
-                    selectionBox.controls[index].y1 = shape.points[j + 1];
-                    selectionBox.controls[index].x2 = shape.controlPoints[j / 2][0].x;
-                    selectionBox.controls[index].y2 = shape.controlPoints[j / 2][0].y;
 
-                    selectionBox.controls[index + 1].x1 = shape.points[j];
-                    selectionBox.controls[index + 1].y1 = shape.points[j + 1];
-                    selectionBox.controls[index + 1].x2 = shape.controlPoints[j / 2][1].x;
-                    selectionBox.controls[index + 1].y2 = shape.controlPoints[j / 2][1].y;
+                if (shape.open) {
+                    selectionBox.controls[0].x1 = shape.points[0];
+                    selectionBox.controls[index].y1 = shape.points[1];
+                    selectionBox.controls[index].x2 = shape.controlPoints[0][0].x;
+                    selectionBox.controls[index].y2 = shape.controlPoints[0][0].y;
+                    index += 1;
+                }
+                for (let j = 2; j < shape.points.length; j += 2) {
+                    if (shape.open && j + 2 >= shape.points.length) {
+                        selectionBox.controls[index].x1 = shape.points[j];
+                        selectionBox.controls[index].y1 = shape.points[j + 1];
+                        selectionBox.controls[index].x2 = shape.controlPoints[j / 2][1].x;
+                        selectionBox.controls[index].y2 = shape.controlPoints[j / 2][1].y;
+                    } else {
+                        selectionBox.controls[index].x1 = shape.points[j];
+                        selectionBox.controls[index].y1 = shape.points[j + 1];
+                        selectionBox.controls[index].x2 = shape.controlPoints[j / 2][0].x;
+                        selectionBox.controls[index].y2 = shape.controlPoints[j / 2][0].y;
+
+                        selectionBox.controls[index + 1].x1 = shape.points[j];
+                        selectionBox.controls[index + 1].y1 = shape.points[j + 1];
+                        selectionBox.controls[index + 1].x2 = shape.controlPoints[j / 2][1].x;
+                        selectionBox.controls[index + 1].y2 = shape.controlPoints[j / 2][1].y;
+                    }
 
                     index += 2;
                 }
@@ -235,7 +250,15 @@ function generateSelectionBox(shape, boundingBox, mode) {
             }
 
             let controls = [];
-            if (shape.controlPoints && shape.closed) {
+            if (shape.controlPoints && (shape.closed || shape.open)) {
+                if (shape.open) {
+                    controls.push({id: uuidv1(),
+                        index: 0,
+                        x1: shape.points[0],
+                        y1: shape.points[1],
+                        x2: shape.controlPoints[0][0].x,
+                        y2: shape.controlPoints[0][0].y});
+                }
                 for (let j = 2; j < shape.points.length; j += 2) {
                     let cIndex = j / 2;
                     controls.push({id: uuidv1(),
@@ -250,6 +273,11 @@ function generateSelectionBox(shape, boundingBox, mode) {
                         y1: shape.points[j + 1],
                         x2: shape.controlPoints[cIndex][1].x,
                         y2: shape.controlPoints[cIndex][1].y});
+                }
+                if (shape.open) {
+                    let temp = controls.pop();
+                    controls.pop();
+                    controls.push(temp);
                 }
             }
 
