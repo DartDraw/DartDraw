@@ -35,7 +35,7 @@ const initialState = {
     shiftDirection: null,
     past: [],
     future: [],
-    gridLines: [],
+    gridSnapInterval: 48,
     ruler: {
         unitType: 'in',
         unitDivisions: 2,

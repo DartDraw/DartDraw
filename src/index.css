@@ -1,11 +1,9 @@
 #root > [data-reactroot] {
     height: 100%;
-    width: 100%;
 }
 
 html, body, #root, #root > div {
     height: 100%;
-    width: 100%;
 }
 
 body {
@@ -17,35 +15,28 @@ body {
 
 .App {
     height: 100%;
-    width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-/*including menu and canvas*/
-.mainBody {
+/*including menus, rulers, and canvas*/
+.outerBody {
     display: flex;
     height: 100%;
-    width: 100%;
 }
 
-.subBody {
+.middleBody {
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 100%;
 }
 
-.body {
+.innerBody {
     display: flex;
     height: 100%;
-    width: 100%;
 }
 
 .ruler {
     background-color: #5c7080;
-}
-
-#horizontal {
-    /* padding-left: 30px; */
 }

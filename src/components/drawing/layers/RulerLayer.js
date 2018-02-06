@@ -10,6 +10,7 @@ class RulerLayer extends Component {
         height: PropTypes.number,
         widthInUnits: PropTypes.number,
         heightInUnits: PropTypes.number,
+        mouseCoords: PropTypes.object,
         showRulers: PropTypes.bool
     };
 
@@ -68,16 +69,16 @@ class RulerLayer extends Component {
             var x, y, textAnchor, dominantBaseline;
             switch (dir) {
                 case "horizontal":
-                    x = label.loc + (label.final ? -offset : offset);
+                    x = label.loc + (label.first ? offset : -offset);
                     y = offset;
-                    textAnchor = label.final ? "end" : "start";
+                    textAnchor = label.first ? "start" : "end";
                     dominantBaseline = "hanging";
                     break;
                 case "vertical":
                     x = offset;
-                    y = label.loc + (label.final ? -offset : offset);
+                    y = label.loc + (label.first ? offset : -offset);
                     textAnchor = "start";
-                    dominantBaseline = label.final ? "baseline" : "hanging";
+                    dominantBaseline = label.first ? "hanging" : "baseLine";
                     break;
                 default: break;
             }
@@ -112,11 +113,11 @@ class RulerLayer extends Component {
 
     render() {
         const { ruler, mouseCoords, showRulers, dir, width, height } = this.props;
-        console.log("rendering ruler");
-        // var trackerLoc = 0;
+        var trackerLoc;
+
         switch (dir) {
             case "horizontal":
-                // trackerLoc = Math.max(0, Math.min(mouseCoords.x - ruler.width - 45, width));
+                trackerLoc = Math.max(0, Math.min(mouseCoords.x - ruler.width - 45, width));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -127,10 +128,11 @@ class RulerLayer extends Component {
                     >
                         {this.renderTicks(ruler.horizontal.ticks)}
                         {this.renderLabels(ruler.horizontal.labels)}
+                        {this.buildTracker(trackerLoc, 0, trackerLoc, ruler.width)}
                     </svg>
                 );
             case "vertical":
-                // trackerLoc = Math.max(0, Math.min(mouseCoords.y - ruler.width - 45, height));
+                trackerLoc = Math.max(0, Math.min(mouseCoords.y - ruler.width - 45, height));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -140,6 +142,7 @@ class RulerLayer extends Component {
                     >
                         {this.renderTicks(ruler.vertical.ticks)}
                         {this.renderLabels(ruler.vertical.labels)}
+                        {this.buildTracker(0, trackerLoc, ruler.width, trackerLoc)}
                     </svg>
                 );
             default: break;

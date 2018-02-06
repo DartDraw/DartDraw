@@ -46,14 +46,15 @@ class App extends Component {
                 ref={el => { this.app = el; }}
                 onKeyDown={this.handleKeyDown}
                 onKeyUp={this.handleKeyUp}
+                onMouseMove={this.handleMouseMove}
                 tabIndex={-1}
             >
                 <TopMenuContainer />
-                <div className="mainBody">
+                <div className="outerBody">
                     <LeftMenuContainer />
-                    <div className="subBody">
+                    <div className="middleBody">
                         <RulerLayerContainer dir="horizontal" />
-                        <div className="body">
+                        <div className="innerBody">
                             <RulerLayerContainer dir="vertical" />
                             <CanvasContainer />
                         </div>

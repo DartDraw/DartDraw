@@ -133,16 +133,16 @@ class ContextualMenu extends Component {
     }
 
     handleSubmitCustomZoom(event) {
-        this.props.onSetCustomZoom(parseInt((document.getElementById("scale").value) / 100.0), 10);
+        this.props.onSetCustomZoom(parseFloat(document.getElementById("scale").value) / 100.0);
         event.preventDefault();
     }
 
     handleSubmitRulerGrid(event) {
         this.props.onSetRulerGrid({
             unitType: document.getElementById("unitType").value,
-            width: parseFloat(document.getElementById("width").value),
-            height: parseFloat(document.getElementById("height").value),
-            unitDivisions: parseInt(document.getElementById("unitDivisions").value, 10)
+            width: document.getElementById("width").value,
+            height: document.getElementById("height").value,
+            unitDivisions: document.getElementById("unitDivisions").value
         });
         event.preventDefault();
     }
@@ -268,7 +268,7 @@ class ContextualMenu extends Component {
                             {Math.round(scale * 100.0) + "% "}
                             <input
                                 id="scale"
-                                defaultValue={Math.round(scale * 100)}
+                                defaultValue={Math.round(scale * 100.0)}
                                 type="number"
                             />
                         </form>

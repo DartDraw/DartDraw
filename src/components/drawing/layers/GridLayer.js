@@ -6,7 +6,9 @@ class GridLayer extends Component {
     static propTypes = {
         canvasWidth: PropTypes.number,
         canvasHeight: PropTypes.number,
-        lines: PropTypes.array,
+        ruler: PropTypes.object,
+        panX: PropTypes.number,
+        panY: PropTypes.number,
         scale: PropTypes.number,
         showGrid: PropTypes.bool,
         showSubDivisions: PropTypes.bool
@@ -27,14 +29,26 @@ class GridLayer extends Component {
         );
     }
 
-    renderMajorLines() {
-        const { canvasWidth, canvasHeight, lines, showSubDivisions, scale } = this.props;
-        return lines.map((line) => {
-            if (showSubDivisions || line.major) {
+    renderVerticalLines() {
+        const { canvasWidth, showSubDivisions, ruler, scale, panY } = this.props;
+        return ruler.vertical.ticks.map((line) => {
+            if ((showSubDivisions || line.major) && line.loc !== 0) {
                 return (
                     <g key={line.loc} >
-                        {this.buildGridLine(line.loc / scale, 0, line.loc / scale, canvasHeight, true)}
-                        {this.buildGridLine(0, line.loc / scale, canvasWidth, line.loc / scale, true)}
+                        {this.buildGridLine(0, line.loc / scale + panY, canvasWidth, line.loc / scale + panY, line.major)}
+                    </g>
+                );
+            }
+        });
+    }
+
+    renderHorizontalLines() {
+        const { canvasHeight, showSubDivisions, ruler, scale, panX } = this.props;
+        return ruler.horizontal.ticks.map((line) => {
+            if ((showSubDivisions || line.major) && line.loc !== 0) {
+                return (
+                    <g key={line.loc} >
+                        {this.buildGridLine(line.loc / scale + panX, 0, line.loc / scale + panX, canvasHeight, line.major)}
                     </g>
                 );
             }
@@ -43,12 +57,12 @@ class GridLayer extends Component {
 
     render() {
         const { showGrid } = this.props;
-        console.log("rendering grid");
         return (
             <svg className="grid"
                 display={showGrid ? "" : "none"}
             >
-                {this.renderMajorLines()}
+                {this.renderHorizontalLines()}
+                {this.renderVerticalLines()}
             </svg>
         );
     }

@@ -1,53 +1,13 @@
 import { updateRulerGrid } from './rulers';
 
-const minZoom = 0;
-const maxZoom = 100;
-
-export function zoomIn(stateCopy) {
-    const scaleFactor = 2;
-    const newScale = Math.min(stateCopy.scale * scaleFactor, maxZoom);
-
-    const { panX, panY } = setPan(stateCopy, newScale);
-
-    const updateGrid = true;
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, newScale, panX, panY, updateGrid);
-    stateCopy.ruler = ruler;
-    stateCopy.gridLines = gridLines;
-    stateCopy.panX = panX;
-    stateCopy.panY = panY;
-    stateCopy.scale = newScale;
-
-    return stateCopy;
-}
-
-export function zoomOut(stateCopy) {
-    const scaleFactor = 0.5;
-    const newScale = Math.max(stateCopy.scale * scaleFactor, minZoom);
-
-    const { panX, panY } = setPan(stateCopy, newScale);
-
-    const updateGrid = true;
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, newScale, panX, panY, updateGrid);
-    stateCopy.ruler = ruler;
-    stateCopy.gridLines = gridLines;
-    stateCopy.panX = panX;
-    stateCopy.panY = panY;
-    stateCopy.scale = newScale;
-
-    return stateCopy;
-}
-
 export function setCustomZoom(stateCopy, action) {
     const { customScale } = action.payload;
 
-    var scale = clamp(customScale, minZoom, maxZoom);
+    var scale = constrainScale(customScale);
 
     const { panX, panY } = setPan(stateCopy, scale);
 
-    const updateGrid = true;
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY, updateGrid);
-    stateCopy.ruler = ruler;
-    stateCopy.gridLines = gridLines;
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
     stateCopy.panX = panX;
     stateCopy.panY = panY;
     stateCopy.scale = scale;
@@ -64,7 +24,7 @@ export function zoomToMarqueeBox(stateCopy) {
 
     const zoomRatioX = Math.abs(windowWidth / marqueeBox.width);
     const zoomRatioY = Math.abs(windowHeight / marqueeBox.height);
-    const scale = clamp(Math.min(zoomRatioX, zoomRatioY), minZoom, maxZoom);
+    const scale = constrainScale(Math.min(zoomRatioX, zoomRatioY));
 
     let panX, panY;
 
@@ -74,11 +34,10 @@ export function zoomToMarqueeBox(stateCopy) {
     panY = marqueeBox.y + (marqueeBox.height / 2) - (windowHeight / 2 / scale);
     panY = clamp(panY, 0, canvasHeight - windowHeight / scale);
 
-    const updateGrid = true;
-    const { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY, updateGrid);
+    const ruler = updateRulerGrid(stateCopy, scale, panX, panY);
+
     return {
         ruler: ruler,
-        gridLines: gridLines,
         panX: panX,
         panY: panY,
         scale: scale
@@ -97,18 +56,16 @@ export function pan(stateCopy, draggableData) {
     var panY = stateCopy.panY - deltaY / scale;
     panY = clamp(panY, 0, canvasHeight - (window.innerHeight - stateCopy.ruler.width - 45) / scale);
 
-    const updateGrid = true;
-    var { ruler, gridLines } = updateRulerGrid(stateCopy, scale, panX, panY, updateGrid);
+    const ruler = updateRulerGrid(stateCopy, scale, panX, panY);
 
     return {
         ruler: ruler,
-        gridLines: gridLines,
         panX: panX,
         panY: panY
     };
 }
 
-function setPan(stateCopy, newScale) {
+export function setPan(stateCopy, newScale) {
     var { canvasWidth, canvasHeight, panX, panY, scale } = stateCopy;
 
     // The value 45 is the width menus.
@@ -133,6 +90,21 @@ function setPan(stateCopy, newScale) {
     panY = clamp(panY, 0, canvasHeight - windowHeight / newScale);
 
     return { panX, panY };
+}
+
+function constrainScale(scale) {
+    const minZoom = 0.1;
+    const maxZoom = 24;
+
+    if (scale > maxZoom) {
+        scale = maxZoom;
+        console.error("Maximum zoom level reached.");
+    } else if (scale < minZoom) {
+        scale = minZoom;
+        console.error("Minimum zoom level reached.");
+    }
+
+    return scale;
 }
 
 function clamp(num, min, max) {
