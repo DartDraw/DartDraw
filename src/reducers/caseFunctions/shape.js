@@ -1,6 +1,6 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -183,6 +183,33 @@ export function handleDragStop(stateCopy, action, root) {
     return stateCopy;
 }
 
+export function controlDragStart(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        default: break;
+    }
+    return stateCopy;
+}
+
+export function controlDrag(stateCopy, action, root) {
+    const { draggableData, handleIndex } = action.payload;
+
+    if (stateCopy.mode === 'reshape') {
+        stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+            stateCopy.panX, stateCopy.panY, stateCopy.scale);
+        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+
+        return stateCopy;
+    }
+    return stateCopy;
+}
+
+export function controlDragStop(stateCopy, action, root) {
+    switch (stateCopy.mode) {
+        default: break;
+    }
+    return stateCopy;
+}
+
 export function textInputChange(stateCopy, action, root) {
     const { shapeId, value, focused } = action.payload;
     stateCopy.shapes.byId[shapeId].text = value;
@@ -354,6 +381,11 @@ export function keyDown(stateCopy, action, root) {
             action.payload.degree = 45;
             stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
                 stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+            break;
+        case 54: // TEMP Hard Coded Arc Flip
+            if (stateCopy.selected.length > 0 && stateCopy.shapes.byId[stateCopy.selected[0]].type === 'arc') {
+                stateCopy.shapes.byId[stateCopy.selected[0]].flipArc = !stateCopy.shapes.byId[stateCopy.selected[0]].flipArc;
+            }
             break;
         default:
             break;

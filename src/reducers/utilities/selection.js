@@ -134,6 +134,36 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
                     selectionBox.handles.push({ id: uuidv1(), index: i + 1, x: shape.points[i * 2], y: shape.points[i * 2 + 1] });
                 }
             }
+            if (shape.controlPoints && selectionBox.controls.length > 0) {
+                let index = 0;
+                for (let j = 2; j < shape.points.length; j += 2) {
+                    selectionBox.controls[index].x1 = shape.points[j];
+                    selectionBox.controls[index].y1 = shape.points[j + 1];
+                    selectionBox.controls[index].x2 = shape.controlPoints[j / 2][0].x;
+                    selectionBox.controls[index].y2 = shape.controlPoints[j / 2][0].y;
+
+                    selectionBox.controls[index + 1].x1 = shape.points[j];
+                    selectionBox.controls[index + 1].y1 = shape.points[j + 1];
+                    selectionBox.controls[index + 1].x2 = shape.controlPoints[j / 2][1].x;
+                    selectionBox.controls[index + 1].y2 = shape.controlPoints[j / 2][1].y;
+
+                    index += 2;
+                }
+            }
+
+            if (shape.type === 'arc') {
+                const matrix = shape.transform[0].parameters;
+                let p1 = transformPoint(shape.points[0], shape.points[1], matrix);
+                let p2 = transformPoint(shape.points[2], shape.points[3], matrix);
+
+                selectionBox.controls[0].x2 = p1.x;
+                selectionBox.controls[0].y2 = p1.y;
+                selectionBox.controls[1].x2 = p2.x;
+                selectionBox.controls[1].y2 = p2.y;
+
+                selectionBox.handles = [];
+            }
+
             return selectionBox;
         default:
             let handle0, handle1, handle2, handle3;
@@ -204,6 +234,48 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 }
             }
 
+            let controls = [];
+            if (shape.controlPoints && shape.closed) {
+                for (let j = 2; j < shape.points.length; j += 2) {
+                    let cIndex = j / 2;
+                    controls.push({id: uuidv1(),
+                        index: cIndex * 2,
+                        x1: shape.points[j],
+                        y1: shape.points[j + 1],
+                        x2: shape.controlPoints[cIndex][0].x,
+                        y2: shape.controlPoints[cIndex][0].y});
+                    controls.push({id: uuidv1(),
+                        index: cIndex * 2 + 1,
+                        x1: shape.points[j],
+                        y1: shape.points[j + 1],
+                        x2: shape.controlPoints[cIndex][1].x,
+                        y2: shape.controlPoints[cIndex][1].y});
+                }
+            }
+
+            if (shape.type === 'arc') {
+                const matrix = shape.transform[0].parameters;
+                let c = transformPoint(shape.center.x, shape.center.y, matrix);
+
+                let p1 = transformPoint(shape.points[0], shape.points[1], matrix);
+                let p2 = transformPoint(shape.points[2], shape.points[3], matrix);
+
+                controls.push({id: uuidv1(),
+                    index: 0,
+                    x1: c.x,
+                    y1: c.y,
+                    x2: p1.x,
+                    y2: p1.y});
+                controls.push({id: uuidv1(),
+                    index: 1,
+                    x1: c.x,
+                    y1: c.y,
+                    x2: p2.x,
+                    y2: p2.y});
+
+                handles = [];
+            }
+
             return {
                 id: uuidv1(),
                 shapeId: shape.id,
@@ -215,6 +287,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 width: 0,
                 transform,
                 handles,
+                controls,
                 mode
             };
         default:

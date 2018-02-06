@@ -13,7 +13,7 @@ class Bezier extends Component {
         width: PropTypes.number,
         height: PropTypes.number,
         points: PropTypes.arrayOf(PropTypes.number),
-        controlPoints: PropTypes.arrayOf(PropTypes.object),
+        controlPoints: PropTypes.object,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
