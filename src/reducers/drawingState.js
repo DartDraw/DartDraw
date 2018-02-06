@@ -156,8 +156,8 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
-        case menuActions.SET_RULER_GRID:
-            updatedState = rulers.setRulerGrid(stateCopy, action, root);
+        case menuActions.EDIT_SHAPE:
+            updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
             break;
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
@@ -178,7 +178,7 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
-                console.log(action.type, root.menuState);
+                // console.log(action.type, root.menuState);
             }
         }
     }

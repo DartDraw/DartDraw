@@ -310,3 +310,13 @@ function getBaseLog(x, y) {
 function clamp(num, min, max) {
     return Math.max(min, Math.min(num, max));
 }
+
+export function editShape(stateCopy, action) {
+    const { shape } = action.payload;
+
+    stateCopy.shapes.byId[shape.id].arrowType = shape.arrowType;
+
+    console.log(stateCopy.shapes.byId[shape.id]);
+
+    return stateCopy;
+}

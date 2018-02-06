@@ -260,6 +260,7 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         arrowhead: {},
         arrowId: uuidv1(),
+        arrowType: "triangle",
         arrowLength: 30,
         arrowShown: 'yes'
     };
