@@ -9,18 +9,14 @@ import {
     addColor,
     removeColor,
     addPalette,
-    removePalette,
-    zoomIn,
-    zoomOut,
-    customZoom
+    removePalette
 } from './../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         scale: drawingState.scale,
         fillColor: menuState.fillColor,
-        strokeColor: menuState.strokeColor,
-        currentPalette: menuState.palettes[menuState.currentPalette].colors
+        strokeColor: menuState.strokeColor
     };
 };
 
@@ -53,15 +49,6 @@ const mapDispatchToProps = (dispatch) => {
         },
         onRemovePalette: (paletteName) => {
             dispatch(removePalette(paletteName));
-        },
-        onZoomIn: () => {
-            dispatch(zoomIn());
-        },
-        onZoomOut: () => {
-            dispatch(zoomOut());
-        },
-        onCustomZoom: (customScale) => {
-            dispatch(customZoom(customScale));
         }
     };
 };

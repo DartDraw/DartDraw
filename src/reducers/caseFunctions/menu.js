@@ -176,6 +176,7 @@ export function selectPalette(stateCopy, action) {
 }
 
 export function addColor(stateCopy, action) {
+    console.log("added color");
     stateCopy.palettes[stateCopy.currentPalette].colors.push(colorToString(action.payload.color));
     return stateCopy;
 }

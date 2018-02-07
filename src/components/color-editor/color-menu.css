@@ -1,5 +1,25 @@
 .color-editor {
+  margin-top: 20px;
   height: 200px;
+}
+
+.color-editor h1, p {
+  font-family: Catamaran, sans-serif;
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 0.7em;
+}
+
+.color-square {
+  height: 15px;
+  width: 15px;
+  border: solid 1px white;
+  border-radius: 3px;
+}
+
+#basic-button {
+  background-color: white;
+  width: auto;
 }
 
 #current-color-display {
