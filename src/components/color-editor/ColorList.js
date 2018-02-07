@@ -17,7 +17,7 @@ class ColorList extends Component {
             <ColorSquare color={color} />
         );
         return (
-            <div>{palette}</div>
+            <div id="palette">{palette}</div>
         );
     }
 }
