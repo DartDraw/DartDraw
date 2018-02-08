@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
 import { ColorMenuContainer } from '../color-editor';
+import { PaletteEditorContainer } from '../palette-editor';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -223,6 +224,7 @@ class ContextualMenu extends Component {
                         </button>
                     </div>
                     <ColorMenuContainer />
+                    <PaletteEditorContainer />
                     <div className="dynamic-menu">
                         { menuLayout }
                     </div>

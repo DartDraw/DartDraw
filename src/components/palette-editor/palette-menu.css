@@ -1,0 +1,49 @@
+.color-editor {
+  margin-top: 20px;
+  height: 200px;
+}
+
+.color-editor h1, p {
+  font-family: Catamaran, sans-serif;
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 0.7em;
+}
+
+.color-square {
+  height: 20px;
+  width: 20px;
+  /* border: solid 1px white; */
+  border-radius: 3px;
+}
+
+#palette {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#palette div {
+  margin: 3px;
+}
+
+#basic-button {
+  background-color: white;
+  width: auto;
+}
+
+#current-color-display {
+  height: 30px;
+  width: 30px;
+  border-radius: 3px;
+}
+
+#color-input {
+  display: flex;
+  flex-flow: row nowrap;
+
+}
+
+#color-input input {
+  width: 30px;
+  margin: 5px;
+}
