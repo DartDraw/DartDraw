@@ -11,15 +11,16 @@ class PaletteEditor extends Component {
         currentPalette: PropTypes.string,
         onSelectColor: PropTypes.func,
         onSelectPalette: PropTypes.func,
-        onAddPalette: PropTypes.func
+        onAddPalette: PropTypes.func,
+        onRemoveColor: PropTypes.func
     };
 
     constructor(props) {
         super(props);
         this.state = {
             showNewPaletteCreate: false,
-            paletteName: ''
-
+            paletteName: '',
+            deleteMode: false
         };
 
         this.handleColorClick = this.handleColorClick.bind(this);
@@ -27,11 +28,29 @@ class PaletteEditor extends Component {
         this.handleAddPalette = this.handleAddPalette.bind(this);
         this.toggleCreatePalette = this.toggleCreatePalette.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
+        this.keydownHandler = this.keydownHandler.bind(this);
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.keydownHandler);
+    }
+
+    keydownHandler(e) {
+        if (e.ctrlKey) { // && e.repeat
+            this.setState({deleteMode: true});
+        } else {
+            this.setState({deleteMode: false});
+        }
     }
 
     handleColorClick(color) {
         console.log(Object.keys(this.props.palettes));
-        this.props.onSelectColor(color);
+        if (!this.state.deleteMode) {
+            this.props.onSelectColor(color);
+        } else {
+            this.props.onRemoveColor(color);
+            console.log("delete color");
+        }
     }
 
     handleChangePalette(paletteName) {

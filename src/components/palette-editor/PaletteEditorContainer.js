@@ -5,7 +5,8 @@ import {
     addColor,
     selectColor,
     selectPalette,
-    addPalette
+    addPalette,
+    removeColor
 } from '../../actions/menu';
 import PaletteEditor from './PaletteEditor';
 
@@ -40,6 +41,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onAddPalette: (paletteName) => {
             dispatch(addPalette(paletteName));
+        },
+        onRemoveColor: (colorObj) => {
+            dispatch(removeColor(colorObj));
         }
     };
 };

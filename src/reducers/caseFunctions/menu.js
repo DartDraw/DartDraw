@@ -183,8 +183,19 @@ export function addColor(stateCopy, action) {
 }
 
 export function removeColor(stateCopy, action) {
+    console.log("removing color");
     const palette = stateCopy.palettes[stateCopy.currentPalette].colors;
+    stateCopy.palettes[stateCopy.currentPalette].colors.map((color, index) => {
+        console.log(color, action.payload.color);
+        if (JSON.stringify(color) === JSON.stringify(action.payload.color)) {
+            console.log("YES found the color");
+            console.log(index);
+        }
+    });
     const i = palette.indexOf(action.payload.color);
+    console.log(action.payload.color);
+    console.log(palette);
+    console.log(i);
 
     if (i >= 0) {
         palette.splice(i, 1);
