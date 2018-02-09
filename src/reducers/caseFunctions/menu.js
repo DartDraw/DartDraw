@@ -158,6 +158,7 @@ function colorToString(colorObj) {
 }
 
 export function selectColor(stateCopy, action) {
+    console.log("selecting a new color");
     if (stateCopy.fillStrokeButton === "fill") {
         stateCopy.fillColor = action.payload.color;
     } else {

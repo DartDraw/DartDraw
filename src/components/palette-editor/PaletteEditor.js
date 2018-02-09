@@ -7,7 +7,8 @@ class PaletteEditor extends Component {
     static propTypes = {
         currentColor: PropTypes.object,
         palettes: PropTypes.object,
-        currentPalette: PropTypes.string
+        currentPalette: PropTypes.string,
+        onSelectColor: PropTypes.func
     };
 
     constructor(props) {
@@ -20,8 +21,8 @@ class PaletteEditor extends Component {
     }
 
     handleColorClick(color) {
-        console.log("w");
         console.log(color);
+        this.props.onSelectColor(color);
     }
 
     render() {

@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import {
     updateOpacity,
     colorUpdate,
-    addColor
+    addColor,
+    selectColor
 } from '../../actions/menu';
 import PaletteEditor from './PaletteEditor';
 
@@ -28,6 +29,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onAddColor: (colorObj) => {
             dispatch(addColor(colorObj));
+        },
+        onSelectColor: (colorObj) => {
+            dispatch(selectColor(colorObj));
         }
     };
 };
