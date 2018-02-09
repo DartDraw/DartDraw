@@ -3,7 +3,8 @@ import {
     updateOpacity,
     colorUpdate,
     addColor,
-    selectColor
+    selectColor,
+    selectPalette
 } from '../../actions/menu';
 import PaletteEditor from './PaletteEditor';
 
@@ -32,6 +33,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSelectColor: (colorObj) => {
             dispatch(selectColor(colorObj));
+        },
+        onSelectPalette: (paletteName) => {
+            dispatch(selectPalette(paletteName));
         }
     };
 };
