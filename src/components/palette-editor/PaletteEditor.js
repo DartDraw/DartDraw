@@ -43,6 +43,7 @@ class PaletteEditor extends Component {
         console.log(this.state.paletteName);
         this.props.onAddPalette(this.state.paletteName);
         this.toggleCreatePalette();
+        this.props.onSelectPalette(this.state.paletteName);
     }
 
     toggleCreatePalette() {

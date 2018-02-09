@@ -17,7 +17,7 @@ const initialState = {
     centeredControl: false,
     rectangleRadius: {x: 50, y: 50},
     currentPalette: 'Default',
-    colorType: 'CMYK',
+    colorType: 'RGB',
     palettes: {
         'Default': {
             colors: [{r: 255, g: 255, b: 255, a: 1}, {r: 244, g: 67, b: 54, a: 1}, {r: 233, g: 30, b: 99, a: 1},
