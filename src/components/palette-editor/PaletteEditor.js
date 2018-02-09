@@ -6,7 +6,7 @@ import ColorSquare from './ColorSquare';
 class PaletteEditor extends Component {
     static propTypes = {
         currentColor: PropTypes.object,
-        palettes: PropTypes.array,
+        palettes: PropTypes.object,
         currentPalette: PropTypes.string
     };
 
@@ -17,38 +17,23 @@ class PaletteEditor extends Component {
         };
 
         this.handleColorClick = this.handleColorClick.bind(this);
-        this.getCurrentColorList = this.getCurrentColorList.bind(this);
-    }
-
-    onComponentWillMount() {
-        this.setState({colorList: this.getCurrentColorList()});
     }
 
     handleColorClick(color) {
-        console.log(color);
-        console.log(this.state.colorList);
-        console.log(this.props.palettes['Default'].colors);
-    }
-
-    getCurrentColorList() {
-        const {palettes, currentPalette} = this.props;
-        palettes.map((palette) => {
-            if (palette.name === currentPalette) {
-                console.log(palette.colors);
-                return palette.colors;
-            }
-        });
+        console.log("why isn't the color click working");
     }
 
     render() {
         // const colorList = this.getCurrentColorList();
-        const palette = this.state.colorList.map((color) =>
+        const { palettes, currentPalette } = this.props;
+        const colorList = palettes[currentPalette].colors;
+        const palette = colorList.map((color) =>
             <ColorSquare color={color} />
         );
         return (
             <div className="color-editor">
                 <h1>Palette test:</h1>
-                <div>
+                <div id="palette">
                     { palette }
                     <ColorSquare color={this.props.currentColor} colorClick={this.handleColorClick} />
                 </div>
