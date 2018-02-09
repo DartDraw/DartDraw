@@ -36,6 +36,7 @@
     "eslint": "./node_modules/.bin/eslint"
   },
   "devDependencies": {
+    "chaikin-smooth": "^1.0.4",
     "electron": "1.7.8"
   }
 }
