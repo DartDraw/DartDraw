@@ -30,6 +30,7 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
+export const CHANGE_COLOR_TYPE = 'CHANGE_COLOR_TYPE';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -81,6 +82,10 @@ export function addPalette(paletteName, paletteColors) {
 
 export function removePalette(paletteName) {
     return { type: REMOVE_PALETTE, payload: { paletteName } };
+}
+
+export function changeColorType(colorType) {
+    return { type: CHANGE_COLOR_TYPE, payload: { colorType } };
 }
 
 export function undoClick() {

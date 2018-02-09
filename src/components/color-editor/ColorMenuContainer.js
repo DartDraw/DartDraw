@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import {
     updateOpacity,
     colorUpdate,
-    addColor
+    addColor,
+    changeColorType
 } from '../../actions/menu';
 import ColorMenu from './ColorMenu';
 
@@ -14,7 +15,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         fillColor: menuState.fillColor,
         currentColor: menuState.color,
         palettes: menuState.palettes,
-        currentPalette: menuState.currentPalette
+        currentPalette: menuState.currentPalette,
+        colorType: menuState.colorType
     };
 };
 
@@ -28,6 +30,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onAddColor: (colorObj) => {
             dispatch(addColor(colorObj));
+        },
+        onChangeColorType: (colorType) => {
+            dispatch(changeColorType(colorType));
         }
     };
 };

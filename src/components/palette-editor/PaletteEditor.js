@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import './palette-menu.css';
 import ColorSquare from './ColorSquare';
 import Dropdown from 'react-dropdown';
+import Select from 'react-select';
 
 class PaletteEditor extends Component {
     static propTypes = {
@@ -43,7 +44,7 @@ class PaletteEditor extends Component {
         return (
             <div className="color-editor">
                 <h1>Current Palette:</h1>
-                <Dropdown options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
+                <Dropdown id="dropwdown" options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
                 <div id="palette">
                     { palette }
                 </div>

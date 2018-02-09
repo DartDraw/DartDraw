@@ -17,7 +17,7 @@ const initialState = {
     centeredControl: false,
     rectangleRadius: {x: 50, y: 50},
     currentPalette: 'Default',
-
+    colorType: 'CMYK',
     palettes: {
         'Default': {
             colors: [{r: 255, g: 255, b: 255, a: 1}, {r: 244, g: 67, b: 54, a: 1}, {r: 233, g: 30, b: 99, a: 1},
@@ -61,6 +61,9 @@ function menuState(state = initialState, action, root) {
             return menu.colorUpdate(stateCopy, action);
         case menuActions.SELECT_PALETTE:
             return menu.selectPalette(stateCopy, action);
+        case menuActions.CHANGE_COLOR_TYPE:
+            return menu.changeColorType(stateCopy, action);
+
         case menuActions.TOGGLE_SHOW_GRID:
             return grid.toggleShowGrid(stateCopy, action, root);
         case menuActions.TOGGLE_SHOW_SUBDIVISIONS:

@@ -251,3 +251,9 @@ export function colorUpdate(stateCopy, action) {
     }
     return stateCopy;
 }
+
+export function changeColorType(stateCopy, action) {
+    console.log("changing color in back");
+    stateCopy.colorType = action.payload.colorType;
+    return stateCopy;
+}

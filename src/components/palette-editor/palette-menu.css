@@ -1,14 +1,3 @@
-.color-editor {
-  margin-top: 20px;
-  height: 200px;
-}
-
-.color-editor h1, p {
-  font-family: Catamaran, sans-serif;
-  text-transform: uppercase;
-  font-weight: 200;
-  font-size: 0.7em;
-}
 
 .color-square {
   height: 20px;
@@ -22,24 +11,53 @@
   transform: scale(1.2);
 }
 
+.Dropdown-root {
+  width: 100px;
+  font-family: Catamaran;
+  font-size: 0.8em;
+  transition: 0.9s ease-in-out;
+  margin-left: 10px;
+
+}
+
+.Dropdown-control {
+  background-color: #5C7080;
+  padding: 5px;
+}
+
+.Dropdown-menu {
+  padding: 5px;
+  background-color: #EBF1F5;
+  color: #5C7080;
+}
+
+.Dropdown-arrow {
+  height: 10px;
+  background-color: red;
+}
+
+.Dropdown-option {
+  transition: 0.2s ease-in;
+}
+
+.Dropdown-option:hover {
+  margin-left: 5px;
+}
+
+#dropdown {
+  background-color: red;
+  font-family: sans-serif;
+}
+
 #palette {
   display: flex;
   flex-flow: row wrap;
+  margin: 10px 0 10px 10px;
 }
 
 #palette div {
+
   margin: 3px;
-}
-
-#basic-button {
-  background-color: white;
-  width: auto;
-}
-
-#current-color-display {
-  height: 30px;
-  width: 30px;
-  border-radius: 3px;
 }
 
 #color-input {

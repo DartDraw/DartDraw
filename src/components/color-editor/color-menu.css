@@ -1,13 +1,12 @@
-.color-editor {
-  margin-top: 20px;
-  height: 200px;
-}
-
-.color-editor h1, p {
+.color-editor h1, p, label {
   font-family: Catamaran, sans-serif;
   text-transform: uppercase;
   font-weight: 200;
   font-size: 0.7em;
+}
+
+label {
+  text-transform: none;
 }
 
 .color-square {
@@ -17,6 +16,13 @@
   border-radius: 3px;
 }
 
+.Select {
+  width: 150px;
+}
+
+.Select-control {
+  height: 10px;
+}
 #palette {
   display: flex;
   flex-flow: row wrap;
@@ -27,8 +33,15 @@
 }
 
 #basic-button {
-  background-color: white;
+  background-color: #5C7080;
   width: auto;
+  color: #EBF1F5;
+  border-radius: 2px;
+  font-size: 0.5em;
+}
+
+#basic-button:hover {
+  background-color: #394B59;
 }
 
 #current-color-display {
@@ -46,4 +59,113 @@
 #color-input input {
   width: 30px;
   margin: 5px;
+}
+
+input[type=text] {
+  background-color: #182026;
+  border: none;
+  border-bottom: 2px solid #5C7080;
+  outline: none;
+  color: #EBF1F5;
+  text-align: center;
+  font-weight: 100;
+  width:35px;
+}
+
+/* Input range styling from http://brennaobrien.com/blog/2014/05/style-input-type-range-in-every-browser.html */
+
+input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+.range-input {
+  width: 70px;
+  margin: 2px;
+  margin: 10px;
+}
+
+input[type=range] {
+    /*removes default webkit styles*/
+    -webkit-appearance: none;
+
+    /*required for proper track sizing in FF*/
+    width: 70px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 70px;
+    height: 2px;
+    background: #EBF1F5;
+    border: none;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #5C7080;
+    margin-top: -7px;
+}
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #5C7080;
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring{
+
+    outline-offset: -1px;
+}
+
+input[type=range]::-ms-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #5C7080;
+}
+
+#inline-apart {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+#inline-apart h1 {
+  margin-right: 20px;
+}
+
+#inline-close {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.horz-div {
+  height: 2px;
+  width: 330px;
+  background-color: #5C7080;
+  align-self: center;
+  margin: 5px;
+  margin-top: 10px;
+}
+
+#opacity-form {
+  margin-right: 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2em;
 }
