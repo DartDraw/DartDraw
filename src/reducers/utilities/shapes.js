@@ -1,5 +1,4 @@
 import uuidv1 from 'uuid';
-import smooth from 'chaikin-smooth';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
 import { EditorState, ContentState } from 'draft-js';
@@ -1002,7 +1001,6 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
     if (shape.type === 'bezier') {
         let i1 = parseInt(handleIndex / 2);
         let i2 = 0 + handleIndex % 2;
-        console.log(i1, i2);
         shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
     }
     if (shape.type === 'arc') {
