@@ -19,12 +19,14 @@ import {
     selectRuler,
     addRuler,
     saveRuler,
-    deleteRuler
+    deleteRuler,
+    toggleRuler
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selected, scale, ruler, canvasWidth, canvasHeight } = drawingState;
+    const { currentKeys } = menuState;
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: scale,
@@ -33,7 +35,8 @@ const mapStateToProps = ({ drawingState }) => {
         canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
         canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
         rulerNames: ruler.names,
-        currentRuler: ruler.current
+        currentRuler: ruler.current,
+        currentKeys: currentKeys
     };
 };
 
@@ -98,6 +101,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onDeleteRuler: () => {
             dispatch(deleteRuler());
+        },
+        onToggleRuler: (forward) => {
+            dispatch(toggleRuler(forward));
         }
     };
 };

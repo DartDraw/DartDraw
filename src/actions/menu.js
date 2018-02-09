@@ -27,6 +27,7 @@ export const SELECT_RULER = 'SELECT_RULER';
 export const ADD_RULER = 'ADD_RULER';
 export const SAVE_RULER = 'SAVE_RULER';
 export const DELETE_RULER = 'DELETE_RULER';
+export const TOGGLE_RULER = 'TOGGLE_RULER';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -142,4 +143,8 @@ export function saveRuler(rulerSpecs) {
 
 export function deleteRuler() {
     return { type: DELETE_RULER };
+}
+
+export function toggleRuler(forward) {
+    return { type: TOGGLE_RULER, payload: { forward } };
 }

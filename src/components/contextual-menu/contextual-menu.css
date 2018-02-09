@@ -34,7 +34,7 @@
 
 .dynamic-menu {
     display: flex;
-    flex: 0.85;
+    flex: 0.7;
     height: 80px;
     background-color: #30404D;
 }

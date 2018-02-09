@@ -44,6 +44,11 @@ export function saveRuler(stateCopy, action) {
     rulerObj.unitType = unitType;
     rulerObj.unitDivisions = unitDivisions;
 
+    const { scale, panX, panY } = stateCopy;
+
+    stateCopy.ruler = changeRulerPreset(stateCopy.ruler, stateCopy.ruler.current);
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
+
     return stateCopy;
 }
 
@@ -54,6 +59,37 @@ export function deleteRuler(stateCopy) {
     stateCopy.ruler.current = stateCopy.ruler.names[index - 1];
     stateCopy.ruler.names.splice(index, 1);
     delete stateCopy.ruler.byName[current];
+
+    const { scale, panX, panY } = stateCopy;
+
+    stateCopy.ruler = changeRulerPreset(stateCopy.ruler, stateCopy.ruler.current);
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
+
+    return stateCopy;
+}
+
+export function toggleRuler(stateCopy, action) {
+    const { forward } = action.payload;
+    const { names } = stateCopy.ruler;
+
+    console.log(forward);
+
+    var current = stateCopy.ruler.current;
+    var index = names.indexOf(current);
+
+    if (forward) {
+        index = (index + 1) % names.length;
+    } else {
+        if (index === 0) {
+            index = names.length - 1;
+        } else {
+            index = index - 1;
+        }
+    }
+
+    stateCopy.ruler.current = names[index];
+
+    console.log(stateCopy.ruler.current, names, index);
 
     const { scale, panX, panY } = stateCopy;
 
@@ -88,7 +124,7 @@ export function setRulerGrid(stateCopy, action) {
     stateCopy.panX = panX;
     stateCopy.panY = panY;
 
-    stateCopy.ruler = updateRulerGrid(stateCopy, stateCopy.scale, stateCopy.panX, stateCopy.panY, true);
+    stateCopy.ruler = updateRulerGrid(stateCopy, stateCopy.scale, stateCopy.panX, stateCopy.panY);
 
     stateCopy.gridSnapInterval = stateCopy.ruler.pixelsPerUnit / stateCopy.ruler.unitDivisions;
 

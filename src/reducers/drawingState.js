@@ -182,6 +182,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.DELETE_RULER:
             updatedState = rulers.deleteRuler(stateCopy, action, root);
             break;
+        case menuActions.TOGGLE_RULER:
+            updatedState = rulers.toggleRuler(stateCopy, action, root);
+            break;
         default: break;
     }
 
