@@ -38,7 +38,8 @@ class ContextualMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            hidden: false
+            hidden: false,
+            toggleScale: 1
         };
 
         this.toggleMenu = this.toggleMenu.bind(this);
@@ -55,6 +56,7 @@ class ContextualMenu extends Component {
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
+        this.handleToggleScale = this.handleToggleScale.bind(this);
         this.handleShowGrid = this.handleShowGrid.bind(this);
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
@@ -130,6 +132,20 @@ class ContextualMenu extends Component {
         this.props.onSetCustomZoom(this.props.scale / 2);
     }
 
+    handleToggleScale() {
+        var { toggleScale } = this.state;
+        var currentScale = this.props.scale;
+
+        if (currentScale === 1) {
+            this.props.onSetCustomZoom(toggleScale);
+        } else {
+            this.props.onSetCustomZoom(1);
+            this.setState({
+                toggleScale: currentScale
+            });
+        }
+    }
+
     handleShowRulers() {
         this.props.onShowRulers();
     }
@@ -143,7 +159,10 @@ class ContextualMenu extends Component {
     }
 
     handleSubmitCustomZoom(event) {
-        this.props.onSetCustomZoom(parseFloat(document.getElementById("scale").value) / 100.0);
+        var scale = parseFloat(event.target.value) / 100.0;
+        if (scale >= 0.1 && scale <= 8) {
+            this.props.onSetCustomZoom(scale);
+        }
         event.preventDefault();
     }
 
@@ -288,75 +307,33 @@ class ContextualMenu extends Component {
                         </button>
 
                     </div>
-                    <div className="dynamic-menu">
-                        { menuLayout }
-                    </div>
                     <div className="temp">
                         <button onClick={this.handleShowRulers} id="button-icon">R</button>
                         <button onClick={this.handleShowGrid} id="button-icon">G</button>
                         <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
                     </div>
-                    <div className="ruler-menu">
-                        <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
-                            {this.createRulerPresetList()}
-                        </select>
-                        <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
-                            <select
-                                id="unitType"
-                                defaultValue={unitType}
-                            >
-                                <option value="in">{"in"}</option>
-                                <option value="ft">ft</option>
-                                <option value="mm">mm</option>
-                                <option value="cm">cm</option>
-                                <option value="m">m</option>
-                                <option value="px">px</option>
-                                <option value="pt">pt</option>
-                            </select>
-                            <input
-                                id="width"
-                                defaultValue={canvasWidthInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="height"
-                                defaultValue={canvasHeightInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="unitDivisions"
-                                defaultValue={unitDivisions}
-                                type="number"
-                            />
-                            <input type="submit" value="resize" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleAddRuler}>
-                            <input
-                                id="rulerName"
-                                placeholder="name your ruler"
-                                type="text"
-                            />
-                            <input type="submit" value="add" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleSaveRuler}>
-                            <input type="submit" value="save" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleDeleteRuler}>
-                            <input type="submit" value="delete" />
-                        </form>
-                    </div>
                     <div className="zoom-menu">
                         <button onClick={this.handleZoomIn} id="button-icon">+</button>
                         <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                        <form id="button-icon" onSubmit={this.handleSubmitCustomZoom}>
-                            {Math.round(scale * 100.0) + "% "}
+                        <button onClick={this.handleToggleScale} id="button-icon">z</button>
+                    </div>
+                    <div className="zoom-menu">
+                        <form id="button-icon" onSubmit={(event) => event.preventDefault()}>
                             <input
-                                id="scale"
+                                id="zoomSlider"
+                                type="range"
                                 defaultValue={Math.round(scale * 100.0)}
-                                type="number"
+                                min="10"
+                                max="800"
+                                onInput={this.handleSubmitCustomZoom}
                             />
+                            <input
+                                id="zoomText"
+                                type="number"
+                                defaultValue={Math.round(scale * 100.0)}
+                                onInput={this.handleSubmitCustomZoom}
+                            />
+                            {Math.round(scale * 100.0) + "% "}
                         </form>
                     </div>
                 </div>
@@ -366,3 +343,59 @@ class ContextualMenu extends Component {
 }
 
 export default ContextualMenu;
+
+// <div className="dynamic-menu">
+//     { menuLayout }
+// </div>
+
+// <div className="ruler-menu">
+//     <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
+//         {this.createRulerPresetList()}
+//     </select>
+//     <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
+//         <select
+//             id="unitType"
+//             defaultValue={unitType}
+//         >
+//             <option value="in">{"in"}</option>
+//             <option value="ft">ft</option>
+//             <option value="mm">mm</option>
+//             <option value="cm">cm</option>
+//             <option value="m">m</option>
+//             <option value="px">px</option>
+//             <option value="pt">pt</option>
+//         </select>
+//         <input
+//             id="width"
+//             defaultValue={canvasWidthInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="height"
+//             defaultValue={canvasHeightInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="unitDivisions"
+//             defaultValue={unitDivisions}
+//             type="number"
+//         />
+//         <input type="submit" value="resize" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleAddRuler}>
+//         <input type="submit" value="add" />
+//         <input
+//             id="rulerName"
+//             placeholder="name your ruler"
+//             type="text"
+//         />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleSaveRuler}>
+//         <input type="submit" value="save" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleDeleteRuler}>
+//         <input type="submit" value="delete" />
+//     </form>
+// </div>
