@@ -20,7 +20,8 @@ class PaletteEditor extends Component {
     }
 
     handleColorClick(color) {
-        console.log("why isn't the color click working");
+        console.log("w");
+        console.log(color);
     }
 
     render() {
@@ -28,14 +29,14 @@ class PaletteEditor extends Component {
         const { palettes, currentPalette } = this.props;
         const colorList = palettes[currentPalette].colors;
         const palette = colorList.map((color) =>
-            <ColorSquare color={color} />
+            <ColorSquare color={color} colorClick={this.handleColorClick} />
         );
         return (
             <div className="color-editor">
                 <h1>Palette test:</h1>
                 <div id="palette">
                     { palette }
-                    <ColorSquare color={this.props.currentColor} colorClick={this.handleColorClick} />
+                    <ColorSquare color={this.props.currentColor} />
                 </div>
             </div>
         );
