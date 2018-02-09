@@ -1,4 +1,5 @@
 import uuidv1 from 'uuid';
+import smooth from 'chaikin-smooth';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
 import { EditorState, ContentState } from 'draft-js';
@@ -160,9 +161,7 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
     bezier.points.push(bezier.points[0]);
     bezier.points.push(bezier.points[1]);
 
-    bezier.controlPoints[0] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
-    bezier.controlPoints[1] = [{x: bezier.points[2], y: bezier.points[3]}, {x: bezier.points[2], y: bezier.points[3]}];
-    bezier.controlPoints[2] = [{x: bezier.points[2], y: bezier.points[3]}, {x: bezier.points[2], y: bezier.points[3]}];
+    bezier.controlPoints = smoothPath(bezier);
 
     shapes.byId[bezier.id] = bezier;
     shapes.allIds.push(bezier.id);
@@ -185,9 +184,6 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     if (Math.abs(xCoord - bezier.points[0]) < (5 / scale) &&
           Math.abs(yCoord - bezier.points[1]) < (5 / scale)) {
-        bezier.controlPoints[bezier.points.length / 2 - 1][0] = bezier.controlPoints[0][0];
-        delete bezier.controlPoints[0];
-        delete bezier.controlPoints[bezier.points.length / 2];
         bezier.closed = true;
         xCoord = bezier.points[0];
         yCoord = bezier.points[1];
@@ -195,7 +191,6 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     if ((Math.abs(xCoord - bezier.points[bezier.points.length - 4]) < (5 / scale) &&
           Math.abs(yCoord - bezier.points[bezier.points.length - 3]) < (5 / scale))) {
-        delete bezier.controlPoints[bezier.points.length / 2];
         bezier.points.pop();
         bezier.points.pop();
         bezier.open = true;
@@ -203,12 +198,13 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
+    bezier.controlPoints = smoothPath(bezier);
 
     if (!bezier.closed && !bezier.open) {
         // temp point
         bezier.points.push(xCoord);
         bezier.points.push(yCoord);
-        bezier.controlPoints[bezier.points.length / 2] = [ {x: xCoord, y: yCoord}, {x: xCoord, y: yCoord} ];
+        bezier.controlPoints = smoothPath(bezier);
     }
     return shapes;
 }
@@ -230,16 +226,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
 
-    let l = Math.sqrt((xCoord - bezier.points[bezier.points.length - 4]) ** 2 + (yCoord - bezier.points[bezier.points.length - 3]) ** 2);
-    let endX = (1 - (l - 50) / l) * xCoord + (l - 50) / l * bezier.points[bezier.points.length - 4];
-    let endY = (1 - (l - 50) / l) * yCoord + (l - 50) / l * bezier.points[bezier.points.length - 3];
-    if (bezier.controlPoints[(bezier.points.length) / 2 - 2]) {
-        bezier.controlPoints[(bezier.points.length) / 2 - 2][0] = {x: endX, y: endY};
-    }
-
-    endX = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 4] + (l - 50) / l * xCoord;
-    endY = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 3] + (l - 50) / l * yCoord;
-    bezier.controlPoints[(bezier.points.length) / 2 - 1][1] = {x: endX, y: endY};
+    bezier.controlPoints = smoothPath(bezier);
     return shapes;
 }
 
@@ -1015,6 +1002,7 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
     if (shape.type === 'bezier') {
         let i1 = parseInt(handleIndex / 2);
         let i2 = 0 + handleIndex % 2;
+        console.log(i1, i2);
         shape.controlPoints[i1][i2] = {x: mouseX, y: mouseY};
     }
     if (shape.type === 'arc') {
@@ -1739,4 +1727,83 @@ export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, se
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
+}
+
+function smoothPath(bezier) {
+    let points = bezier.points;
+
+    let path = [];
+    let controlPoints = {};
+
+    path.push([points[0], points[1]]);
+    path.push([points[0], points[1]]);
+
+    for (let i = 0; i < points.length; i += 2) {
+        path.push([points[i], points[i + 1]]);
+    }
+
+    if (!bezier.closed) {
+        path.push([points[points.length - 4], points[points.length - 3]]);
+        path.push([points[points.length - 2], points[points.length - 1]]);
+    } else {
+        path.push([points[2], points[3]]);
+        path.push([points[4], points[5]]);
+    }
+
+    let curvePoints = getCurvePoints(path, 1, false, 1);
+
+    for (let i = 1; i <= points.length / 2; i++) {
+        controlPoints[i - 1] = {};
+        controlPoints[i - 1][0] = curvePoints[i + 1][1];
+
+        if (curvePoints[i + 2]) {
+            controlPoints[i - 1][1] = curvePoints[i + 2][0];
+        }
+    }
+
+    if (bezier.closed) delete controlPoints[0];
+
+    return controlPoints;
+}
+
+function getCurvePoints(path) {
+    let controlPoints = {};
+    for (let i = 1; i < path.length - 1; i += 1) {
+        controlPoints[i] = [{}, {}];
+        controlPoints[i][0] = controlPoint(path[i - 1], path[i - 2], path[i]);
+        controlPoints[i][1] = controlPoint(path[i], path[i - 1], path[i + 1], true);
+    }
+    // start control point
+    return controlPoints;
+}
+
+// https://medium.com/@francoisromain/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
+function line(pointA, pointB) {
+    const lengthX = pointB[0] - pointA[0];
+    const lengthY = pointB[1] - pointA[1];
+    return {
+        length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+        angle: Math.atan2(lengthY, lengthX)
+    };
+}
+
+// https://medium.com/@francoisromain/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
+function controlPoint(current, previous, next, reverse) {
+    // When 'current' is the first or last point of the array
+    // 'previous' or 'next' don't exist.
+    // Replace with 'current'
+    const p = previous || current;
+    const n = next || current;
+
+    // Properties of the opposed-line
+    const o = line(p, n);
+
+    // If is end-control-point, add PI to the angle to go backward
+    const angle = o.angle + (reverse ? Math.PI : 0);
+    const length = o.length * 0.3;
+
+    // The control point position is relative to the current point
+    const x = current[0] + Math.cos(angle) * length;
+    const y = current[1] + Math.sin(angle) * length;
+    return {x: x, y: y};
 }
