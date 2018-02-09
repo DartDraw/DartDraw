@@ -190,16 +190,17 @@ export function removeColor(stateCopy, action) {
         if (JSON.stringify(color) === JSON.stringify(action.payload.color)) {
             console.log("YES found the color");
             console.log(index);
+            palette.splice(index, 1);
         }
     });
-    const i = palette.indexOf(action.payload.color);
+    // const i = palette.indexOf(action.payload.color);
     console.log(action.payload.color);
     console.log(palette);
-    console.log(i);
+    // console.log(i);
 
-    if (i >= 0) {
-        palette.splice(i, 1);
-    }
+    // if (i >= 0) {
+    //     palette.splice(i, 1);
+    // }
 
     return stateCopy;
 }
