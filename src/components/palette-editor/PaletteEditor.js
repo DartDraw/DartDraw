@@ -21,7 +21,6 @@ class PaletteEditor extends Component {
     }
 
     handleColorClick(color) {
-        console.log(color);
         this.props.onSelectColor(color);
     }
 
@@ -34,10 +33,9 @@ class PaletteEditor extends Component {
         );
         return (
             <div className="color-editor">
-                <h1>Palette test:</h1>
+                <h1>Current Palette:</h1>
                 <div id="palette">
                     { palette }
-                    <ColorSquare color={this.props.currentColor} />
                 </div>
             </div>
         );

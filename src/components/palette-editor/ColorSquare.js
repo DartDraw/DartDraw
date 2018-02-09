@@ -13,8 +13,6 @@ class ColorSquare extends Component {
     }
 
     handleClick() {
-        console.log("testing click");
-        // this.props.colorClick(this.props.color);
         this.props.colorClick(this.props.color);
     }
 

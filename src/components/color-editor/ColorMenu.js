@@ -77,21 +77,10 @@ class ColorMenu extends Component {
         const currentColorStyle = {
             backgroundColor: `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         };
-        // let paletteTest = null;
-        // let paletteColors = null;
-        // palettes.map((palette) => {
-        //     if (palette.name === currentPalette) {
-        //         paletteColors = <ColorList colorList={palette.colors} />;
-        //     }
-        // });
-        let paletteColors = <p>temp placeholder</p>;
-
-        // paletteTest = <div>{}</div>;
 
         return (
             <div className="color-editor">
                 <h1>Color Editor</h1>
-                {paletteColors}
                 <form onSubmit={this.handleSubmit}>
                     <input type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
                     <input type="text" value={this.tempOpacityValue * 100.0} onChange={this.handleChange} />
@@ -103,10 +92,6 @@ class ColorMenu extends Component {
                     <p>B: <input type="text" defaultValue={fillColor.b} onChange={(e) => { this.handleColorUpdate("B", e); }} /> </p>
                 </div>
                 <button id="basic-button" onClick={this.handleAddColor}>Add To Current Palette</button>
-                <div>
-                    <h1>Palettes</h1>
-
-                </div>
             </div>
         );
     }

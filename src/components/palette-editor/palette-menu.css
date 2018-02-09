@@ -15,7 +15,7 @@
   width: 20px;
   /* border: solid 1px white; */
   border-radius: 3px;
-  transition: 0.2s ease-in;
+  transition: 0.1s ease-in;
 }
 
 .color-square:hover {
