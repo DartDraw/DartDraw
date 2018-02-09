@@ -76,8 +76,8 @@ export function removeColor(color) {
     return { type: REMOVE_COLOR, payload: { color } };
 }
 
-export function addPalette(paletteName, paletteColors) {
-    return { type: ADD_PALETTE, payload: { paletteName, paletteColors } };
+export function addPalette(paletteName) {
+    return { type: ADD_PALETTE, payload: { paletteName } };
 }
 
 export function removePalette(paletteName) {

@@ -194,9 +194,9 @@ export function removeColor(stateCopy, action) {
 }
 
 export function addPalette(stateCopy, action) {
+    console.log(action);
     stateCopy.palettes[action.payload.paletteName] = {
-        'type': "HEX", // should change this once we figure out the interface
-        'colors': action.payload.paletteColors
+        'colors': []
     };
     return stateCopy;
 }
