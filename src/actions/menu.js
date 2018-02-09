@@ -23,6 +23,10 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
+export const SELECT_RULER = 'SELECT_RULER';
+export const ADD_RULER = 'ADD_RULER';
+export const SAVE_RULER = 'SAVE_RULER';
+export const DELETE_RULER = 'DELETE_RULER';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -122,4 +126,20 @@ export function toggleShowSubDivisions() {
 
 export function setRulerGrid(canvasSpecs) {
     return { type: SET_RULER_GRID, payload: canvasSpecs };
+}
+
+export function selectRuler(rulerName) {
+    return { type: SELECT_RULER, payload: { rulerName } };
+}
+
+export function addRuler(rulerSpecs) {
+    return { type: ADD_RULER, payload: rulerSpecs };
+}
+
+export function saveRuler(rulerSpecs) {
+    return { type: SAVE_RULER, payload: rulerSpecs };
+}
+
+export function deleteRuler() {
+    return { type: DELETE_RULER };
 }

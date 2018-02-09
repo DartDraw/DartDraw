@@ -7,6 +7,73 @@ export function toggleShowRulers(stateCopy) {
     return stateCopy;
 }
 
+export function selectRuler(stateCopy, action) {
+    const { rulerName } = action.payload;
+    const { scale, panX, panY } = stateCopy;
+
+    stateCopy.ruler = changeRulerPreset(stateCopy.ruler, rulerName);
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
+
+    return stateCopy;
+}
+
+export function addRuler(stateCopy, action) {
+    const { name, unitType, unitDivisions } = action.payload;
+
+    var newRulerPreset = {
+        unitType,
+        unitDivisions
+    };
+
+    stateCopy.ruler.byName[name] = newRulerPreset;
+    stateCopy.ruler.names.push(name);
+
+    const { scale, panX, panY } = stateCopy;
+
+    stateCopy.ruler = changeRulerPreset(stateCopy.ruler, name);
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
+
+    return stateCopy;
+}
+
+export function saveRuler(stateCopy, action) {
+    const { unitType, unitDivisions } = action.payload;
+
+    var rulerObj = stateCopy.ruler.byName[stateCopy.ruler.current];
+
+    rulerObj.unitType = unitType;
+    rulerObj.unitDivisions = unitDivisions;
+
+    return stateCopy;
+}
+
+export function deleteRuler(stateCopy) {
+    var current = stateCopy.ruler.current;
+    var index = stateCopy.ruler.names.indexOf(current);
+
+    stateCopy.ruler.current = stateCopy.ruler.names[index - 1];
+    stateCopy.ruler.names.splice(index, 1);
+    delete stateCopy.ruler.byName[current];
+
+    const { scale, panX, panY } = stateCopy;
+
+    stateCopy.ruler = changeRulerPreset(stateCopy.ruler, stateCopy.ruler.current);
+    stateCopy.ruler = updateRulerGrid(stateCopy, scale, panX, panY);
+
+    return stateCopy;
+}
+
+function changeRulerPreset(ruler, newRulerName) {
+    var rulerObj = ruler.byName[newRulerName];
+
+    ruler.current = newRulerName;
+    ruler.unitDivisions = rulerObj.unitDivisions;
+    ruler.unitType = rulerObj.unitType;
+    ruler.pixelsPerUnit = setPixelsPerUnit(rulerObj.unitType);
+
+    return ruler;
+}
+
 export function setRulerGrid(stateCopy, action) {
     const { unitType, width, height, unitDivisions } = constrainInput(action.payload);
 
@@ -52,8 +119,8 @@ export function updateRulerGrid(stateCopy, scale, panX, panY) {
     const windowHeight = window.innerHeight - ruler.width - 45;
 
     // need adjust min spacing to account for the # of digits in the ruler labels
-    const minLabelSpacing = (canvasWidth / ruler.pixelsPerUnit).toString().length * pixelsPerDigit * 2;
-    const minRulerWidth = (canvasHeight / ruler.pixelsPerUnit).toString().length * pixelsPerDigit;
+    const minLabelSpacing = Math.ceil((canvasWidth / ruler.pixelsPerUnit)).toString().length * pixelsPerDigit * 2;
+    const minRulerWidth = Math.ceil((canvasHeight / ruler.pixelsPerUnit)).toString().length * pixelsPerDigit;
 
     // increase the width of the ruler if necessary
     if (minRulerWidth > ruler.width) {
@@ -127,7 +194,7 @@ function addWholeUnits(windowDim, panOffset, scaledPixelsPerUnit, minLabelSpacin
 }
 
 function addSubUnits(ruler, windowDim, panOffset, scaledPixelsPerUnit, minTickSpacing, rulerWidth, subUnitBase, subUnitExponent) {
-    const tickLengthMultiplier = (subUnitBase !== 2 && subUnitBase !== 10) ? 0.5 : 0.75;
+    const tickLengthMultiplier = (subUnitExponent === 1) ? 0.5 : 0.75;
 
     // make sure we don't render the same tick twice
     var masterTickIndex = [];

@@ -15,7 +15,11 @@ import {
     toggleShowGrid,
     toggleShowRulers,
     toggleShowSubDivisions,
-    setRulerGrid
+    setRulerGrid,
+    selectRuler,
+    addRuler,
+    saveRuler,
+    deleteRuler
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
@@ -27,7 +31,9 @@ const mapStateToProps = ({ drawingState }) => {
         unitType: ruler.unitType,
         unitDivisions: ruler.unitDivisions,
         canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
-        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit
+        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
+        rulerNames: ruler.names,
+        currentRuler: ruler.current
     };
 };
 
@@ -80,6 +86,18 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: (canvasSpecs) => {
             dispatch(setRulerGrid(canvasSpecs));
+        },
+        onSelectRuler: (rulerName) => {
+            dispatch(selectRuler(rulerName));
+        },
+        onAddRuler: (rulerSpecs) => {
+            dispatch(addRuler(rulerSpecs));
+        },
+        onSaveRuler: (rulerSpecs) => {
+            dispatch(saveRuler(rulerSpecs));
+        },
+        onDeleteRuler: () => {
+            dispatch(deleteRuler());
         }
     };
 };

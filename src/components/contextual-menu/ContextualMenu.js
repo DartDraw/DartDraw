@@ -11,6 +11,8 @@ class ContextualMenu extends Component {
         unitDivisions: PropTypes.number,
         canvasWidthInUnits: PropTypes.number,
         canvasHeightInUnits: PropTypes.number,
+        rulerNames: PropTypes.array,
+        currentRuler: PropTypes.string,
         editShape: PropTypes.func,
         onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
@@ -26,7 +28,11 @@ class ContextualMenu extends Component {
         onShowGrid: PropTypes.func,
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
-        onSetRulerGrid: PropTypes.func
+        onSetRulerGrid: PropTypes.func,
+        onSelectRuler: PropTypes.func,
+        onAddRuler: PropTypes.func,
+        onSaveRuler: PropTypes.func,
+        onDeleteRuler: PropTypes.func
     };
 
     constructor(props) {
@@ -54,6 +60,10 @@ class ContextualMenu extends Component {
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
+        this.handleSelectRuler = this.handleSelectRuler.bind(this);
+        this.handleAddRuler = this.handleAddRuler.bind(this);
+        this.handleSaveRuler = this.handleSaveRuler.bind(this);
+        this.handleDeleteRuler = this.handleDeleteRuler.bind(this);
     }
 
     toggleMenu() {
@@ -147,8 +157,67 @@ class ContextualMenu extends Component {
         event.preventDefault();
     }
 
+    handleSelectRuler(event) {
+        this.props.onSelectRuler(event.target.value);
+        event.preventDefault();
+    }
+
+    handleAddRuler(event) {
+        const { rulerNames } = this.props;
+        var name = document.getElementById("rulerName").value;
+
+        if (name === "") {
+            console.error("Please name your new ruler.");
+        } else if (rulerNames.indexOf(name) === -1) {
+            this.props.onAddRuler({
+                name,
+                unitType: document.getElementById("unitType").value,
+                unitDivisions: parseInt(document.getElementById("unitDivisions").value)
+            });
+        } else {
+            console.error("The name '%s' is already taken. Please enter a different name for your ruler preset.", name);
+        }
+        event.preventDefault();
+    }
+
+    handleSaveRuler(event) {
+        const { currentRuler } = this.props;
+
+        if (currentRuler !== "Default") {
+            this.props.onSaveRuler({
+                unitType: document.getElementById("unitType").value,
+                unitDivisions: parseInt(document.getElementById("unitDivisions").value)
+            });
+        } else {
+            console.error("You cannot edit the default ruler.");
+        }
+        event.preventDefault();
+    }
+
+    handleDeleteRuler(event) {
+        const { currentRuler } = this.props;
+
+        if (currentRuler !== "Default") {
+            this.props.onDeleteRuler();
+        } else {
+            console.error("You cannot delete the default ruler.");
+        }
+        event.preventDefault();
+    }
+
+    createRulerPresetList() {
+        const { rulerNames } = this.props;
+        let list = [];
+
+        rulerNames.map((presetName) => {
+            list.push(<option value={presetName}>{presetName}</option>);
+        });
+
+        return list;
+    }
+
     render() {
-        const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
+        const { selectedShape, scale, unitType, unitDivisions, currentRuler, canvasWidthInUnits, canvasHeightInUnits } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         if (selectedShape) {
@@ -228,6 +297,9 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
                     </div>
                     <div className="ruler-menu">
+                        <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
+                            {this.createRulerPresetList()}
+                        </select>
                         <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
                             <select
                                 id="unitType"
@@ -259,6 +331,20 @@ class ContextualMenu extends Component {
                                 type="number"
                             />
                             <input type="submit" value="resize" />
+                        </form>
+                        <form id="button-icon" onSubmit={this.handleAddRuler}>
+                            <input
+                                id="rulerName"
+                                placeholder="name your ruler"
+                                type="text"
+                            />
+                            <input type="submit" value="add" />
+                        </form>
+                        <form id="button-icon" onSubmit={this.handleSaveRuler}>
+                            <input type="submit" value="save" />
+                        </form>
+                        <form id="button-icon" onSubmit={this.handleDeleteRuler}>
+                            <input type="submit" value="delete" />
                         </form>
                     </div>
                     <div className="zoom-menu">
