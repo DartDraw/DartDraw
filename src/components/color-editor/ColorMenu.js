@@ -95,13 +95,14 @@ class ColorMenu extends Component {
         const currentColorStyle = {
             backgroundColor: `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         };
-        let paletteTest = null;
-        let paletteColors = null;
-        palettes.map((palette) => {
-            if (palette.name === currentPalette) {
-                paletteColors = <ColorList colorList={palette.colors} />;
-            }
-        });
+        // let paletteTest = null;
+        // let paletteColors = null;
+        // palettes.map((palette) => {
+        //     if (palette.name === currentPalette) {
+        //         paletteColors = <ColorList colorList={palette.colors} />;
+        //     }
+        // });
+        let paletteColors = <p>temp placeholder</p>;
 
         // paletteTest = <div>{}</div>;
 

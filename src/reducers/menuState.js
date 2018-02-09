@@ -18,23 +18,17 @@ const initialState = {
     rectangleRadius: {x: 50, y: 50},
     currentPalette: 'Default',
 
-    palettes: [
-        {
-            name: 'Default',
+    palettes: {
+        'Default': {
             colors: [{r: '255', g: '255', b: '255', a: '1'}, {r: '244', g: '67', b: '54', a: '1'}, {r: '233', g: '30', b: '99', a: '1'},
                 {r: '103', g: '58', b: '183', a: '1'}, {r: '33', g: '150', b: '243', a: '1'}, {r: '76', g: '175', b: '80', a: '1'},
                 {r: '255', g: '235', b: '59', a: '1'}, {r: '255', g: '152', b: '0', a: '1'}, {r: '121', g: '85', b: '72', a: '1'},
                 {r: '0', g: '0', b: '0', a: '1'}]
         },
-        {
-            name: 'Tri',
-            colors: ["rgba(255,0,0,1)", "rgba(0,0,255,1)", "rgba(255,255,0,1)"]
-        },
-        {
-            name: 'Primary',
+        'Primary': {
             colors: [{r: '255', g: '0', b: '0', a: '1'}, {r: '0', g: '0', b: '255', a: '1'}, {r: '255', g: '255', b: '0', a: '1'}]
         }
-    ],
+    },
     gridSnapping: false,
     showRulers: true,
     showSubDivisions: true,
