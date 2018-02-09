@@ -184,7 +184,7 @@ export function addColor(stateCopy, action) {
 
 export function removeColor(stateCopy, action) {
     const palette = stateCopy.palettes[stateCopy.currentPalette].colors;
-    const i = palette.indexOf(colorToString(action.payload.color));
+    const i = palette.indexOf(action.payload.color);
 
     if (i >= 0) {
         palette.splice(i, 1);
@@ -227,7 +227,6 @@ export function updateOpacity(stateCopy, action) {
 }
 
 export function colorUpdate(stateCopy, action) {
-    console.log("color change");
     let colorPart = action.payload.colorPart;
     let newValue = action.payload.newValue;
     // action: colorPart and newValue
@@ -238,11 +237,6 @@ export function colorUpdate(stateCopy, action) {
     } else if (colorPart === "B") {
         stateCopy.color.b = Number(newValue);
     }
-
-    console.log(stateCopy);
-    // if (!stateCopy.editInProgress) {
-    //     console.log(stateCopy.shapes.byId[stateCopy.selected[0]]);
-    // }
 
     if (stateCopy.fillStrokeButton === "fill") {
         stateCopy.fillColor = stateCopy.color;
