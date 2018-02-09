@@ -10,18 +10,13 @@ class ColorMenu extends Component {
         currentColor: PropTypes.object,
         onUpdateOpacity: PropTypes.func,
         onColorUpdate: PropTypes.func,
-        palettes: PropTypes.array,
+        palettes: PropTypes.object,
         currentPalette: PropTypes.string,
         onAddColor: PropTypes.func
     };
 
     constructor(props) {
         super(props);
-        this.state = {
-            r: '100',
-            g: '100',
-            b: '100'
-        };
 
         this.tempOpacityValue = this.props.currentColor.a;
 
@@ -30,8 +25,6 @@ class ColorMenu extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleColorUpdate = this.handleColorUpdate.bind(this);
-        this.renderColorsInPalette = this.renderColorsInPalette.bind(this);
-        this.renderPalette = this.renderPalette.bind(this);
         this.handleAddColor = this.handleAddColor.bind(this);
     }
 
@@ -42,6 +35,7 @@ class ColorMenu extends Component {
 
     showColorInfo(event) {
         console.log(this.props.currentColor);
+        this.props.onAddColor(this.props.currentColor);
     }
 
     handleChange(event) {
@@ -71,23 +65,11 @@ class ColorMenu extends Component {
     }
 
     handleAddColor() {
-        console.log(this.state);
+        console.log("this is supposed to add a color");
+        console.log(this.props.currentColor);
+        console.log(this.props.palettes);
 
-        this.props.onAddColor(this.state);
-    }
-
-    renderColorsInPalette(paletteColors) {
-        let color = paletteColors[0];
-        const paletteColorStyle = {
-            backgroundColor: paletteColors[0]
-        };
-        console.log("what even are palette colors");
-        console.log(paletteColors[0]);
-        return (<div style={paletteColorStyle} id="current-color-display" />);
-    }
-
-    renderPalette(paletteName) {
-
+        this.props.onAddColor(this.props.currentColor);
     }
 
     render() {
