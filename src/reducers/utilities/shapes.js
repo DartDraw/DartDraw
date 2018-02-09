@@ -1650,8 +1650,11 @@ function getCenter(boundingBox, shapeMatrix) {
 
 function getShapeInfo(shape, boundingBox) {
     const shapeInfo = {};
-    shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
-    shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+
+    if (shape.x && shape.y) {
+        shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
+        shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+    }
 
     shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
     if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;

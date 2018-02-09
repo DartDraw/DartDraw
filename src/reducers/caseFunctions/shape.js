@@ -133,17 +133,17 @@ export function handleDrag(stateCopy, action, root) {
         stateCopy.shiftDirection = determineShiftDirection(action, stateCopy.scale, shiftSelected);
     }
 
-    if (stateCopy.mode === 'reshape') {
-        stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
-        return stateCopy;
-    }
-
     if (!stateCopy.editInProgress) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     } else {
+        if (stateCopy.mode === 'reshape') {
+            stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
+            return stateCopy;
+        }
+
         switch (root.menuState.toolType) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
@@ -196,12 +196,17 @@ export function controlDrag(stateCopy, action, root) {
     stateCopy.mouseCoords.x = draggableData.x;
     stateCopy.mouseCoords.y = draggableData.y;
 
-    if (stateCopy.mode === 'reshape') {
-        stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale);
-        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+    if (!stateCopy.editInProgress) {
+        stateCopy.editInProgress = true;
+        stateCopy.lastSavedShapes = root.drawingState.shapes;
+    } else {
+        if (stateCopy.mode === 'reshape') {
+            stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
 
-        return stateCopy;
+            return stateCopy;
+        }
     }
     return stateCopy;
 }
@@ -210,6 +215,8 @@ export function controlDragStop(stateCopy, action, root) {
     switch (stateCopy.mode) {
         default: break;
     }
+
+    stateCopy.editInProgress = false;
     return stateCopy;
 }
 
@@ -414,6 +421,8 @@ export function keyUp(stateCopy, action, root) {
         default:
             break;
     }
+
+    stateCopy.editInProgress = false;
     return stateCopy;
 }
 
