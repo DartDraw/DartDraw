@@ -2,7 +2,7 @@
   font-family: Catamaran, sans-serif;
   text-transform: uppercase;
   font-weight: 200;
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
 
 label {
@@ -33,7 +33,7 @@ label {
 }
 
 #basic-button {
-  background-color: #5C7080;
+  background-color: transparent;
   width: auto;
   color: #EBF1F5;
   border-radius: 2px;
@@ -41,7 +41,7 @@ label {
 }
 
 #basic-button:hover {
-  background-color: #394B59;
+  color: #5C7080
 }
 
 #current-color-display {
@@ -64,7 +64,7 @@ label {
 input[type=text] {
   background-color: #182026;
   border: none;
-  border-bottom: 2px solid #5C7080;
+  border-bottom: 1px solid #5C7080;
   outline: none;
   color: #EBF1F5;
   text-align: center;
@@ -160,6 +160,7 @@ input[type=range]::-ms-thumb {
 }
 
 #opacity-form {
+  margin-left: 10px;
   margin-right: 20px;
   display: flex;
   flex-flow: row nowrap;

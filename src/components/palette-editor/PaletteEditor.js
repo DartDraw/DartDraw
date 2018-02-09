@@ -43,8 +43,10 @@ class PaletteEditor extends Component {
         );
         return (
             <div className="color-editor">
-                <h1>Current Palette:</h1>
-                <Dropdown id="dropwdown" options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
+                <div id="inline-close">
+                    <label>Palette:</label>
+                    <Dropdown id="dropwdown" options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
+                </div>
                 <div id="palette">
                     { palette }
                 </div>

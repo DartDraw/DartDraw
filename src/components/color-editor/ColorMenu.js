@@ -1,9 +1,7 @@
 import 'react-select/dist/react-select.css';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import './color-menu.css';
-import Select from 'react-select';
 import Dropdown from 'react-dropdown';
 
 class ColorMenu extends Component {
@@ -116,15 +114,16 @@ class ColorMenu extends Component {
             <div className="color-editor">
                 <div id="inline-apart">
                     <h1>Color Editor</h1>
+
+                </div>
+                <div id="inline-close">
+                    <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
+                    <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>
                         <input className="range-input" type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
                         <input type="text" value={this.tempOpacityValue * 100.0} onChange={this.handleChange} />
                     </form>
-                </div>
-                <div id="inline-close">
-                    <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
-                    <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                 </div>
                 <div id="inline-close">
                     { colorInput }
