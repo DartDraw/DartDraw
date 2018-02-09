@@ -1019,8 +1019,10 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
     }
     if (shape.type === 'arc') {
         const matrix = shape.transform[0].parameters;
+        let decomposed = decomposeMatrix(matrix);
         let c = transformPoint(shape.center.x, shape.center.y, matrix);
-        let angle = Math.atan2(mouseY - c.y, mouseX - c.x);
+        let angle = Math.atan2(mouseY - c.y, mouseX - c.x) - decomposed.skewX;
+
         let rx = Math.abs(shape.rx);
         let ry = Math.abs(shape.ry);
 
