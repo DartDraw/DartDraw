@@ -14,16 +14,6 @@ class ContextualMenu extends Component {
         canvasWidthInUnits: PropTypes.number,
         canvasHeightInUnits: PropTypes.number,
         editShape: PropTypes.func,
-        onAllignmentClick: PropTypes.func,
-        onGroupClick: PropTypes.func,
-        onUngroupClick: PropTypes.func,
-        onMoveBackward: PropTypes.func,
-        onMoveForward: PropTypes.func,
-        onSendToBack: PropTypes.func,
-        onBringToFront: PropTypes.func,
-        onFlipHorizontal: PropTypes.func,
-        onFlipVertical: PropTypes.func,
-        onToggleGridSnapping: PropTypes.func,
         fillColor: PropTypes.object,
         onSetCustomZoom: PropTypes.func,
         onShowGrid: PropTypes.func,
@@ -40,16 +30,7 @@ class ContextualMenu extends Component {
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
-        this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
-        this.handleGroupClick = this.handleGroupClick.bind(this);
-        this.handleUngroupClick = this.handleUngroupClick.bind(this);
-        this.handleMoveBackward = this.handleMoveBackward.bind(this);
-        this.handleMoveForward = this.handleMoveForward.bind(this);
-        this.handleSendToBack = this.handleSendToBack.bind(this);
-        this.handleBringToFront = this.handleBringToFront.bind(this);
-        this.handleFlipHorizontal = this.handleFlipHorizontal.bind(this);
-        this.handleFlipVertical = this.handleFlipVertical.bind(this);
-        this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
+
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleShowGrid = this.handleShowGrid.bind(this);
@@ -69,50 +50,6 @@ class ContextualMenu extends Component {
     handleEdit(shape) {
         const { editShape } = this.props;
         editShape && editShape(shape);
-    }
-
-    handleToggleGridSnapping(event) {
-        this.props.onToggleGridSnapping();
-    }
-
-    handleAlignmentClick(event) {
-        let id = event.target.id;
-        if (!id) {
-            id = event.target.firstChild.id;
-        }
-        this.props.onAllignmentClick(id);
-    }
-
-    handleGroupClick() {
-        this.props.onGroupClick();
-    }
-
-    handleUngroupClick() {
-        this.props.onUngroupClick();
-    }
-
-    handleMoveForward() {
-        this.props.onMoveForward();
-    }
-
-    handleMoveBackward() {
-        this.props.onMoveBackward();
-    }
-
-    handleBringToFront() {
-        this.props.onBringToFront();
-    }
-
-    handleSendToBack() {
-        this.props.onSendToBack();
-    }
-
-    handleFlipHorizontal() {
-        this.props.onFlipHorizontal();
-    }
-
-    handleFlipVertical() {
-        this.props.onFlipVertical();
     }
 
     handleZoomIn() {
@@ -173,56 +110,6 @@ class ContextualMenu extends Component {
                     <div className="hide-button" onClick={this.toggleMenu} />
                 </div>
                 <div className="menu-column">
-                    <h2>Object Manipulation</h2>
-
-                    <div className="static-menu">
-                        <button onClick={this.handleGroupClick}>
-                            <img src="./assets/group.svg" alt="group" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleUngroupClick}>
-                            <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleMoveForward}>
-                            <img src="./assets/upone.svg" alt="upone" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleMoveBackward}>
-                            <img src="./assets/backone.svg" alt="downone" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleSendToBack}>
-                            <img src="./assets/SendToBack.svg" alt="backall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleBringToFront}>
-                            <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleFlipHorizontal}>
-                            <img src="./assets/flip-horz.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleFlipVertical}>
-                            <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
-                    </div>
-                    <h2>Alignment</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="alignment-horizontal" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/right-alignment.svg" alt="right-alignment" id="alignment-right" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="alignment-bottom" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
-                        </button>
-                    </div>
                     <ColorMenuContainer />
                     <PaletteEditorContainer />
                     <div className="dynamic-menu">

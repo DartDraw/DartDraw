@@ -2,20 +2,11 @@ import { connect } from 'react-redux';
 import {
     editShape,
     alignmentClick,
-    groupButtonClick,
-    ungroupButtonClick,
-    moveBackward,
-    moveForward,
-    sendToBack,
-    flipHorizontal,
-    flipVertical,
-    bringToFront,
-    setCustomZoom,
-    toggleGridSnapping,
     toggleShowGrid,
     toggleShowRulers,
     toggleShowSubDivisions,
-    setRulerGrid
+    setRulerGrid,
+    setCustomZoom
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
@@ -40,33 +31,7 @@ const mapDispatchToProps = (dispatch) => {
         onAllignmentClick: (id) => {
             dispatch(alignmentClick(id));
         },
-        onGroupClick: () => {
-            dispatch(groupButtonClick());
-        },
-        onUngroupClick: () => {
-            dispatch(ungroupButtonClick());
-        },
-        onMoveBackward: () => {
-            dispatch(moveBackward());
-        },
-        onMoveForward: () => {
-            dispatch(moveForward());
-        },
-        onSendToBack: () => {
-            dispatch(sendToBack());
-        },
-        onBringToFront: () => {
-            dispatch(bringToFront());
-        },
-        onFlipHorizontal: () => {
-            dispatch(flipHorizontal());
-        },
-        onFlipVertical: () => {
-            dispatch(flipVertical());
-        },
-        onToggleGridSnapping: () => {
-            dispatch(toggleGridSnapping());
-        },
+
         onSetCustomZoom: (customScale) => {
             dispatch(setCustomZoom(customScale));
         },

@@ -5,11 +5,16 @@ import {
     redoClick,
     selectColor,
     selectButton,
-    selectPalette,
-    addColor,
-    removeColor,
-    addPalette,
-    removePalette
+    alignmentClick,
+    groupButtonClick,
+    ungroupButtonClick,
+    moveBackward,
+    moveForward,
+    sendToBack,
+    flipHorizontal,
+    flipVertical,
+    bringToFront,
+    toggleGridSnapping
 } from './../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
@@ -31,24 +36,38 @@ const mapDispatchToProps = (dispatch) => {
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
         },
-
         onButtonSelect: (buttonInfo) => {
             dispatch(selectButton(buttonInfo));
         },
-        onPaletteSelect: (paletteName) => {
-            dispatch(selectPalette(paletteName));
+        onAllignmentClick: (id) => {
+            dispatch(alignmentClick(id));
         },
-        onAddColor: (color) => {
-            dispatch(addColor(color));
+        onGroupClick: () => {
+            dispatch(groupButtonClick());
         },
-        onRemoveColor: (color) => {
-            dispatch(removeColor(color));
+        onUngroupClick: () => {
+            dispatch(ungroupButtonClick());
         },
-        onAddPalette: (paletteName, paletteColors) => {
-            dispatch(addPalette(paletteName, paletteColors));
+        onMoveBackward: () => {
+            dispatch(moveBackward());
         },
-        onRemovePalette: (paletteName) => {
-            dispatch(removePalette(paletteName));
+        onMoveForward: () => {
+            dispatch(moveForward());
+        },
+        onSendToBack: () => {
+            dispatch(sendToBack());
+        },
+        onBringToFront: () => {
+            dispatch(bringToFront());
+        },
+        onFlipHorizontal: () => {
+            dispatch(flipHorizontal());
+        },
+        onFlipVertical: () => {
+            dispatch(flipVertical());
+        },
+        onToggleGridSnapping: () => {
+            dispatch(toggleGridSnapping());
         }
     };
 };

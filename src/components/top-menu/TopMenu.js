@@ -7,14 +7,19 @@ class TopMenu extends Component {
     static propTypes = {
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
-        onColorSelect: PropTypes.func,
         fillColor: PropTypes.object,
         strokeColor: PropTypes.object,
         onButtonSelect: PropTypes.func,
-        onAddColor: PropTypes.func,
-        onRemoveColor: PropTypes.func,
-        onAddPalette: PropTypes.func,
-        onRemovePalette: PropTypes.func
+        onAllignmentClick: PropTypes.func,
+        onGroupClick: PropTypes.func,
+        onUngroupClick: PropTypes.func,
+        onMoveBackward: PropTypes.func,
+        onMoveForward: PropTypes.func,
+        onSendToBack: PropTypes.func,
+        onBringToFront: PropTypes.func,
+        onFlipHorizontal: PropTypes.func,
+        onFlipVertical: PropTypes.func,
+        onToggleGridSnapping: PropTypes.func
     };
 
     constructor(props) {
@@ -23,17 +28,19 @@ class TopMenu extends Component {
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
 
-        this.handleColorSelect = this.handleColorSelect.bind(this);
-        this.handlePaletteSelect = this.handlePaletteSelect.bind(this);
-        this.handleAddColor = this.handleAddColor.bind(this);
-        this.handleRemoveColor = this.handleRemoveColor.bind(this);
-        this.handleAddPalette = this.handleAddPalette.bind(this);
-        this.handleRemovePalette = this.handleRemovePalette.bind(this);
-        this.handleZoomIn = this.handleZoomIn.bind(this);
-        this.handleZoomOut = this.handleZoomOut.bind(this);
-
         this.handleChange = this.handleChange.bind(this);
         this.handleButtonSelect = this.handleButtonSelect.bind(this);
+        this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
+
+        this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.handleUngroupClick = this.handleUngroupClick.bind(this);
+        this.handleMoveBackward = this.handleMoveBackward.bind(this);
+        this.handleMoveForward = this.handleMoveForward.bind(this);
+        this.handleSendToBack = this.handleSendToBack.bind(this);
+        this.handleBringToFront = this.handleBringToFront.bind(this);
+        this.handleFlipHorizontal = this.handleFlipHorizontal.bind(this);
+        this.handleFlipVertical = this.handleFlipVertical.bind(this);
+        this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
     }
 
     handleUndoClick() {
@@ -42,6 +49,42 @@ class TopMenu extends Component {
 
     handleRedoClick() {
         this.props.onRedoClick();
+    }
+
+    handleToggleGridSnapping(event) {
+        this.props.onToggleGridSnapping();
+    }
+
+    handleGroupClick() {
+        this.props.onGroupClick();
+    }
+
+    handleUngroupClick() {
+        this.props.onUngroupClick();
+    }
+
+    handleMoveForward() {
+        this.props.onMoveForward();
+    }
+
+    handleMoveBackward() {
+        this.props.onMoveBackward();
+    }
+
+    handleBringToFront() {
+        this.props.onBringToFront();
+    }
+
+    handleSendToBack() {
+        this.props.onSendToBack();
+    }
+
+    handleFlipHorizontal() {
+        this.props.onFlipHorizontal();
+    }
+
+    handleFlipVertical() {
+        this.props.onFlipVertical();
     }
 
     handleColorSelect(color, event) {
@@ -61,27 +104,6 @@ class TopMenu extends Component {
         this.props.onRemoveColor(color.rgb); // removed from current palette
     }
 
-    handleAddPalette(event) {
-        // this.props.onAddPalette(paletteName, paletteColors);
-        // where paletteName is a string and paletteColors is an array
-        // of rgba objects...
-        // ex. paletteColors = [{ r: 33, g: 150, b: 243, a: 1 }, { r: 42, g: 250, b: 243, a: 0.5 }]
-        // The paletteType is always 'HEX' - we can change that.
-
-        // alternatively you could just create a new empty palette and then
-        // add colors to it one by one - up to you! Just let me know if you need
-        // me to change the backend (or you can just do it yourself!)
-    }
-
-    handleRemovePalette(event) {
-        // this.props.onRemovePalette(paletteName);
-        // where paletteName is a string
-
-        // I wrote the backend so you can't delete "Default"
-        // and if you delete the currentPalette, then
-        // currentPalette = "Default"
-    }
-
     handleZoomIn() {
         this.props.onZoomIn();
     }
@@ -91,6 +113,14 @@ class TopMenu extends Component {
     }
     handleChange(event) {
         this.tempScale = event.target.value / 100.0;
+    }
+
+    handleAlignmentClick(event) {
+        let id = event.target.id;
+        if (!id) {
+            id = event.target.firstChild.id;
+        }
+        this.props.onAllignmentClick(id);
     }
 
     handleButtonSelect(color, button) {
@@ -125,10 +155,49 @@ class TopMenu extends Component {
                     <label htmlFor="stroke" style={strokeStyle} onClick={() => { this.handleButtonSelect(strokeColor, "stroke"); }} />
                     <p>Stroke</p>
                 </form>
-                <div id="color-palette">
-                    <CirclePicker onChangeComplete={this.handleColorSelect} colors={currentPalette} circleSize={20} circleSpacing={5} width='450px' />
-                </div>
-
+                <button onClick={this.handleGroupClick}>
+                    <img src="./assets/group.svg" alt="group" id="button-icon" />
+                </button>
+                <button onClick={this.handleUngroupClick}>
+                    <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
+                </button>
+                <button onClick={this.handleMoveForward}>
+                    <img src="./assets/upone.svg" alt="upone" id="button-icon" />
+                </button>
+                <button onClick={this.handleMoveBackward}>
+                    <img src="./assets/backone.svg" alt="downone" id="button-icon" />
+                </button>
+                <button onClick={this.handleSendToBack}>
+                    <img src="./assets/SendToBack.svg" alt="backall" id="button-icon" />
+                </button>
+                <button onClick={this.handleBringToFront}>
+                    <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
+                </button>
+                <button onClick={this.handleFlipHorizontal}>
+                    <img src="./assets/flip-horz.svg" alt="frontall" id="button-icon" />
+                </button>
+                <button onClick={this.handleFlipVertical}>
+                    <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
+                </button>
+                <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
+                <button onClick={this.handleAlignmentClick}>
+                    <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
+                </button>
+                <button onClick={this.handleAlignmentClick}>
+                    <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="alignment-horizontal" />
+                </button>
+                <button onClick={this.handleAlignmentClick}>
+                    <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />
+                </button>
+                <button onClick={this.handleAlignmentClick}>
+                    <img src="./assets/right-alignment.svg" alt="right-alignment" id="alignment-right" />
+                </button>
+                <button onClick={this.handleAlignmentClick}>
+                    <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="alignment-bottom" />
+                </button>
+                <button onClick={this.handleAlignmentClick}>
+                    <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
+                </button>
             </div>
         );
     }
