@@ -26,7 +26,8 @@ class ContextualMenu extends Component {
         onShowGrid: PropTypes.func,
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
-        onSetRulerGrid: PropTypes.func
+        onSetRulerGrid: PropTypes.func,
+        onResizeShapeTo: PropTypes.func
     };
 
     constructor(props) {
@@ -54,6 +55,7 @@ class ContextualMenu extends Component {
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
+        this.handleResizeShapeTo = this.handleResizeShapeTo.bind(this);
     }
 
     toggleMenu() {
@@ -147,6 +149,10 @@ class ContextualMenu extends Component {
         event.preventDefault();
     }
 
+    handleResizeShapeTo(width, height) {
+        this.props.onResizeShapeTo(width, height);
+    }
+
     render() {
         const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
         const { hidden } = this.state;
@@ -155,7 +161,7 @@ class ContextualMenu extends Component {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'rectangle') {
-                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'ellipse') {

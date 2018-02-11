@@ -5,7 +5,8 @@ import './menu-layouts.css';
 class RectangleMenu extends Component {
     static propTypes = {
         rectangle: PropTypes.object,
-        onEdit: PropTypes.func
+        onEdit: PropTypes.func,
+        onResizeShapeTo: PropTypes.func
     };
 
     constructor(props) {
@@ -14,6 +15,8 @@ class RectangleMenu extends Component {
         this.handleXChange = this.handleXChange.bind(this);
         this.handleYChange = this.handleYChange.bind(this);
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
+        this.handleWidthChange = this.handleWidthChange.bind(this);
+        this.handleHeightChange = this.handleHeightChange.bind(this);
     }
 
     handleXChange(event) {
@@ -30,11 +33,22 @@ class RectangleMenu extends Component {
 
     handleStrokeWidth(event) {
         const { rectangle, onEdit } = this.props;
-        if (event.target.value > 0){
+        if (event.target.value > 0) {
             const newRectangle = Object.assign({}, rectangle, { strokeWidth: event.target.value });
             onEdit && onEdit(newRectangle);
         }
-        
+    }
+
+    handleWidthChange(event) {
+        const {onResizeShapeTo} = this.props;
+        const width = event.target.value;
+        onResizeShapeTo && onResizeShapeTo(width);
+    }
+
+    handleHeightChange(event) {
+        const {rectangle, onResizeShapeTo} = this.props;
+        const height = event.target.value;
+        onResizeShapeTo && onResizeShapeTo(rectangle.info.width, height);
     }
 
     render() {
@@ -47,9 +61,10 @@ class RectangleMenu extends Component {
                     <option value="15">15</option>
                     <option value="20">20</option>
                 </select>
-    
-                <input value={this.props.rectangle.x} />
-                <input value={this.props.rectangle.y} />
+                <input value={this.props.rectangle.info.x} />
+                <input value={this.props.rectangle.info.y} />
+                <input default={this.props.rectangle.info.width} onChange={this.handleWidthChange} />
+                <input default={this.props.rectangle.info.height} onChange={this.handleHeightChange} />
             </div>
         );
     }

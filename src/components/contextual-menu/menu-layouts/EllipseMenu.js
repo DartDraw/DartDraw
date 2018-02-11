@@ -30,8 +30,8 @@ class EllipseMenu extends Component {
                     <option value="15">15</option>
                     <option value="20">20</option>
                 </select>
-                <input value={this.props.ellipse.rx} />
-                <input value={this.props.ellipse.ry} />
+                <input value={this.props.ellipse.info.cx} />
+                <input value={this.props.ellipse.info.cy} />
             </div>
         );
     }

@@ -15,7 +15,8 @@ import {
     toggleShowGrid,
     toggleShowRulers,
     toggleShowSubDivisions,
-    setRulerGrid
+    setRulerGrid,
+    resizeShapeTo
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
@@ -80,6 +81,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: (canvasSpecs) => {
             dispatch(setRulerGrid(canvasSpecs));
+        },
+        onResizeShapeTo: (width, height) => {
+            dispatch(resizeShapeTo(width, height));
         }
     };
 };

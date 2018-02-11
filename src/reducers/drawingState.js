@@ -162,6 +162,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
             break;
+        case menuActions.RESIZE_SHAPE_TO:
+            updatedState = shape.resizeShapes(stateCopy, action, root);
+            break;
         default: break;
     }
 
