@@ -983,6 +983,34 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
     return shapes;
 }
 
+export function removePoint(shapes, selected, handleIndex) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'polygon':
+                shape.points.splice(handleIndex * 2, 2);
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = shape.points[0];
+                    shape.points[shape.points.length - 1] = shape.points[1];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.points[0] = shape.points[shape.points.length - 2];
+                    shape.points[1] = shape.points[shape.points.length - 1];
+                }
+
+                shape.refreshSelection = true;
+                break;
+            case 'bezier':
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
 export function moveControl(shapes, selected, draggableData, handleIndex, panX, panY, scale) {
     const { x, y, node } = draggableData;
 

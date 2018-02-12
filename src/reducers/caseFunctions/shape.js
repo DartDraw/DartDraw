@@ -1,6 +1,7 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
+    moveControl, removePoint } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -120,6 +121,12 @@ export function handleDragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
+
+    const { handleIndex } = action.payload;
+    if (stateCopy.mode === 'reshape') {
+        stateCopy.selectedHandle = handleIndex;
+        return stateCopy;
+    }
     return stateCopy;
 }
 
@@ -141,6 +148,7 @@ export function handleDrag(stateCopy, action, root) {
         if (stateCopy.mode === 'reshape') {
             stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
                 stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
+            stateCopy.selectedHandle = handleIndex;
             return stateCopy;
         }
 
@@ -290,8 +298,12 @@ export function keyDown(stateCopy, action, root) {
     switch (keyCode) {
         case 8:
             stateCopy.lastSavedShapes = root.drawingState.shapes;
-            stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
-            stateCopy.selected = [];
+            if (stateCopy.mode === 'reshape') {
+                stateCopy.shape = removePoint(stateCopy.shapes, stateCopy.selected, stateCopy.selectedHandle);
+            } else {
+                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.selected = [];
+            }
             break;
         case 13: // finish reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
