@@ -19,6 +19,7 @@
     "jsondiffpatch": "0.2.4",
     "react": "15.6.1",
     "react-color": "2.13.8",
+    "react-color-picker": "^4.0.2",
     "react-contextmenu": "^2.9.2",
     "react-dom": "15.6.1",
     "react-draggable": "3.0.3",

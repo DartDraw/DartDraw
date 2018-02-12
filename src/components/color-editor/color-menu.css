@@ -23,6 +23,16 @@ label {
 .Select-control {
   height: 10px;
 }
+
+#color-picker {
+    width: 100px;
+    height: 100px;
+    z-index: 2;
+    background-color: white;
+    position: absolute;
+    top: 80px;
+}
+
 #palette {
   display: flex;
   flex-flow: row wrap;

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './color-menu.css';
 import Dropdown from 'react-dropdown';
+import ColorPicker from 'react-color-picker';
 
 class ColorMenu extends Component {
     static propTypes = {
@@ -19,6 +20,10 @@ class ColorMenu extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            showColorPicker: false
+        };
 
         this.tempOpacityValue = this.props.currentColor.a;
 
@@ -38,7 +43,8 @@ class ColorMenu extends Component {
 
     showColorInfo(event) {
         console.log(this.props.currentColor);
-        this.props.onAddColor(this.props.currentColor);
+        this.setState({showColorPicker: !this.state.showColorPicker});
+        // this.props.onAddColor(this.props.currentColor);
     }
 
     handleChange(event) {
@@ -101,6 +107,12 @@ class ColorMenu extends Component {
                 <p>B: <input type="text" defaultValue={fillColor.b} onChange={(e) => { this.handleColorUpdate("B", e); }} /> </p>
             </div>;
 
+        let colorPicker = null;
+        if (this.state.showColorPicker) {
+            colorPicker = <div />;
+        } else {
+            colorPicker = <div id="color-picker" />;
+        }
         let colorInput = null;
         if (this.props.colorType === "CMYK") {
             colorInput = CMYKEditor;
@@ -118,6 +130,7 @@ class ColorMenu extends Component {
                 </div>
                 <div id="inline-close">
                     <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
+                    {colorPicker}
                     <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>
