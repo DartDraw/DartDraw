@@ -1003,6 +1003,20 @@ export function removePoint(shapes, selected, handleIndex) {
                 shape.refreshSelection = true;
                 break;
             case 'bezier':
+                shape.points.splice(handleIndex * 2, 2);
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = shape.points[0];
+                    shape.points[shape.points.length - 1] = shape.points[1];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.points[0] = shape.points[shape.points.length - 2];
+                    shape.points[1] = shape.points[shape.points.length - 1];
+                }
+
+                shape.controlPoints = smoothPath(shape);
+                shape.refreshSelection = true;
                 break;
             default:
                 break;
