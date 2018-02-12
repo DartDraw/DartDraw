@@ -381,6 +381,13 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.pasteOffset.y += stateCopy.gridSnapInterval;
             }
             break;
+        case 88: // copy
+            if (commandSelected && !root.menuState.copied) {
+                stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.selected = [];
+            }
+            break;
         case 50: // TEMP RESIZE X
             action.payload.x = 50;
             //  action.payload.y = 50;
