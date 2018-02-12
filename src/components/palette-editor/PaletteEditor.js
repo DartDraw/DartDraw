@@ -36,7 +36,8 @@ class PaletteEditor extends Component {
     }
 
     keydownHandler(e) {
-        if (e.ctrlKey) { // && e.repeat
+        if (e.ctrlKey && !this.state.deleteMode) { // && e.repeat
+            console.log('delete mode on');
             this.setState({deleteMode: true});
         } else {
             this.setState({deleteMode: false});
@@ -82,9 +83,15 @@ class PaletteEditor extends Component {
             <ColorSquare color={color} colorClick={this.handleColorClick} />
         );
         let newPalette = null;
+        let paletteStyle = null;
+        if (this.state.colorMode) {
+            paletteStyle = {backgroundColor: 'transparent'};
+        } else {
+            paletteStyle = {backgroundColor: 'white'};
+        }
         if (this.state.showNewPaletteCreate) {
             newPalette = <div>
-                <form onSubmit={this.handleAddPalette}>
+                <form onSubmit={this.handleAddPalette} >
                     <input type="text" onChange={this.handleNameChange} style={{width: '200px', backgroundColor: '#5C7080', textAlign: 'left'}} />
                     <button id="basic-button">Create</button>
                 </form>
