@@ -140,7 +140,7 @@ export function handleDrag(stateCopy, action, root) {
         stateCopy.shiftDirection = determineShiftDirection(action, stateCopy.scale, shiftSelected);
     }
 
-    if (!stateCopy.editInProgress) {
+    if (!stateCopy.editInProgress && !stateCopy.mode === 'reshape') {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
