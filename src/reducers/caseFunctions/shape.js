@@ -308,6 +308,7 @@ export function keyDown(stateCopy, action, root) {
         case 13: // finish reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
                 stateCopy.mode = "";
+                stateCopy.shapes.byId[stateCopy.selected[0]].reshapeInProgress = false;
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
             }
             break;
@@ -360,6 +361,7 @@ export function keyDown(stateCopy, action, root) {
                     stateCopy.mode = "reshape";
                     stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
                     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+                    stateCopy.shapes.byId[stateCopy.selected[0]].reshapeInProgress = true;
                 }
             }
             break;

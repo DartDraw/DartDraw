@@ -20,7 +20,8 @@ class Polygon extends Component {
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
         })),
-        propagateEvents: PropTypes.bool
+        propagateEvents: PropTypes.bool,
+        reshapeInProgress: PropTypes.bool
     }
 
     defaultProps = {
@@ -64,7 +65,8 @@ class Polygon extends Component {
             strokeWidth,
             fill,
             transform,
-            propagateEvents
+            propagateEvents,
+            reshapeInProgress
         } = this.props;
 
         const svgProps = {
@@ -76,6 +78,10 @@ class Polygon extends Component {
             points: formatPoints(points),
             vectorEffect: "non-scaling-stroke"
         };
+
+        if (reshapeInProgress) {
+            svgProps.pointerEvents = "visibleStroke";
+        }
 
         return (
             <Shape
