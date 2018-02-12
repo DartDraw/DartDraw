@@ -86,7 +86,7 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
             return;
         }
 
-        if (selectionBox && selectionBox.mode === mode) {
+        if (selectionBox && selectionBox.mode === mode && !shape.refreshSelection) {
             if (shape.type !== 'text') {
                 updatedSelectionBoxes[id] = updateSelectionBox(shape, selectionBox, boundingBox, mode);
             } else {
@@ -105,6 +105,7 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
                     {x: shape.x, y: shape.y, width: shape.width, height: shape.height}
                 );
             }
+            shape.refreshSelection = false;
         }
 
         if (shape.type === 'line' && mode !== 'reshape') {
