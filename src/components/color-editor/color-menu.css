@@ -24,14 +24,27 @@ label {
   height: 10px;
 }
 
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #EBF1F5;
+  position: absolute;
+  z-index: 5;
+  left: 5px;
+  top: -9px;
+}
+
 #color-picker {
+  padding-top: 5px;
     width: 200px;
     height: 200px;
     z-index: 2;
-    background-color: black;
+    background-color: #EBF1F5;
     position: absolute;
-    top: 69px;
-    border-radius: 10px;
+    top: 79px;
+    border-radius: 5px;
 }
 
 #palette {

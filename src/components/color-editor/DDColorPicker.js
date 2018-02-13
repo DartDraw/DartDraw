@@ -24,7 +24,6 @@ class DDColorPicker extends Component {
             },
             input: {
                 height: 34,
-                border: `1px solid ${this.props.hex}`,
                 paddingLeft: 10
             },
             saturation: {

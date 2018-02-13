@@ -90,12 +90,6 @@ class ColorMenu extends Component {
         this.props.onChangeColorType(String(event.value));
     }
 
-    onDrag(color, c) {
-        this.setState({
-            color
-        });
-    }
-
     handleColorChange(colorInfo) {
         console.log(colorInfo.rgb);
         this.props.onSelectColor(colorInfo.rgb);
@@ -127,7 +121,7 @@ class ColorMenu extends Component {
         if (this.state.showColorPicker) {
             colorPicker = <div />;
         } else {
-            colorPicker = <div id="color-picker"><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
+            colorPicker = <div id="color-picker"><div className="arrow-up" /><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
         }
         let colorInput = null;
         if (this.props.colorType === "CMYK") {
