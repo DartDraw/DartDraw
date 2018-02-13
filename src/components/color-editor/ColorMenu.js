@@ -122,6 +122,10 @@ class ColorMenu extends Component {
             padding: 0
         };
 
+        const hexStyle = {
+            width: '100px'
+        };
+
         const CMYKEditor =
             <div id="color-input">
                 <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
@@ -150,6 +154,13 @@ class ColorMenu extends Component {
                 </ColorPicker>
             </div>;
 
+        const HEXEditor =
+            <div id="color-input">
+                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
+                    <ColorInput model='hex' style={hexStyle} />
+                </ColorPicker>
+            </div>;
+
         let colorPicker = null;
         if (!this.state.showColorPicker) {
             colorPicker = <div />;
@@ -161,11 +172,13 @@ class ColorMenu extends Component {
             colorInput = CMYKEditor;
         } else if (this.props.colorType === "RGB") {
             colorInput = RGBEditor;
-        } else {
+        } else if (this.props.colorType === "HSV") {
             colorInput = HSVEditor;
+        } else {
+            colorInput = HEXEditor;
         }
 
-        let colorOptions = [{value: 'RGB', label: 'RGB'}, {value: 'CMYK', label: 'CMYK'}, {value: 'HSV', label: 'HSV'}];
+        let colorOptions = [{value: 'RGB', label: 'RGB'}, {value: 'CMYK', label: 'CMYK'}, {value: 'HSV', label: 'HSV'}, {value: 'HEX', label: 'HEX'}];
 
         return (
             <div className="color-editor">
