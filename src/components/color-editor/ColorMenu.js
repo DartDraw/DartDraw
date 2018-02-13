@@ -118,7 +118,7 @@ class ColorMenu extends Component {
             </div>;
 
         let colorPicker = null;
-        if (this.state.showColorPicker) {
+        if (!this.state.showColorPicker) {
             colorPicker = <div />;
         } else {
             colorPicker = <div id="color-picker"><div className="arrow-up" /><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
