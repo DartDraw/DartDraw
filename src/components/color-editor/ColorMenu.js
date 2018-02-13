@@ -134,9 +134,20 @@ class ColorMenu extends Component {
 
         const RGBEditor =
             <div id="color-input">
-                <p>R: <input type="text" defaultValue={fillColor.r} onChange={(e) => { this.handleColorUpdate("R", e); }} /> </p>
-                <p>G: <input type="text" defaultValue={fillColor.g} onChange={(e) => { this.handleColorUpdate("G", e); }} /> </p>
-                <p>B: <input type="text" defaultValue={fillColor.b} onChange={(e) => { this.handleColorUpdate("B", e); }} /> </p>
+                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
+                    <ColorInput model='rgb.r' style={inputStyles} />
+                    <ColorInput model='rgb.g' style={inputStyles} />
+                    <ColorInput model='rgb.b' style={inputStyles} />
+                </ColorPicker>
+            </div>;
+
+        const HSVEditor =
+            <div id="color-input">
+                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
+                    <ColorInput model='hsv.h' style={inputStyles} />
+                    <ColorInput model='hsv.s' style={inputStyles} />
+                    <ColorInput model='hsv.v' style={inputStyles} />
+                </ColorPicker>
             </div>;
 
         let colorPicker = null;
@@ -148,11 +159,13 @@ class ColorMenu extends Component {
         let colorInput = null;
         if (this.props.colorType === "CMYK") {
             colorInput = CMYKEditor;
-        } else {
+        } else if (this.props.colorType === "RGB") {
             colorInput = RGBEditor;
+        } else {
+            colorInput = HSVEditor;
         }
 
-        let colorOptions = [{value: 'RGB', label: 'RGB'}, {value: 'CMYK', label: 'CMYK'}];
+        let colorOptions = [{value: 'RGB', label: 'RGB'}, {value: 'CMYK', label: 'CMYK'}, {value: 'HSV', label: 'HSV'}];
 
         return (
             <div className="color-editor">
