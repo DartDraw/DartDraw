@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './color-menu.css';
 import Dropdown from 'react-dropdown';
-import ColorPicker from 'react-color-picker';
 import DDColorPicker from './DDColorPicker';
+import {ColorInput, ColorPicker} from 'react-colors';
 
 class ColorMenu extends Component {
     static propTypes = {
@@ -38,6 +38,8 @@ class ColorMenu extends Component {
         this.handleAddColor = this.handleAddColor.bind(this);
         this.handleChangeColorType = this.handleChangeColorType.bind(this);
         this.handleColorChange = this.handleColorChange.bind(this);
+        this.handleColorInputChange = this.handleColorInputChange.bind(this);
+        this.convertRGBArrayToObj = this.convertRGBArrayToObj.bind(this);
     }
 
     handleUpdate(event) {
@@ -96,18 +98,38 @@ class ColorMenu extends Component {
         // pick color
     }
 
+    handleColorInputChange(stuff) {
+        console.log("changed input from api");
+        console.log(stuff);
+        this.props.onSelectColor(this.convertRGBArrayToObj(stuff));
+    }
+
+    convertRGBArrayToObj(colorInfo) {
+        return {r: colorInfo.rgb[0], g: colorInfo.rgb[1], b: colorInfo.rgb[2], a: colorInfo.alpha};
+    }
+
     render() {
         const { fillColor, currentColor, colorType } = this.props;
         const currentColorStyle = {
             backgroundColor: `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         };
+        const inputStyles =
+        {
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            fontFamily: 'Catamaran',
+            margin: 0,
+            padding: 0
+        };
 
         const CMYKEditor =
             <div id="color-input">
-                <p>C: <input type="text" defaultValue={fillColor.r} onChange={(e) => { this.handleColorUpdate("R", e); }} /> </p>
-                <p>M: <input type="text" defaultValue={fillColor.g} onChange={(e) => { this.handleColorUpdate("G", e); }} /> </p>
-                <p>Y: <input type="text" defaultValue={fillColor.b} onChange={(e) => { this.handleColorUpdate("B", e); }} /> </p>
-                <p>K: <input type="text" defaultValue={fillColor.b} onChange={(e) => { this.handleColorUpdate("B", e); }} /> </p>
+                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
+                    <ColorInput model='cmyk.c' style={inputStyles} />
+                    <ColorInput model='cmyk.m' style={inputStyles} />
+                    <ColorInput model='cmyk.y' style={inputStyles} />
+                    <ColorInput model='cmyk.k' style={inputStyles} />
+                </ColorPicker>
             </div>;
 
         const RGBEditor =
@@ -136,7 +158,6 @@ class ColorMenu extends Component {
             <div className="color-editor">
                 <div id="inline-apart">
                     <h1>Color Editor</h1>
-
                 </div>
                 <div id="inline-close">
                     <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />

@@ -77,13 +77,38 @@ label {
 #color-input {
   display: flex;
   flex-flow: row nowrap;
-
 }
 
 #color-input input {
   width: 30px;
-  margin: 5px;
+  /* margin: 5px; */
+  margin: 0;
 }
+
+#color-input div {
+  font-family: Catamaran sans-serif;
+  /* text-align: center;
+  vertical-align: baseline; */
+  display: hidden;
+}
+
+#api-color-input{
+  background-color: red;
+}
+
+#color-input div {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content:  flex-start;
+  align-items: baseline;
+}
+
+/* #color-input div div {
+  height: 30px;
+} */
+
+
+
 
 input[type=text] {
   background-color: #182026;
