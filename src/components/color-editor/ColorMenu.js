@@ -80,10 +80,7 @@ class ColorMenu extends Component {
     }
 
     handleAddColor() {
-        console.log("this is supposed to add a color");
-        console.log(this.props.currentColor);
-        console.log(this.props.palettes);
-
+        this.setState({showColorPicker: false});
         this.props.onAddColor(this.props.currentColor);
     }
 
@@ -188,6 +185,7 @@ class ColorMenu extends Component {
                 <div id="inline-close">
                     <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
                     {colorPicker}
+                    <button id="basic-button" onClick={this.handleAddColor}>+</button>
                     <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>
@@ -197,7 +195,7 @@ class ColorMenu extends Component {
                 </div>
                 <div id="inline-close">
                     { colorInput }
-                    <button id="basic-button" onClick={this.handleAddColor}>Add To Palette</button>
+
                 </div>
                 <div className="horz-div" />
             </div>
