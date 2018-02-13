@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import './color-menu.css';
 import Dropdown from 'react-dropdown';
 import ColorPicker from 'react-color-picker';
+import DDColorPicker from './DDColorPicker';
 
 class ColorMenu extends Component {
     static propTypes = {
@@ -22,7 +23,8 @@ class ColorMenu extends Component {
         super(props);
 
         this.state = {
-            showColorPicker: false
+            showColorPicker: false,
+            color: this.props.currentColor
         };
 
         this.tempOpacityValue = this.props.currentColor.a;
@@ -34,6 +36,7 @@ class ColorMenu extends Component {
         this.handleColorUpdate = this.handleColorUpdate.bind(this);
         this.handleAddColor = this.handleAddColor.bind(this);
         this.handleChangeColorType = this.handleChangeColorType.bind(this);
+        this.handleColorChange = this.handleColorChange.bind(this);
     }
 
     handleUpdate(event) {
@@ -86,6 +89,16 @@ class ColorMenu extends Component {
         this.props.onChangeColorType(String(event.value));
     }
 
+    onDrag(color, c) {
+        this.setState({
+            color
+        });
+    }
+
+    handleColorChange(hex) {
+        console.log(hex);
+    }
+
     render() {
         const { fillColor, currentColor, colorType } = this.props;
         const currentColorStyle = {
@@ -111,7 +124,7 @@ class ColorMenu extends Component {
         if (this.state.showColorPicker) {
             colorPicker = <div />;
         } else {
-            colorPicker = <div id="color-picker" />;
+            colorPicker = <div id="color-picker"><ColorPicker value={this.state.color} onDrag={this.onDrag.bind(this)} /></div>;
         }
         let colorInput = null;
         if (this.props.colorType === "CMYK") {
@@ -130,7 +143,8 @@ class ColorMenu extends Component {
                 </div>
                 <div id="inline-close">
                     <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
-                    {colorPicker}
+
+                    <DDColorPicker onChangeComplete={this.handleColorChange} color="orange" />
                     <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>
