@@ -25,10 +25,10 @@ label {
 }
 
 #color-picker {
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     z-index: 2;
-    background-color: white;
+    background-color: black;
     position: absolute;
     top: 69px;
 }

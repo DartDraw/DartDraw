@@ -3,7 +3,8 @@ import {
     updateOpacity,
     colorUpdate,
     addColor,
-    changeColorType
+    changeColorType,
+    selectColor
 } from '../../actions/menu';
 import ColorMenu from './ColorMenu';
 
@@ -33,6 +34,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onChangeColorType: (colorType) => {
             dispatch(changeColorType(colorType));
+        },
+        onSelectColor: (colorObj) => {
+            dispatch(selectColor(colorObj));
         }
     };
 };

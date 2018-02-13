@@ -16,7 +16,8 @@ class ColorMenu extends Component {
         currentPalette: PropTypes.string,
         onAddColor: PropTypes.func,
         colorType: PropTypes.string,
-        onChangeColorType: PropTypes.func
+        onChangeColorType: PropTypes.func,
+        onSelectColor: PropTypes.func
     };
 
     constructor(props) {
@@ -95,8 +96,10 @@ class ColorMenu extends Component {
         });
     }
 
-    handleColorChange(hex) {
-        console.log(hex);
+    handleColorChange(colorInfo) {
+        console.log(colorInfo.rgb);
+        this.props.onSelectColor(colorInfo.rgb);
+        // pick color
     }
 
     render() {
@@ -124,7 +127,7 @@ class ColorMenu extends Component {
         if (this.state.showColorPicker) {
             colorPicker = <div />;
         } else {
-            colorPicker = <div id="color-picker"><ColorPicker value={this.state.color} onDrag={this.onDrag.bind(this)} /></div>;
+            colorPicker = <div id="color-picker"><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
         }
         let colorInput = null;
         if (this.props.colorType === "CMYK") {
@@ -143,8 +146,7 @@ class ColorMenu extends Component {
                 </div>
                 <div id="inline-close">
                     <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
-
-                    <DDColorPicker onChangeComplete={this.handleColorChange} color="orange" />
+                    {colorPicker}
                     <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>
