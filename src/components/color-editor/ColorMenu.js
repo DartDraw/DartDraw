@@ -199,6 +199,7 @@ class ColorMenu extends Component {
                     { colorInput }
                     <button id="basic-button" onClick={this.handleAddColor}>Add To Palette</button>
                 </div>
+                <div className="horz-div" />
             </div>
         );
     }
