@@ -2,7 +2,7 @@ import 'react-select/dist/react-select.css';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { CustomPicker } from 'react-color';
-var { EditableInput, Alpha, Hue } = window.require('react-color/lib/components/common');
+var { EditableInput, Saturation, Hue } = window.require('react-color/lib/components/common');
 
 class DDColorPicker extends Component {
     static propTypes = {
@@ -27,15 +27,19 @@ class DDColorPicker extends Component {
                 border: `1px solid ${this.props.hex}`,
                 paddingLeft: 10
             },
-            swatch: {
-                width: 54,
-                height: 38,
-                background: this.props.hex
+            saturation: {
+                width: 200,
+                height: 150,
+                position: 'relative'
             }
         };
         return (
             <div className="color-editor">
-                <p>Custom Picker</p>
+                <div style={styles.saturation}>
+                    <Saturation
+                        {...this.props}
+                        onChange={this.props.onChange} />
+                </div>
                 <div style={styles.hue}>
                     <Hue hsl={this.props.hsl} onChange={this.props.onChange} />
                 </div>
@@ -45,7 +49,7 @@ class DDColorPicker extends Component {
                         onChange={this.props.onChange}
                     />
                 </div>
-                <div style={styles.swatch} />
+
             </div>
         );
     }

@@ -31,6 +31,7 @@ label {
     background-color: black;
     position: absolute;
     top: 69px;
+    border-radius: 10px;
 }
 
 #palette {
