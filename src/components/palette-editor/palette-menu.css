@@ -7,6 +7,12 @@
   transition: 0.1s ease-in;
 }
 
+#color-square {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
 .color-square:hover {
   transform: scale(1.2);
 }
@@ -17,7 +23,6 @@
   font-size: 0.8em;
   transition: 0.9s ease-in-out;
   margin-left: 10px;
-
 }
 
 .Dropdown-control {

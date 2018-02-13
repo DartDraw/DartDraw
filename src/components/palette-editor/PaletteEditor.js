@@ -12,7 +12,9 @@ class PaletteEditor extends Component {
         onSelectColor: PropTypes.func,
         onSelectPalette: PropTypes.func,
         onAddPalette: PropTypes.func,
-        onRemoveColor: PropTypes.func
+        onRemoveColor: PropTypes.func,
+        onAddColor: PropTypes.func,
+        onDeletePalette: PropTypes.func
     };
 
     constructor(props) {
@@ -29,6 +31,8 @@ class PaletteEditor extends Component {
         this.toggleCreatePalette = this.toggleCreatePalette.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.keydownHandler = this.keydownHandler.bind(this);
+        this.handleAddColor = this.handleAddColor.bind(this);
+        this.handleDeletePalette = this.handleDeletePalette.bind(this);
     }
 
     componentDidMount() {
@@ -45,12 +49,10 @@ class PaletteEditor extends Component {
     }
 
     handleColorClick(color) {
-        console.log(Object.keys(this.props.palettes));
         if (!this.state.deleteMode) {
             this.props.onSelectColor(color);
         } else {
             this.props.onRemoveColor(color);
-            console.log("delete color");
         }
     }
 
@@ -75,12 +77,41 @@ class PaletteEditor extends Component {
         this.setState({'paletteName': event.target.value});
     }
 
+    handleAddColor() {
+        this.props.onAddColor(this.props.currentColor);
+    }
+
+    handleDeletePalette() {
+        const { dialog } = window.require('electron').remote;
+        // console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}));
+        // cancel = 1, yes = 0
+        if (dialog.showMessageBox({options: ["warning"], message: 'Are you sure you want to delete the current palette?', buttons: ['Yes', 'Cancel']}) === 0) {
+            console.log("deleting palette");
+            this.props.onDeletePalette(this.props.currentPalette);
+        }
+        // console.log(dialog.showMessageBox({options: ["warning"], message: 'Are you sure you want to delete the current palette?', buttons: ['Yes', 'Cancel']}));
+        // this.props.onDeletePalette(this.props.currentPalette);
+    }
+
     render() {
         // const colorList = this.getCurrentColorList();
         const { palettes, currentPalette } = this.props;
         const colorList = palettes[currentPalette].colors;
+        let deleteColorStyle = {};
+        if (this.state.deleteMode) {
+            deleteColorStyle = {
+                marginLeft: '-17px'
+            };
+        } else {
+            deleteColorStyle = {
+                display: 'none'
+            };
+        }
         const palette = colorList.map((color) =>
-            <ColorSquare color={color} colorClick={this.handleColorClick} />
+            <div id="color-square">
+                <ColorSquare color={color} colorClick={this.handleColorClick} />
+                <p style={deleteColorStyle}>x</p>
+            </div>
         );
         let newPalette = null;
         let paletteStyle = null;
@@ -101,14 +132,18 @@ class PaletteEditor extends Component {
         }
         return (
             <div className="color-editor">
-                <div id="inline-close">
-                    <label>Palette:</label>
-                    <Dropdown id="dropwdown" options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
-                    <button id="basic-button" onClick={this.toggleCreatePalette}>Create new Palette</button>
+                <div id="inline-apart">
+                    <div id="inline-close">
+                        <label>Palette:</label>
+                        <Dropdown id="dropwdown" options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
+                        <button id="basic-button" onClick={this.toggleCreatePalette}>Create new Palette</button>
+                    </div>
+                    <button id="basic-button" onClick={this.handleDeletePalette}>Delete</button>
                 </div>
                 {newPalette}
                 <div id="palette">
                     { palette }
+                    <div onClick={this.handleAddColor}>+</div>
                 </div>
             </div>
         );

@@ -65,6 +65,8 @@ function menuState(state = initialState, action, root) {
             return menu.changeColorType(stateCopy, action);
         case menuActions.ADD_PALETTE:
             return menu.addPalette(stateCopy, action);
+        case menuActions.REMOVE_PALETTE:
+            return menu.removePalette(stateCopy, action);
         case menuActions.REMOVE_COLOR:
             return menu.removeColor(stateCopy, action);
 
