@@ -27,7 +27,9 @@ class ContextualMenu extends Component {
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
         onSetRulerGrid: PropTypes.func,
-        onResizeShapeTo: PropTypes.func
+        onResizeShapeTo: PropTypes.func,
+        onMoveShapeTo: PropTypes.func,
+        onRotateShapeTo: PropTypes.func
     };
 
     constructor(props) {
@@ -56,6 +58,8 @@ class ContextualMenu extends Component {
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
         this.handleResizeShapeTo = this.handleResizeShapeTo.bind(this);
+        this.handleMoveShapeTo = this.handleMoveShapeTo.bind(this);
+        this.handleRotateShapeTo = this.handleRotateShapeTo.bind(this);
     }
 
     toggleMenu() {
@@ -153,6 +157,14 @@ class ContextualMenu extends Component {
         this.props.onResizeShapeTo(width, height);
     }
 
+    handleMoveShapeTo(x, y) {
+        this.props.onMoveShapeTo(x, y);
+    }
+
+    handleRotateShapeTo(degree) {
+        this.props.onRotateShapeTo(degree);
+    }
+
     render() {
         const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
         const { hidden } = this.state;
@@ -161,7 +173,7 @@ class ContextualMenu extends Component {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'rectangle') {
-                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} />;
+                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'ellipse') {

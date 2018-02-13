@@ -24,6 +24,8 @@ export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
 export const RESIZE_SHAPE_TO = 'RESIZE_SHAPE_TO';
+export const MOVE_SHAPE_TO = 'MOVE_SHAPE_TO';
+export const ROTATE_SHAPE_TO = 'ROTATE_SHAPE_TO';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -127,4 +129,12 @@ export function setRulerGrid(canvasSpecs) {
 
 export function resizeShapeTo(width, height) {
     return { type: RESIZE_SHAPE_TO, payload: {width, height} };
+}
+
+export function moveShapeTo(x, y) {
+    return { type: MOVE_SHAPE_TO, payload: {x, y} };
+}
+
+export function rotateShapeTo(degree) {
+    return {type: ROTATE_SHAPE_TO, payload: {degree}};
 }

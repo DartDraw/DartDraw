@@ -269,9 +269,19 @@ export function flipHorizontal(stateCopy, action, root) {
 }
 
 export function resizeShapes(stateCopy, action, root) {
-    console.log(action.payload.width);
-    console.log(action.payload.height);
     stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
+export function moveShapes(stateCopy, action, root) {
+    stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
+export function rotateShapes(stateCopy, action, root) {
+    stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
         stateCopy.boundingBoxes, stateCopy.selectionBoxes);
     return stateCopy;
 }

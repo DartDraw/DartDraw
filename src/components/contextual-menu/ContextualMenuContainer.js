@@ -16,7 +16,9 @@ import {
     toggleShowRulers,
     toggleShowSubDivisions,
     setRulerGrid,
-    resizeShapeTo
+    resizeShapeTo,
+    moveShapeTo,
+    rotateShapeTo
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
@@ -84,6 +86,12 @@ const mapDispatchToProps = (dispatch) => {
         },
         onResizeShapeTo: (width, height) => {
             dispatch(resizeShapeTo(width, height));
+        },
+        onMoveShapeTo: (x, y) => {
+            dispatch(moveShapeTo(x, y));
+        },
+        onRotateShapeTo: (degree) => {
+            dispatch(rotateShapeTo(degree));
         }
     };
 };

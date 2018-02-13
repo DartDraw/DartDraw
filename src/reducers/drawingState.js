@@ -165,6 +165,12 @@ function drawingState(state = initialState, action, root) {
         case menuActions.RESIZE_SHAPE_TO:
             updatedState = shape.resizeShapes(stateCopy, action, root);
             break;
+        case menuActions.MOVE_SHAPE_TO:
+            updatedState = shape.moveShapes(stateCopy, action, root);
+            break;
+        case menuActions.ROTATE_SHAPE_TO:
+            updatedState = shape.rotateShapes(stateCopy, action, root);
+            break;
         default: break;
     }
 
