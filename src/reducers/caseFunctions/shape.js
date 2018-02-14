@@ -1,7 +1,7 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
-    prepareForReshape, moveControl, addPoint, removePoint } from '../utilities/shapes';
+    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -319,6 +319,7 @@ export function keyDown(stateCopy, action, root) {
 
     const { keyCode } = action.payload;
     let commandSelected = 91 in root.menuState.currentKeys;
+
     switch (keyCode) {
         case 8:
             stateCopy.lastSavedShapes = root.drawingState.shapes;
@@ -355,6 +356,14 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, stateCopy.duplicateOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
                 stateCopy.justDuplicated = true;
+            }
+            break;
+        case 69: // smooth
+            if (commandSelected) {
+                stateCopy.shapes = smoothShapes(stateCopy.shapes, stateCopy.selected);
+            } else {
+                stateCopy.shapes = unSmoothShapes(stateCopy.shapes, stateCopy.selected);
+                console.log(stateCopy.shapes);
             }
             break;
         case 70: // forward

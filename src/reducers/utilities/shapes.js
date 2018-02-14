@@ -1823,6 +1823,34 @@ export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, se
     return shapes;
 }
 
+export function smoothShapes(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'bezier':
+                shape.controlPoints = smoothPath(shape);
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
+export function unSmoothShapes(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'bezier':
+                shape.controlPoints = unSmoothPath(shape);
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
 function smoothPath(bezier) {
     let points = bezier.points;
 
@@ -1868,6 +1896,22 @@ function getCurvePoints(path) {
         controlPoints[i][1] = controlPoint(path[i], path[i - 1], path[i + 1], true);
     }
     // start control point
+    return controlPoints;
+}
+
+function unSmoothPath(bezier) {
+    let points = bezier.points;
+
+    let controlPoints = {};
+
+    for (let i = 0; i <= points.length / 2; i++) {
+        controlPoints[i] = {};
+        controlPoints[i][0] = {x: points[i * 2], y: points[i * 2 + 1]};
+        controlPoints[i][1] = {x: points[i * 2], y: points[i * 2 + 1]};
+    }
+
+    if (bezier.closed) delete controlPoints[0];
+
     return controlPoints;
 }
 
