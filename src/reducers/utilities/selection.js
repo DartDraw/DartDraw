@@ -244,6 +244,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
     switch (mode) {
         case 'reshape':
             let handles = [];
+            let addPointLines = [];
             if (shape.points) {
                 for (let i = 0; i < shape.points.length / 2; i++) {
                     handles.push({id: uuidv1(), index: i, x: shape.points[i * 2], y: shape.points[i * 2 + 1]});
@@ -303,6 +304,16 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 handles = [];
             }
 
+            if (shape.type === "polygon") {
+                for (let i = 0; i <= shape.points.length - 4; i += 2) {
+                    addPointLines.push(
+                        {id: uuidv1(),
+                            index: i / 2,
+                            stroke: shape.strokeWidth,
+                            points: [shape.points[i], shape.points[i + 1], shape.points[i + 2], shape.points[i + 3]]});
+                }
+            }
+
             return {
                 id: uuidv1(),
                 shapeId: shape.id,
@@ -314,6 +325,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 width: 0,
                 transform,
                 handles,
+                addPointLines,
                 controls,
                 mode
             };

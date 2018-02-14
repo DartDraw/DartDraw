@@ -100,6 +100,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.CONTROL_DRAG_STOP:
             updatedState = shape.controlDragStop(stateCopy, action, root);
             break;
+        case canvasActions.ADD_POINT_LINE_DRAG_STOP:
+            updatedState = shape.addPointLineDragStop(stateCopy, action, root);
+            break;
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
             break;

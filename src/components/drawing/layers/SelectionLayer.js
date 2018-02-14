@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Rectangle, Handle, Control, Line } from '../shapes';
+import { Rectangle, Handle, Control, Line, TransparentLine } from '../shapes';
 
 class SelectionLayer extends Component {
     static propTypes = {
@@ -13,7 +13,8 @@ class SelectionLayer extends Component {
         onHandleDragStop: PropTypes.func,
         onControlDragStart: PropTypes.func,
         onControlDrag: PropTypes.func,
-        onControlDragStop: PropTypes.func
+        onControlDragStop: PropTypes.func,
+        onAddPointLineDragStop: PropTypes.func
     };
 
     constructor(props) {
@@ -25,6 +26,7 @@ class SelectionLayer extends Component {
         this.handleControlDragStart = this.handleControlDragStart.bind(this);
         this.handleControlDrag = this.handleControlDrag.bind(this);
         this.handleControlDragStop = this.handleControlDragStop.bind(this);
+        this.handleAddPointLineDragStop = this.handleAddPointLineDragStop.bind(this);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -49,6 +51,11 @@ class SelectionLayer extends Component {
 
     handleControlDragStop(shapeId, handleIndex, draggableData) {
         this.props.onControlDragStop(shapeId, handleIndex, draggableData);
+    }
+
+    handleAddPointLineDragStop(shapeId, handleIndex, draggableData) {
+        console.log(handleIndex);
+        this.props.onAddPointLineDragStop(shapeId, handleIndex, draggableData);
     }
 
     renderHandles(selectionBox) {
@@ -82,6 +89,30 @@ class SelectionLayer extends Component {
                     onDrag={this.handleHandleDrag}
                     onDragStop={this.handleHandleDragStop}
                     propagateEvents={propagateEvents}
+                />
+            );
+        });
+    }
+
+    renderAddPointLines(selectionBox) {
+        if (!selectionBox.controls) return;
+
+        return selectionBox.addPointLines.map((line, i) => {
+            const { id, index } = line;
+
+            return (
+                <TransparentLine
+                    key={id}
+                    id={id}
+                    shapeId={selectionBox.shapeId}
+                    index={index}
+                    points={line.points}
+                    arrowLength={0}
+                    strokeWidth={line.stroke}
+                    stroke={"transparent"}
+                    pointerEvents={"stroke"}
+                    onDragStop={this.handleAddPointLineDragStop}
+                    onDragStart={() => console.log("start")}
                 />
             );
         });
@@ -157,6 +188,7 @@ class SelectionLayer extends Component {
                         fill='none'
                         propagateEvents={propagateEvents}
                     />
+                    {this.renderAddPointLines(selectionBox)}
                     {this.renderControlLines(selectionBox)}
                     {this.renderHandles(selectionBox)}
                     {this.renderControls(selectionBox)}
