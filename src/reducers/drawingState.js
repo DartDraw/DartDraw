@@ -145,6 +145,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.ALIGNMENT_CHANGE:
             updatedState = shape.alignClick(stateCopy, action, root);
             break;
+        case menuActions.DISTRIBUTE_CLICK:
+            updatedState = shape.distributeClick(stateCopy, action, root);
+            break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
             break;

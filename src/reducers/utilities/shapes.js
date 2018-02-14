@@ -2114,6 +2114,14 @@ function alignCenterHorizontal(shapes, selected, boundingBoxes, selectionBoxes) 
     return shapes;
 }
 
+export function distributeShapes(shapes, selected, boundingBoxes, selectionBoxes, direction) {
+    switch (direction) {
+        default:
+            break;
+    }
+    return shapes;
+}
+
 function findLeftPoint(points) {
     let minX = Infinity;
     points.map((p) => {

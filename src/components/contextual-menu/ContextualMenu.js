@@ -12,7 +12,8 @@ class ContextualMenu extends Component {
         canvasWidthInUnits: PropTypes.number,
         canvasHeightInUnits: PropTypes.number,
         editShape: PropTypes.func,
-        onAllignmentClick: PropTypes.func,
+        onAlignmentClick: PropTypes.func,
+        onDistributeClick: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -77,7 +78,15 @@ class ContextualMenu extends Component {
         if (!id) {
             id = event.target.firstChild.id;
         }
-        this.props.onAllignmentClick(id);
+        this.props.onAlignmentClick(id);
+    }
+
+    handleDistributeClick(event) {
+        let id = event.target.id;
+        if (!id) {
+            id = event.target.firstChild.id;
+        }
+        this.props.onDistributeClick(id);
     }
 
     handleGroupClick() {
@@ -217,7 +226,33 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleAlignmentClick}>
                             <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
                         </button>
-
+                    </div>
+                    <h2>Distribution</h2>
+                    <div className="static-menu">
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="top" id="distribute-top" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="center" id="distribute-vertical" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="bottom" id="distribute-bottom" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="height" id="distribute-height" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="left" id="distribute-left" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="center" id="distribute-horizontal" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="right" id="distribute-right" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="width" id="distribute-width" />
+                        </button>
                     </div>
                     <div className="dynamic-menu">
                         { menuLayout }

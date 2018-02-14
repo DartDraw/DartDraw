@@ -1,7 +1,8 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
-    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape } from '../utilities/shapes';
+    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape,
+    distributeShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -363,7 +364,6 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.shapes = smoothShapes(stateCopy.shapes, stateCopy.selected);
             } else {
                 stateCopy.shapes = unSmoothShapes(stateCopy.shapes, stateCopy.selected);
-                console.log(stateCopy.shapes);
             }
             break;
         case 70: // forward
@@ -492,6 +492,14 @@ export function alignClick(stateCopy, action, root) {
     let shiftSelected = 16 in root.menuState.currentKeys;
     if (shiftSelected) {
         stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
+    }
+    return stateCopy;
+}
+
+export function distributeClick(stateCopy, action, root) {
+    let shiftSelected = 16 in root.menuState.currentKeys;
+    if (shiftSelected) {
+        stateCopy.shapes = distributeShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
 }
