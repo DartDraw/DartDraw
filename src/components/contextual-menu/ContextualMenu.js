@@ -14,6 +14,8 @@ class ContextualMenu extends Component {
         editShape: PropTypes.func,
         onAlignmentClick: PropTypes.func,
         onDistributeClick: PropTypes.func,
+        editText: PropTypes.func,
+        onAllignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -38,6 +40,7 @@ class ContextualMenu extends Component {
 
         this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
+        this.handleEditText = this.handleEditText.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleUngroupClick = this.handleUngroupClick.bind(this);
@@ -67,6 +70,15 @@ class ContextualMenu extends Component {
     handleEdit(shape) {
         const { editShape } = this.props;
         editShape && editShape(shape);
+    }
+
+    handleEditText(shape) {
+        const { editText } = this.props;
+        editText && editText(shape);
+    }
+
+    handleChange(event) {
+        this.tempScale = event.target.value / 100.0;
     }
 
     handleToggleGridSnapping(event) {
@@ -162,7 +174,7 @@ class ContextualMenu extends Component {
         let menuLayout = null;
         if (selectedShape) {
             if (selectedShape.type === 'text') {
-                menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} onEditText={this.handleEditText} />;
             } else if (selectedShape.type === 'rectangle') {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {

@@ -1,3 +1,6 @@
+import _ from 'lodash';
+import uuidv1 from 'uuid';
+import DiffMatchPatch from 'diff-match-patch';
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
@@ -5,8 +8,103 @@ import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMo
     distributeShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
-
 import * as menu from './menu';
+
+export function editShape(stateCopy, action, root) {
+    stateCopy.shapes.byId[action.payload.shape.id] = action.payload.shape;
+    return stateCopy;
+}
+
+export function editText(stateCopy, action, root) {
+    const { shape } = action.payload;
+    const { id } = shape;
+    const baseShape = stateCopy.shapes.byId[id];
+    const { text, tspans, selectionRange } = baseShape;
+    const baseStyle = {
+        fontFamily: baseShape.fontFamily,
+        fontSize: baseShape.fontSize,
+        fontWeight: baseShape.fontWeight,
+        fontStyle: baseShape.fontStyle,
+        textAlign: baseShape.textAlign,
+        textDecoration: baseShape.textDecoration,
+        lineHeight: baseShape.lineHeight,
+        fill: baseShape.fill,
+        stroke: baseShape.stroke
+    };
+    const newStyle = {
+        fontFamily: shape.fontFamily,
+        fontSize: shape.fontSize,
+        fontWeight: shape.fontWeight,
+        fontStyle: shape.fontStyle,
+        textAlign: shape.textAlign,
+        textDecoration: shape.textDecoration,
+        lineHeight: shape.lineHeight,
+        fill: shape.fill,
+        stroke: shape.stroke
+    };
+    // Remove undefined style keys:
+    Object.keys(newStyle).forEach((key) => (newStyle[key] === undefined) && delete newStyle[key]);
+    const updatedTspans = tspans.slice();
+    if (selectionRange && selectionRange[0] !== selectionRange[1]) {
+        if (tspans.length > 0) {
+            // If there are other tspans, find overlaps and combine styles:
+            tspans.map(tspan => {
+                // Tspan overlaps with the selection range:
+                if (
+                    (selectionRange[0] >= tspan.range[0] && selectionRange[0] < tspan.range[1]) ||
+                    (selectionRange[1] > tspan.range[0] && selectionRange[1] <= tspan.range[1]) ||
+                    (selectionRange[0] <= tspan.range[0] && selectionRange[1] >= tspan.range[1])
+                ) {
+                    const tspanIndex = _.findIndex(updatedTspans, function(o) { return _.isEqual(tspan, o); });
+                    // Tspan is equal to or entirely inside the selection range:
+                    if (selectionRange[0] <= tspan.range[0] && selectionRange[1] >= tspan.range[1]) {
+                        updatedTspans[tspanIndex].style = Object.assign({}, tspan.style, newStyle);
+                    } else {
+                        // Tspan is encloses or partially overlaps with selection range, so remove it and break it up:
+                        updatedTspans.splice(tspanIndex, 1);
+                        // Create new tspans in the place where it's not overlapping selection range and combine overlapping styles:
+                        if (selectionRange[0] >= tspan.range[0] && selectionRange[1] <= tspan.range[1]) {
+                            if (selectionRange[0] !== tspan.range[0]) {
+                                updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [tspan.range[0], selectionRange[0]] });
+                            }
+                            updatedTspans.push({ id: uuidv1(), style: Object.assign({}, tspan.style, newStyle), range: [selectionRange[0], selectionRange[1]] });
+                            if (selectionRange[1] !== tspan.range[1]) {
+                                updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [selectionRange[1], tspan.range[1]] });
+                            }
+                        } else {
+                            if (selectionRange[0] >= tspan.range[0]) {
+                                if (selectionRange[0] !== tspan.range[0]) {
+                                    updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [tspan.range[0], selectionRange[0]] });
+                                }
+                                updatedTspans.push({ id: uuidv1(), style: Object.assign({}, tspan.style, newStyle), range: [selectionRange[0], tspan.range[1]] });
+                            }
+                            if (selectionRange[1] <= tspan.range[1]) {
+                                updatedTspans.push({ id: uuidv1(), style: Object.assign({}, tspan.style, newStyle), range: [tspan.range[0], selectionRange[0]] });
+                                if (selectionRange[1] !== tspan.range[1]) {
+                                    updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [selectionRange[1], tspan.range[1]] });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            if (selectionRange[0] !== 0) {
+                updatedTspans.push({ id: uuidv1(), style: baseStyle, range: [0, selectionRange[0]] });
+            }
+            updatedTspans.push({ id: uuidv1(), style: Object.assign({}, baseStyle, newStyle), range: selectionRange });
+            if (selectionRange[1] < text.length) {
+                updatedTspans.push({ id: uuidv1(), style: baseStyle, range: [selectionRange[1], text.length] });
+            }
+        }
+        stateCopy.shapes.byId[shape.id].tspans = updatedTspans.sort((a, b) => {
+            return a.range[0] - b.range[0];
+        });
+    } else {
+        stateCopy.shapes.byId[shape.id] = Object.assign({}, baseShape, shape);
+    }
+    return stateCopy;
+}
 
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
@@ -254,9 +352,55 @@ export function controlDragStop(stateCopy, action, root) {
 }
 
 export function textInputChange(stateCopy, action, root) {
-    const { shapeId, value, focused } = action.payload;
+    const { shapeId, value, focused, selectionRange } = action.payload;
+
+    const tspans = stateCopy.shapes.byId[shapeId].tspans;
+    const updatedTspans = _.cloneDeep(tspans);
+    const previousValue = stateCopy.shapes.byId[shapeId].text;
+    const dmp = new DiffMatchPatch();
+    let currentIndex = 0;
+    dmp.diff_main(previousValue, value).map(diff => {
+        if (diff[0] === DiffMatchPatch.DIFF_EQUAL) {
+            currentIndex += diff[1].length;
+        } else if (diff[0] === DiffMatchPatch.DIFF_INSERT) {
+            // Expand whatever tspan this diff was inserted into and all the ones after:
+            let editingTspans = false;
+            tspans.map((tspan, tspanIndex) => {
+                if (editingTspans) {
+                    updatedTspans[tspanIndex].range[0] += diff[1].length;
+                    updatedTspans[tspanIndex].range[1] += diff[1].length;
+                } else if (currentIndex > tspan.range[0] && currentIndex <= tspan.range[1]) {
+                    updatedTspans[tspanIndex].range[1] += diff[1].length;
+                    editingTspans = true;
+                }
+            });
+            currentIndex += diff[1].length;
+        } else if (diff[0] === DiffMatchPatch.DIFF_DELETE) {
+            diff[1].split('').map(char => {
+                let editingTspans = false;
+                tspans.map(tspan => {
+                    const tspanIndex = _.findIndex(updatedTspans, function(o) { return tspan.id === o.id; });
+                    if (editingTspans) {
+                        updatedTspans[tspanIndex].range[0] -= 1;
+                        updatedTspans[tspanIndex].range[1] -= 1;
+                    } else if (currentIndex >= tspan.range[0] && currentIndex < tspan.range[1]) {
+                        updatedTspans[tspanIndex].range[1] -= 1;
+                        if (updatedTspans[tspanIndex].range[0] === updatedTspans[tspanIndex].range[1]) {
+                            updatedTspans.splice(tspanIndex, 1);
+                        }
+                        editingTspans = true;
+                    }
+                });
+                currentIndex += 1;
+            });
+            currentIndex -= diff[1].length;
+        }
+    });
+
     stateCopy.shapes.byId[shapeId].text = value;
     stateCopy.shapes.byId[shapeId].focused = focused;
+    stateCopy.shapes.byId[shapeId].selectionRange = selectionRange;
+    stateCopy.shapes.byId[shapeId].tspans = updatedTspans;
     return stateCopy;
 }
 

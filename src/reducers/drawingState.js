@@ -166,7 +166,10 @@ function drawingState(state = initialState, action, root) {
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         case menuActions.EDIT_SHAPE:
-            updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
+            updatedState = shape.editShape(stateCopy, action, root);
+            break;
+        case menuActions.EDIT_TEXT:
+            updatedState = shape.editText(stateCopy, action, root);
             break;
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
