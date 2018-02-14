@@ -907,6 +907,37 @@ export function removeTransformation(shapes, selected) {
     return shapes;
 }
 
+export function prepareForReshape(shapes, selected) {
+    let shape = shapes.byId[selected[0]];
+    shape.pointsToAdd = [];
+
+    for (let i = 0; i < shape.points.length - 2; i += 2) {
+        shape.pointsToAdd[i / 2] = getPoints({x: shape.points[i], y: shape.points[i + 1]},
+            {x: shape.points[i + 2], y: shape.points[i + 3]}, 25);
+    }
+
+    shape.reshapeInProgress = true;
+    return shapes;
+}
+
+function getPoints(p1, p2, quantity) {
+    const points = [];
+    const ydiff = p2.y - p1.y;
+    const xdiff = p2.x - p1.x;
+    const slope = (p2.y - p1.y) / (p2.x - p1.y);
+
+    let x = 0;
+    let y = 0;
+
+    for (let i = 0; i < quantity; i++) {
+        y = slope === 0 ? 0 : ydiff * (i / quantity);
+        x = slope === 0 ? xdiff * (i / quantity) : y / slope;
+        points[i] = { x: x + p1.x, y: y + p1.y };
+    }
+
+    return points;
+}
+
 export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { x, y, node } = draggableData;
 
@@ -980,6 +1011,29 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
                 break;
         }
     });
+    return shapes;
+}
+export function addPoint(shapes, selected, handleIndex, draggableData, panX, panY, scale) {
+    let { x, y, node } = draggableData;
+    x = (x + (panX * scale) - node.parentNode.parentNode.parentNode.getBoundingClientRect().top) / scale;
+    y = (y + (panY * scale) - node.parentNode.parentNode.parentNode.getBoundingClientRect().top) / scale;
+
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'polygon':
+                shape.points.splice((handleIndex + 1) * 2, 0, x, y);
+                break;
+            case 'bezier':
+                shape.points.splice((handleIndex + 1) * 2, 0, x, y);
+                shape.controlPoints = smoothPath(shape);
+                break;
+            default:
+                break;
+        }
+        shape.refreshSelection = true;
+    });
+
     return shapes;
 }
 

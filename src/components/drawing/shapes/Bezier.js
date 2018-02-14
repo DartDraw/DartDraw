@@ -21,7 +21,8 @@ class Bezier extends Component {
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
         })),
-        propagateEvents: PropTypes.bool
+        propagateEvents: PropTypes.bool,
+        reshapeInProgress: PropTypes.bool
     }
 
     defaultProps = {
@@ -66,7 +67,8 @@ class Bezier extends Component {
             strokeWidth,
             fill,
             transform,
-            propagateEvents
+            propagateEvents,
+            reshapeInProgress
         } = this.props;
 
         const svgProps = {
@@ -78,6 +80,10 @@ class Bezier extends Component {
             d: formatCurve(points, controlPoints),
             vectorEffect: "non-scaling-stroke"
         };
+
+        if (reshapeInProgress) {
+            svgProps.pointerEvents = "visibleStroke";
+        }
 
         return (
             <Shape

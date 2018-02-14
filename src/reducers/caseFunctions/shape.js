@@ -1,7 +1,7 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
-    moveControl, removePoint } from '../utilities/shapes';
+    prepareForReshape, moveControl, addPoint, removePoint } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -44,7 +44,7 @@ export function dragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
-    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
+
     return stateCopy;
 }
 
@@ -183,6 +183,25 @@ export function handleDragStop(stateCopy, action, root) {
         case 'selectTool':
         case 'rotateTool':
             stateCopy.shapes = resetShapeSigns(stateCopy.shapes, stateCopy.selected);
+
+            if (stateCopy.mode === "reshape") {
+                stateCopy.shapes.byId[stateCopy.selected[0]].refreshSelection = true;
+                stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+            }
+            break;
+        default:
+            stateCopy.editInProgress = false;
+            break;
+    }
+
+    return stateCopy;
+}
+
+export function addPointDragStop(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        case 'selectTool':
+            stateCopy.shapes = addPoint(stateCopy.shapes, stateCopy.selected, action.payload.handleIndex, action.payload.draggableData, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
             break;
         default:
             stateCopy.editInProgress = false;
@@ -222,6 +241,11 @@ export function controlDrag(stateCopy, action, root) {
 export function controlDragStop(stateCopy, action, root) {
     switch (stateCopy.mode) {
         default: break;
+    }
+
+    if (stateCopy.mode === "reshape") {
+        stateCopy.shapes.byId[stateCopy.selected[0]].refreshSelection = true;
+        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     }
 
     stateCopy.editInProgress = false;
@@ -308,6 +332,7 @@ export function keyDown(stateCopy, action, root) {
         case 13: // finish reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
                 stateCopy.mode = "";
+                stateCopy.shapes.byId[stateCopy.selected[0]].reshapeInProgress = false;
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
             }
             break;
@@ -360,6 +385,7 @@ export function keyDown(stateCopy, action, root) {
                     stateCopy.mode = "reshape";
                     stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
                     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+                    stateCopy.shapes = prepareForReshape(stateCopy.shapes, stateCopy.selected);
                 }
             }
             break;
