@@ -12,6 +12,7 @@ export const GROUP_CLICK = 'GROUP_CLICK';
 export const HANDLE_DRAG_START = 'HANDLE_DRAG_START';
 export const HANDLE_DRAG = 'HANDLE_DRAG';
 export const HANDLE_DRAG_STOP = 'HANDLE_DRAG_STOP';
+export const ADD_POINT_DRAG_STOP = 'ADD_POINT_DRAG_STOP';
 export const CONTROL_DRAG_START = 'CONTROL_DRAG_START';
 export const CONTROL_DRAG = 'CONTROL_DRAG';
 export const CONTROL_DRAG_STOP = 'CONTROL_DRAG_STOP';
@@ -86,8 +87,12 @@ export function controlDragStop(shapeId, handleIndex, draggableData) {
     return { type: CONTROL_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
 }
 
-export function textInputChange(shapeId, value, focused) {
-    return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value, focused } };
+export function addPointDragStop(shapeId, handleIndex, draggableData) {
+    return { type: ADD_POINT_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function textInputChange(shapeId, value, focused, selectionRange) {
+    return { type: TEXT_INPUT_CHANGE, payload: { shapeId, value, focused, selectionRange } };
 }
 
 export function updateBoundingBoxes(boundingBoxes) {

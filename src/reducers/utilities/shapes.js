@@ -1,7 +1,6 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
-import { EditorState, ContentState } from 'draft-js';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval, rectangleRadius) {
     const { draggableData } = action.payload;
@@ -162,9 +161,7 @@ export function addBezier(shapes, action, fill, stroke, panX, panY, scale, gridS
     bezier.points.push(bezier.points[0]);
     bezier.points.push(bezier.points[1]);
 
-    bezier.controlPoints[0] = [{x: bezier.points[0], y: bezier.points[1]}, {x: bezier.points[0], y: bezier.points[1]}];
-    bezier.controlPoints[1] = [{x: bezier.points[2], y: bezier.points[3]}, {x: bezier.points[2], y: bezier.points[3]}];
-    bezier.controlPoints[2] = [{x: bezier.points[2], y: bezier.points[3]}, {x: bezier.points[2], y: bezier.points[3]}];
+    bezier.controlPoints = smoothPath(bezier);
 
     shapes.byId[bezier.id] = bezier;
     shapes.allIds.push(bezier.id);
@@ -187,9 +184,6 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     if (Math.abs(xCoord - bezier.points[0]) < (5 / scale) &&
           Math.abs(yCoord - bezier.points[1]) < (5 / scale)) {
-        bezier.controlPoints[bezier.points.length / 2 - 1][0] = bezier.controlPoints[0][0];
-        delete bezier.controlPoints[0];
-        delete bezier.controlPoints[bezier.points.length / 2];
         bezier.closed = true;
         xCoord = bezier.points[0];
         yCoord = bezier.points[1];
@@ -197,7 +191,6 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     if ((Math.abs(xCoord - bezier.points[bezier.points.length - 4]) < (5 / scale) &&
           Math.abs(yCoord - bezier.points[bezier.points.length - 3]) < (5 / scale))) {
-        delete bezier.controlPoints[bezier.points.length / 2];
         bezier.points.pop();
         bezier.points.pop();
         bezier.open = true;
@@ -205,12 +198,13 @@ export function addBezierPoint(shapes, selected, action, panX, panY, scale, grid
 
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
+    bezier.controlPoints = smoothPath(bezier);
 
     if (!bezier.closed && !bezier.open) {
         // temp point
         bezier.points.push(xCoord);
         bezier.points.push(yCoord);
-        bezier.controlPoints[bezier.points.length / 2] = [ {x: xCoord, y: yCoord}, {x: xCoord, y: yCoord} ];
+        bezier.controlPoints = smoothPath(bezier);
     }
     return shapes;
 }
@@ -232,16 +226,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     bezier.points[bezier.points.length - 2] = xCoord;
     bezier.points[bezier.points.length - 1] = yCoord;
 
-    let l = Math.sqrt((xCoord - bezier.points[bezier.points.length - 4]) ** 2 + (yCoord - bezier.points[bezier.points.length - 3]) ** 2);
-    let endX = (1 - (l - 50) / l) * xCoord + (l - 50) / l * bezier.points[bezier.points.length - 4];
-    let endY = (1 - (l - 50) / l) * yCoord + (l - 50) / l * bezier.points[bezier.points.length - 3];
-    if (bezier.controlPoints[(bezier.points.length) / 2 - 2]) {
-        bezier.controlPoints[(bezier.points.length) / 2 - 2][0] = {x: endX, y: endY};
-    }
-
-    endX = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 4] + (l - 50) / l * xCoord;
-    endY = (1 - (l - 50) / l) * bezier.points[bezier.points.length - 3] + (l - 50) / l * yCoord;
-    bezier.controlPoints[(bezier.points.length) / 2 - 1][1] = {x: endX, y: endY};
+    bezier.controlPoints = smoothPath(bezier);
     return shapes;
 }
 
@@ -348,9 +333,10 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, g
 
     const text = {
         id: uuidv1(),
-        editorState: EditorState.createWithContent(ContentState.createFromText('hello')),
         type: 'text',
         text: '',
+        tspans: [],
+        selectionRange: [0, 0],
         x: (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
         y: (y + (panY * scale) - node.getBoundingClientRect().top) / scale,
         width: 120,
@@ -923,6 +909,37 @@ export function removeTransformation(shapes, selected) {
     return shapes;
 }
 
+export function prepareForReshape(shapes, selected) {
+    let shape = shapes.byId[selected[0]];
+    shape.pointsToAdd = [];
+
+    for (let i = 0; i < shape.points.length - 2; i += 2) {
+        shape.pointsToAdd[i / 2] = getPoints({x: shape.points[i], y: shape.points[i + 1]},
+            {x: shape.points[i + 2], y: shape.points[i + 3]}, 25);
+    }
+
+    shape.reshapeInProgress = true;
+    return shapes;
+}
+
+function getPoints(p1, p2, quantity) {
+    const points = [];
+    const ydiff = p2.y - p1.y;
+    const xdiff = p2.x - p1.x;
+    const slope = (p2.y - p1.y) / (p2.x - p1.y);
+
+    let x = 0;
+    let y = 0;
+
+    for (let i = 0; i < quantity; i++) {
+        y = slope === 0 ? 0 : ydiff * (i / quantity);
+        x = slope === 0 ? xdiff * (i / quantity) : y / slope;
+        points[i] = { x: x + p1.x, y: y + p1.y };
+    }
+
+    return points;
+}
+
 export function reshape(shapes, selected, draggableData, handleIndex, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { x, y, node } = draggableData;
 
@@ -998,6 +1015,71 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
     });
     return shapes;
 }
+export function addPoint(shapes, selected, handleIndex, draggableData, panX, panY, scale) {
+    let { x, y, node } = draggableData;
+    x = (x + (panX * scale) - node.parentNode.parentNode.parentNode.getBoundingClientRect().top) / scale;
+    y = (y + (panY * scale) - node.parentNode.parentNode.parentNode.getBoundingClientRect().top) / scale;
+
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'polygon':
+                shape.points.splice((handleIndex + 1) * 2, 0, x, y);
+                break;
+            case 'bezier':
+                shape.points.splice((handleIndex + 1) * 2, 0, x, y);
+                shape.controlPoints = smoothPath(shape);
+                break;
+            default:
+                break;
+        }
+        shape.refreshSelection = true;
+    });
+
+    return shapes;
+}
+
+export function removePoint(shapes, selected, handleIndex) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'polygon':
+                shape.points.splice(handleIndex * 2, 2);
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = shape.points[0];
+                    shape.points[shape.points.length - 1] = shape.points[1];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.points[0] = shape.points[shape.points.length - 2];
+                    shape.points[1] = shape.points[shape.points.length - 1];
+                }
+
+                shape.refreshSelection = true;
+                break;
+            case 'bezier':
+                shape.points.splice(handleIndex * 2, 2);
+
+                if (handleIndex === 0) {
+                    shape.points[shape.points.length - 2] = shape.points[0];
+                    shape.points[shape.points.length - 1] = shape.points[1];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.points[0] = shape.points[shape.points.length - 2];
+                    shape.points[1] = shape.points[shape.points.length - 1];
+                }
+
+                shape.controlPoints = smoothPath(shape);
+                shape.refreshSelection = true;
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
 
 export function moveControl(shapes, selected, draggableData, handleIndex, panX, panY, scale) {
     const { x, y, node } = draggableData;
@@ -1021,8 +1103,10 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
     }
     if (shape.type === 'arc') {
         const matrix = shape.transform[0].parameters;
+        let decomposed = decomposeMatrix(matrix);
         let c = transformPoint(shape.center.x, shape.center.y, matrix);
-        let angle = Math.atan2(mouseY - c.y, mouseX - c.x);
+        let angle = Math.atan2(mouseY - c.y, mouseX - c.x) - decomposed.skewX;
+
         let rx = Math.abs(shape.rx);
         let ry = Math.abs(shape.ry);
 
@@ -1650,8 +1734,11 @@ function getCenter(boundingBox, shapeMatrix) {
 
 function getShapeInfo(shape, boundingBox) {
     const shapeInfo = {};
-    shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
-    shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+
+    if (shape.x && shape.y) {
+        shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
+        shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
+    }
 
     shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
     if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
@@ -1736,4 +1823,353 @@ export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, se
         shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
+}
+
+export function smoothShapes(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'bezier':
+                shape.controlPoints = smoothPath(shape);
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
+export function unSmoothShapes(shapes, selected) {
+    selected.map((id) => {
+        let shape = shapes.byId[id];
+        switch (shape.type) {
+            case 'bezier':
+                shape.controlPoints = unSmoothPath(shape);
+                break;
+            default:
+                break;
+        }
+    });
+    return shapes;
+}
+
+function smoothPath(bezier) {
+    let points = bezier.points;
+
+    let path = [];
+    let controlPoints = {};
+
+    path.push([points[0], points[1]]);
+    path.push([points[0], points[1]]);
+
+    for (let i = 0; i < points.length; i += 2) {
+        path.push([points[i], points[i + 1]]);
+    }
+
+    if (!bezier.closed) {
+        path.push([points[points.length - 4], points[points.length - 3]]);
+        path.push([points[points.length - 2], points[points.length - 1]]);
+    } else {
+        path.push([points[2], points[3]]);
+        path.push([points[4], points[5]]);
+    }
+
+    let curvePoints = getCurvePoints(path, 1, false, 1);
+
+    for (let i = 1; i <= points.length / 2; i++) {
+        controlPoints[i - 1] = {};
+        controlPoints[i - 1][0] = curvePoints[i + 1][1];
+
+        if (curvePoints[i + 2]) {
+            controlPoints[i - 1][1] = curvePoints[i + 2][0];
+        }
+    }
+
+    if (bezier.closed) delete controlPoints[0];
+
+    return controlPoints;
+}
+
+function getCurvePoints(path) {
+    let controlPoints = {};
+    for (let i = 1; i < path.length - 1; i += 1) {
+        controlPoints[i] = [{}, {}];
+        controlPoints[i][0] = controlPoint(path[i - 1], path[i - 2], path[i]);
+        controlPoints[i][1] = controlPoint(path[i], path[i - 1], path[i + 1], true);
+    }
+    // start control point
+    return controlPoints;
+}
+
+function unSmoothPath(bezier) {
+    let points = bezier.points;
+
+    let controlPoints = {};
+
+    for (let i = 0; i <= points.length / 2; i++) {
+        controlPoints[i] = {};
+        controlPoints[i][0] = {x: points[i * 2], y: points[i * 2 + 1]};
+        controlPoints[i][1] = {x: points[i * 2], y: points[i * 2 + 1]};
+    }
+
+    if (bezier.closed) delete controlPoints[0];
+
+    return controlPoints;
+}
+
+// https://medium.com/@francoisromain/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
+function line(pointA, pointB) {
+    const lengthX = pointB[0] - pointA[0];
+    const lengthY = pointB[1] - pointA[1];
+    return {
+        length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+        angle: Math.atan2(lengthY, lengthX)
+    };
+}
+
+// https://medium.com/@francoisromain/smooth-a-svg-path-with-cubic-bezier-curves-e37b49d46c74
+function controlPoint(current, previous, next, reverse) {
+    // When 'current' is the first or last point of the array
+    // 'previous' or 'next' don't exist.
+    // Replace with 'current'
+    const p = previous || current;
+    const n = next || current;
+
+    // Properties of the opposed-line
+    const o = line(p, n);
+
+    // If is end-control-point, add PI to the angle to go backward
+    const angle = o.angle + (reverse ? Math.PI : 0);
+    const length = o.length * 0.3;
+
+    // The control point position is relative to the current point
+    const x = current[0] + Math.cos(angle) * length;
+    const y = current[1] + Math.sin(angle) * length;
+    return {x: x, y: y};
+}
+
+export function alignToShape(shapes, selected, boundingBoxes, selectionBoxes, direction) {
+    switch (direction) {
+        case "alignment-left":
+            shapes = alignLeft(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-right":
+            shapes = alignRight(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-top":
+            shapes = alignTop(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-bottom":
+            shapes = alignBottom(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-vertical":
+            shapes = alignCenterVertical(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-horizontal":
+            shapes = alignCenterHorizontal(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        default:
+            break;
+    }
+    return shapes;
+}
+
+function alignLeft(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minX = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findLeftPoint(selectionBox.handles);
+        if (x < minX) {
+            minX = x;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = minX - findLeftPoint(selectionBox.handles);
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignRight(shapes, selected, boundingBoxes, selectionBoxes) {
+    let maxX = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findRightPoint(selectionBox.handles);
+        if (x > maxX) {
+            maxX = x;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = maxX - findRightPoint(selectionBox.handles);
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignCenterVertical(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minX = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findLeftPoint(selectionBox.handles);
+        if (x < minX) {
+            minX = x;
+        }
+    });
+
+    let maxX = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findRightPoint(selectionBox.handles);
+        if (x > maxX) {
+            maxX = x;
+        }
+    });
+
+    let centerX = (minX + maxX) / 2;
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = centerX - findCenterHorizontalPoint(selectionBox.handles);
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignTop(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minY = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findTopPoint(selectionBox.handles);
+        if (y < minY) {
+            minY = y;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = minY - findTopPoint(selectionBox.handles);
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignBottom(shapes, selected, boundingBoxes, selectionBoxes) {
+    let maxY = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findBottomPoint(selectionBox.handles);
+        if (y > maxY) {
+            maxY = y;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = maxY - findBottomPoint(selectionBox.handles);
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignCenterHorizontal(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minY = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findTopPoint(selectionBox.handles);
+        if (y < minY) {
+            minY = y;
+        }
+    });
+
+    let maxY = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findBottomPoint(selectionBox.handles);
+        if (y > maxY) {
+            maxY = y;
+        }
+    });
+
+    let centerY = (minY + maxY) / 2;
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = centerY - findCenterVerticalPoint(selectionBox.handles);
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function findLeftPoint(points) {
+    let minX = Infinity;
+    points.map((p) => {
+        let x = p.x;
+        if (x < minX) {
+            minX = x;
+        }
+    });
+    return minX;
+}
+
+function findRightPoint(points) {
+    let maxX = -Infinity;
+    points.map((p) => {
+        let x = p.x;
+        if (x > maxX) {
+            maxX = x;
+        }
+    });
+    return maxX;
+}
+
+function findCenterHorizontalPoint(points) {
+    let maxX = findRightPoint(points);
+    let minX = findLeftPoint(points);
+
+    return ((minX + maxX) / 2);
+}
+
+function findTopPoint(points) {
+    let minY = Infinity;
+    points.map((p) => {
+        let y = p.y;
+        if (y < minY) {
+            minY = y;
+        }
+    });
+    return minY;
+}
+
+function findBottomPoint(points) {
+    let maxY = -Infinity;
+    points.map((p) => {
+        let y = p.y;
+        if (y > maxY) {
+            maxY = y;
+        }
+    });
+    return maxY;
+}
+
+function findCenterVerticalPoint(points) {
+    let maxY = findBottomPoint(points);
+    let minY = findTopPoint(points);
+
+    return ((minY + maxY) / 2);
 }

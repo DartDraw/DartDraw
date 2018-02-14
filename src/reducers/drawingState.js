@@ -100,6 +100,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.CONTROL_DRAG_STOP:
             updatedState = shape.controlDragStop(stateCopy, action, root);
             break;
+        case canvasActions.ADD_POINT_DRAG_STOP:
+            updatedState = shape.addPointDragStop(stateCopy, action, root);
+            break;
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
             break;
@@ -139,6 +142,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SELECT_TOOL:
             updatedState = shape.selectTool(stateCopy, action, root);
             break;
+        case menuActions.ALIGNMENT_CHANGE:
+            updatedState = shape.alignClick(stateCopy, action, root);
+            break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
             break;
@@ -157,7 +163,10 @@ function drawingState(state = initialState, action, root) {
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
         case menuActions.EDIT_SHAPE:
-            updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
+            updatedState = shape.editShape(stateCopy, action, root);
+            break;
+        case menuActions.EDIT_TEXT:
+            updatedState = shape.editText(stateCopy, action, root);
             break;
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);

@@ -7,46 +7,29 @@ class TextInputLayer extends Component {
         textObjects: PropTypes.array,
         canvasWidth: PropTypes.number,
         canvasHeight: PropTypes.number,
-        onShapeDragStart: PropTypes.func,
-        onShapeDrag: PropTypes.func,
-        onShapeDragStop: PropTypes.func,
         onShapeClick: PropTypes.func,
-        onTextInputChange: PropTypes.func
+        onTextInputChange: PropTypes.func,
+        propagateEvents: PropTypes.bool
     };
 
     constructor(props) {
         super(props);
 
-        this.handleShapeDragStart = this.handleShapeDragStart.bind(this);
-        this.handleShapeDrag = this.handleShapeDrag.bind(this);
-        this.handleShapeDragStop = this.handleShapeDragStop.bind(this);
         this.handleShapeClick = this.handleShapeClick.bind(this);
         this.handleTextInputChange = this.handleTextInputChange.bind(this);
-    }
-
-    handleShapeDragStart(shapeId, draggableData) {
-        this.props.onShapeDragStart(shapeId, draggableData);
-    }
-
-    handleShapeDrag(shapeId, draggableData) {
-        this.props.onShapeDrag(shapeId, draggableData);
-    }
-
-    handleShapeDragStop(shapeId, draggableData) {
-        this.props.onShapeDragStop(shapeId, draggableData);
     }
 
     handleShapeClick(shapeId, event) {
         this.props.onShapeClick(shapeId, event);
     }
 
-    handleTextInputChange(id, value, focused) {
+    handleTextInputChange(id, value, focused, selectionRange) {
         const { onTextInputChange } = this.props;
-        onTextInputChange && onTextInputChange(id, value, focused);
+        onTextInputChange && onTextInputChange(id, value, focused, selectionRange);
     }
 
     render() {
-        const { textObjects, canvasWidth, canvasHeight } = this.props;
+        const { textObjects, canvasWidth, canvasHeight, propagateEvents } = this.props;
 
         const textInputs = textObjects.map(text => {
             return (
@@ -54,17 +37,23 @@ class TextInputLayer extends Component {
                     key={text.id}
                     {...text}
                     onClick={this.handleShapeClick}
-                    onDragStart={this.handleShapeDragStart}
-                    onDrag={this.handleShapeDrag}
-                    onDragStop={this.handleShapeDragStop}
-                    onChange={this.handleTextInputChange} />
+                    onChange={this.handleTextInputChange}
+                    propagateEvents={propagateEvents}
+                />
             );
         });
-        return (
-            <div style={{ position: 'absolute', width: canvasWidth, height: canvasHeight, pointerEvents: 'none' }}>
+
+        return textInputs.length > 0 ? (
+            <div style={{
+                position: 'absolute',
+                width: canvasWidth,
+                height: canvasHeight,
+                pointerEvents: 'none',
+                overflow: 'hidden'
+            }}>
                 {textInputs}
             </div>
-        );
+        ) : null;
     }
 }
 

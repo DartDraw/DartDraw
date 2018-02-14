@@ -1,4 +1,5 @@
 export const EDIT_SHAPE = 'EDIT_SHAPE';
+export const EDIT_TEXT = 'EDIT_TEXT';
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const MOUSE_MOVE = 'MOUSE_MOVE';
@@ -29,6 +30,10 @@ export const ROTATE_SHAPE_TO = 'ROTATE_SHAPE_TO';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
+}
+
+export function editText(shape) {
+    return { type: EDIT_TEXT, payload: { shape } };
 }
 
 export function keyDown(keyCode) {

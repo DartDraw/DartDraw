@@ -81,6 +81,9 @@ class Canvas extends Component {
                     element = element.childNodes[0];
                 }
                 if (element.id && element.tagName !== 'marker') {
+                    if (element.tagName === 'foreignObject') {
+                        boundingBoxes[element.id] = Object.assign({}, element.getBBox(), { x: element.getAttribute('x'), y: element.getAttribute('y') });
+                    }
                     boundingBoxes[element.id] = element.getBBox({ markers: true }); // https://bugs.chromium.org/p/chromium/issues/detail?id=280576
                 }
             });
@@ -220,11 +223,11 @@ class Canvas extends Component {
     }
 
     render() {
-        const { canvasHeight, canvasWidth, viewBox } = this.props;
+        const { canvasHeight, canvasWidth, viewBox, propagateEvents } = this.props;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
-                <TextInputLayerContainer />
+                <TextInputLayerContainer propagateEvents={propagateEvents} />
                 <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}

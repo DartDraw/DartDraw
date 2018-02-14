@@ -1,10 +1,109 @@
+import _ from 'lodash';
+import uuidv1 from 'uuid';
+import DiffMatchPatch from 'diff-match-patch';
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
-    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns, moveControl } from '../utilities/shapes';
+    flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
+    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
-
 import * as menu from './menu';
+
+export function editShape(stateCopy, action, root) {
+    stateCopy.shapes.byId[action.payload.shape.id] = action.payload.shape;
+    return stateCopy;
+}
+
+export function editText(stateCopy, action, root) {
+    const { shape } = action.payload;
+    const { id } = shape;
+    const baseShape = stateCopy.shapes.byId[id];
+    const { text, tspans, selectionRange } = baseShape;
+    const baseStyle = {
+        fontFamily: baseShape.fontFamily,
+        fontSize: baseShape.fontSize,
+        fontWeight: baseShape.fontWeight,
+        fontStyle: baseShape.fontStyle,
+        textAlign: baseShape.textAlign,
+        textDecoration: baseShape.textDecoration,
+        lineHeight: baseShape.lineHeight,
+        fill: baseShape.fill,
+        stroke: baseShape.stroke
+    };
+    const newStyle = {
+        fontFamily: shape.fontFamily,
+        fontSize: shape.fontSize,
+        fontWeight: shape.fontWeight,
+        fontStyle: shape.fontStyle,
+        textAlign: shape.textAlign,
+        textDecoration: shape.textDecoration,
+        lineHeight: shape.lineHeight,
+        fill: shape.fill,
+        stroke: shape.stroke
+    };
+    // Remove undefined style keys:
+    Object.keys(newStyle).forEach((key) => (newStyle[key] === undefined) && delete newStyle[key]);
+    const updatedTspans = tspans.slice();
+    if (selectionRange && selectionRange[0] !== selectionRange[1]) {
+        if (tspans.length > 0) {
+            // If there are other tspans, find overlaps and combine styles:
+            tspans.map(tspan => {
+                // Tspan overlaps with the selection range:
+                if (
+                    (selectionRange[0] >= tspan.range[0] && selectionRange[0] < tspan.range[1]) ||
+                    (selectionRange[1] > tspan.range[0] && selectionRange[1] <= tspan.range[1]) ||
+                    (selectionRange[0] <= tspan.range[0] && selectionRange[1] >= tspan.range[1])
+                ) {
+                    const tspanIndex = _.findIndex(updatedTspans, function(o) { return _.isEqual(tspan, o); });
+                    // Tspan is equal to or entirely inside the selection range:
+                    if (selectionRange[0] <= tspan.range[0] && selectionRange[1] >= tspan.range[1]) {
+                        updatedTspans[tspanIndex].style = Object.assign({}, tspan.style, newStyle);
+                    } else {
+                        // Tspan is encloses or partially overlaps with selection range, so remove it and break it up:
+                        updatedTspans.splice(tspanIndex, 1);
+                        // Create new tspans in the place where it's not overlapping selection range and combine overlapping styles:
+                        if (selectionRange[0] >= tspan.range[0] && selectionRange[1] <= tspan.range[1]) {
+                            if (selectionRange[0] !== tspan.range[0]) {
+                                updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [tspan.range[0], selectionRange[0]] });
+                            }
+                            updatedTspans.push({ id: uuidv1(), style: Object.assign({}, tspan.style, newStyle), range: [selectionRange[0], selectionRange[1]] });
+                            if (selectionRange[1] !== tspan.range[1]) {
+                                updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [selectionRange[1], tspan.range[1]] });
+                            }
+                        } else {
+                            if (selectionRange[0] >= tspan.range[0]) {
+                                if (selectionRange[0] !== tspan.range[0]) {
+                                    updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [tspan.range[0], selectionRange[0]] });
+                                }
+                                updatedTspans.push({ id: uuidv1(), style: Object.assign({}, tspan.style, newStyle), range: [selectionRange[0], tspan.range[1]] });
+                            }
+                            if (selectionRange[1] <= tspan.range[1]) {
+                                updatedTspans.push({ id: uuidv1(), style: Object.assign({}, tspan.style, newStyle), range: [tspan.range[0], selectionRange[0]] });
+                                if (selectionRange[1] !== tspan.range[1]) {
+                                    updatedTspans.push({ id: uuidv1(), style: tspan.style, range: [selectionRange[1], tspan.range[1]] });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            if (selectionRange[0] !== 0) {
+                updatedTspans.push({ id: uuidv1(), style: baseStyle, range: [0, selectionRange[0]] });
+            }
+            updatedTspans.push({ id: uuidv1(), style: Object.assign({}, baseStyle, newStyle), range: selectionRange });
+            if (selectionRange[1] < text.length) {
+                updatedTspans.push({ id: uuidv1(), style: baseStyle, range: [selectionRange[1], text.length] });
+            }
+        }
+        stateCopy.shapes.byId[shape.id].tspans = updatedTspans.sort((a, b) => {
+            return a.range[0] - b.range[0];
+        });
+    } else {
+        stateCopy.shapes.byId[shape.id] = Object.assign({}, baseShape, shape);
+    }
+    return stateCopy;
+}
 
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
@@ -43,7 +142,7 @@ export function dragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
-    stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
+
     return stateCopy;
 }
 
@@ -120,6 +219,12 @@ export function handleDragStart(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         default: break;
     }
+
+    const { handleIndex } = action.payload;
+    if (stateCopy.mode === 'reshape') {
+        stateCopy.selectedHandle = handleIndex;
+        return stateCopy;
+    }
     return stateCopy;
 }
 
@@ -133,17 +238,18 @@ export function handleDrag(stateCopy, action, root) {
         stateCopy.shiftDirection = determineShiftDirection(action, stateCopy.scale, shiftSelected);
     }
 
-    if (stateCopy.mode === 'reshape') {
-        stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
-        return stateCopy;
-    }
-
-    if (!stateCopy.editInProgress) {
+    if (!stateCopy.editInProgress && !stateCopy.mode === 'reshape') {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         stateCopy.editInProgress = true;
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     } else {
+        if (stateCopy.mode === 'reshape') {
+            stateCopy.shape = reshape(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
+            stateCopy.selectedHandle = handleIndex;
+            return stateCopy;
+        }
+
         switch (root.menuState.toolType) {
             case "selectTool":
                 if (stateCopy.shapes.byId[shapeId].type !== 'text') {
@@ -175,6 +281,25 @@ export function handleDragStop(stateCopy, action, root) {
         case 'selectTool':
         case 'rotateTool':
             stateCopy.shapes = resetShapeSigns(stateCopy.shapes, stateCopy.selected);
+
+            if (stateCopy.mode === "reshape") {
+                stateCopy.shapes.byId[stateCopy.selected[0]].refreshSelection = true;
+                stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+            }
+            break;
+        default:
+            stateCopy.editInProgress = false;
+            break;
+    }
+
+    return stateCopy;
+}
+
+export function addPointDragStop(stateCopy, action, root) {
+    switch (root.menuState.toolType) {
+        case 'selectTool':
+            stateCopy.shapes = addPoint(stateCopy.shapes, stateCopy.selected, action.payload.handleIndex, action.payload.draggableData, stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
             break;
         default:
             stateCopy.editInProgress = false;
@@ -196,12 +321,17 @@ export function controlDrag(stateCopy, action, root) {
     stateCopy.mouseCoords.x = draggableData.x;
     stateCopy.mouseCoords.y = draggableData.y;
 
-    if (stateCopy.mode === 'reshape') {
-        stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
-            stateCopy.panX, stateCopy.panY, stateCopy.scale);
-        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+    if (!stateCopy.editInProgress) {
+        stateCopy.editInProgress = true;
+        stateCopy.lastSavedShapes = root.drawingState.shapes;
+    } else {
+        if (stateCopy.mode === 'reshape') {
+            stateCopy.shape = moveControl(stateCopy.shapes, stateCopy.selected, draggableData, handleIndex,
+                stateCopy.panX, stateCopy.panY, stateCopy.scale);
+            stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
 
-        return stateCopy;
+            return stateCopy;
+        }
     }
     return stateCopy;
 }
@@ -210,13 +340,66 @@ export function controlDragStop(stateCopy, action, root) {
     switch (stateCopy.mode) {
         default: break;
     }
+
+    if (stateCopy.mode === "reshape") {
+        stateCopy.shapes.byId[stateCopy.selected[0]].refreshSelection = true;
+        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+    }
+
+    stateCopy.editInProgress = false;
     return stateCopy;
 }
 
 export function textInputChange(stateCopy, action, root) {
-    const { shapeId, value, focused } = action.payload;
+    const { shapeId, value, focused, selectionRange } = action.payload;
+
+    const tspans = stateCopy.shapes.byId[shapeId].tspans;
+    const updatedTspans = _.cloneDeep(tspans);
+    const previousValue = stateCopy.shapes.byId[shapeId].text;
+    const dmp = new DiffMatchPatch();
+    let currentIndex = 0;
+    dmp.diff_main(previousValue, value).map(diff => {
+        if (diff[0] === DiffMatchPatch.DIFF_EQUAL) {
+            currentIndex += diff[1].length;
+        } else if (diff[0] === DiffMatchPatch.DIFF_INSERT) {
+            // Expand whatever tspan this diff was inserted into and all the ones after:
+            let editingTspans = false;
+            tspans.map((tspan, tspanIndex) => {
+                if (editingTspans) {
+                    updatedTspans[tspanIndex].range[0] += diff[1].length;
+                    updatedTspans[tspanIndex].range[1] += diff[1].length;
+                } else if (currentIndex > tspan.range[0] && currentIndex <= tspan.range[1]) {
+                    updatedTspans[tspanIndex].range[1] += diff[1].length;
+                    editingTspans = true;
+                }
+            });
+            currentIndex += diff[1].length;
+        } else if (diff[0] === DiffMatchPatch.DIFF_DELETE) {
+            diff[1].split('').map(char => {
+                let editingTspans = false;
+                tspans.map(tspan => {
+                    const tspanIndex = _.findIndex(updatedTspans, function(o) { return tspan.id === o.id; });
+                    if (editingTspans) {
+                        updatedTspans[tspanIndex].range[0] -= 1;
+                        updatedTspans[tspanIndex].range[1] -= 1;
+                    } else if (currentIndex >= tspan.range[0] && currentIndex < tspan.range[1]) {
+                        updatedTspans[tspanIndex].range[1] -= 1;
+                        if (updatedTspans[tspanIndex].range[0] === updatedTspans[tspanIndex].range[1]) {
+                            updatedTspans.splice(tspanIndex, 1);
+                        }
+                        editingTspans = true;
+                    }
+                });
+                currentIndex += 1;
+            });
+            currentIndex -= diff[1].length;
+        }
+    });
+
     stateCopy.shapes.byId[shapeId].text = value;
     stateCopy.shapes.byId[shapeId].focused = focused;
+    stateCopy.shapes.byId[shapeId].selectionRange = selectionRange;
+    stateCopy.shapes.byId[shapeId].tspans = updatedTspans;
     return stateCopy;
 }
 
@@ -298,15 +481,21 @@ export function keyDown(stateCopy, action, root) {
 
     const { keyCode } = action.payload;
     let commandSelected = 91 in root.menuState.currentKeys;
+
     switch (keyCode) {
         case 8:
             stateCopy.lastSavedShapes = root.drawingState.shapes;
-            stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
-            stateCopy.selected = [];
+            if (stateCopy.mode === 'reshape') {
+                stateCopy.shape = removePoint(stateCopy.shapes, stateCopy.selected, stateCopy.selectedHandle);
+            } else {
+                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.selected = [];
+            }
             break;
         case 13: // finish reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.mode === 'reshape') {
                 stateCopy.mode = "";
+                stateCopy.shapes.byId[stateCopy.selected[0]].reshapeInProgress = false;
                 stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
             }
             break;
@@ -329,6 +518,13 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.shapes = pasteShapes(stateCopy.shapes, stateCopy.toDuplicate, stateCopy.duplicateOffset);
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toDuplicate).length);
                 stateCopy.justDuplicated = true;
+            }
+            break;
+        case 69: // smooth
+            if (commandSelected) {
+                stateCopy.shapes = smoothShapes(stateCopy.shapes, stateCopy.selected);
+            } else {
+                stateCopy.shapes = unSmoothShapes(stateCopy.shapes, stateCopy.selected);
             }
             break;
         case 70: // forward
@@ -359,6 +555,7 @@ export function keyDown(stateCopy, action, root) {
                     stateCopy.mode = "reshape";
                     stateCopy.shapes = removeTransformation(stateCopy.shapes, stateCopy.selected);
                     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+                    stateCopy.shapes = prepareForReshape(stateCopy.shapes, stateCopy.selected);
                 }
             }
             break;
@@ -378,6 +575,13 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.selected = stateCopy.shapes.allIds.slice(-1 * Object.keys(stateCopy.toCopy).length);
                 stateCopy.pasteOffset.x += stateCopy.gridSnapInterval;
                 stateCopy.pasteOffset.y += stateCopy.gridSnapInterval;
+            }
+            break;
+        case 88: // cut
+            if (commandSelected && !root.menuState.copied) {
+                stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy.selected = [];
             }
             break;
         case 54: // TEMP Hard Coded Arc Flip
@@ -409,6 +613,8 @@ export function keyUp(stateCopy, action, root) {
         default:
             break;
     }
+
+    stateCopy.editInProgress = false;
     return stateCopy;
 }
 
@@ -416,6 +622,14 @@ export function selectTool(stateCopy, action, root) {
     if ((root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') ||
         (root.menuState.toolType === 'bezierTool' && action.toolType !== 'bezierTool')) {
         stateCopy.editInProgress = false;
+    }
+    return stateCopy;
+}
+
+export function alignClick(stateCopy, action, root) {
+    let shiftSelected = 16 in root.menuState.currentKeys;
+    if (shiftSelected) {
+        stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
 }
