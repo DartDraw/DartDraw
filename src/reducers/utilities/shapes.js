@@ -2086,6 +2086,9 @@ export function distributeShapes(shapes, selected, boundingBoxes, selectionBoxes
         case "distribute-top":
             shapes = distributeTop(shapes, selected, boundingBoxes, selectionBoxes);
             break;
+        case "distribute-bottom":
+            shapes = distributeBottom(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
         default:
             break;
     }
@@ -2093,16 +2096,50 @@ export function distributeShapes(shapes, selected, boundingBoxes, selectionBoxes
 }
 
 function distributeTop(shapes, selected, boundingBoxes, selectionBoxes) {
-    let {minY, maxY} = determineMinYMaxY(shapes, selected, selectionBoxes);
-    let centerY = (minY + maxY) / 2;
+    let {minY} = determineMinYMaxY(shapes, selected, selectionBoxes);
 
-    selected.map((id) => {
+    let sortedIds = [];
+    selected.map((id, i) => {
         const selectionBox = selectionBoxes[id];
+        sortedIds[i] = {id, point: findTopPoint(selectionBox.handles)};
+    });
+
+    sortedIds.sort((a, b) => {
+        return a.point - b.point;
+    });
+
+    let distributionLength = (sortedIds[sortedIds.length - 1].point - minY) / (selected.length - 1);
+    for (let i = 1; i < sortedIds.length - 1; i++) {
         let action = { payload: { draggableData: { } } };
         action.payload.draggableData.deltaX = 0;
-        action.payload.draggableData.deltaY = centerY - findCenterVerticalPoint(selectionBox.handles);
-        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+        action.payload.draggableData.deltaY = (minY + distributionLength * i) - sortedIds[i].point;
+        shapes = moveShape(shapes, [sortedIds[i].id], action, 1, boundingBoxes, selectionBoxes);
+    }
+
+    return shapes;
+}
+
+function distributeBottom(shapes, selected, boundingBoxes, selectionBoxes) {
+    let {maxY} = determineMinYMaxY(shapes, selected, selectionBoxes);
+
+    let sortedIds = [];
+    selected.map((id, i) => {
+        const selectionBox = selectionBoxes[id];
+        sortedIds[i] = {id, point: findBottomPoint(selectionBox.handles)};
     });
+
+    sortedIds.sort((a, b) => {
+        return b.point - a.point;
+    });
+
+    let distributionLength = (sortedIds[sortedIds.length - 1].point - maxY) / (selected.length - 1);
+    for (let i = 1; i < sortedIds.length - 1; i++) {
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = (maxY + distributionLength * i) - sortedIds[i].point;
+        shapes = moveShape(shapes, [sortedIds[i].id], action, 1, boundingBoxes, selectionBoxes);
+    }
+
     return shapes;
 }
 

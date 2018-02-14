@@ -15,7 +15,7 @@ class ContextualMenu extends Component {
         onAlignmentClick: PropTypes.func,
         onDistributeClick: PropTypes.func,
         editText: PropTypes.func,
-        onAllignmentClick: PropTypes.func,
+        onAlignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -42,6 +42,7 @@ class ContextualMenu extends Component {
         this.handleEdit = this.handleEdit.bind(this);
         this.handleEditText = this.handleEditText.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
+        this.handleDistributeClick = this.handleDistributeClick.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleUngroupClick = this.handleUngroupClick.bind(this);
         this.handleMoveBackward = this.handleMoveBackward.bind(this);
