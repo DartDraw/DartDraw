@@ -197,7 +197,7 @@ export function handleDragStop(stateCopy, action, root) {
     return stateCopy;
 }
 
-export function addPointLineDragStop(stateCopy, action, root) {
+export function addPointDragStop(stateCopy, action, root) {
     switch (root.menuState.toolType) {
         case 'selectTool':
             stateCopy.shapes = addPoint(stateCopy.shapes, stateCopy.selected, action.payload.handleIndex, action.payload.draggableData, stateCopy.panX, stateCopy.panY, stateCopy.scale);
