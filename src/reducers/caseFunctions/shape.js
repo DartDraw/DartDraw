@@ -4,7 +4,8 @@ import DiffMatchPatch from 'diff-match-patch';
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
-    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape } from '../utilities/shapes';
+    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape,
+    distributeShapes } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 import * as menu from './menu';
@@ -632,9 +633,13 @@ export function selectTool(stateCopy, action, root) {
 }
 
 export function alignClick(stateCopy, action, root) {
-    let shiftSelected = 16 in root.menuState.currentKeys;
-    if (shiftSelected) {
-        stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
+    stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
+    return stateCopy;
+}
+
+export function distributeClick(stateCopy, action, root) {
+    if (stateCopy.selected.length > 2) {
+        stateCopy.shapes = distributeShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
 }

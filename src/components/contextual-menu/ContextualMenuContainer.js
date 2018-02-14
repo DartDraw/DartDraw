@@ -3,6 +3,7 @@ import {
     editShape,
     editText,
     alignmentClick,
+    distributeClick,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
@@ -40,8 +41,11 @@ const mapDispatchToProps = (dispatch) => {
         editText: (shape) => {
             dispatch(editText(shape));
         },
-        onAllignmentClick: (id) => {
+        onAlignmentClick: (id) => {
             dispatch(alignmentClick(id));
+        },
+        onDistributeClick: (id) => {
+            dispatch(distributeClick(id));
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());
