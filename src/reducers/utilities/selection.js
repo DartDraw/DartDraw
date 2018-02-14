@@ -244,7 +244,6 @@ function generateSelectionBox(shape, boundingBox, mode) {
     switch (mode) {
         case 'reshape':
             let handles = [];
-            let addPointLines = [];
             if (shape.points) {
                 for (let i = 0; i < shape.points.length / 2; i++) {
                     handles.push({id: uuidv1(), index: i, x: shape.points[i * 2], y: shape.points[i * 2 + 1]});
@@ -304,6 +303,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 handles = [];
             }
 
+            let addPointLines = [];
             if (shape.type === "polygon") {
                 for (let i = 0; i <= shape.points.length - 4; i += 2) {
                     addPointLines.push(
@@ -311,6 +311,24 @@ function generateSelectionBox(shape, boundingBox, mode) {
                             index: i / 2,
                             stroke: shape.strokeWidth,
                             points: [shape.points[i], shape.points[i + 1], shape.points[i + 2], shape.points[i + 3]]});
+                }
+            }
+
+            let addPointBeziers = [];
+            if (shape.type === "bezier") {
+                addPointBeziers.push({id: uuidv1(),
+                    index: 0,
+                    stroke: shape.strokeWidth,
+                    points: [shape.points[0], shape.points[1], shape.points[2], shape.points[3]],
+                    controlPoints: [shape.controlPoints[shape.points.length / 2 - 1][1], shape.controlPoints[1][0]]
+                });
+                for (let i = 2; i <= shape.points.length - 4; i += 2) {
+                    addPointBeziers.push(
+                        {id: uuidv1(),
+                            index: i / 2,
+                            stroke: shape.strokeWidth,
+                            points: [shape.points[i], shape.points[i + 1], shape.points[i + 2], shape.points[i + 3]],
+                            controlPoints: [shape.controlPoints[i / 2][1], shape.controlPoints[i / 2 + 1][0]]});
                 }
             }
 
@@ -326,6 +344,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 transform,
                 handles,
                 addPointLines,
+                addPointBeziers,
                 controls,
                 mode
             };

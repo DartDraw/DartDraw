@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Rectangle, Handle, Control, Line, TransparentLine } from '../shapes';
+import { Rectangle, Handle, Control, Line, TransparentLine, TransparentBezier } from '../shapes';
 
 class SelectionLayer extends Component {
     static propTypes = {
@@ -54,7 +54,6 @@ class SelectionLayer extends Component {
     }
 
     handleAddPointLineDragStop(shapeId, handleIndex, draggableData) {
-        console.log(handleIndex);
         this.props.onAddPointLineDragStop(shapeId, handleIndex, draggableData);
     }
 
@@ -113,6 +112,31 @@ class SelectionLayer extends Component {
                     pointerEvents={"stroke"}
                     onDragStop={this.handleAddPointLineDragStop}
                     onDragStart={() => console.log("start")}
+                />
+            );
+        });
+    }
+
+    renderAddPointBeziers(selectionBox) {
+        if (!selectionBox.controls) return;
+
+        return selectionBox.addPointBeziers.map((line, i) => {
+            const { id, index } = line;
+
+            return (
+                <TransparentBezier
+                    key={id}
+                    id={id}
+                    shapeId={selectionBox.shapeId}
+                    index={index}
+                    points={line.points}
+                    controlPoints={line.controlPoints}
+                    arrowLength={0}
+                    strokeWidth={line.stroke}
+                    stroke={"transparent"}
+                    fill={"none"}
+                    pointerEvents={"stroke"}
+                    onDragStop={this.handleAddPointLineDragStop}
                 />
             );
         });
@@ -189,6 +213,7 @@ class SelectionLayer extends Component {
                         propagateEvents={propagateEvents}
                     />
                     {this.renderAddPointLines(selectionBox)}
+                    {this.renderAddPointBeziers(selectionBox)}
                     {this.renderControlLines(selectionBox)}
                     {this.renderHandles(selectionBox)}
                     {this.renderControls(selectionBox)}

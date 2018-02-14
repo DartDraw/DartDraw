@@ -94,7 +94,7 @@ class TextInput extends Component {
                     fontStyle,
                     textAlign,
                     textDecoration,
-                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px'
                 }}
                 onClick={event => { this.handleClick(id, event); }}
             >

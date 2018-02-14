@@ -1023,14 +1023,17 @@ export function addPoint(shapes, selected, handleIndex, draggableData, panX, pan
         switch (shape.type) {
             case 'polygon':
                 shape.points.splice((handleIndex + 1) * 2, 0, x, y);
-                shape.refreshSelection = true;
                 break;
             case 'bezier':
+                shape.points.splice((handleIndex + 1) * 2, 0, x, y);
+                shape.controlPoints = smoothPath(shape);
                 break;
             default:
                 break;
         }
+        shape.refreshSelection = true;
     });
+
     return shapes;
 }
 

@@ -187,11 +187,17 @@ export function handleDragStop(stateCopy, action, root) {
         case 'selectTool':
         case 'rotateTool':
             stateCopy.shapes = resetShapeSigns(stateCopy.shapes, stateCopy.selected);
+
+            if (stateCopy.mode === "reshape") {
+                stateCopy.shapes.byId[stateCopy.selected[0]].refreshSelection = true;
+                stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
+            }
             break;
         default:
             stateCopy.editInProgress = false;
             break;
     }
+
     return stateCopy;
 }
 
@@ -239,6 +245,11 @@ export function controlDrag(stateCopy, action, root) {
 export function controlDragStop(stateCopy, action, root) {
     switch (stateCopy.mode) {
         default: break;
+    }
+
+    if (stateCopy.mode === "reshape") {
+        stateCopy.shapes.byId[stateCopy.selected[0]].refreshSelection = true;
+        stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     }
 
     stateCopy.editInProgress = false;
