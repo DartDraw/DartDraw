@@ -1,7 +1,7 @@
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
-    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes } from '../utilities/shapes';
+    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 
@@ -484,6 +484,14 @@ export function selectTool(stateCopy, action, root) {
     if ((root.menuState.toolType === 'polygonTool' && action.toolType !== 'polygonTool') ||
         (root.menuState.toolType === 'bezierTool' && action.toolType !== 'bezierTool')) {
         stateCopy.editInProgress = false;
+    }
+    return stateCopy;
+}
+
+export function alignClick(stateCopy, action, root) {
+    let shiftSelected = 16 in root.menuState.currentKeys;
+    if (shiftSelected) {
+        stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
 }

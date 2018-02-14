@@ -1945,3 +1945,229 @@ function controlPoint(current, previous, next, reverse) {
     const y = current[1] + Math.sin(angle) * length;
     return {x: x, y: y};
 }
+
+export function alignToShape(shapes, selected, boundingBoxes, selectionBoxes, direction) {
+    switch (direction) {
+        case "alignment-left":
+            shapes = alignLeft(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-right":
+            shapes = alignRight(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-top":
+            shapes = alignTop(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-bottom":
+            shapes = alignBottom(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-vertical":
+            shapes = alignCenterVertical(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        case "alignment-horizontal":
+            shapes = alignCenterHorizontal(shapes, selected, boundingBoxes, selectionBoxes);
+            break;
+        default:
+            break;
+    }
+    return shapes;
+}
+
+function alignLeft(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minX = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findLeftPoint(selectionBox.handles);
+        if (x < minX) {
+            minX = x;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = minX - findLeftPoint(selectionBox.handles);
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignRight(shapes, selected, boundingBoxes, selectionBoxes) {
+    let maxX = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findRightPoint(selectionBox.handles);
+        if (x > maxX) {
+            maxX = x;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = maxX - findRightPoint(selectionBox.handles);
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignCenterVertical(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minX = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findLeftPoint(selectionBox.handles);
+        if (x < minX) {
+            minX = x;
+        }
+    });
+
+    let maxX = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let x = findRightPoint(selectionBox.handles);
+        if (x > maxX) {
+            maxX = x;
+        }
+    });
+
+    let centerX = (minX + maxX) / 2;
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = centerX - findCenterHorizontalPoint(selectionBox.handles);
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignTop(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minY = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findTopPoint(selectionBox.handles);
+        if (y < minY) {
+            minY = y;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = minY - findTopPoint(selectionBox.handles);
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignBottom(shapes, selected, boundingBoxes, selectionBoxes) {
+    let maxY = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findBottomPoint(selectionBox.handles);
+        if (y > maxY) {
+            maxY = y;
+        }
+    });
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = maxY - findBottomPoint(selectionBox.handles);
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function alignCenterHorizontal(shapes, selected, boundingBoxes, selectionBoxes) {
+    let minY = Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findTopPoint(selectionBox.handles);
+        if (y < minY) {
+            minY = y;
+        }
+    });
+
+    let maxY = -Infinity;
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let y = findBottomPoint(selectionBox.handles);
+        if (y > maxY) {
+            maxY = y;
+        }
+    });
+
+    let centerY = (minY + maxY) / 2;
+
+    selected.map((id) => {
+        const selectionBox = selectionBoxes[id];
+        let action = { payload: { draggableData: { } } };
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = centerY - findCenterVerticalPoint(selectionBox.handles);
+        shapes = moveShape(shapes, [id], action, 1, boundingBoxes, selectionBoxes);
+    });
+    return shapes;
+}
+
+function findLeftPoint(points) {
+    let minX = Infinity;
+    points.map((p) => {
+        let x = p.x;
+        if (x < minX) {
+            minX = x;
+        }
+    });
+    return minX;
+}
+
+function findRightPoint(points) {
+    let maxX = -Infinity;
+    points.map((p) => {
+        let x = p.x;
+        if (x > maxX) {
+            maxX = x;
+        }
+    });
+    return maxX;
+}
+
+function findCenterHorizontalPoint(points) {
+    let maxX = findRightPoint(points);
+    let minX = findLeftPoint(points);
+
+    return ((minX + maxX) / 2);
+}
+
+function findTopPoint(points) {
+    let minY = Infinity;
+    points.map((p) => {
+        let y = p.y;
+        if (y < minY) {
+            minY = y;
+        }
+    });
+    return minY;
+}
+
+function findBottomPoint(points) {
+    let maxY = -Infinity;
+    points.map((p) => {
+        let y = p.y;
+        if (y > maxY) {
+            maxY = y;
+        }
+    });
+    return maxY;
+}
+
+function findCenterVerticalPoint(points) {
+    let maxY = findBottomPoint(points);
+    let minY = findTopPoint(points);
+
+    return ((minY + maxY) / 2);
+}
