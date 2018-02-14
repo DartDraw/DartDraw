@@ -2418,3 +2418,13 @@ function determineMinXMaxX(shapes, selected, selectionBoxes) {
 
     return {minX, maxX};
 }
+
+export function snapToGrid(shapes, selected, action, scale, boundingBoxes, selectionBoxes, gridSnapInterval, align) {
+    action.payload.draggableData = {};
+    selected.map((id) => {
+        action.payload.draggableData.deltaX = 0;
+        action.payload.draggableData.deltaY = 0;
+        shapes = moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, true, gridSnapInterval, align);
+    });
+    return shapes;
+}
