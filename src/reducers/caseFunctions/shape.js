@@ -45,10 +45,6 @@ export function dragStart(stateCopy, action, root) {
         default: break;
     }
 
-    if (stateCopy.mode === 'reshape') {
-        //      stateCopy.shapes = addPoint(stateCopy.shapes, stateCopy.selected, action.payload.draggableData, stateCopy.panX, stateCopy.panY, stateCopy.scale);
-    }
-    //  stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
     return stateCopy;
 }
 
