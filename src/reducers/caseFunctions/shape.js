@@ -5,7 +5,7 @@ import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMo
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
     prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape,
-    distributeShapes } from '../utilities/shapes';
+    distributeShapes, snapToGrid } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 import * as menu from './menu';
@@ -530,6 +530,11 @@ export function keyDown(stateCopy, action, root) {
             } else if (commandSelected) {
                 stateCopy = moveBackward(stateCopy, action, root);
             }
+            break;
+        case 75: // temp: snap to grid
+            upSelected = 38 in root.menuState.currentKeys;
+            stateCopy.shapes = snapToGrid(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapInterval, root.menuState.align);
             break;
         case 82: // reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.selected.length === 1) {
