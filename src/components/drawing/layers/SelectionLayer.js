@@ -14,7 +14,7 @@ class SelectionLayer extends Component {
         onControlDragStart: PropTypes.func,
         onControlDrag: PropTypes.func,
         onControlDragStop: PropTypes.func,
-        onAddPointLineDragStop: PropTypes.func
+        onAddPointDragStop: PropTypes.func
     };
 
     constructor(props) {
@@ -26,7 +26,7 @@ class SelectionLayer extends Component {
         this.handleControlDragStart = this.handleControlDragStart.bind(this);
         this.handleControlDrag = this.handleControlDrag.bind(this);
         this.handleControlDragStop = this.handleControlDragStop.bind(this);
-        this.handleAddPointLineDragStop = this.handleAddPointLineDragStop.bind(this);
+        this.handleAddPointDragStop = this.handleAddPointDragStop.bind(this);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -53,8 +53,8 @@ class SelectionLayer extends Component {
         this.props.onControlDragStop(shapeId, handleIndex, draggableData);
     }
 
-    handleAddPointLineDragStop(shapeId, handleIndex, draggableData) {
-        this.props.onAddPointLineDragStop(shapeId, handleIndex, draggableData);
+    handleAddPointDragStop(shapeId, handleIndex, draggableData) {
+        this.props.onAddPointDragStop(shapeId, handleIndex, draggableData);
     }
 
     renderHandles(selectionBox) {
@@ -110,7 +110,7 @@ class SelectionLayer extends Component {
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     pointerEvents={"stroke"}
-                    onDragStop={this.handleAddPointLineDragStop}
+                    onDragStop={this.handleAddPointDragStop}
                     onDragStart={() => console.log("start")}
                 />
             );
@@ -136,7 +136,7 @@ class SelectionLayer extends Component {
                     stroke={"transparent"}
                     fill={"none"}
                     pointerEvents={"stroke"}
-                    onDragStop={this.handleAddPointLineDragStop}
+                    onDragStop={this.handleAddPointDragStop}
                 />
             );
         });
