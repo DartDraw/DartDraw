@@ -48,7 +48,8 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
                 stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
-                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon" ||
+                  stateCopy.shapes.byId[stateCopy.selected[0]].open) {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
                     stateCopy.editInProgress = false;
