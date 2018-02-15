@@ -30,11 +30,10 @@ class RectangleMenu extends Component {
 
     handleStrokeWidth(event) {
         const { rectangle, onEdit } = this.props;
-        if (event.target.value > 0){
+        if (event.target.value > 0) {
             const newRectangle = Object.assign({}, rectangle, { strokeWidth: event.target.value });
             onEdit && onEdit(newRectangle);
         }
-        
     }
 
     render() {
@@ -47,7 +46,7 @@ class RectangleMenu extends Component {
                     <option value="15">15</option>
                     <option value="20">20</option>
                 </select>
-    
+
                 <input value={this.props.rectangle.x} />
                 <input value={this.props.rectangle.y} />
             </div>

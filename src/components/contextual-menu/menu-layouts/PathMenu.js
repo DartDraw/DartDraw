@@ -58,7 +58,6 @@ class PathMenu extends Component {
                     <option value="yes">yes</option>
                     <option value="no">no</option>
                 </select>
-
             </div>
         );
     }

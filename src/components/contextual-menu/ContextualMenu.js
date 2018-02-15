@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
+import { ArrowheadGUIContainer } from './gui-editors';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
     static propTypes = {
         selectedShape: PropTypes.object,
+        arrowheads: PropTypes.arrayOf(PropTypes.objects),
         scale: PropTypes.number,
         unitType: PropTypes.string,
         unitDivisions: PropTypes.number,
@@ -54,6 +56,10 @@ class ContextualMenu extends Component {
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
+    }
+
+    coponentWillMoung() {
+        this.props.generateArrowheadPrototypes();
     }
 
     toggleMenu() {
@@ -148,9 +154,11 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
+        const { selectedShape, arrowheads, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
+        console.log(arrowheads);
         const { hidden } = this.state;
         let menuLayout = null;
+        let guiEditor = null;
         if (selectedShape) {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} />;
@@ -158,6 +166,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
+                guiEditor = <ArrowheadGUIContainer path={selectedShape} arrowhead={arrowheads[0]} />;
             } else if (selectedShape.type === 'ellipse') {
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
             }
@@ -221,6 +230,7 @@ class ContextualMenu extends Component {
                     </div>
                     <div className="dynamic-menu">
                         { menuLayout }
+                        { guiEditor }
                     </div>
                     <div className="temp">
                         <button onClick={this.handleShowRulers} id="button-icon">R</button>

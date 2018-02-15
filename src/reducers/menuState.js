@@ -3,6 +3,7 @@ import * as menu from './caseFunctions/menu';
 import * as grid from './caseFunctions/grid';
 import * as rulers from './caseFunctions/rulers';
 import { deepCopy } from './utilities/object';
+import { generateArrowheadPrototypes } from './utilities/arrowhead';
 
 const initialState = {
     color: { r: 33, g: 150, b: 243, a: 1 },
@@ -19,7 +20,8 @@ const initialState = {
     gridSnapping: false,
     showRulers: true,
     showSubDivisions: true,
-    showGrid: true
+    showGrid: true,
+    arrowheads: generateArrowheadPrototypes()
 };
 
 function menuState(state = initialState, action, root) {

@@ -53,6 +53,7 @@ class SelectionLayer extends Component {
 
     renderHandles(selectionBox) {
         const { propagateEvents, scale } = this.props;
+        console.log("handles:", selectionBox);
         return selectionBox.handles.map((handle, i) => {
             const { id, index } = handle;
             const x = handle.x - 5 / scale;
@@ -89,6 +90,7 @@ class SelectionLayer extends Component {
 
     renderControls(selectionBox) {
         const { propagateEvents, scale } = this.props;
+        console.log("controls:", selectionBox);
         if (!selectionBox.controls) return;
         return selectionBox.controls.map((control, i) => {
             const { id, index } = control;
