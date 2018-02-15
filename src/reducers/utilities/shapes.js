@@ -103,10 +103,15 @@ export function addPolygonPoint(shapes, selected, action, panX, panY, scale, gri
         polygon.type = 'polygon';
     }
 
+    if ((Math.abs(xCoord - polygon.points[polygon.points.length - 4]) < (5 / scale) &&
+          Math.abs(yCoord - polygon.points[polygon.points.length - 3]) < (5 / scale))) {
+        polygon.open = true;
+    }
+
     polygon.points[polygon.points.length - 2] = xCoord;
     polygon.points[polygon.points.length - 1] = yCoord;
 
-    if (polygon.type !== 'polygon') {
+    if (polygon.type !== 'polygon' && !polygon.open) {
         // temp point
         polygon.points.push(xCoord);
         polygon.points.push(yCoord);
@@ -843,6 +848,7 @@ export function removeTransformation(shapes, selected) {
         switch (shape.type) {
             case 'line':
             case 'polygon':
+            case 'polyline':
                 for (let i = 0; i < shape.points.length; i += 2) {
                     let coords = transformPoint(shape.points[i], shape.points[i + 1], shapeMatrix);
                     shape.points[i] = coords.x;
@@ -961,6 +967,7 @@ export function reshape(shapes, selected, draggableData, handleIndex, panX, panY
         let shape = shapes.byId[id];
         switch (shape.type) {
             case 'line':
+            case 'polyline':
                 shape.points[handleIndex * 2] = mouseX;
                 shape.points[handleIndex * 2 + 1] = mouseY;
                 break;
@@ -1022,6 +1029,7 @@ export function addPoint(shapes, selected, handleIndex, draggableData, panX, pan
         let shape = shapes.byId[id];
         switch (shape.type) {
             case 'polygon':
+            case 'polyline':
                 shape.points.splice((handleIndex + 1) * 2, 0, x, y);
                 break;
             case 'bezier':
@@ -1041,6 +1049,11 @@ export function removePoint(shapes, selected, handleIndex) {
     selected.map((id) => {
         let shape = shapes.byId[id];
         switch (shape.type) {
+            case 'polyline':
+                shape.points.splice(handleIndex * 2, 2);
+
+                shape.refreshSelection = true;
+                break;
             case 'polygon':
                 shape.points.splice(handleIndex * 2, 2);
 
