@@ -68,6 +68,20 @@ const template = [
             }
         ]
     },
+    {
+        label: 'View',
+          submenu: [
+            {role: 'reload'},
+            {role: 'forcereload'},
+            {role: 'toggledevtools'},
+            {type: 'separator'},
+            {role: 'resetzoom'},
+            {role: 'zoomin'},
+            {role: 'zoomout'},
+            {type: 'separator'},
+            {role: 'togglefullscreen'}
+        ]
+    }
 ];
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -82,9 +96,6 @@ function createWindow() {
 
     // and load the index.html of the app.
     win.loadURL('http://localhost:3000');
-
-    // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     win.on('closed', function() {
