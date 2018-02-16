@@ -25,7 +25,8 @@ class ColorMenu extends Component {
 
         this.state = {
             showColorPicker: false,
-            color: this.props.currentColor
+            color: this.props.currentColor,
+            showColorEditor: true
         };
 
         this.tempOpacityValue = this.props.currentColor.a;
@@ -40,6 +41,7 @@ class ColorMenu extends Component {
         this.handleColorChange = this.handleColorChange.bind(this);
         this.handleColorInputChange = this.handleColorInputChange.bind(this);
         this.convertRGBArrayToObj = this.convertRGBArrayToObj.bind(this);
+        this.toggleColorEditor = this.toggleColorEditor.bind(this);
     }
 
     handleUpdate(event) {
@@ -105,8 +107,13 @@ class ColorMenu extends Component {
         return {r: colorInfo.rgb[0], g: colorInfo.rgb[1], b: colorInfo.rgb[2], a: colorInfo.alpha};
     }
 
+    toggleColorEditor() {
+        this.setState({showColorEditor: !this.state.showColorEditor});
+        console.log(this.state.showColorEditor);
+    }
+
     render() {
-        const { fillColor, currentColor, colorType } = this.props;
+        const { currentColor, colorType } = this.props;
         const currentColorStyle = {
             backgroundColor: `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         };
@@ -178,25 +185,28 @@ class ColorMenu extends Component {
         let colorOptions = [{value: 'RGB', label: 'RGB'}, {value: 'CMYK', label: 'CMYK'}, {value: 'HSV', label: 'HSV'}, {value: 'HEX', label: 'HEX'}];
 
         return (
-            <div className="color-editor">
-                <div id="inline-apart">
+            <div>
+                <div id="inline-close" className="color-editor" onClick={this.toggleColorEditor}>
                     <h1>Color Editor</h1>
+                    <div className={this.state.showColorEditor ? 'arrow-right-small' : 'arrow-down'} />
                 </div>
-                <div id="inline-close">
-                    <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
-                    {colorPicker}
-                    <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
-                    <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
-                    <form id="opacity-form" onSubmit={this.handleSubmit}>
-                        <label>Opacity:</label>
-                        <input className="range-input" type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
-                        <input type="text" value={this.tempOpacityValue * 100.0} onChange={this.handleChange} />
-                    </form>
+                <div className="color-editor" style={this.state.showColorEditor ? {display: "none"} : {display: 'block'}}>
+                    <div id="inline-close">
+                        <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
+                        {colorPicker}
+                        <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
+                        <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
+                        <form id="opacity-form" onSubmit={this.handleSubmit}>
+                            <label>Opacity:</label>
+                            <input className="range-input" type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
+                            <input type="text" value={this.tempOpacityValue * 100.0} onChange={this.handleChange} />
+                        </form>
+                    </div>
+                    <div id="inline-close">
+                        { colorInput }
+                    </div>
+                    <div className="horz-div" />
                 </div>
-                <div id="inline-close">
-                    { colorInput }
-                </div>
-                <div className="horz-div" />
             </div>
         );
     }
