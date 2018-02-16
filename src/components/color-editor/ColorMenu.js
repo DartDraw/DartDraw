@@ -185,7 +185,7 @@ class ColorMenu extends Component {
                 <div id="inline-close">
                     <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
                     {colorPicker}
-                    <button id="basic-button" onClick={this.handleAddColor}>+</button>
+                    <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
                     <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>

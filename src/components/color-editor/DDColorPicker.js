@@ -42,13 +42,6 @@ class DDColorPicker extends Component {
                 <div style={styles.hue}>
                     <Hue hsl={this.props.hsl} onChange={this.props.onChange} />
                 </div>
-                <div style={styles.input}>
-                    <EditableInput
-                        value={this.props.hex}
-                        onChange={this.props.onChange}
-                    />
-                </div>
-
             </div>
         );
     }

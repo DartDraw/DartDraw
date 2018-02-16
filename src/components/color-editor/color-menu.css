@@ -68,6 +68,18 @@ label {
   background-color: #394B59;
 }
 
+#basic-button-1 {
+  background-color: transparent;
+  width: auto;
+  color: #394B59;
+  border-radius: 2px;
+  font-size: 0.5em;
+}
+
+#basic-button-1:hover {
+  background-color: #EBF1F5;
+}
+
 #current-color-display {
   height: 30px;
   width: 30px;
