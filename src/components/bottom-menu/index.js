@@ -1,2 +1,2 @@
-export {default as BottomMenuContainer} from './BottomMenuContainer';
-export {default as BottomMenu} from './BottomMenu';
+export {default as BottomScrollContainer} from './BottomScrollContainer';
+export {default as RightScrollContainer} from './RightScrollContainer';

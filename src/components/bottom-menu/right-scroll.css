@@ -1,0 +1,19 @@
+#right-scroll-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #202B33;
+    transition: right 200ms ease-in-out;
+}
+
+#right-scroll-bar {
+    position: relative;
+    left: 2px;
+    right: 2px;
+    width: 10px;
+    background-color: #30404D;
+}
