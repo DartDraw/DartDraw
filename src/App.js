@@ -4,6 +4,7 @@ import { IpcMiddlewareContainer } from './components/ipc-middle';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
+import { BottomMenuContainer } from './components/bottom-menu';
 import { RulerLayerContainer } from './components/drawing/layers';
 import { ContextualMenuContainer } from './components/contextual-menu';
 
@@ -62,6 +63,7 @@ class App extends Component {
                     </div>
                 </div>
                 <IpcMiddlewareContainer />
+                <BottomMenuContainer />
                 <ContextualMenuContainer />
             </div>
         );

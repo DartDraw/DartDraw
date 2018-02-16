@@ -46,6 +46,7 @@ class Canvas extends Component {
         onGroupClick: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
+        onScroll: PropTypes.func,
         onBoundingBoxUpdate: PropTypes.func
     };
 
@@ -67,6 +68,15 @@ class Canvas extends Component {
         this.handleGroupDrag = this.handleGroupDrag.bind(this);
         this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
+    }
+
+    componentDidMount() {
+        window.addEventListener('wheel', this.handleScroll);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('wheel', this.handleScroll);
     }
 
     componentDidUpdate(prevProps) {
@@ -141,6 +151,10 @@ class Canvas extends Component {
 
     handleRedoClick() {
         this.props.onRedoClick();
+    }
+
+    handleScroll({ deltaX, deltaY }) {
+        this.props.onScroll(deltaX, deltaY);
     }
 
     renderShape(shape) {
@@ -226,7 +240,7 @@ class Canvas extends Component {
         const { canvasHeight, canvasWidth, viewBox, propagateEvents } = this.props;
 
         return (
-            <div style={{flex: 1, overflow: 'hidden'}}>
+            <div style={{flex: 1, overflow: 'hidden'}} onScroll={event => { console.log(event); }}>
                 <TextInputLayerContainer propagateEvents={propagateEvents} />
                 <Draggable
                     onStart={this.handleDragStart}
