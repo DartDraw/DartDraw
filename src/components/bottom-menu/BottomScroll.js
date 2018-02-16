@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Draggable } from '../shared';
 import './bottom-scroll.css';
 
 class BottomScroll extends Component {
@@ -15,29 +16,50 @@ class BottomScroll extends Component {
         super(props);
 
         this.state = {
+            dragging: false,
             hidden: true
         };
 
-        this.handleScroll = this.handleScroll.bind(this);
+        this.handleDragStart = this.handleDragStart.bind(this);
+        this.handleDrag = this.handleDrag.bind(this);
+        this.handleDragStop = this.handleDragStop.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.panX !== this.props.panX || nextProps.panY !== this.props.panY) {
-            this.setState({
-                hidden: false
-            });
-            if (this.timeoutTimer) {
-                clearTimeout(this.timeoutTimer);
+        if (!this.state.dragging) {
+            if (nextProps.panX !== this.props.panX || nextProps.panY !== this.props.panY) {
+                this.setState({
+                    hidden: false
+                });
+                if (this.timeoutTimer) {
+                    clearTimeout(this.timeoutTimer);
+                }
+                this.timeoutTimer = setTimeout(() => {
+                    this.setState({ hidden: true });
+                }, 2000);
             }
-            this.timeoutTimer = setTimeout(() => {
-                this.setState({ hidden: true });
-            }, 1000);
         }
     }
 
-    handleScroll() {
+    handleDragStart() {
+        clearTimeout(this.timeoutTimer);
+        this.setState({
+            dragging: true
+        });
+    }
+
+    handleDrag(draggableData) {
         const { onScroll } = this.props;
-        onScroll && onScroll();
+        onScroll && onScroll(draggableData.deltaX, 0);
+    }
+
+    handleDragStop() {
+        this.setState({
+            dragging: false
+        });
+        this.timeoutTimer = setTimeout(() => {
+            this.setState({ hidden: true });
+        }, 2000);
     }
 
     render() {
@@ -49,7 +71,9 @@ class BottomScroll extends Component {
 
         return (
             <div id="bottom-scroll-container" style={{ bottom: hidden ? -18 : 0 }}>
-                <div id="bottom-scroll-bar" style={{ width: scrollBarWidth, left: scrollBarPosition }} />
+                <Draggable onStart={this.handleDragStart} onDrag={this.handleDrag} onStop={this.handleDragStop}>
+                    <div id="bottom-scroll-bar" style={{ width: scrollBarWidth, left: scrollBarPosition }} />
+                </Draggable>
             </div>
         );
     }

@@ -97,6 +97,7 @@ export function textInputChange(shapeId, value, focused, selectionRange) {
 }
 
 export function scroll(deltaX, deltaY) {
+    console.log(deltaY);
     return { type: SCROLL, payload: { deltaX, deltaY } };
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Draggable } from '../shared';
 import './right-scroll.css';
 
 class RightScroll extends Component {
@@ -15,24 +16,50 @@ class RightScroll extends Component {
         super(props);
 
         this.state = {
+            dragging: false,
             hidden: true
         };
 
-        this.handleScroll = this.handleScroll.bind(this);
+        this.handleDragStart = this.handleDragStart.bind(this);
+        this.handleDrag = this.handleDrag.bind(this);
+        this.handleDragStop = this.handleDragStop.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.panX !== this.props.panX || nextProps.panY !== this.props.panY) {
-            this.setState({
-                hidden: false
-            });
-            if (this.timeoutTimer) {
-                clearTimeout(this.timeoutTimer);
+        if (!this.state.dragging) {
+            if (nextProps.panX !== this.props.panX || nextProps.panY !== this.props.panY) {
+                this.setState({
+                    hidden: false
+                });
+                if (this.timeoutTimer) {
+                    clearTimeout(this.timeoutTimer);
+                }
+                this.timeoutTimer = setTimeout(() => {
+                    this.setState({ hidden: true });
+                }, 2000);
             }
-            this.timeoutTimer = setTimeout(() => {
-                this.setState({ hidden: true });
-            }, 1000);
         }
+    }
+
+    handleDragStart() {
+        clearTimeout(this.timeoutTimer);
+        this.setState({
+            dragging: true
+        });
+    }
+
+    handleDrag(draggableData) {
+        const { onScroll } = this.props;
+        onScroll && onScroll(0, draggableData.deltaY);
+    }
+
+    handleDragStop() {
+        this.setState({
+            dragging: false
+        });
+        this.timeoutTimer = setTimeout(() => {
+            this.setState({ hidden: true });
+        }, 2000);
     }
 
     handleScroll() {
@@ -49,7 +76,9 @@ class RightScroll extends Component {
 
         return (
             <div id="right-scroll-container" style={{ right: hidden ? -18 : 0 }}>
-                <div id="right-scroll-bar" style={{ height: scrollBarHeight, top: scrollBarPosition }} />
+                <Draggable onStart={this.handleDragStart} onDrag={this.handleDrag} onStop={this.handleDragStop}>
+                    <div id="right-scroll-bar" style={{ height: scrollBarHeight, top: scrollBarPosition }} />
+                </Draggable>
             </div>
         );
     }

@@ -15,7 +15,8 @@ const mapStateToProps = ({ drawingState }) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onScroll: () => {
+        onScroll: (deltaX, deltaY) => {
+            dispatch(scroll(deltaX, deltaY));
         }
     };
 };
