@@ -162,7 +162,7 @@ class ColorMenu extends Component {
         if (!this.state.showColorPicker) {
             colorPicker = <div />;
         } else {
-            colorPicker = <div id="color-picker"><div className="arrow-up" /><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
+            colorPicker = <div id="color-picker"><div className="arrow-right" /><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
         }
         let colorInput = null;
         if (this.props.colorType === "CMYK") {
@@ -195,7 +195,6 @@ class ColorMenu extends Component {
                 </div>
                 <div id="inline-close">
                     { colorInput }
-
                 </div>
                 <div className="horz-div" />
             </div>

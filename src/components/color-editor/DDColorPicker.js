@@ -28,7 +28,7 @@ class DDColorPicker extends Component {
             },
             saturation: {
                 width: 200,
-                height: 150,
+                height: 180,
                 position: 'relative'
             }
         };

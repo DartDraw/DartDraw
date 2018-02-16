@@ -36,15 +36,28 @@ label {
   top: -9px;
 }
 
+.arrow-right {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #394B59;
+  position: absolute;
+  z-index: 5;
+  left: 210px;
+}
+
 #color-picker {
-  padding-top: 5px;
+  padding: 5px;
     width: 200px;
     height: 200px;
     z-index: 2;
-    background-color: #EBF1F5;
+    background-color: #394B59;
     position: absolute;
-    top: 79px;
+    top: 40px;
+    left: -210px;
     border-radius: 5px;
+
 }
 
 #palette {
