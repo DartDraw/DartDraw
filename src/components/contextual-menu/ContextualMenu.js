@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
+import { CONTEXTUAL_MENU_WIDTH } from '../../constants';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -11,11 +12,12 @@ class ContextualMenu extends Component {
         unitDivisions: PropTypes.number,
         canvasWidthInUnits: PropTypes.number,
         canvasHeightInUnits: PropTypes.number,
+        hidden: PropTypes.bool,
+        onToggleHidden: PropTypes.func,
         editShape: PropTypes.func,
         onAlignmentClick: PropTypes.func,
         onDistributeClick: PropTypes.func,
         editText: PropTypes.func,
-        onAlignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -34,12 +36,9 @@ class ContextualMenu extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            hidden: false
-        };
 
-        this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
+        this.handleToggleHidden = this.handleToggleHidden.bind(this);
         this.handleEditText = this.handleEditText.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
         this.handleDistributeClick = this.handleDistributeClick.bind(this);
@@ -61,11 +60,9 @@ class ContextualMenu extends Component {
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
     }
 
-    toggleMenu() {
-        const { hidden } = this.state;
-        this.setState({
-            hidden: !hidden
-        });
+    handleToggleHidden() {
+        const { onToggleHidden } = this.props;
+        onToggleHidden && onToggleHidden();
     }
 
     handleEdit(shape) {
@@ -170,8 +167,7 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
-        const { hidden } = this.state;
+        const { hidden, selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
         let menuLayout = null;
         if (selectedShape) {
             if (selectedShape.type === 'text') {
@@ -186,9 +182,9 @@ class ContextualMenu extends Component {
         }
 
         return (
-            <div className="contextual-menu" style={{ right: hidden ? -352 : 0 }}>
+            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -352 : 0 }}>
                 <div className="hide-button-column">
-                    <div className="hide-button" onClick={this.toggleMenu} />
+                    <div className="hide-button" onClick={this.handleToggleHidden} />
                 </div>
                 <div className="menu-column">
                     <h2>Object Manipulation</h2>

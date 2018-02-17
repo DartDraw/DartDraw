@@ -263,3 +263,12 @@ export function mouseMove(stateCopy, action, root) {
     }
     return stateCopy;
 }
+
+export function scroll(stateCopy, action, root) {
+    const { deltaX, deltaY } = action.payload;
+    const { ruler, panX, panY } = pan(stateCopy, { deltaX: -deltaX, deltaY: -deltaY });
+    stateCopy.ruler = ruler;
+    stateCopy.panX = panX;
+    stateCopy.panY = panY;
+    return stateCopy;
+}

@@ -4,6 +4,7 @@ import { IpcMiddlewareContainer } from './components/ipc-middle';
 import { CanvasContainer } from './components/drawing';
 import { TopMenuContainer } from './components/top-menu';
 import { LeftMenuContainer } from './components/left-menu';
+import { BottomScrollContainer, RightScrollContainer } from './components/scroll-bars';
 import { RulerLayerContainer } from './components/drawing/layers';
 import { ContextualMenuContainer } from './components/contextual-menu';
 
@@ -62,6 +63,8 @@ class App extends Component {
                     </div>
                 </div>
                 <IpcMiddlewareContainer />
+                <BottomScrollContainer />
+                <RightScrollContainer />
                 <ContextualMenuContainer />
             </div>
         );
