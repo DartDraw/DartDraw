@@ -2,14 +2,15 @@ import { connect } from 'react-redux';
 import RightScroll from './RightScroll';
 import { scroll } from './../../actions/canvas';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     const { panX, panY, canvasHeight, ruler, scale } = drawingState;
     const maxPanY = canvasHeight - (window.innerHeight - ruler.width - 45) / scale;
     return {
         panX,
         panY,
         maxPanY,
-        canvasHeight
+        canvasHeight,
+        contextualMenuVisible: menuState.showContextualMenu
     };
 };
 

@@ -1,18 +1,16 @@
 #bottom-scroll-container {
     position: absolute;
-    left: 0;
-    right: 0;
-    height: 18px;
+    left: 45px;
     padding-left: 5px;
     padding-right: 5px;
     background-color: #202B33;
-    transition: bottom 200ms ease-in-out;
+    transition: bottom 500ms ease-in-out;
 }
 
 #bottom-scroll-bar {
     position: relative;
-    top: 2px;
+    top: 4px;
     bottom: 2px;
     height: 10px;
-    background-color: #30404D;
+    background-color: #EBF1F5;
 }

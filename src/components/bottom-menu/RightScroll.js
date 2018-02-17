@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Draggable } from '../shared';
+import { CONTEXTUAL_MENU_WIDTH, SCROLL_BAR_WIDTH } from '../../constants';
 import './right-scroll.css';
 
 class RightScroll extends Component {
@@ -9,6 +10,7 @@ class RightScroll extends Component {
         panY: PropTypes.number,
         canvasHeight: PropTypes.number,
         maxPanY: PropTypes.number,
+        contextualMenuVisible: PropTypes.bool,
         onScroll: PropTypes.func
     };
 
@@ -68,14 +70,18 @@ class RightScroll extends Component {
     }
 
     render() {
-        const { panY, maxPanY, canvasHeight } = this.props;
+        const { panY, maxPanY, canvasHeight, contextualMenuVisible } = this.props;
         const { hidden } = this.state;
 
+        let containerPosition = hidden ? -SCROLL_BAR_WIDTH : 0;
+        if (contextualMenuVisible) {
+            containerPosition += CONTEXTUAL_MENU_WIDTH;
+        }
         const scrollBarHeight = ((1 - maxPanY / canvasHeight) * 100) + '%';
         const scrollBarPosition = (panY / canvasHeight * 100) + '%';
 
         return (
-            <div id="right-scroll-container" style={{ right: hidden ? -18 : 0 }}>
+            <div id="right-scroll-container" style={{ width: SCROLL_BAR_WIDTH, right: containerPosition }}>
                 <Draggable onStart={this.handleDragStart} onDrag={this.handleDrag} onStop={this.handleDragStop}>
                     <div id="right-scroll-bar" style={{ height: scrollBarHeight, top: scrollBarPosition }} />
                 </Draggable>

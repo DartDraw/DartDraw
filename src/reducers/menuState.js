@@ -19,7 +19,8 @@ const initialState = {
     gridSnapping: false,
     showRulers: true,
     showSubDivisions: true,
-    showGrid: true
+    showGrid: true,
+    showContextualMenu: true
 };
 
 function menuState(state = initialState, action, root) {
@@ -46,6 +47,9 @@ function menuState(state = initialState, action, root) {
             return grid.toggleShowSubDivisions(stateCopy, action, root);
         case menuActions.TOGGLE_SHOW_RULER:
             return rulers.toggleShowRulers(stateCopy, action, root);
+        case menuActions.TOGGLE_CONTEXTUAL_MENU:
+            stateCopy.showContextualMenu = !stateCopy.showContextualMenu;
+            return stateCopy;
         default:
             return stateCopy;
     }

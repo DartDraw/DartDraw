@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Draggable } from '../shared';
+import { CONTEXTUAL_MENU_WIDTH, SCROLL_BAR_WIDTH } from '../../constants';
 import './bottom-scroll.css';
 
 class BottomScroll extends Component {
@@ -9,6 +10,7 @@ class BottomScroll extends Component {
         panY: PropTypes.number,
         canvasWidth: PropTypes.number,
         maxPanX: PropTypes.number,
+        contextualMenuVisible: PropTypes.bool,
         onScroll: PropTypes.func
     };
 
@@ -63,14 +65,14 @@ class BottomScroll extends Component {
     }
 
     render() {
-        const { panX, maxPanX, canvasWidth } = this.props;
+        const { panX, maxPanX, canvasWidth, contextualMenuVisible } = this.props;
         const { hidden } = this.state;
 
         const scrollBarWidth = ((1 - maxPanX / canvasWidth) * 100) + '%';
         const scrollBarPosition = (panX / canvasWidth * 100) + '%';
 
         return (
-            <div id="bottom-scroll-container" style={{ bottom: hidden ? -18 : 0 }}>
+            <div id="bottom-scroll-container" style={{ height: SCROLL_BAR_WIDTH, right: contextualMenuVisible ? CONTEXTUAL_MENU_WIDTH : 0, bottom: hidden ? -SCROLL_BAR_WIDTH : 0 }}>
                 <Draggable onStart={this.handleDragStart} onDrag={this.handleDrag} onStop={this.handleDragStop}>
                     <div id="bottom-scroll-bar" style={{ width: scrollBarWidth, left: scrollBarPosition }} />
                 </Draggable>

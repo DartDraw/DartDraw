@@ -1,7 +1,6 @@
 .contextual-menu {
   background-color: #202B33;
   display: flex;
-  width: 360px;
   position: absolute;
   top: 41px;
   bottom: 0;

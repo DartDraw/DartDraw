@@ -63,9 +63,9 @@ class App extends Component {
                     </div>
                 </div>
                 <IpcMiddlewareContainer />
-                <ContextualMenuContainer />
                 <BottomScrollContainer />
                 <RightScrollContainer />
+                <ContextualMenuContainer />
             </div>
         );
     }

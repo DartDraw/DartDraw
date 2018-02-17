@@ -17,11 +17,12 @@ import {
     toggleShowGrid,
     toggleShowRulers,
     toggleShowSubDivisions,
-    setRulerGrid
+    setRulerGrid,
+    toggleContextualMenu
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selected, scale, ruler, canvasWidth, canvasHeight } = drawingState;
     return {
         selectedShape: shapes.byId[selected[0]],
@@ -29,7 +30,8 @@ const mapStateToProps = ({ drawingState }) => {
         unitType: ruler.unitType,
         unitDivisions: ruler.unitDivisions,
         canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
-        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit
+        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
+        hidden: !menuState.showContextualMenu
     };
 };
 
@@ -88,6 +90,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: (canvasSpecs) => {
             dispatch(setRulerGrid(canvasSpecs));
+        },
+        onToggleHidden: () => {
+            dispatch(toggleContextualMenu());
         }
     };
 };

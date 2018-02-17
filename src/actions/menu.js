@@ -27,6 +27,7 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
+export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -142,4 +143,8 @@ export function toggleShowSubDivisions() {
 
 export function setRulerGrid(canvasSpecs) {
     return { type: SET_RULER_GRID, payload: canvasSpecs };
+}
+
+export function toggleContextualMenu() {
+    return { type: TOGGLE_CONTEXTUAL_MENU };
 }
