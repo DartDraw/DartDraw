@@ -18,6 +18,7 @@ import {
     scroll,
     updateBoundingBoxes
 } from './../../actions/canvas';
+import { setRulerGrid } from './../../actions/menu';
 
 function formatShape(shape, shapes, scale) {
     const formattedShape = Object.assign({}, shape);
@@ -115,6 +116,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onBoundingBoxUpdate: (boundingBoxes) => {
             dispatch(updateBoundingBoxes(boundingBoxes));
+        },
+        onSetRulerGrid: () => {
+            dispatch(setRulerGrid());
         }
     };
 };

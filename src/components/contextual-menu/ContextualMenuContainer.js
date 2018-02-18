@@ -18,12 +18,18 @@ import {
     toggleShowRulers,
     toggleShowSubDivisions,
     setRulerGrid,
+    selectRuler,
+    addRuler,
+    saveRuler,
+    deleteRuler,
+    toggleRuler,
     toggleContextualMenu
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selected, scale, ruler, canvasWidth, canvasHeight } = drawingState;
+    const { currentKeys } = menuState;
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: scale,
@@ -31,6 +37,9 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         unitDivisions: ruler.unitDivisions,
         canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
         canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
+        rulerNames: Object.keys(ruler.byName),
+        currentRuler: ruler.current,
+        currentKeys: currentKeys,
         hidden: !menuState.showContextualMenu
     };
 };
@@ -90,6 +99,21 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: (canvasSpecs) => {
             dispatch(setRulerGrid(canvasSpecs));
+        },
+        onSelectRuler: (rulerName) => {
+            dispatch(selectRuler(rulerName));
+        },
+        onAddRuler: (rulerSpecs) => {
+            dispatch(addRuler(rulerSpecs));
+        },
+        onSaveRuler: (rulerSpecs) => {
+            dispatch(saveRuler(rulerSpecs));
+        },
+        onDeleteRuler: () => {
+            dispatch(deleteRuler());
+        },
+        onToggleRuler: (forward) => {
+            dispatch(toggleRuler(forward));
         },
         onToggleHidden: () => {
             dispatch(toggleContextualMenu());

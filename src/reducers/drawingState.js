@@ -49,6 +49,13 @@ const initialState = {
         vertical: {
             ticks: [],
             labels: []
+        },
+        current: 'Default',
+        byName: {
+            'Default': {
+                unitType: 'in',
+                unitDivisions: 2
+            }
         }
     }
 };
@@ -181,6 +188,21 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
             break;
+        case menuActions.SELECT_RULER:
+            updatedState = rulers.selectRuler(stateCopy, action, root);
+            break;
+        case menuActions.ADD_RULER:
+            updatedState = rulers.addRuler(stateCopy, action, root);
+            break;
+        case menuActions.SAVE_RULER:
+            updatedState = rulers.saveRuler(stateCopy, action, root);
+            break;
+        case menuActions.DELETE_RULER:
+            updatedState = rulers.deleteRuler(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_RULER:
+            updatedState = rulers.toggleRuler(stateCopy, action, root);
+            break;
         case canvasActions.SCROLL:
             updatedState = canvas.scroll(stateCopy, action, root);
             break;
@@ -200,6 +222,7 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
+                // console.log(action.type, root.menuState);
             }
         }
     }
