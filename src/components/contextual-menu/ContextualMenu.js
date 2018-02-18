@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
+import { CONTEXTUAL_MENU_WIDTH } from '../../constants';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -14,8 +15,12 @@ class ContextualMenu extends Component {
         rulerNames: PropTypes.array,
         currentRuler: PropTypes.string,
         currentKeys: PropTypes.object,
+        hidden: PropTypes.bool,
+        onToggleHidden: PropTypes.func,
         editShape: PropTypes.func,
-        onAllignmentClick: PropTypes.func,
+        onAlignmentClick: PropTypes.func,
+        onDistributeClick: PropTypes.func,
+        editText: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -40,13 +45,14 @@ class ContextualMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            hidden: false,
             toggleScale: 1
         };
 
-        this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
+        this.handleToggleHidden = this.handleToggleHidden.bind(this);
+        this.handleEditText = this.handleEditText.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
+        this.handleDistributeClick = this.handleDistributeClick.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleUngroupClick = this.handleUngroupClick.bind(this);
         this.handleMoveBackward = this.handleMoveBackward.bind(this);
@@ -72,16 +78,23 @@ class ContextualMenu extends Component {
         this.handleToggleCanvasOrientation = this.handleToggleCanvasOrientation.bind(this);
     }
 
-    toggleMenu() {
-        const { hidden } = this.state;
-        this.setState({
-            hidden: !hidden
-        });
+    handleToggleHidden() {
+        const { onToggleHidden } = this.props;
+        onToggleHidden && onToggleHidden();
     }
 
     handleEdit(shape) {
         const { editShape } = this.props;
         editShape && editShape(shape);
+    }
+
+    handleEditText(shape) {
+        const { editText } = this.props;
+        editText && editText(shape);
+    }
+
+    handleChange(event) {
+        this.tempScale = event.target.value / 100.0;
     }
 
     handleToggleGridSnapping(event) {
@@ -93,7 +106,15 @@ class ContextualMenu extends Component {
         if (!id) {
             id = event.target.firstChild.id;
         }
-        this.props.onAllignmentClick(id);
+        this.props.onAlignmentClick(id);
+    }
+
+    handleDistributeClick(event) {
+        let id = event.target.id;
+        if (!id) {
+            id = event.target.firstChild.id;
+        }
+        this.props.onDistributeClick(id);
     }
 
     handleGroupClick() {
@@ -263,12 +284,12 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { selectedShape, scale, unitType, unitDivisions, currentRuler, canvasWidthInUnits, canvasHeightInUnits } = this.props;
-        const { hidden } = this.state;
+        const { hidden, selectedShape, scale, unitType, unitDivisions, currentRuler, canvasWidthInUnits, canvasHeightInUnits } = this.props;
+
         let menuLayout = null;
         if (selectedShape) {
             if (selectedShape.type === 'text') {
-                menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} onEditText={this.handleEditText} />;
             } else if (selectedShape.type === 'rectangle') {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {
@@ -279,9 +300,9 @@ class ContextualMenu extends Component {
         }
 
         return (
-            <div className="contextual-menu" style={{ right: hidden ? -352 : 0 }}>
+            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -352 : 0 }}>
                 <div className="hide-button-column">
-                    <div className="hide-button" onClick={this.toggleMenu} />
+                    <div className="hide-button" onClick={this.handleToggleHidden} />
                 </div>
                 <div className="menu-column">
                     <h2>Object Manipulation</h2>
@@ -332,7 +353,33 @@ class ContextualMenu extends Component {
                         <button onClick={this.handleAlignmentClick}>
                             <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
                         </button>
-
+                    </div>
+                    <h2>Distribution</h2>
+                    <div className="static-menu">
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="top" id="distribute-top" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="center" id="distribute-vertical" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="bottom" id="distribute-bottom" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="height" id="distribute-height" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="left" id="distribute-left" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="center" id="distribute-horizontal" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="right" id="distribute-right" />
+                        </button>
+                        <button onClick={this.handleDistributeClick}>
+                            <img src="" alt="width" id="distribute-width" />
+                        </button>
                     </div>
                     <h2>Ruler / Grid / Canvas Settings</h2>
                     <div className="temp">

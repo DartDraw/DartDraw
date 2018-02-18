@@ -2,6 +2,7 @@ import jsondiffpatch from 'jsondiffpatch';
 import * as canvasActions from './../actions/canvas';
 import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
+import * as file from './caseFunctions/file';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
@@ -108,6 +109,9 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.CONTROL_DRAG_STOP:
             updatedState = shape.controlDragStop(stateCopy, action, root);
             break;
+        case canvasActions.ADD_POINT_DRAG_STOP:
+            updatedState = shape.addPointDragStop(stateCopy, action, root);
+            break;
         case canvasActions.TEXT_INPUT_CHANGE:
             updatedState = shape.textInputChange(stateCopy, action, root);
             break;
@@ -147,6 +151,12 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SELECT_TOOL:
             updatedState = shape.selectTool(stateCopy, action, root);
             break;
+        case menuActions.ALIGNMENT_CHANGE:
+            updatedState = shape.alignClick(stateCopy, action, root);
+            break;
+        case menuActions.DISTRIBUTE_CLICK:
+            updatedState = shape.distributeClick(stateCopy, action, root);
+            break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
             break;
@@ -164,8 +174,17 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
+        case menuActions.FILE_SAVE:
+            file.fileSave(root, action);
+            return stateCopy;
+        case menuActions.FILE_OPEN:
+            file.fileOpen(stateCopy, action);
+            return stateCopy;
         case menuActions.EDIT_SHAPE:
-            updatedState.shapes.byId[action.payload.shape.id] = action.payload.shape;
+            updatedState = shape.editShape(stateCopy, action, root);
+            break;
+        case menuActions.EDIT_TEXT:
+            updatedState = shape.editText(stateCopy, action, root);
             break;
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
@@ -184,6 +203,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.TOGGLE_RULER:
             updatedState = rulers.toggleRuler(stateCopy, action, root);
+            break;
+        case canvasActions.SCROLL:
+            updatedState = canvas.scroll(stateCopy, action, root);
             break;
         default: break;
     }

@@ -5,6 +5,7 @@ import { Path } from '.';
 class TransparentLine extends Component {
     static propTypes = {
         id: PropTypes.string,
+        index: PropTypes.number,
         arrowId: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -27,22 +28,38 @@ class TransparentLine extends Component {
     defaultProps = {
         propagateEvents: false
     }
+    constructor(props) {
+        super(props);
+
+        this.handleDragStop = this.handleDragStop.bind(this);
+    }
+
+    handleDragStop(id, draggableData) {
+        const { onDragStop, index } = this.props;
+        if (index > -1) {
+            onDragStop && onDragStop(id, index, draggableData);
+        }
+    }
 
     render() {
-        const { id, points, propagateEvents } = this.props;
+        let { id, points, strokeWidth, index, propagateEvents } = this.props;
 
         const svgProps = {
             d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}],
             opacity: 0
         };
 
+        if (index > -1) {
+            propagateEvents = false;
+            svgProps.opacity = 1;
+            svgProps.strokeWidth = strokeWidth;
+            svgProps.stroke = 'transparent';
+        }
+
         return (
             <Path
                 id={id + "_transparent"}
-                onDragStart={this.handleDragStart}
-                onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
-                onClick={this.handleClick}
                 {...svgProps}
                 propagateEvents={propagateEvents}
             />

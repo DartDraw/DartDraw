@@ -1,6 +1,18 @@
 import { connect } from 'react-redux';
 import SelectionLayer from './SelectionLayer';
-import { handleDragStart, handleDrag, handleDragStop, controlDragStart, controlDrag, controlDragStop } from '../../../actions/canvas';
+import {
+    handleDragStart,
+    handleDrag,
+    handleDragStop,
+    shapeClick,
+    shapeDragStart,
+    shapeDrag,
+    shapeDragStop,
+    controlDragStart,
+    controlDrag,
+    controlDragStop,
+    addPointDragStop
+} from '../../../actions/canvas';
 
 const propagateEventTools = [
     'rectangleTool',
@@ -49,6 +61,21 @@ const mapDispatchToProps = (dispatch) => {
         },
         onControlDragStop: (shapeId, handleIndex, draggableData) => {
             dispatch(controlDragStop(shapeId, handleIndex, draggableData));
+        },
+        onAddPointDragStop: (shapeId, handleIndex, draggableData) => {
+            dispatch(addPointDragStop(shapeId, handleIndex, draggableData));
+        },
+        onTextHandleDragStart: (shapeId, draggableData) => {
+            dispatch(shapeDragStart(shapeId, draggableData));
+        },
+        onTextHandleDrag: (shapeId, draggableData) => {
+            dispatch(shapeDrag(shapeId, draggableData));
+        },
+        onTextHandleDragStop: (shapeId, handleIndex, draggableData) => {
+            dispatch(shapeDragStop(shapeId, draggableData));
+        },
+        onTextHandleClick: (shapeId, event) => {
+            dispatch(shapeClick(shapeId));
         }
     };
 };

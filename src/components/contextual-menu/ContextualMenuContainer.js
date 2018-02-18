@@ -1,7 +1,9 @@
 import { connect } from 'react-redux';
 import {
     editShape,
+    editText,
     alignmentClick,
+    distributeClick,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
@@ -20,7 +22,8 @@ import {
     addRuler,
     saveRuler,
     deleteRuler,
-    toggleRuler
+    toggleRuler,
+    toggleContextualMenu
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
@@ -36,7 +39,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
         rulerNames: ruler.names,
         currentRuler: ruler.current,
-        currentKeys: currentKeys
+        currentKeys: currentKeys,
+        hidden: !menuState.showContextualMenu
     };
 };
 
@@ -45,8 +49,14 @@ const mapDispatchToProps = (dispatch) => {
         editShape: (shape) => {
             dispatch(editShape(shape));
         },
-        onAllignmentClick: (id) => {
+        editText: (shape) => {
+            dispatch(editText(shape));
+        },
+        onAlignmentClick: (id) => {
             dispatch(alignmentClick(id));
+        },
+        onDistributeClick: (id) => {
+            dispatch(distributeClick(id));
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());
@@ -104,6 +114,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onToggleRuler: (forward) => {
             dispatch(toggleRuler(forward));
+        },
+        onToggleHidden: () => {
+            dispatch(toggleContextualMenu());
         }
     };
 };

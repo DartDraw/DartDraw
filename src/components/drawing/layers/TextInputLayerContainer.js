@@ -2,44 +2,33 @@ import { connect } from 'react-redux';
 import TextInputLayer from './TextInputLayer';
 import {
     shapeClick,
-    shapeDragStart,
-    shapeDrag,
-    shapeDragStop,
     textInputChange
 } from '../../../actions/canvas';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState }, ownProps) => {
     const { shapes, selected, canvasHeight, canvasWidth, scale } = drawingState;
+    const { propagateEvents } = ownProps;
     const shapesArray = shapes.allIds.filter(id => {
-        return shapes.byId[id].type === 'text';
+        return shapes.byId[id].type === 'text' && selected.indexOf(id) > -1;
     }).map(id => {
-        shapes.byId[id].selected = selected.indexOf(id) > -1;
         return shapes.byId[id];
     });
 
     return {
         textObjects: shapesArray,
         canvasHeight: canvasHeight * scale,
-        canvasWidth: canvasWidth * scale
+        canvasWidth: canvasWidth * scale,
+        propagateEvents
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onShapeDragStart: (shapeId, draggableData) => {
-            dispatch(shapeDragStart(shapeId, draggableData));
-        },
-        onShapeDrag: (shapeId, draggableData) => {
-            dispatch(shapeDrag(shapeId, draggableData));
-        },
-        onShapeDragStop: (shapeId, draggableData) => {
-            dispatch(shapeDragStop(shapeId));
-        },
         onShapeClick: (shapeId, event) => {
             dispatch(shapeClick(shapeId));
         },
-        onTextInputChange: (textId, value, focused) => {
-            dispatch(textInputChange(textId, value, focused));
+        onTextInputChange: (textId, value, focused, selectionRange) => {
+            dispatch(textInputChange(textId, value, focused, selectionRange));
         }
     };
 };

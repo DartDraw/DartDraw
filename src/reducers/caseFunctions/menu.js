@@ -17,28 +17,30 @@ export function keyDown(stateCopy, action, root) {
 
 export function selectAlignment(stateCopy, action, root) {
     const { id } = action.payload;
-
-    switch (id) {
-        case 'alignment-top':
-            stateCopy.align[0] = 'top';
-            break;
-        case 'alignment-bottom':
-            stateCopy.align[0] = 'bottom';
-            break;
-        case 'alignment-left':
-            stateCopy.align[1] = 'left';
-            break;
-        case 'alignment-right':
-            stateCopy.align[1] = 'right';
-            break;
-        case 'alignment-vertical':
-            stateCopy.align[1] = 'center';
-            break;
-        case 'alignment-horizontal':
-            stateCopy.align[0] = 'center';
-            break;
-        default:
-            break;
+    let shiftSelected = 16 in stateCopy.currentKeys;
+    if (shiftSelected) {
+        switch (id) {
+            case 'alignment-top':
+                stateCopy.align[0] = 'top';
+                break;
+            case 'alignment-bottom':
+                stateCopy.align[0] = 'bottom';
+                break;
+            case 'alignment-left':
+                stateCopy.align[1] = 'left';
+                break;
+            case 'alignment-right':
+                stateCopy.align[1] = 'right';
+                break;
+            case 'alignment-vertical':
+                stateCopy.align[1] = 'center';
+                break;
+            case 'alignment-horizontal':
+                stateCopy.align[0] = 'center';
+                break;
+            default:
+                break;
+        }
     }
 
     return stateCopy;

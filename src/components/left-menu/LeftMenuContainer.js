@@ -16,7 +16,15 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
+const mapStateToProps = ({ menuState }) => {
+    const { toolType } = menuState;
+
+    return {
+        toolType
+    };
+};
+
 export default connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(LeftMenu);

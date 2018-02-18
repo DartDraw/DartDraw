@@ -48,7 +48,8 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
                 stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
-                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon" ||
+                  stateCopy.shapes.byId[stateCopy.selected[0]].open) {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
                     stateCopy.editInProgress = false;
@@ -260,5 +261,14 @@ export function mouseMove(stateCopy, action, root) {
         default:
             break;
     }
+    return stateCopy;
+}
+
+export function scroll(stateCopy, action, root) {
+    const { deltaX, deltaY } = action.payload;
+    const { ruler, panX, panY } = pan(stateCopy, { deltaX: -deltaX, deltaY: -deltaY });
+    stateCopy.ruler = ruler;
+    stateCopy.panX = panX;
+    stateCopy.panY = panY;
     return stateCopy;
 }
