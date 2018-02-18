@@ -1326,8 +1326,10 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let decomposed = decomposeMatrix(shapeMatrix);
 
-        if (sx === 0) sx = -0.000001;
-        if (sy === 0) sy = -0.000001;
+        if (sx < 0.000001 && sx >= 0) sx = 0.000001;
+        if (sy < 0.000001 && sy >= 0) sy = 0.000001;
+        if (sx > -0.000001 && sx <= 0) sx = -0.000001;
+        if (sy > -0.000001 && sy <= 0) sy = -0.000001;
 
         if (centeredControl) {
             let center = getCenter(boundingBox, shapeMatrix);
