@@ -1049,6 +1049,9 @@ export function addPoint(shapes, selected, handleIndex, draggableData, panX, pan
 export function removePoint(shapes, selected, handleIndex) {
     selected.map((id) => {
         let shape = shapes.byId[id];
+        if (shape.points.length <= 6) {
+            return shape;
+        }
         switch (shape.type) {
             case 'polyline':
                 shape.points.splice(handleIndex * 2, 2);
@@ -1083,7 +1086,25 @@ export function removePoint(shapes, selected, handleIndex) {
                     shape.points[1] = shape.points[shape.points.length - 1];
                 }
 
-                shape.controlPoints = smoothPath(shape);
+                let controlPoints = smoothPath(shape);
+
+                shape.controlPoints[handleIndex - 1] = controlPoints[handleIndex - 1];
+                shape.controlPoints[handleIndex] = controlPoints[handleIndex];
+
+                for (let i = handleIndex + 1; i <= shape.points.length / 2; i++) {
+                    shape.controlPoints[i] = shape.controlPoints[i + 1];
+                }
+
+                if (handleIndex === 0) {
+                    shape.controlPoints[shape.points.length / 2] = shape.controlPoints[0];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.controlPoints[0] = shape.controlPoints[0];
+                }
+
+                if (shape.closed) delete shape.controlPoints[0];
+
                 shape.refreshSelection = true;
                 break;
             default:
