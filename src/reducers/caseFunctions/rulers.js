@@ -26,7 +26,6 @@ export function addRuler(stateCopy, action) {
     };
 
     stateCopy.ruler.byName[name] = newRulerPreset;
-    stateCopy.ruler.names.push(name);
 
     const { scale, panX, panY } = stateCopy;
 
@@ -53,11 +52,11 @@ export function saveRuler(stateCopy, action) {
 }
 
 export function deleteRuler(stateCopy) {
+    var names = Object.keys(stateCopy.ruler.byName);
     var current = stateCopy.ruler.current;
-    var index = stateCopy.ruler.names.indexOf(current);
+    var index = names.indexOf(current);
 
-    stateCopy.ruler.current = stateCopy.ruler.names[index - 1];
-    stateCopy.ruler.names.splice(index, 1);
+    stateCopy.ruler.current = names[index - 1];
     delete stateCopy.ruler.byName[current];
 
     const { scale, panX, panY } = stateCopy;
@@ -70,7 +69,7 @@ export function deleteRuler(stateCopy) {
 
 export function toggleRuler(stateCopy, action) {
     const { forward } = action.payload;
-    const { names } = stateCopy.ruler;
+    const names = Object.keys(stateCopy.ruler.byName);
 
     console.log(forward);
 
@@ -88,8 +87,6 @@ export function toggleRuler(stateCopy, action) {
     }
 
     stateCopy.ruler.current = names[index];
-
-    console.log(stateCopy.ruler.current, names, index);
 
     const { scale, panX, panY } = stateCopy;
 
@@ -111,13 +108,14 @@ function changeRulerPreset(ruler, newRulerName) {
 }
 
 export function setRulerGrid(stateCopy, action) {
-    const { unitType, width, height, unitDivisions } = constrainInput(action.payload);
-
-    stateCopy.ruler.unitDivisions = unitDivisions;
-    stateCopy.ruler.unitType = unitType;
-    stateCopy.ruler.pixelsPerUnit = setPixelsPerUnit(unitType);
-    stateCopy.canvasWidth = width * stateCopy.ruler.pixelsPerUnit;
-    stateCopy.canvasHeight = height * stateCopy.ruler.pixelsPerUnit;
+    if (action.payload) {
+        const { unitType, width, height, unitDivisions } = constrainInput(action.payload);
+        stateCopy.ruler.unitDivisions = unitDivisions;
+        stateCopy.ruler.unitType = unitType;
+        stateCopy.ruler.pixelsPerUnit = setPixelsPerUnit(unitType);
+        stateCopy.canvasWidth = width * stateCopy.ruler.pixelsPerUnit;
+        stateCopy.canvasHeight = height * stateCopy.ruler.pixelsPerUnit;
+    }
 
     const { panX, panY } = setPan(stateCopy, stateCopy.scale);
 

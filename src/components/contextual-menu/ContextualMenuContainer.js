@@ -37,7 +37,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         unitDivisions: ruler.unitDivisions,
         canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
         canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
-        rulerNames: ruler.names,
+        rulerNames: Object.keys(ruler.byName),
         currentRuler: ruler.current,
         currentKeys: currentKeys,
         hidden: !menuState.showContextualMenu

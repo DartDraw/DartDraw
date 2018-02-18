@@ -51,7 +51,6 @@ const initialState = {
             labels: []
         },
         current: 'Default',
-        names: ['Default'],
         byName: {
             'Default': {
                 unitType: 'in',

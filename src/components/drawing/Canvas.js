@@ -47,7 +47,8 @@ class Canvas extends Component {
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
         onScroll: PropTypes.func,
-        onBoundingBoxUpdate: PropTypes.func
+        onBoundingBoxUpdate: PropTypes.func,
+        onSetRulerGrid: PropTypes.func
     };
 
     constructor(props) {
@@ -69,14 +70,17 @@ class Canvas extends Component {
         this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
+        this.handleResize = this.handleResize.bind(this);
     }
 
     componentDidMount() {
         window.addEventListener('wheel', this.handleScroll);
+        window.addEventListener('resize', this.handleResize);
     }
 
     componentWillUnmount() {
         window.removeEventListener('wheel', this.handleScroll);
+        window.removeEventListener('resize', this.handleResize);
     }
 
     componentDidUpdate(prevProps) {
@@ -155,6 +159,10 @@ class Canvas extends Component {
 
     handleScroll({ deltaX, deltaY }) {
         this.props.onScroll(deltaX, deltaY);
+    }
+
+    handleResize() {
+        this.props.onSetRulerGrid();
     }
 
     renderShape(shape) {

@@ -185,7 +185,7 @@ class ContextualMenu extends Component {
 
     handleSubmitCustomZoom(event) {
         var scale = parseFloat(event.target.value) / 100.0;
-        if (scale >= 0.1 && scale <= 8) {
+        if (scale >= 0.1 && scale <= 32) {
             this.props.onSetCustomZoom(scale);
         }
         event.preventDefault();
@@ -227,7 +227,7 @@ class ContextualMenu extends Component {
             this.props.onAddRuler({
                 name,
                 unitType: document.getElementById("unitType").value,
-                unitDivisions: parseInt(document.getElementById("unitDivisions").value)
+                unitDivisions: parseInt(document.getElementById("unitDivisions").value, 10)
             });
         } else {
             console.error("The name '%s' is already taken. Please enter a different name for your ruler preset.", name);
@@ -241,7 +241,7 @@ class ContextualMenu extends Component {
         if (currentRuler !== "Default") {
             this.props.onSaveRuler({
                 unitType: document.getElementById("unitType").value,
-                unitDivisions: parseInt(document.getElementById("unitDivisions").value)
+                unitDivisions: parseInt(document.getElementById("unitDivisions").value, 10)
             });
         } else {
             console.error("You cannot edit the default ruler.");
@@ -277,7 +277,7 @@ class ContextualMenu extends Component {
         let list = [];
 
         rulerNames.map((presetName) => {
-            list.push(<option value={presetName}>{presetName}</option>);
+            list.push(<option key={presetName} value={presetName}>{presetName}</option>);
         });
 
         return list;
@@ -454,7 +454,7 @@ class ContextualMenu extends Component {
                                 type="range"
                                 defaultValue={Math.round(scale * 100.0)}
                                 min="10"
-                                max="800"
+                                max="3200"
                                 onInput={this.handleSubmitCustomZoom}
                             />
                             <input
