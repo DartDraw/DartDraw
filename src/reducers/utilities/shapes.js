@@ -1343,8 +1343,6 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             shape.ry = Math.abs(shape.ry / sy);
         }
 
-        console.log(sx, sy);
-
         if (decomposed.skewX !== 0) {
             shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, -decomposed.skewY, cx, cy);
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, sx, sy, cx, cy);
