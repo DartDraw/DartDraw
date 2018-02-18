@@ -111,6 +111,7 @@ export function click(stateCopy, action, root) {
 
     switch (root.menuState.toolType) {
         case "selectTool":
+        case "rotateTool":
             if (!stateCopy.editInProgress) {
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 let selectMultiple = false;
@@ -161,6 +162,7 @@ export function drag(stateCopy, action, root) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         switch (root.menuState.toolType) {
             case "selectTool":
+            case "rotateTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
