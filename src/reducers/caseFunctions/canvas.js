@@ -104,6 +104,7 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "selectTool":
+        case "rotateTool":
             if (stateCopy.mode === 'reshape') { return stateCopy; }
             if (!(16 in root.menuState.currentKeys)) {
                 stateCopy.selected = selectShape([], null);
@@ -163,6 +164,7 @@ export function drag(stateCopy, action, root) {
             stateCopy.panX = panX;
             stateCopy.panY = panY;
             break;
+        case "rotateTool":
         case "selectTool":
         case "zoomTool":
             stateCopy.marqueeBox = resizeMarqueeBox(stateCopy.marqueeBox, draggableData, stateCopy.scale);
@@ -211,6 +213,7 @@ export function dragStop(stateCopy, action, root) {
             }
             stateCopy.selected = [];
             break;
+        case "rotateTool":
         case "selectTool":
             let commandSelected = 91 in root.menuState.currentKeys;
             let shiftSelected = 16 in root.menuState.currentKeys;
