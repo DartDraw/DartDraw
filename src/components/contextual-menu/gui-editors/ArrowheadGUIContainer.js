@@ -1,65 +1,34 @@
 import { connect } from 'react-redux';
 import ArrowheadGUI from './ArrowheadGUI';
 import {
-    handleDragStart,
-    handleDrag,
-    handleDragStop
-} from '../../../actions/canvas';
-
-function formatShape(shape, shapes, scale) {
-    const formattedShape = Object.assign({}, shape);
-    if (formattedShape.type === 'group') {
-        formattedShape.members = formattedShape.members.map((shapeId, i) => {
-            return formatShape(shapes.byId[shapeId], shapes, scale);
-        });
-    } else {
-        formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
-    }
-    return formattedShape;
-}
+    arrowheadHandleDragStart,
+    arrowheadHandleDrag,
+    arrowheadHandleDragStop,
+    changeArrowheadType
+} from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, scale } = drawingState;
-    const { toolType } = menuState;
-    const shapesArray = shapes.allIds.map((id) => {
-        return formatShape(shapes.byId[id], shapes, scale);
-    });
-
-    const arrowsArray = shapes.allArrows.map((id) => {
-        return formatShape(shapes.byId[shapes.byArrowId[id].id], shapes, scale);
-    });
-
-    const propagateEventTools = [
-        'rectangleTool',
-        'ellipseTool',
-        'polygonTool',
-        'bezierTool',
-        'arcTool',
-        'freehandPathTool',
-        'lineTool',
-        'textTool',
-        'panTool',
-        'zoomTool'
-    ];
+    const { arrowheadPresets, currentArrowhead } = menuState;
 
     return {
-        shapes: shapesArray,
-        arrows: arrowsArray,
-        selected,
-        propagateEvents: propagateEventTools.indexOf(toolType) > -1
+        arrowheadPresets,
+        currentArrowhead
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onHandleDragStart: (shapeId, handleIndex, draggableData) => {
-            dispatch(handleDragStart(shapeId, handleIndex, draggableData));
+        onArrowheadHandleDragStart: (shapeId, handleIndex, draggableData) => {
+            dispatch(arrowheadHandleDragStart(shapeId, handleIndex, draggableData));
         },
-        onHandleDrag: (shapeId, handleIndex, draggableData) => {
-            dispatch(handleDrag(shapeId, handleIndex, draggableData));
+        onArrowheadHandleDrag: (shapeId, handleIndex, draggableData) => {
+            dispatch(arrowheadHandleDrag(shapeId, handleIndex, draggableData));
         },
-        onHandleDragStop: (shapeId, handleIndex, draggableData) => {
-            dispatch(handleDragStop(shapeId, handleIndex, draggableData));
+        onArrowheadHandleDragStop: (shapeId, handleIndex, draggableData) => {
+            dispatch(arrowheadHandleDragStop(shapeId, handleIndex, draggableData));
+        },
+        onChangeArrowheadType: (arrowheadType) => {
+            dispatch(changeArrowheadType(arrowheadType));
         }
     };
 };

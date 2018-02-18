@@ -5,54 +5,62 @@ import { Polygon, Handle } from '../../drawing/shapes';
 
 class ArrowheadGUI extends Component {
     static propTypes = {
-        shapes: PropTypes.array,
-        arrows: PropTypes.array,
         selected: PropTypes.array,
         path: PropTypes.object,
-        arrowhead: PropTypes.object,
+        currentArrowhead: PropTypes.object,
+        arrowheadPresets: PropTypes.array,
         propagateEvents: PropTypes.bool,
-        onHandleDragStart: PropTypes.func,
-        onHandleDrag: PropTypes.func,
-        onHandleDragStop: PropTypes.func
+        onArrowheadHandleDragStart: PropTypes.func,
+        onArrowheadHandleDrag: PropTypes.func,
+        onArrowheadHandleDragStop: PropTypes.func,
+        onChangeArrowheadType: PropTypes.func
     };
 
     constructor(props) {
         super(props);
 
-        // this.renderDrawing = this.renderDrawing.bind(this);
-        // this.renderArrows = this.renderArrows.bind(this);
         this.renderReferenceLine = this.renderReferenceLine.bind(this);
         this.renderArrowhead = this.renderArrowhead.bind(this);
         this.renderHandles = this.renderHandles.bind(this);
-        this.handleHandleDragStart = this.handleHandleDragStart.bind(this);
-        this.handleHandleDrag = this.handleHandleDrag.bind(this);
-        this.handleHandleDragStop = this.handleHandleDragStop.bind(this);
+        this.handleArrowheadHandleDragStart = this.handleArrowheadHandleDragStart.bind(this);
+        this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
+        this.handleArrowheadHandleDragStop = this.handleArrowheadHandleDragStop.bind(this);
+        this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
     }
 
-    handleHandleDragStart(shapeId, handleIndex, draggableData) {
+    handleArrowheadHandleDragStart(shapeId, handleIndex, draggableData) {
         // should be arrowheadId not shapeID
-
-        this.props.onHandleDragStart(shapeId, handleIndex, draggableData);
+        // console.log("start");
+        this.props.onArrowheadHandleDragStart(shapeId, handleIndex, draggableData);
     }
 
-    handleHandleDrag(shapeId, handleIndex, draggableData) {
+    handleArrowheadHandleDrag(shapeId, handleIndex, draggableData) {
         // should be arrowheadId not shapeID
+        // console.log("dragging");
 
-        this.props.onHandleDrag(shapeId, handleIndex, draggableData);
+        this.props.onArrowheadHandleDrag(shapeId, handleIndex, draggableData);
     }
 
-    handleHandleDragStop(shapeId, handleIndex, draggableData) {
+    handleArrowheadHandleDragStop(shapeId, handleIndex, draggableData) {
+        // console.log("stop");
+
         // should be arrowheadId not shapeID
-        this.props.onHandleDragStop(shapeId, handleIndex, draggableData);
+        this.props.onArrowheadHandleDragStop(shapeId, handleIndex, draggableData);
     }
 
-    renderReferenceLine(path) {
+    handleChangeArrowheadType(event) {
+        this.props.onChangeArrowheadType(event.target.value);
+        event.preventDefault();
+    }
+
+    renderReferenceLine(path, arrowhead) {
         // update so it's not hardcoded!
-        return <line x1={50} y1={75} x2={250} y2={75} strokeWidth={path.strokeWidth} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={arrowhead.points[0]} y2={75} strokeWidth={path.strokeWidth} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
         const { stroke, strokeWidth, strokeDasharray } = this.props.path;
+
         const arrowheadProps = {
             // id: uuidv1(),
             type: 'polyline',
@@ -79,38 +87,42 @@ class ArrowheadGUI extends Component {
                 <Handle
                     key={id}
                     id={id}
-                    shapeId={arrowhead.id} // should be arrowheadid, right?
+                    shapeId={arrowhead.id}
                     index={index}
                     x={x}
                     y={y}
                     width={width}
                     height={height}
                     strokeWidth={2}
-                    onDragStart={this.handleHandleDragStart}
-                    onDrag={this.handleHandleDrag}
-                    onDragStop={this.handleHandleDragStop}
+                    onDragStart={this.handleArrowheadHandleDragStart}
+                    onDrag={this.handleArrowheadHandleDrag}
+                    onDragStop={this.handleArrowheadHandleDragStop}
                     propagateEvents={propagateEvents}
                 />
             );
         });
     }
 
-    // renderDrawing() {
-    //     const { shapes } = this.props;
-    //     return shapes.map((shape) => {
-    //         return this.renderShape(shape);
-    //     });
-    // }
-
     render() {
-        const { path, arrowhead } = this.props;
+        const { path, currentArrowhead } = this.props;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
+                <select
+                    id="type"
+                    defaultValue={currentArrowhead.type}
+                    onChange={this.handleChangeArrowheadType}
+                >
+                    <option value="triangle">triangle</option>
+                    <option value="barbed">barbed</option>
+                    <option value="circle">circle</option>
+                    <option value="square">square</option>
+                    <option value="line">line</option>
+                </select>
                 <svg className="arrowhead-gui">
-                    {this.renderReferenceLine(path)}
-                    {this.renderArrowhead(arrowhead)}
-                    {this.renderHandles(arrowhead)}
+                    {this.renderReferenceLine(path, currentArrowhead)}
+                    {this.renderArrowhead(currentArrowhead)}
+                    {this.renderHandles(currentArrowhead)}
                 </svg>
             </div>
         );
@@ -118,3 +130,23 @@ class ArrowheadGUI extends Component {
 }
 
 export default ArrowheadGUI;
+
+// <form id="button-icon" onSubmit={() => console.log("hi")}>
+//     <input
+//         id="width"
+//         defaultValue={300 - (2 * arrowhead.points[0])}
+//         type="number"
+//     />
+//     <input
+//         id="length"
+//         defaultValue={arrowhead.points[2] - arrowhead.points[0]}
+//         type="number"
+//     />
+//     <input
+//         id="strokeWidth"
+//         defaultValue={path.strokeWidth}
+//         type="number"
+//     />
+//     <input type="checkbox" />
+//     <input type="submit" value="submit" />
+// </form>

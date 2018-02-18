@@ -2,8 +2,9 @@ import * as menuActions from '../actions/menu';
 import * as menu from './caseFunctions/menu';
 import * as grid from './caseFunctions/grid';
 import * as rulers from './caseFunctions/rulers';
+import * as arrowhead from './caseFunctions/arrowhead';
 import { deepCopy } from './utilities/object';
-import { generateArrowheadPrototypes } from './utilities/arrowhead';
+import { setArrowheadType } from './utilities/arrowhead';
 
 const initialState = {
     color: { r: 33, g: 150, b: 243, a: 1 },
@@ -21,7 +22,8 @@ const initialState = {
     showRulers: true,
     showSubDivisions: true,
     showGrid: true,
-    arrowheads: generateArrowheadPrototypes()
+    currentArrowhead: setArrowheadType('triangle'),
+    arrowheadPresets: []
 };
 
 function menuState(state = initialState, action, root) {
@@ -48,6 +50,14 @@ function menuState(state = initialState, action, root) {
             return grid.toggleShowSubDivisions(stateCopy, action, root);
         case menuActions.TOGGLE_SHOW_RULER:
             return rulers.toggleShowRulers(stateCopy, action, root);
+        case menuActions.ARROWHEAD_HANDLE_DRAG_START:
+            return arrowhead.arrowheadHandleDragStart(stateCopy, action, root);
+        case menuActions.ARROWHEAD_HANDLE_DRAG:
+            return arrowhead.arrowheadHandleDrag(stateCopy, action, root);
+        case menuActions.ARROWHEAD_HANDLE_DRAG_STOP:
+            return arrowhead.arrowheadHandleDragStop(stateCopy, action, root);
+        case menuActions.CHANGE_ARROWHEAD_TYPE:
+            return arrowhead.changeArrowheadType(stateCopy, action, root);
         default:
             return stateCopy;
     }

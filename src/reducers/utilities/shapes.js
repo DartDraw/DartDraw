@@ -247,7 +247,7 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
         arrowhead: {},
         arrowId: uuidv1(),
         arrowLength: 30,
-        arrowShown: 'yes'
+        arrowShown: 'no'
     };
 
     const arrow = {

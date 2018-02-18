@@ -7,7 +7,6 @@ import './contextual-menu.css';
 class ContextualMenu extends Component {
     static propTypes = {
         selectedShape: PropTypes.object,
-        arrowheads: PropTypes.arrayOf(PropTypes.objects),
         scale: PropTypes.number,
         unitType: PropTypes.string,
         unitDivisions: PropTypes.number,
@@ -56,10 +55,6 @@ class ContextualMenu extends Component {
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
-    }
-
-    coponentWillMoung() {
-        this.props.generateArrowheadPrototypes();
     }
 
     toggleMenu() {
@@ -154,8 +149,7 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { selectedShape, arrowheads, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
-        console.log(arrowheads);
+        const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
         const { hidden } = this.state;
         let menuLayout = null;
         let guiEditor = null;
@@ -166,7 +160,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
-                guiEditor = <ArrowheadGUIContainer path={selectedShape} arrowhead={arrowheads[0]} />;
+                guiEditor = <ArrowheadGUIContainer path={selectedShape} />;
             } else if (selectedShape.type === 'ellipse') {
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
             }

@@ -23,6 +23,10 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
+export const ARROWHEAD_HANDLE_DRAG_START = 'ARROWHEAD_HANDLE_DRAG_START';
+export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
+export const ARROWHEAD_HANDLE_DRAG_STOP = 'ARROWHEAD_HANDLE_DRAG_STOP';
+export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -122,4 +126,20 @@ export function toggleShowSubDivisions() {
 
 export function setRulerGrid(canvasSpecs) {
     return { type: SET_RULER_GRID, payload: canvasSpecs };
+}
+
+export function arrowheadHandleDragStart(shapeId, handleIndex, draggableData) {
+    return { type: ARROWHEAD_HANDLE_DRAG_START, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function arrowheadHandleDrag(shapeId, handleIndex, draggableData) {
+    return { type: ARROWHEAD_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function arrowheadHandleDragStop(shapeId, handleIndex, draggableData) {
+    return { type: ARROWHEAD_HANDLE_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function changeArrowheadType(arrowheadType) {
+    return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
 }
