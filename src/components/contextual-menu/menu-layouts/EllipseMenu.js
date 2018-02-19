@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Input, Select } from '../../ui';
 import './menu-layouts.css';
 
 class EllipseMenu extends Component {
@@ -17,44 +18,68 @@ class EllipseMenu extends Component {
         this.handleRotationChange = this.handleRotationChange.bind(this);
         this.handleXChange = this.handleXChange.bind(this);
         this.handleYChange = this.handleYChange.bind(this);
+        this.handleWidthChange = this.handleWidthChange.bind(this);
+        this.handleHeightChange = this.handleHeightChange.bind(this);
     }
 
-    handleStrokeWidth(event) {
+    handleStrokeWidth(value) {
         const { ellipse, onEdit } = this.props;
-        const newEllipse = Object.assign({}, ellipse, { strokeWidth: event.target.value });
+        const newEllipse = Object.assign({}, ellipse, { strokeWidth: value });
         onEdit && onEdit(newEllipse);
     }
 
-    handleRotationChange(event) {
+    handleRotationChange(value) {
         const {onRotateShapeTo} = this.props;
-        const degree = event.target.value;
-        onRotateShapeTo && onRotateShapeTo(degree);
+        onRotateShapeTo && onRotateShapeTo(value);
     }
 
-    handleXChange(event) {
+    handleXChange(value) {
         const { ellipse, onMoveShapeTo } = this.props;
-        const cx = event.target.value;
-        onMoveShapeTo && onMoveShapeTo(cx, ellipse.info.cy);
+        onMoveShapeTo && onMoveShapeTo(value, ellipse.info.cy);
     }
 
-    handleYChange(event) {
+    handleYChange(value) {
         const { ellipse, onMoveShapeTo } = this.props;
-        const cy = event.target.value;
-        onMoveShapeTo && onMoveShapeTo(ellipse.info.cx, cy);
+        onMoveShapeTo && onMoveShapeTo(ellipse.info.cx, value);
     }
+
+    handleWidthChange(value) {
+        console.log(value);
+    }
+
+    handleHeightChange(value) {
+        console.log(value);
+    }
+
     render() {
         return (
-            <div className="ellipse-menu">
-                <select value={this.props.ellipse.strokeWidth} onChange={this.handleStrokeWidth}>
-                    <option value="1">1</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
-                <input default={this.props.ellipse.info.cx} />
-                <input default={this.props.ellipse.info.cy} />
-                <input default={this.props.ellipse.degree} onChange={this.handleRotationChange} />
+            <div className="ellipse-menu menu">
+                <div className="menu-title">Ellipse</div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Stroke:</div>
+                    <Select value={this.props.ellipse.strokeWidth} style={{ width: 90 }} onChange={this.handleStrokeWidth}>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </Select>
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Position:</div>
+                    <Input value={this.props.ellipse.info.cx} label="X" style={{ width: 49, marginRight: 11 }} onChange={this.handleXChange} />
+                    <Input value={this.props.ellipse.info.cy} label="Y" style={{ width: 49 }} onChange={this.handleYChange} />
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Size:</div>
+                    <Input value={this.props.ellipse.info.width} label="Width" style={{ width: 49, marginRight: 11 }} onChange={this.handleWidthChange} />
+                    <Input value={this.props.ellipse.info.height} label="Height" style={{ width: 49 }} onChange={this.handleHeightChange} />
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Rotation:</div>
+                    <Input value={this.props.ellipse.info.degree} label="Rotation" onChange={this.handleRotationChange} />
+                </div>
             </div>
         );
     }

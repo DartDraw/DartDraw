@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Input, Select } from '../../ui';
 import './menu-layouts.css';
 
 class RectangleMenu extends Component {
@@ -22,59 +23,72 @@ class RectangleMenu extends Component {
         this.handleRotationChange = this.handleRotationChange.bind(this);
     }
 
-    handleXChange(event) {
+    handleXChange(value) {
+        console.log(value);
         const { rectangle, onMoveShapeTo } = this.props;
-        const x = event.target.value;
+        const x = value;
         onMoveShapeTo && onMoveShapeTo(x, rectangle.info.y);
     }
 
-    handleYChange(event) {
+    handleYChange(value) {
         const { rectangle, onMoveShapeTo } = this.props;
-        const y = event.target.value;
+        const y = value;
         onMoveShapeTo && onMoveShapeTo(rectangle.info.x, y);
     }
 
-    handleStrokeWidth(event) {
+    handleStrokeWidth(value) {
         const { rectangle, onEdit } = this.props;
-        if (event.target.value > 0) {
-            const newRectangle = Object.assign({}, rectangle, { strokeWidth: event.target.value });
-            onEdit && onEdit(newRectangle);
-        }
+        const newRectangle = Object.assign({}, rectangle, { strokeWidth: value });
+        onEdit && onEdit(newRectangle);
     }
 
-    handleWidthChange(event) {
+    handleWidthChange(value) {
         const {onResizeShapeTo} = this.props;
-        const width = event.target.value;
+        const width = value;
         onResizeShapeTo && onResizeShapeTo(width);
     }
 
-    handleHeightChange(event) {
+    handleHeightChange(value) {
         const {rectangle, onResizeShapeTo} = this.props;
-        const height = event.target.value;
+        const height = value;
         onResizeShapeTo && onResizeShapeTo(rectangle.info.width, height);
     }
 
-    handleRotationChange(event) {
+    handleRotationChange(value) {
         const {onRotateShapeTo} = this.props;
-        const degree = event.target.value;
+        const degree = value;
         onRotateShapeTo && onRotateShapeTo(degree);
     }
 
     render() {
         return (
-            <div className="rectangle-menu">
-                <select value={this.props.rectangle.strokeWidth} onChange={this.handleStrokeWidth}>
-                    <option value="1">1</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
-                <input default={this.props.rectangle.info.x} onChange={this.handleXChange} />
-                <input default={this.props.rectangle.info.y} onChange={this.handleYChange} />
-                <input default={this.props.rectangle.info.width} onChange={this.handleWidthChange} />
-                <input default={this.props.rectangle.info.height} onChange={this.handleHeightChange} />
-                <input default={this.props.rectangle.degree} onChange={this.handleRotationChange} />
+            <div className="rectangle-menu menu">
+                <div className="menu-title">RECTANGLE</div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Stroke:</div>
+                    <Select value={this.props.rectangle.strokeWidth} style={{ width: 90 }} onChange={this.handleStrokeWidth}>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </Select>
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Position:</div>
+                    <Input value={this.props.rectangle.info.x} label="X" style={{ width: 49, marginRight: 11 }} onChange={this.handleXChange} />
+                    <Input value={this.props.rectangle.info.y} label="Y" style={{ width: 49 }} onChange={this.handleYChange} />
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Size:</div>
+                    <Input value={this.props.rectangle.info.width} label="Width" style={{ width: 49, marginRight: 11 }} onChange={this.handleWidthChange} />
+                    <Input value={this.props.rectangle.info.height} label="Height" style={{ width: 49 }} onChange={this.handleHeightChange} />
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Rotation:</div>
+                    <Input value={this.props.rectangle.degree} label="Rotation" onChange={this.handleRotationChange} />
+                </div>
             </div>
         );
     }

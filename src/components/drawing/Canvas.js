@@ -219,7 +219,7 @@ class Canvas extends Component {
                 };
 
                 return (
-                    <g className="line">
+                    <g key={line.id} className="line">
                         <Line {...shapeProps} />
                         <TransparentLine {...line} />
                     </g>);
@@ -240,7 +240,7 @@ class Canvas extends Component {
     renderArrows() {
         const { arrows } = this.props;
         return arrows.map((shape) => {
-            return <Arrowhead {...shape} />;
+            return <Arrowhead key={shape.arrowId} {...shape} />;
         });
     }
 
