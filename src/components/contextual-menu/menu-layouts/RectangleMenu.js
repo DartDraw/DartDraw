@@ -5,7 +5,10 @@ import './menu-layouts.css';
 class RectangleMenu extends Component {
     static propTypes = {
         rectangle: PropTypes.object,
-        onEdit: PropTypes.func
+        onEdit: PropTypes.func,
+        onResizeShapeTo: PropTypes.func,
+        onMoveShapeTo: PropTypes.func,
+        onRotateShapeTo: PropTypes.func
     };
 
     constructor(props) {
@@ -14,27 +17,47 @@ class RectangleMenu extends Component {
         this.handleXChange = this.handleXChange.bind(this);
         this.handleYChange = this.handleYChange.bind(this);
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
+        this.handleWidthChange = this.handleWidthChange.bind(this);
+        this.handleHeightChange = this.handleHeightChange.bind(this);
+        this.handleRotationChange = this.handleRotationChange.bind(this);
     }
 
     handleXChange(event) {
-        const { rectangle, onEdit } = this.props;
-        const newRectangle = Object.assign({}, rectangle, { x: event.target.value });
-        onEdit && onEdit(newRectangle);
+        const { rectangle, onMoveShapeTo } = this.props;
+        const x = event.target.value;
+        onMoveShapeTo && onMoveShapeTo(x, rectangle.info.y);
     }
 
     handleYChange(event) {
-        const { rectangle, onEdit } = this.props;
-        const newRectangle = Object.assign({}, rectangle, { y: event.target.value });
-        onEdit && onEdit(newRectangle);
+        const { rectangle, onMoveShapeTo } = this.props;
+        const y = event.target.value;
+        onMoveShapeTo && onMoveShapeTo(rectangle.info.x, y);
     }
 
     handleStrokeWidth(event) {
         const { rectangle, onEdit } = this.props;
-        if (event.target.value > 0){
+        if (event.target.value > 0) {
             const newRectangle = Object.assign({}, rectangle, { strokeWidth: event.target.value });
             onEdit && onEdit(newRectangle);
         }
-        
+    }
+
+    handleWidthChange(event) {
+        const {onResizeShapeTo} = this.props;
+        const width = event.target.value;
+        onResizeShapeTo && onResizeShapeTo(width);
+    }
+
+    handleHeightChange(event) {
+        const {rectangle, onResizeShapeTo} = this.props;
+        const height = event.target.value;
+        onResizeShapeTo && onResizeShapeTo(rectangle.info.width, height);
+    }
+
+    handleRotationChange(event) {
+        const {onRotateShapeTo} = this.props;
+        const degree = event.target.value;
+        onRotateShapeTo && onRotateShapeTo(degree);
     }
 
     render() {
@@ -47,9 +70,11 @@ class RectangleMenu extends Component {
                     <option value="15">15</option>
                     <option value="20">20</option>
                 </select>
-    
-                <input value={this.props.rectangle.x} />
-                <input value={this.props.rectangle.y} />
+                <input default={this.props.rectangle.info.x} onChange={this.handleXChange} />
+                <input default={this.props.rectangle.info.y} onChange={this.handleYChange} />
+                <input default={this.props.rectangle.info.width} onChange={this.handleWidthChange} />
+                <input default={this.props.rectangle.info.height} onChange={this.handleHeightChange} />
+                <input default={this.props.rectangle.degree} onChange={this.handleRotationChange} />
             </div>
         );
     }

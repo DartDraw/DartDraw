@@ -16,7 +16,8 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
         height: 1,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
-        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        info: {}
     };
 
     if (gridSnapping) {
@@ -41,7 +42,8 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
         ry: 0.5,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
-        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        info: {}
     };
 
     if (gridSnapping) {
@@ -1832,24 +1834,24 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
         let coords = {};
         coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
-        if (action.payload.x) {
+        if (action.payload.width) {
             coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
-            let dt = action.payload.x;
+            let dt = action.payload.width;
             let d = Math.sqrt((coords[3].x - coords[0].x) ** 2 + (coords[3].y - coords[0].y) ** 2);
 
             if (d) {
                 action.payload.draggableData.x = (1 - dt / d) * coords[3].x + dt / d * coords[0].x;
                 action.payload.draggableData.y = (1 - dt / d) * coords[3].y + dt / d * coords[0].y;
             } else {
-                action.payload.draggableData.x = coords[3].x + action.payload.x;
+                action.payload.draggableData.x = coords[3].x + action.payload.width;
                 action.payload.draggableData.y = coords[3].y;
             }
             handleIndex = 0;
         }
 
-        if (action.payload.y) {
+        if (action.payload.height) {
             coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-            let dt = action.payload.y;
+            let dt = action.payload.height;
             let d = Math.sqrt((coords[3].x - coords[2].x) ** 2 + (coords[3].y - coords[2].y) ** 2);
 
             if (d) {
@@ -1857,7 +1859,7 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
                 action.payload.draggableData.y = (1 - dt / d) * coords[3].y + dt / d * coords[2].y;
             } else {
                 action.payload.draggableData.x = coords[3].x;
-                action.payload.draggableData.y = coords[3].y + action.payload.y;
+                action.payload.draggableData.y = coords[3].y + action.payload.height;
             }
             handleIndex = 2;
         }

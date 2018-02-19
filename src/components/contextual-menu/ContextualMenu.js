@@ -39,7 +39,10 @@ class ContextualMenu extends Component {
         onAddRuler: PropTypes.func,
         onSaveRuler: PropTypes.func,
         onDeleteRuler: PropTypes.func,
-        onToggleRuler: PropTypes.func
+        onToggleRuler: PropTypes.func,
+        onResizeShapeTo: PropTypes.func,
+        onMoveShapeTo: PropTypes.func,
+        onRotateShapeTo: PropTypes.func
     };
 
     constructor(props) {
@@ -76,6 +79,9 @@ class ContextualMenu extends Component {
         this.handleDeleteRuler = this.handleDeleteRuler.bind(this);
         this.handleToggleRuler = this.handleToggleRuler.bind(this);
         this.handleToggleCanvasOrientation = this.handleToggleCanvasOrientation.bind(this);
+        this.handleResizeShapeTo = this.handleResizeShapeTo.bind(this);
+        this.handleMoveShapeTo = this.handleMoveShapeTo.bind(this);
+        this.handleRotateShapeTo = this.handleRotateShapeTo.bind(this);
     }
 
     handleToggleHidden() {
@@ -201,6 +207,19 @@ class ContextualMenu extends Component {
         event.preventDefault();
     }
 
+    handleResizeShapeTo(width, height) {
+        this.props.onResizeShapeTo(width, height);
+    }
+
+    handleMoveShapeTo(x, y) {
+        console.log("handleMoveShapeTo called");
+        this.props.onMoveShapeTo(x, y);
+    }
+
+    handleRotateShapeTo(degree) {
+        this.props.onRotateShapeTo(degree);
+    }
+
     handleToggleCanvasOrientation(event) {
         const { unitType, canvasWidthInUnits, canvasHeightInUnits, unitDivisions } = this.props;
         this.props.onSetRulerGrid({
@@ -291,11 +310,11 @@ class ContextualMenu extends Component {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} onEditText={this.handleEditText} />;
             } else if (selectedShape.type === 'rectangle') {
-                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'ellipse') {
-                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} onMoveShapeTo={this.handleMoveShapeTo} />;
             }
         }
 
