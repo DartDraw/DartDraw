@@ -126,7 +126,7 @@ export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY
     const { x, y } = action.payload;
 
     const polygon = shapes.byId[selected[0]];
-    if (!polygon || polygon.type === 'polygon') { return shapes; }
+    if (!polygon || polygon.type !== 'polyline') { return shapes; }
 
     let xCoord = (x + (panX * scale) - offset.x) / scale;
     let yCoord = (y + (panY * scale) - offset.y) / scale;
@@ -218,7 +218,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     const { x, y } = action.payload;
 
     const bezier = shapes.byId[selected[0]];
-    if (!bezier || bezier.closed || bezier.open) { return shapes; }
+    if (!bezier || bezier.type !== "bezier" || bezier.closed || bezier.open) { return shapes; }
 
     let xCoord = (x + (panX * scale) - offset.x) / scale;
     let yCoord = (y + (panY * scale) - offset.y) / scale;
