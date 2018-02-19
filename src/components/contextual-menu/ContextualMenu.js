@@ -30,7 +30,7 @@ class ContextualMenu extends Component {
         onSetRulerGrid: PropTypes.func,
         onResizeShapeTo: PropTypes.func,
         onMoveShapeTo: PropTypes.func,
-        onRotateShapeTo: PropTypes.func
+        onRotateShapeTo: PropTypes.func,
     };
 
     constructor(props) {
@@ -169,6 +169,7 @@ class ContextualMenu extends Component {
     }
 
     handleMoveShapeTo(x, y) {
+        console.log("handleMoveShapeTo called");
         this.props.onMoveShapeTo(x, y);
     }
 
@@ -188,7 +189,7 @@ class ContextualMenu extends Component {
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
             } else if (selectedShape.type === 'ellipse') {
-                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} onMoveShapeTo={this.handleMoveShapeTo} />;
             }
         }
 

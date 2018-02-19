@@ -141,5 +141,5 @@ export function moveShapeTo(x, y) {
 }
 
 export function rotateShapeTo(degree) {
-    return {type: ROTATE_SHAPE_TO, payload: {degree}};
+    return { type: ROTATE_SHAPE_TO, payload: {degree} };
 }
