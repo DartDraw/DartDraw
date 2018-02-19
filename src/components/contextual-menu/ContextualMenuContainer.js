@@ -3,6 +3,7 @@ import {
     editShape,
     editText,
     alignmentClick,
+    distributeClick,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
@@ -17,21 +18,32 @@ import {
     toggleShowRulers,
     toggleShowSubDivisions,
     setRulerGrid,
+    selectRuler,
+    addRuler,
+    saveRuler,
+    deleteRuler,
+    toggleRuler,
     resizeShapeTo,
     moveShapeTo,
-    rotateShapeTo
+    rotateShapeTo,
+    toggleContextualMenu
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
 
-const mapStateToProps = ({ drawingState }) => {
+const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, selected, scale, ruler, canvasWidth, canvasHeight } = drawingState;
+    const { currentKeys } = menuState;
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: scale,
         unitType: ruler.unitType,
         unitDivisions: ruler.unitDivisions,
         canvasWidthInUnits: canvasWidth / ruler.pixelsPerUnit,
-        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit
+        canvasHeightInUnits: canvasHeight / ruler.pixelsPerUnit,
+        rulerNames: Object.keys(ruler.byName),
+        currentRuler: ruler.current,
+        currentKeys: currentKeys,
+        hidden: !menuState.showContextualMenu
     };
 };
 
@@ -43,8 +55,11 @@ const mapDispatchToProps = (dispatch) => {
         editText: (shape) => {
             dispatch(editText(shape));
         },
-        onAllignmentClick: (id) => {
+        onAlignmentClick: (id) => {
             dispatch(alignmentClick(id));
+        },
+        onDistributeClick: (id) => {
+            dispatch(distributeClick(id));
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());
@@ -96,6 +111,24 @@ const mapDispatchToProps = (dispatch) => {
         },
         onRotateShapeTo: (degree) => {
             dispatch(rotateShapeTo(degree));
+        },
+        onSelectRuler: (rulerName) => {
+            dispatch(selectRuler(rulerName));
+        },
+        onAddRuler: (rulerSpecs) => {
+            dispatch(addRuler(rulerSpecs));
+        },
+        onSaveRuler: (rulerSpecs) => {
+            dispatch(saveRuler(rulerSpecs));
+        },
+        onDeleteRuler: () => {
+            dispatch(deleteRuler());
+        },
+        onToggleRuler: (forward) => {
+            dispatch(toggleRuler(forward));
+        },
+        onToggleHidden: () => {
+            dispatch(toggleContextualMenu());
         }
     };
 };

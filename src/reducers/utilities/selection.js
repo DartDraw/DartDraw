@@ -304,7 +304,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
             }
 
             let addPointLines = [];
-            if (shape.type === "polygon") {
+            if (shape.type === "polygon" || shape.type === "polyline") {
                 for (let i = 0; i <= shape.points.length - 4; i += 2) {
                     addPointLines.push(
                         {id: uuidv1(),

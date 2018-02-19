@@ -2,6 +2,7 @@ import jsondiffpatch from 'jsondiffpatch';
 import * as canvasActions from './../actions/canvas';
 import * as menuActions from './../actions/menu';
 import * as canvas from './caseFunctions/canvas';
+import * as file from './caseFunctions/file';
 import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
@@ -48,6 +49,13 @@ const initialState = {
         vertical: {
             ticks: [],
             labels: []
+        },
+        current: 'Default',
+        byName: {
+            'Default': {
+                unitType: 'in',
+                unitDivisions: 2
+            }
         }
     }
 };
@@ -145,6 +153,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.ALIGNMENT_CHANGE:
             updatedState = shape.alignClick(stateCopy, action, root);
             break;
+        case menuActions.DISTRIBUTE_CLICK:
+            updatedState = shape.distributeClick(stateCopy, action, root);
+            break;
         case menuActions.GROUP_BUTTON_CLICK:
             updatedState = menu.groupButtonClick(stateCopy, action, root);
             break;
@@ -162,6 +173,12 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.EXPORT_CLICK:
             return menu.exportClick(stateCopy);
+        case menuActions.FILE_SAVE:
+            file.fileSave(root, action);
+            return stateCopy;
+        case menuActions.FILE_OPEN:
+            file.fileOpen(stateCopy, action);
+            return stateCopy;
         case menuActions.EDIT_SHAPE:
             updatedState = shape.editShape(stateCopy, action, root);
             break;
@@ -171,6 +188,21 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SET_RULER_GRID:
             updatedState = rulers.setRulerGrid(stateCopy, action, root);
             break;
+        case menuActions.SELECT_RULER:
+            updatedState = rulers.selectRuler(stateCopy, action, root);
+            break;
+        case menuActions.ADD_RULER:
+            updatedState = rulers.addRuler(stateCopy, action, root);
+            break;
+        case menuActions.SAVE_RULER:
+            updatedState = rulers.saveRuler(stateCopy, action, root);
+            break;
+        case menuActions.DELETE_RULER:
+            updatedState = rulers.deleteRuler(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_RULER:
+            updatedState = rulers.toggleRuler(stateCopy, action, root);
+            break;
         case menuActions.RESIZE_SHAPE_TO:
             updatedState = shape.resizeShapes(stateCopy, action, root);
             break;
@@ -179,6 +211,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.ROTATE_SHAPE_TO:
             updatedState = shape.rotateShapes(stateCopy, action, root);
+            break;
+        case canvasActions.SCROLL:
+            updatedState = canvas.scroll(stateCopy, action, root);
             break;
         default: break;
     }
@@ -196,6 +231,7 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
+                // console.log(action.type, root.menuState);
             }
         }
     }

@@ -4,7 +4,8 @@ import DiffMatchPatch from 'diff-match-patch';
 import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMoveShape, rotateShape,
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
-    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape } from '../utilities/shapes';
+    prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape,
+    distributeShapes, snapToGrid } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 import * as menu from './menu';
@@ -110,6 +111,7 @@ export function click(stateCopy, action, root) {
 
     switch (root.menuState.toolType) {
         case "selectTool":
+        case "rotateTool":
             if (!stateCopy.editInProgress) {
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 let selectMultiple = false;
@@ -160,6 +162,7 @@ export function drag(stateCopy, action, root) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         switch (root.menuState.toolType) {
             case "selectTool":
+            case "rotateTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
@@ -548,6 +551,11 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy = moveBackward(stateCopy, action, root);
             }
             break;
+        case 75: // temp: snap to grid
+            upSelected = 38 in root.menuState.currentKeys;
+            stateCopy.shapes = snapToGrid(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+                stateCopy.boundingBoxes, stateCopy.selectionBoxes, stateCopy.gridSnapInterval, root.menuState.align);
+            break;
         case 82: // reshape
             if (root.menuState.toolType === 'selectTool' && stateCopy.selected.length === 1) {
                 const hasPoints = stateCopy.shapes.byId[stateCopy.selected[0]].points;
@@ -627,9 +635,13 @@ export function selectTool(stateCopy, action, root) {
 }
 
 export function alignClick(stateCopy, action, root) {
-    let shiftSelected = 16 in root.menuState.currentKeys;
-    if (shiftSelected) {
-        stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
+    stateCopy.shapes = alignToShape(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
+    return stateCopy;
+}
+
+export function distributeClick(stateCopy, action, root) {
+    if (stateCopy.selected.length > 2) {
+        stateCopy.shapes = distributeShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
 }
