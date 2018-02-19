@@ -53,6 +53,9 @@ class App extends Component {
                 tabIndex={-1}
             >
                 <ElectronMenuContainer />
+                <BottomScrollContainer />
+                <RightScrollContainer />
+                <ContextualMenuContainer />
                 <TopMenuContainer />
                 <div className="outerBody">
                     <LeftMenuContainer />
@@ -65,9 +68,6 @@ class App extends Component {
                     </div>
                 </div>
                 <IpcMiddlewareContainer />
-                <BottomScrollContainer />
-                <RightScrollContainer />
-                <ContextualMenuContainer />
             </div>
         );
     }

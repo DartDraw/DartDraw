@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import {
     editShape,
     editText,
+    selectTool,
     alignmentClick,
     distributeClick,
     groupButtonClick,
@@ -91,6 +92,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetCustomZoom: (customScale) => {
             dispatch(setCustomZoom(customScale));
+        },
+        onSelectZoomTool: () => {
+            dispatch(selectTool('zoomTool'));
         },
         onShowGrid: () => {
             dispatch(toggleShowGrid());

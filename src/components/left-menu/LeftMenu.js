@@ -69,10 +69,6 @@ class LeftMenu extends Component {
                     <button onClick={this.handleExportSelect}>
                         <img src="./assets/export.svg" alt="export" id="button-icon" />
                     </button>
-
-                    <button onClick={() => this.handleToolSelect("zoomTool")}>
-                        <img src="./assets/marquee-zoom.svg" alt="marquee zoom" id="button-icon" />
-                    </button>
                     <button onClick={() => this.handleToolSelect("textTool")} className={this.isSelected("textTool")}>
                         <img src="./assets/text.svg" alt="rect" id="button-icon" />
                     </button>
