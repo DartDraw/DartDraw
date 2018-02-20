@@ -15,6 +15,7 @@ class Polyline extends Component {
         points: PropTypes.arrayOf(PropTypes.number),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeMiterlimit: PropTypes.number,
         fill: PropTypes.string,
         fillOpacity: PropTypes.number,
         transform: PropTypes.arrayOf(PropTypes.shape({
@@ -63,6 +64,7 @@ class Polyline extends Component {
             points,
             stroke,
             strokeWidth,
+            strokeMiterlimit,
             fill,
             fillOpacity,
             transform,
@@ -73,6 +75,7 @@ class Polyline extends Component {
             id,
             stroke,
             strokeWidth,
+            strokeMiterlimit,
             fill,
             fillOpacity,
             transform: formatTransform(transform),

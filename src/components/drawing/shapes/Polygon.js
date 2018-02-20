@@ -15,6 +15,7 @@ class Polygon extends Component {
         points: PropTypes.arrayOf(PropTypes.number),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeMiterlimit: PropTypes.number,
         fill: PropTypes.string,
         fillOpacity: PropTypes.number,
         transform: PropTypes.arrayOf(PropTypes.shape({
@@ -64,6 +65,7 @@ class Polygon extends Component {
             points,
             stroke,
             strokeWidth,
+            strokeMiterlimit,
             fill,
             fillOpacity,
             transform,
@@ -75,6 +77,7 @@ class Polygon extends Component {
             id,
             stroke,
             strokeWidth,
+            strokeMiterlimit,
             fill,
             fillOpacity,
             transform: formatTransform(transform),

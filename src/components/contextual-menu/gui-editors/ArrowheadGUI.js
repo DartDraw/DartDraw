@@ -249,15 +249,14 @@ class ArrowheadGUI extends Component {
     }
 
     renderArrowhead(arrowhead) {
-        const { stroke, strokeDasharray } = this.props.path;
+        const { stroke } = this.props.path;
 
         const arrowheadProps = {
             ...arrowhead,
             transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
             fill: stroke,
             stroke: stroke,
-            strokeWidth: 5,
-            strokeDasharray: strokeDasharray
+            strokeWidth: 5
         };
 
         switch (arrowhead.type) {
