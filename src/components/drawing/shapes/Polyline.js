@@ -16,6 +16,7 @@ class Polyline extends Component {
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
+        fillOpacity: PropTypes.number,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
@@ -63,6 +64,7 @@ class Polyline extends Component {
             stroke,
             strokeWidth,
             fill,
+            fillOpacity,
             transform,
             propagateEvents
         } = this.props;
@@ -72,6 +74,7 @@ class Polyline extends Component {
             stroke,
             strokeWidth,
             fill,
+            fillOpacity,
             transform: formatTransform(transform),
             points: formatPoints(points),
             vectorEffect: "non-scaling-stroke"

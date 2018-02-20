@@ -27,3 +27,8 @@ export function changeArrowheadType(stateCopy, action, root) {
 
     return stateCopy;
 }
+
+export function editArrowhead(stateCopy, action, root) {
+    stateCopy.currentArrowhead = action.payload.arrowhead;
+    return stateCopy;
+}

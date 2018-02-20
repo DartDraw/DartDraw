@@ -22,6 +22,7 @@ const initialState = {
     showRulers: true,
     showSubDivisions: true,
     showGrid: true,
+    showContextualMenu: true,
     currentArrowhead: setArrowheadType('triangle'),
     arrowheadPresets: []
 };
@@ -58,6 +59,11 @@ function menuState(state = initialState, action, root) {
             return arrowhead.arrowheadHandleDragStop(stateCopy, action, root);
         case menuActions.CHANGE_ARROWHEAD_TYPE:
             return arrowhead.changeArrowheadType(stateCopy, action, root);
+        case menuActions.EDIT_ARROWHEAD:
+            return arrowhead.editArrowhead(stateCopy, action, root);
+        case menuActions.TOGGLE_CONTEXTUAL_MENU:
+            stateCopy.showContextualMenu = !stateCopy.showContextualMenu;
+            return stateCopy;
         default:
             return stateCopy;
     }

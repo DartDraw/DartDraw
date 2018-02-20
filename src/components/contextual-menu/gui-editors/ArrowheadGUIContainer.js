@@ -4,7 +4,8 @@ import {
     arrowheadHandleDragStart,
     arrowheadHandleDrag,
     arrowheadHandleDragStop,
-    changeArrowheadType
+    changeArrowheadType,
+    editArrowhead
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
@@ -29,6 +30,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onChangeArrowheadType: (arrowheadType) => {
             dispatch(changeArrowheadType(arrowheadType));
+        },
+        onEditArrowhead: (arrowhead) => {
+            dispatch(editArrowhead(arrowhead));
         }
     };
 };

@@ -46,7 +46,9 @@ class Canvas extends Component {
         onGroupClick: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
-        onBoundingBoxUpdate: PropTypes.func
+        onScroll: PropTypes.func,
+        onBoundingBoxUpdate: PropTypes.func,
+        onSetRulerGrid: PropTypes.func
     };
 
     constructor(props) {
@@ -67,6 +69,18 @@ class Canvas extends Component {
         this.handleGroupDrag = this.handleGroupDrag.bind(this);
         this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+    }
+
+    componentDidMount() {
+        window.addEventListener('wheel', this.handleScroll);
+        window.addEventListener('resize', this.handleResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('wheel', this.handleScroll);
+        window.removeEventListener('resize', this.handleResize);
     }
 
     componentDidUpdate(prevProps) {
@@ -81,6 +95,9 @@ class Canvas extends Component {
                     element = element.childNodes[0];
                 }
                 if (element.id && element.tagName !== 'marker') {
+                    if (element.tagName === 'foreignObject') {
+                        boundingBoxes[element.id] = Object.assign({}, element.getBBox(), { x: element.getAttribute('x'), y: element.getAttribute('y') });
+                    }
                     boundingBoxes[element.id] = element.getBBox({ markers: true }); // https://bugs.chromium.org/p/chromium/issues/detail?id=280576
                 }
             });
@@ -138,6 +155,14 @@ class Canvas extends Component {
 
     handleRedoClick() {
         this.props.onRedoClick();
+    }
+
+    handleScroll({ deltaX, deltaY }) {
+        this.props.onScroll(deltaX, deltaY);
+    }
+
+    handleResize() {
+        this.props.onSetRulerGrid();
     }
 
     renderShape(shape) {
@@ -220,11 +245,11 @@ class Canvas extends Component {
     }
 
     render() {
-        const { canvasHeight, canvasWidth, viewBox } = this.props;
+        const { canvasHeight, canvasWidth, viewBox, propagateEvents } = this.props;
 
         return (
-            <div style={{flex: 1, overflow: 'hidden'}}>
-                <TextInputLayerContainer />
+            <div style={{flex: 1, overflow: 'hidden'}} onScroll={event => { console.log(event); }}>
+                <TextInputLayerContainer propagateEvents={propagateEvents} />
                 <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}

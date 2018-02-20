@@ -1,23 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
-import { Polygon, Handle } from '../../drawing/shapes';
+import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
 class ArrowheadGUI extends Component {
     static propTypes = {
         selected: PropTypes.array,
         path: PropTypes.object,
+        fillColor: PropTypes.object,
         currentArrowhead: PropTypes.object,
         arrowheadPresets: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDragStart: PropTypes.func,
         onArrowheadHandleDrag: PropTypes.func,
         onArrowheadHandleDragStop: PropTypes.func,
-        onChangeArrowheadType: PropTypes.func
+        onChangeArrowheadType: PropTypes.func,
+        onEditArrowhead: PropTypes.func
     };
 
     constructor(props) {
         super(props);
+        this.state = {
+            isChecked: this.props.currentArrowhead.fillOpacity === 1
+        };
 
         this.renderReferenceLine = this.renderReferenceLine.bind(this);
         this.renderArrowhead = this.renderArrowhead.bind(this);
@@ -26,6 +31,29 @@ class ArrowheadGUI extends Component {
         this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
         this.handleArrowheadHandleDragStop = this.handleArrowheadHandleDragStop.bind(this);
         this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
+        this.handleXChange = this.handleXChange.bind(this);
+        this.handleYChange = this.handleYChange.bind(this);
+        this.handleToggleFill = this.handleToggleFill.bind(this);
+    }
+
+    handleXChange(event) {
+        const { currentArrowhead } = this.props;
+        const newArrowhead = Object.assign({}, currentArrowhead, { x: event.target.value });
+        this.props.onEditArrowhead(newArrowhead);
+    }
+
+    handleYChange(event) {
+        const { currentArrowhead } = this.props;
+        const newArrowhead = Object.assign({}, currentArrowhead, { y: event.target.value });
+        this.props.onEditArrowhead(newArrowhead);
+    }
+
+    handleToggleFill(event) {
+        const { currentArrowhead } = this.props;
+        const { isChecked } = this.state;
+        const newArrowhead = Object.assign({}, currentArrowhead, { fillOpacity: isChecked ? 0 : 1 });
+        this.props.onEditArrowhead(newArrowhead);
+        this.setState({isChecked: !isChecked});
     }
 
     handleArrowheadHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -53,25 +81,76 @@ class ArrowheadGUI extends Component {
         event.preventDefault();
     }
 
+    determineParameterMenu() {
+        const { currentArrowhead } = this.props;
+        const { isChecked } = this.state;
+
+        switch (currentArrowhead.type) {
+            case "triangle":
+                return (
+                    <form id="button-icon">
+                        <input
+                            id="width"
+                            defaultValue={300 - (2 * currentArrowhead.points[0])}
+                            type="number"
+                            onChange={this.handleXChange}
+                        />
+                        <input
+                            id="length"
+                            defaultValue={currentArrowhead.points[2] - currentArrowhead.points[0]}
+                            type="number"
+                            onChange={this.handleYChange}
+                        />
+                        <input
+                            id="fill"
+                            type="checkbox"
+                            onChange={this.handleToggleFill}
+                            checked={isChecked}
+                        />
+                        <input id="submit" type="submit" value="submit" />
+                    </form>
+                );
+            case "barbed":
+                break;
+            case "ellipse":
+                break;
+            case "rectangle":
+                break;
+            case "polyline":
+                break;
+            default: break;
+        }
+    }
+
     renderReferenceLine(path, arrowhead) {
         // update so it's not hardcoded!
-        return <line x1={0} y1={75} x2={arrowhead.points[0]} y2={75} strokeWidth={path.strokeWidth} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={250} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
-        const { stroke, strokeWidth, strokeDasharray } = this.props.path;
+        const { stroke, strokeDasharray } = this.props.path;
 
         const arrowheadProps = {
-            // id: uuidv1(),
-            type: 'polyline',
-            points: arrowhead.points,
+            ...arrowhead,
             transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
             fill: stroke,
-            strokeWidth: strokeWidth,
+            stroke: stroke,
+            strokeWidth: 5,
             strokeDasharray: strokeDasharray
         };
 
-        return <Polygon {...arrowheadProps} />;
+        switch (arrowhead.type) {
+            case 'triangle':
+            case 'barbed':
+                return <Polygon {...arrowheadProps} />;
+            case 'ellipse':
+                return <Ellipse {...arrowheadProps} />;
+            case 'rectangle':
+                return <Rectangle {...arrowheadProps} />;
+            case 'polyline':
+                return <Polyline {...arrowheadProps} />;
+            default: break;
+        }
     }
 
     renderHandles(arrowhead) {
@@ -106,6 +185,8 @@ class ArrowheadGUI extends Component {
     render() {
         const { path, currentArrowhead } = this.props;
 
+        const parameterMenu = this.determineParameterMenu();
+
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
                 <select
@@ -113,40 +194,21 @@ class ArrowheadGUI extends Component {
                     defaultValue={currentArrowhead.type}
                     onChange={this.handleChangeArrowheadType}
                 >
-                    <option value="triangle">triangle</option>
-                    <option value="barbed">barbed</option>
-                    <option value="circle">circle</option>
-                    <option value="square">square</option>
-                    <option value="line">line</option>
+                    <option value='triangle'>triangle</option>
+                    <option value='barbed'>barbed</option>
+                    <option value='ellipse'>ellipse</option>
+                    <option value='rectangle'>rectangle</option>
+                    <option value='polyline'>polyline</option>
                 </select>
                 <svg className="arrowhead-gui">
                     {this.renderReferenceLine(path, currentArrowhead)}
                     {this.renderArrowhead(currentArrowhead)}
                     {this.renderHandles(currentArrowhead)}
                 </svg>
+                {parameterMenu}
             </div>
         );
     }
 }
 
 export default ArrowheadGUI;
-
-// <form id="button-icon" onSubmit={() => console.log("hi")}>
-//     <input
-//         id="width"
-//         defaultValue={300 - (2 * arrowhead.points[0])}
-//         type="number"
-//     />
-//     <input
-//         id="length"
-//         defaultValue={arrowhead.points[2] - arrowhead.points[0]}
-//         type="number"
-//     />
-//     <input
-//         id="strokeWidth"
-//         defaultValue={path.strokeWidth}
-//         type="number"
-//     />
-//     <input type="checkbox" />
-//     <input type="submit" value="submit" />
-// </form>

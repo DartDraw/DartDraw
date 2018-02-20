@@ -18,9 +18,10 @@ class Rectangle extends Component {
         ry: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
-        strokeDasharray: PropTypes.number,
+        strokeDasharray: PropTypes.string,
         vectorEffect: PropTypes.string,
         fill: PropTypes.string,
+        fillOpacity: PropTypes.number,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
@@ -74,6 +75,7 @@ class Rectangle extends Component {
             strokeWidth,
             strokeDasharray,
             fill,
+            fillOpacity,
             transform,
             propagateEvents
         } = this.props;
@@ -84,6 +86,7 @@ class Rectangle extends Component {
             strokeWidth,
             strokeDasharray,
             fill,
+            fillOpacity,
             transform: formatTransform(transform),
             vectorEffect: 'non-scaling-stroke',
             rx,

@@ -15,13 +15,7 @@ class RulerLayer extends Component {
     };
 
     componentWillMount() {
-        const { ruler, widthInUnits, heightInUnits } = this.props;
-        this.props.onSetRulerGrid({
-            unitType: ruler.unitType,
-            width: widthInUnits,
-            height: heightInUnits,
-            unitDivisions: ruler.unitDivisions
-        });
+        this.props.onSetRulerGrid();
     }
 
     buildLabel(num, x, y, textAnchor, dominantBaseline, key) {

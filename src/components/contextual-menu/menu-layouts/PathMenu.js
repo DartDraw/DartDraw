@@ -14,6 +14,7 @@ class PathMenu extends Component {
         this.handleStrokeDasharrayChange = this.handleStrokeDasharrayChange.bind(this);
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
         this.handleArrowShown = this.handleArrowShown.bind(this);
+        this.handleArrowType = this.handleArrowType.bind(this);
     }
 
     handleStrokeDasharrayChange(event) {
@@ -33,6 +34,12 @@ class PathMenu extends Component {
     handleArrowShown(event) {
         const { path, onEdit } = this.props;
         const newPath = Object.assign({}, path, { arrowShown: event.target.value });
+        onEdit && onEdit(newPath);
+    }
+
+    handleArrowType(event) {
+        const { path, onEdit } = this.props;
+        const newPath = Object.assign({}, path, { arrowType: event.target.value });
         onEdit && onEdit(newPath);
     }
 

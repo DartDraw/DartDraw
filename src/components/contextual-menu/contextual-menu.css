@@ -1,9 +1,8 @@
 .contextual-menu {
   background-color: #202B33;
   display: flex;
-  width: 360px;
   position: absolute;
-  top: 43px;
+  top: 41px;
   bottom: 0;
   transition: right 500ms ease-in-out;
   color: #EBF1F5;
@@ -34,7 +33,7 @@
 
 .dynamic-menu {
     display: flex;
-    flex: 0.85;
+    flex: 0.7;
     height: 80px;
     background-color: #30404D;
     flex-direction: column;

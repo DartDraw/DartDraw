@@ -1,4 +1,5 @@
 export const EDIT_SHAPE = 'EDIT_SHAPE';
+export const EDIT_TEXT = 'EDIT_TEXT';
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const MOUSE_MOVE = 'MOUSE_MOVE';
@@ -8,6 +9,7 @@ export const SELECT_COLOR = 'SELECT_COLOR';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const SET_CUSTOM_ZOOM = 'SET_CUSTOM_ZOOM';
+export const DISTRIBUTE_CLICK = 'DISTRIBUTE_CLICK';
 export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
@@ -19,6 +21,8 @@ export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
+export const FILE_OPEN = 'FILE_OPEN';
+export const FILE_SAVE = 'FILE_SAVE';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
@@ -27,9 +31,20 @@ export const ARROWHEAD_HANDLE_DRAG_START = 'ARROWHEAD_HANDLE_DRAG_START';
 export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
 export const ARROWHEAD_HANDLE_DRAG_STOP = 'ARROWHEAD_HANDLE_DRAG_STOP';
 export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
+export const EDIT_ARROWHEAD = 'EDIT_ARROWHEAD';
+export const SELECT_RULER = 'SELECT_RULER';
+export const ADD_RULER = 'ADD_RULER';
+export const SAVE_RULER = 'SAVE_RULER';
+export const DELETE_RULER = 'DELETE_RULER';
+export const TOGGLE_RULER = 'TOGGLE_RULER';
+export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
+}
+
+export function editText(shape) {
+    return { type: EDIT_TEXT, payload: { shape } };
 }
 
 export function keyDown(keyCode) {
@@ -76,6 +91,10 @@ export function alignmentClick(id) {
     return { type: ALIGNMENT_CHANGE, payload: { id } };
 }
 
+export function distributeClick(id) {
+    return { type: DISTRIBUTE_CLICK, payload: { id } };
+}
+
 export function groupButtonClick() {
     return { type: GROUP_BUTTON_CLICK };
 }
@@ -112,6 +131,14 @@ export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
 }
 
+export function fileSave(data) {
+    return { type: FILE_SAVE, payload: { data } };
+}
+
+export function fileOpen(data) {
+    return { type: FILE_OPEN, payload: { data } };
+}
+
 export function toggleShowRulers() {
     return { type: TOGGLE_SHOW_RULER };
 }
@@ -128,6 +155,30 @@ export function setRulerGrid(canvasSpecs) {
     return { type: SET_RULER_GRID, payload: canvasSpecs };
 }
 
+export function selectRuler(rulerName) {
+    return { type: SELECT_RULER, payload: { rulerName } };
+}
+
+export function addRuler(rulerSpecs) {
+    return { type: ADD_RULER, payload: rulerSpecs };
+}
+
+export function saveRuler(rulerSpecs) {
+    return { type: SAVE_RULER, payload: rulerSpecs };
+}
+
+export function deleteRuler() {
+    return { type: DELETE_RULER };
+}
+
+export function toggleRuler(forward) {
+    return { type: TOGGLE_RULER, payload: { forward } };
+}
+
+export function toggleContextualMenu() {
+    return { type: TOGGLE_CONTEXTUAL_MENU };
+}
+
 export function arrowheadHandleDragStart(shapeId, handleIndex, draggableData) {
     return { type: ARROWHEAD_HANDLE_DRAG_START, payload: { shapeId, handleIndex, draggableData } };
 }
@@ -142,4 +193,8 @@ export function arrowheadHandleDragStop(shapeId, handleIndex, draggableData) {
 
 export function changeArrowheadType(arrowheadType) {
     return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
+}
+
+export function editArrowhead(arrowhead) {
+    return { type: EDIT_ARROWHEAD, payload: { arrowhead } };
 }

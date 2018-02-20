@@ -1,26 +1,4 @@
 import uuidv1 from 'uuid';
-//
-// export function generateArrowheadPrototypes() {
-//     let arrowheadPrototypes = {};
-//
-//     const triangle = {
-//         id: "triangle",
-//         type: "triangle",
-//         points: [150, 25, 250, 75, 150, 125]
-//     };
-//     triangle.handles = generateHandles(triangle);
-//     arrowheadPrototypes[triangle.id] = triangle;
-//
-//     const barbed = {
-//         id: "barbed",
-//         type: "barbed",
-//         points: [175, 75, 150, 25, 250, 75, 150, 125]
-//     };
-//     barbed.handles = generateHandles(barbed);
-//     arrowheadPrototypes[barbed.id] = barbed;
-//
-//     return arrowheadPrototypes;
-// }
 
 export function setArrowheadType(arrowheadType) {
     var arrowhead = {};
@@ -28,23 +6,49 @@ export function setArrowheadType(arrowheadType) {
     switch (arrowheadType) {
         case 'triangle':
             arrowhead = {
-                id: "triangle",
-                type: "triangle",
-                points: [150, 25, 250, 75, 150, 125]
+                id: 'triangle',
+                type: 'triangle',
+                points: [100, 25, 200, 75, 100, 125],
+                fillOpacity: 0
             };
             break;
         case 'barbed':
             arrowhead = {
-                id: "barbed",
-                type: "barbed",
-                points: [175, 75, 150, 25, 250, 75, 150, 125]
+                id: 'barbed',
+                type: 'barbed',
+                points: [125, 75, 100, 25, 200, 75, 100, 125],
+                fillOpacity: 0
             };
             break;
-        case 'circle':
+        case 'ellipse':
+            arrowhead = {
+                id: 'ellipse',
+                type: 'ellipse',
+                cx: 150,
+                cy: 75,
+                rx: 50,
+                ry: 50,
+                fillOpacity: 0
+            };
             break;
-        case 'square':
+        case 'rectangle':
+            arrowhead = {
+                id: 'rectangle',
+                type: 'rectangle',
+                x: 100,
+                y: 25,
+                width: 100,
+                height: 100,
+                fillOpacity: 0
+            };
             break;
-        case 'line':
+        case 'polyline':
+            arrowhead = {
+                id: 'polyline',
+                type: 'polyline',
+                points: [100, 25, 200, 75, 100, 125],
+                fillOpacity: 0
+            };
             break;
         default: break;
     }
@@ -72,6 +76,7 @@ export function reshape(arrowhead, draggableData, handleIndex) {
 
     switch (arrowhead.type) {
         case 'triangle':
+        case 'polyline':
             if (handleIndex === 0) {
                 arrowhead.points[0] = clamp(mouseX, 0, arrowhead.points[2]);
                 arrowhead.points[1] = clamp(mouseY, 0, arrowhead.points[3]);
@@ -93,6 +98,21 @@ export function reshape(arrowhead, draggableData, handleIndex) {
                 arrowhead.points[handleIndex * 2] = clamp(mouseX, arrowhead.points[0], node.parentNode.clientWidth);
             }
             break;
+        case 'ellipse':
+            if (handleIndex === 0) {
+                arrowhead.ry = clamp(arrowhead.cy - mouseY, 0, node.parentNode.clientHeight / 2);
+            } else if (handleIndex === 1) {
+                arrowhead.rx = clamp(mouseX - arrowhead.cx, 0, node.parentNode.clientWidth / 2);
+            }
+            break;
+        case 'rectangle':
+            const cx = arrowhead.x + arrowhead.width / 2;
+            const cy = arrowhead.y + arrowhead.height / 2;
+            arrowhead.x = clamp(mouseX, 0, cx);
+            arrowhead.y = clamp(mouseY, 0, cy);
+            arrowhead.width = 2 * Math.abs(cx - arrowhead.x);
+            arrowhead.height = 2 * Math.abs(cy - arrowhead.y);
+            break;
         default:
             break;
     }
@@ -105,19 +125,27 @@ export function reshape(arrowhead, draggableData, handleIndex) {
 function generateHandles(arrowhead) {
     let handles = [];
     switch (arrowhead.type) {
-        case "triangle" :
+        case 'triangle':
+        case 'polyline':
             if (arrowhead.points) {
                 for (let i = 0; i < 2; i++) {
                     handles.push({id: uuidv1(), index: i, x: arrowhead.points[i * 2], y: arrowhead.points[i * 2 + 1]});
                 }
             }
             break;
-        case "barbed":
+        case 'barbed':
             if (arrowhead.points) {
                 for (let i = 0; i < 3; i++) {
                     handles.push({id: uuidv1(), index: i, x: arrowhead.points[i * 2], y: arrowhead.points[i * 2 + 1]});
                 }
             }
+            break;
+        case 'ellipse':
+            handles.push({id: uuidv1(), index: 0, x: arrowhead.cx, y: arrowhead.cy - arrowhead.ry});
+            handles.push({id: uuidv1(), index: 1, x: arrowhead.cx + arrowhead.rx, y: arrowhead.cy});
+            break;
+        case 'rectangle':
+            handles.push({id: uuidv1(), index: 0, x: arrowhead.x, y: arrowhead.y});
             break;
         default: break;
     }
@@ -127,7 +155,8 @@ function generateHandles(arrowhead) {
 function updateHandles(arrowhead) {
     // can probs consolidate this
     switch (arrowhead.type) {
-        case "triangle" :
+        case 'triangle':
+        case 'polyline':
             if (arrowhead.points) {
                 for (let i = 0; i < 2; i++) {
                     arrowhead.handles[i].x = arrowhead.points[i * 2];
@@ -135,13 +164,23 @@ function updateHandles(arrowhead) {
                 }
             }
             break;
-        case "barbed":
+        case 'barbed':
             if (arrowhead.points) {
                 for (let i = 0; i < 3; i++) {
                     arrowhead.handles[i].x = arrowhead.points[i * 2];
                     arrowhead.handles[i].y = arrowhead.points[i * 2 + 1];
                 }
             }
+            break;
+        case 'ellipse':
+            arrowhead.handles[0].x = arrowhead.cx;
+            arrowhead.handles[0].y = arrowhead.cy - arrowhead.ry;
+            arrowhead.handles[1].x = arrowhead.cx + arrowhead.rx;
+            arrowhead.handles[1].y = arrowhead.cy;
+            break;
+        case 'rectangle':
+            arrowhead.handles[0].x = arrowhead.x;
+            arrowhead.handles[0].y = arrowhead.y;
             break;
         default: break;
     }
