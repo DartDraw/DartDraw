@@ -224,7 +224,26 @@ class ArrowheadGUI extends Component {
 
     renderReferenceLine(path, arrowhead) {
         // update so it's not hardcoded!
-        return <line x1={0} y1={75} x2={250} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        var x2;
+
+        switch (arrowhead.type) {
+            case "triangle":
+            case "barbed":
+                x2 = arrowhead.points[0];
+                break;
+            case "ellipse":
+                x2 = arrowhead.cx - arrowhead.rx;
+                break;
+            case "rectangle":
+                x2 = arrowhead.x;
+                break;
+            case "polyline":
+                x2 = arrowhead.points[2];
+                break;
+            default: break;
+        }
+
+        return <line x1={25} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {

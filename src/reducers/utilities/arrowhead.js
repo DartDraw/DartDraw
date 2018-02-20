@@ -8,7 +8,7 @@ export function setArrowheadType(arrowheadType) {
             arrowhead = {
                 id: 'triangle',
                 type: 'triangle',
-                points: [100, 25, 200, 75, 100, 125],
+                points: [175, 25, 275, 75, 175, 125],
                 fillOpacity: 1
             };
             break;
@@ -16,7 +16,7 @@ export function setArrowheadType(arrowheadType) {
             arrowhead = {
                 id: 'barbed',
                 type: 'barbed',
-                points: [125, 75, 100, 25, 200, 75, 100, 125],
+                points: [200, 75, 175, 25, 275, 75, 175, 125],
                 fillOpacity: 1
             };
             break;
@@ -24,7 +24,7 @@ export function setArrowheadType(arrowheadType) {
             arrowhead = {
                 id: 'ellipse',
                 type: 'ellipse',
-                cx: 150,
+                cx: 225,
                 cy: 75,
                 rx: 50,
                 ry: 50,
@@ -35,7 +35,7 @@ export function setArrowheadType(arrowheadType) {
             arrowhead = {
                 id: 'rectangle',
                 type: 'rectangle',
-                x: 100,
+                x: 175,
                 y: 25,
                 width: 100,
                 height: 100,
@@ -46,7 +46,7 @@ export function setArrowheadType(arrowheadType) {
             arrowhead = {
                 id: 'polyline',
                 type: 'polyline',
-                points: [100, 25, 200, 75, 100, 125],
+                points: [175, 25, 275, 75, 175, 125],
                 fillOpacity: 0
             };
             break;
