@@ -37,6 +37,9 @@ export const ADD_RULER = 'ADD_RULER';
 export const SAVE_RULER = 'SAVE_RULER';
 export const DELETE_RULER = 'DELETE_RULER';
 export const TOGGLE_RULER = 'TOGGLE_RULER';
+export const RESIZE_SHAPE_TO = 'RESIZE_SHAPE_TO';
+export const MOVE_SHAPE_TO = 'MOVE_SHAPE_TO';
+export const ROTATE_SHAPE_TO = 'ROTATE_SHAPE_TO';
 export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
 
 export function editShape(shape) {
@@ -153,6 +156,18 @@ export function toggleShowSubDivisions() {
 
 export function setRulerGrid(canvasSpecs) {
     return { type: SET_RULER_GRID, payload: canvasSpecs };
+}
+
+export function resizeShapeTo(width, height) {
+    return { type: RESIZE_SHAPE_TO, payload: {width, height} };
+}
+
+export function moveShapeTo(x, y) {
+    return { type: MOVE_SHAPE_TO, payload: {x, y} };
+}
+
+export function rotateShapeTo(degree) {
+    return { type: ROTATE_SHAPE_TO, payload: {degree} };
 }
 
 export function selectRuler(rulerName) {

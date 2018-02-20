@@ -16,7 +16,8 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
         height: 1,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
-        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        info: {}
     };
 
     if (gridSnapping) {
@@ -41,7 +42,8 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
         ry: 0.5,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
-        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
+        transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        info: {}
     };
 
     if (gridSnapping) {
@@ -124,7 +126,7 @@ export function addTempPolygonPoint(shapes, selected, action, offset, panX, panY
     const { x, y } = action.payload;
 
     const polygon = shapes.byId[selected[0]];
-    if (!polygon || polygon.type === 'polygon') { return shapes; }
+    if (!polygon || polygon.type !== 'polyline') { return shapes; }
 
     let xCoord = (x + (panX * scale) - offset.x) / scale;
     let yCoord = (y + (panY * scale) - offset.y) / scale;
@@ -216,7 +218,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     const { x, y } = action.payload;
 
     const bezier = shapes.byId[selected[0]];
-    if (!bezier || bezier.closed || bezier.open) { return shapes; }
+    if (!bezier || bezier.type !== "bezier" || bezier.closed || bezier.open) { return shapes; }
 
     let xCoord = (x + (panX * scale) - offset.x) / scale;
     let yCoord = (y + (panY * scale) - offset.y) / scale;
@@ -1035,7 +1037,27 @@ export function addPoint(shapes, selected, handleIndex, draggableData, panX, pan
                 break;
             case 'bezier':
                 shape.points.splice((handleIndex + 1) * 2, 0, x, y);
-                shape.controlPoints = smoothPath(shape);
+
+                let curve = {};
+                curve.points = shape.points.slice(handleIndex * 2, handleIndex * 2 + 6);
+                let controlPoints = smoothPath(curve);
+
+                for (let i = shape.points.length / 2; i > handleIndex + 1; i--) {
+                    shape.controlPoints[i] = shape.controlPoints[i - 1];
+                }
+
+                shape.controlPoints[handleIndex + 1] = controlPoints[1];
+
+                if (handleIndex === 0) {
+                    shape.controlPoints[shape.points.length / 2] = shape.controlPoints[0];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.controlPoints[0] = shape.controlPoints[0];
+                }
+
+                if (shape.closed) delete shape.controlPoints[0];
+
                 break;
             default:
                 break;
@@ -1049,6 +1071,9 @@ export function addPoint(shapes, selected, handleIndex, draggableData, panX, pan
 export function removePoint(shapes, selected, handleIndex) {
     selected.map((id) => {
         let shape = shapes.byId[id];
+        if (shape.points.length <= 6) {
+            return shape;
+        }
         switch (shape.type) {
             case 'polyline':
                 shape.points.splice(handleIndex * 2, 2);
@@ -1083,7 +1108,25 @@ export function removePoint(shapes, selected, handleIndex) {
                     shape.points[1] = shape.points[shape.points.length - 1];
                 }
 
-                shape.controlPoints = smoothPath(shape);
+                let controlPoints = smoothPath(shape);
+
+                shape.controlPoints[handleIndex - 1] = controlPoints[handleIndex - 1];
+                shape.controlPoints[handleIndex] = controlPoints[handleIndex];
+
+                for (let i = handleIndex + 1; i <= shape.points.length / 2; i++) {
+                    shape.controlPoints[i] = shape.controlPoints[i + 1];
+                }
+
+                if (handleIndex === 0) {
+                    shape.controlPoints[shape.points.length / 2] = shape.controlPoints[0];
+                }
+
+                if (handleIndex === (shape.points.length / 2)) {
+                    shape.controlPoints[0] = shape.controlPoints[0];
+                }
+
+                if (shape.closed) delete shape.controlPoints[0];
+
                 shape.refreshSelection = true;
                 break;
             default:
@@ -1326,8 +1369,10 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
 
         let decomposed = decomposeMatrix(shapeMatrix);
 
-        if (sx === 0) sx = -0.000001;
-        if (sy === 0) sy = -0.000001;
+        if (sx < 0.000001 && sx >= 0) sx = 0.000001;
+        if (sy < 0.000001 && sy >= 0) sy = 0.000001;
+        if (sx > -0.000001 && sx <= 0) sx = -0.000001;
+        if (sy > -0.000001 && sy <= 0) sy = -0.000001;
 
         if (centeredControl) {
             let center = getCenter(boundingBox, shapeMatrix);
@@ -1789,24 +1834,24 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
         let coords = {};
         coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
 
-        if (action.payload.x) {
+        if (action.payload.width) {
             coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
-            let dt = action.payload.x;
+            let dt = action.payload.width;
             let d = Math.sqrt((coords[3].x - coords[0].x) ** 2 + (coords[3].y - coords[0].y) ** 2);
 
             if (d) {
                 action.payload.draggableData.x = (1 - dt / d) * coords[3].x + dt / d * coords[0].x;
                 action.payload.draggableData.y = (1 - dt / d) * coords[3].y + dt / d * coords[0].y;
             } else {
-                action.payload.draggableData.x = coords[3].x + action.payload.x;
+                action.payload.draggableData.x = coords[3].x + action.payload.width;
                 action.payload.draggableData.y = coords[3].y;
             }
             handleIndex = 0;
         }
 
-        if (action.payload.y) {
+        if (action.payload.height) {
             coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-            let dt = action.payload.y;
+            let dt = action.payload.height;
             let d = Math.sqrt((coords[3].x - coords[2].x) ** 2 + (coords[3].y - coords[2].y) ** 2);
 
             if (d) {
@@ -1814,7 +1859,7 @@ export function resizeShapeTo(shapes, selected, action, scale, boundingBoxes, se
                 action.payload.draggableData.y = (1 - dt / d) * coords[3].y + dt / d * coords[2].y;
             } else {
                 action.payload.draggableData.x = coords[3].x;
-                action.payload.draggableData.y = coords[3].y + action.payload.y;
+                action.payload.draggableData.y = coords[3].y + action.payload.height;
             }
             handleIndex = 2;
         }

@@ -23,6 +23,9 @@ import {
     saveRuler,
     deleteRuler,
     toggleRuler,
+    resizeShapeTo,
+    moveShapeTo,
+    rotateShapeTo,
     toggleContextualMenu
 } from '../../actions/menu';
 import ContextualMenu from './ContextualMenu';
@@ -100,6 +103,15 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: (canvasSpecs) => {
             dispatch(setRulerGrid(canvasSpecs));
+        },
+        onResizeShapeTo: (width, height) => {
+            dispatch(resizeShapeTo(width, height));
+        },
+        onMoveShapeTo: (x, y) => {
+            dispatch(moveShapeTo(x, y));
+        },
+        onRotateShapeTo: (degree) => {
+            dispatch(rotateShapeTo(degree));
         },
         onSelectRuler: (rulerName) => {
             dispatch(selectRuler(rulerName));

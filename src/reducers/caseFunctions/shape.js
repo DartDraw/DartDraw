@@ -111,6 +111,7 @@ export function click(stateCopy, action, root) {
 
     switch (root.menuState.toolType) {
         case "selectTool":
+        case "rotateTool":
             if (!stateCopy.editInProgress) {
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 let selectMultiple = false;
@@ -161,6 +162,7 @@ export function drag(stateCopy, action, root) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         switch (root.menuState.toolType) {
             case "selectTool":
+            case "rotateTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
@@ -452,6 +454,24 @@ export function flipHorizontal(stateCopy, action, root) {
     return stateCopy;
 }
 
+export function resizeShapes(stateCopy, action, root) {
+    stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
+export function moveShapes(stateCopy, action, root) {
+    stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
+export function rotateShapes(stateCopy, action, root) {
+    stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
 export function keyDown(stateCopy, action, root) {
     // No keyboard shortcuts during text focus
     const shapeIds = stateCopy.shapes.allIds;
@@ -571,29 +591,6 @@ export function keyDown(stateCopy, action, root) {
                 stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
                 stateCopy.selected = [];
             }
-            break;
-        case 50: // TEMP RESIZE X
-            action.payload.x = 50;
-            //  action.payload.y = 50;
-            stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
-        case 51: // TEMP RESIZE X
-            action.payload.y = 50;
-            //  action.payload.y = 50;
-            stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
-        case 52: // TEMP MOVE
-            action.payload.x = 50;
-            action.payload.y = 50;
-            stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
-        case 53: // TEMP Rotate
-            action.payload.degree = 45;
-            stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
         case 54: // TEMP Hard Coded Arc Flip
             if (stateCopy.selected.length > 0 && stateCopy.shapes.byId[stateCopy.selected[0]].type === 'arc') {
