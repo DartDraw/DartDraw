@@ -189,9 +189,9 @@ class ArrowheadGUI extends Component {
             case "barbed":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(currentArrowhead.points[7] - currentArrowhead.points[3])}
-                        {this.renderLengthInput(currentArrowhead.points[4] - currentArrowhead.points[2])}
-                        {this.renderBarbLengthInput(currentArrowhead.points[0] - currentArrowhead.points[2])}
+                        {this.renderHeightInput(currentArrowhead.points[5] - currentArrowhead.points[1])}
+                        {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
+                        {this.renderBarbLengthInput(currentArrowhead.points[6] - currentArrowhead.points[0])}
                         {this.renderFillCheckbox()}
                     </form>
                 );
@@ -228,8 +228,10 @@ class ArrowheadGUI extends Component {
 
         switch (arrowhead.type) {
             case "triangle":
-            case "barbed":
                 x2 = arrowhead.points[0];
+                break;
+            case "barbed":
+                x2 = arrowhead.points[6];
                 break;
             case "ellipse":
                 x2 = arrowhead.cx - arrowhead.rx;
@@ -243,7 +245,7 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={25} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {

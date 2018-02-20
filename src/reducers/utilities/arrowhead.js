@@ -16,7 +16,7 @@ export function setArrowheadType(arrowheadType) {
             arrowhead = {
                 id: 'barbed',
                 type: 'barbed',
-                points: [200, 75, 175, 25, 275, 75, 175, 125],
+                points: [175, 25, 275, 75, 175, 125, 200, 75],
                 fillOpacity: 1
             };
             break;
@@ -60,7 +60,7 @@ export function setArrowheadType(arrowheadType) {
 }
 
 export function reshape(arrowhead, draggableData, handleIndex) {
-    const { x, y, node } = draggableData;
+    const { x, y, deltaX, deltaY, node } = draggableData;
 
     let offsetLeft = 0;
     let offsetTop = 0;
@@ -78,41 +78,37 @@ export function reshape(arrowhead, draggableData, handleIndex) {
     switch (arrowhead.type) {
         case 'triangle':
         case 'polyline':
+            arrowhead.points[0] = clamp(mouseX, 0, arrowhead.points[2]);
+            arrowhead.points[1] = clamp(mouseY, 0, arrowhead.points[3]);
+            arrowhead.points[4] = arrowhead.points[0];
+            arrowhead.points[5] = node.parentNode.clientHeight - arrowhead.points[1];
+            break;
+        case 'barbed':
             if (handleIndex === 0) {
                 arrowhead.points[0] = clamp(mouseX, 0, arrowhead.points[2]);
                 arrowhead.points[1] = clamp(mouseY, 0, arrowhead.points[3]);
                 arrowhead.points[4] = arrowhead.points[0];
                 arrowhead.points[5] = node.parentNode.clientHeight - arrowhead.points[1];
             } else if (handleIndex === 1) {
-                arrowhead.points[handleIndex * 2] = clamp(mouseX, arrowhead.points[0], node.parentNode.clientWidth);
-            }
-            break;
-        case 'barbed':
-            if (handleIndex === 0) {
-                arrowhead.points[handleIndex * 2] = clamp(mouseX, 0, arrowhead.points[4]);
-            } else if (handleIndex === 1) {
-                arrowhead.points[2] = clamp(mouseX, 0, node.parentNode.clientWidth);
-                arrowhead.points[3] = clamp(mouseY, 0, node.parentNode.clientHeight / 2);
-                arrowhead.points[6] = arrowhead.points[2];
-                arrowhead.points[7] = node.parentNode.clientHeight - arrowhead.points[3];
-            } else if (handleIndex === 2) {
-                arrowhead.points[handleIndex * 2] = clamp(mouseX, arrowhead.points[0], node.parentNode.clientWidth);
+                arrowhead.points[6] = clamp(mouseX, 0, arrowhead.points[2]);
             }
             break;
         case 'ellipse':
             if (handleIndex === 0) {
-                arrowhead.ry = clamp(arrowhead.cy - mouseY, 0, node.parentNode.clientHeight / 2);
+                arrowhead.rx = arrowhead.rx - deltaX / 2;
+                arrowhead.cx = arrowhead.cx + deltaX / 2;
             } else if (handleIndex === 1) {
-                arrowhead.rx = clamp(mouseX - arrowhead.cx, 0, node.parentNode.clientWidth / 2);
+                arrowhead.ry = clamp(arrowhead.cy - mouseY, 0, node.parentNode.clientHeight / 2);
             }
             break;
         case 'rectangle':
-            const cx = arrowhead.x + arrowhead.width / 2;
-            const cy = arrowhead.y + arrowhead.height / 2;
-            arrowhead.x = clamp(mouseX, 0, cx);
-            arrowhead.y = clamp(mouseY, 0, cy);
-            arrowhead.width = 2 * Math.abs(cx - arrowhead.x);
-            arrowhead.height = 2 * Math.abs(cy - arrowhead.y);
+            if (handleIndex === 0) {
+                arrowhead.width = arrowhead.width - deltaX;
+                arrowhead.x = mouseX;
+            } else if (handleIndex === 1) {
+                arrowhead.height = arrowhead.height - deltaY * 2;
+                arrowhead.y = mouseY;
+            }
             break;
         default:
             break;
@@ -128,14 +124,12 @@ function generateHandles(arrowhead) {
 
     switch (arrowhead.type) {
         case 'barbed':
-            numHandles = 3;
+        case 'ellipse':
+        case 'rectangle':
+            numHandles = 2;
             break;
         case 'triangle':
         case 'polyline':
-        case 'ellipse':
-            numHandles = 2;
-            break;
-        case 'rectangle':
             numHandles = 1;
             break;
         default: break;
@@ -154,30 +148,26 @@ export function updateHandles(arrowhead) {
     switch (arrowhead.type) {
         case 'triangle':
         case 'polyline':
-            if (arrowhead.points) {
-                for (let i = 0; i < 2; i++) {
-                    arrowhead.handles[i].x = arrowhead.points[i * 2];
-                    arrowhead.handles[i].y = arrowhead.points[i * 2 + 1];
-                }
-            }
+            arrowhead.handles[0].x = arrowhead.points[0];
+            arrowhead.handles[0].y = arrowhead.points[1];
             break;
         case 'barbed':
-            if (arrowhead.points) {
-                for (let i = 0; i < 3; i++) {
-                    arrowhead.handles[i].x = arrowhead.points[i * 2];
-                    arrowhead.handles[i].y = arrowhead.points[i * 2 + 1];
-                }
-            }
+            arrowhead.handles[0].x = arrowhead.points[0];
+            arrowhead.handles[0].y = arrowhead.points[1];
+            arrowhead.handles[1].x = arrowhead.points[6];
+            arrowhead.handles[1].y = arrowhead.points[7];
             break;
         case 'ellipse':
-            arrowhead.handles[0].x = arrowhead.cx;
-            arrowhead.handles[0].y = arrowhead.cy - arrowhead.ry;
-            arrowhead.handles[1].x = arrowhead.cx + arrowhead.rx;
-            arrowhead.handles[1].y = arrowhead.cy;
+            arrowhead.handles[0].x = arrowhead.cx - arrowhead.rx;
+            arrowhead.handles[0].y = arrowhead.cy;
+            arrowhead.handles[1].x = arrowhead.cx;
+            arrowhead.handles[1].y = arrowhead.cy - arrowhead.ry;
             break;
         case 'rectangle':
             arrowhead.handles[0].x = arrowhead.x;
-            arrowhead.handles[0].y = arrowhead.y;
+            arrowhead.handles[0].y = arrowhead.y + arrowhead.height / 2;
+            arrowhead.handles[1].x = arrowhead.x + arrowhead.width / 2;
+            arrowhead.handles[1].y = arrowhead.y;
             break;
         default: break;
     }

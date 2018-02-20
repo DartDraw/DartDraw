@@ -23,12 +23,9 @@ export function changeArrowheadHeight(stateCopy, action, root) {
     switch (currentArrowhead.type) {
         case "triangle":
         case "polyline":
+        case "barbed":
             currentArrowhead.points[1] = 75 - height / 2;
             currentArrowhead.points[5] = 75 + height / 2;
-            break;
-        case "barbed":
-            currentArrowhead.points[3] = 75 - height / 2;
-            currentArrowhead.points[7] = 75 + height / 2;
             break;
         case "rectangle":
             currentArrowhead.y = 75 - height / 2;
@@ -53,14 +50,13 @@ export function changeArrowheadLength(stateCopy, action, root) {
             currentArrowhead.points[4] = currentArrowhead.points[2] - length;
             break;
         case "barbed":
-            const barbLength = currentArrowhead.points[0] - currentArrowhead.points[2];
-            currentArrowhead.points[2] = currentArrowhead.points[4] - length;
-            currentArrowhead.points[0] = currentArrowhead.points[2] + barbLength;
-            currentArrowhead.points[6] = currentArrowhead.points[4] - length;
+            const barbLength = currentArrowhead.points[6] - currentArrowhead.points[0];
+            currentArrowhead.points[0] = currentArrowhead.points[2] - length;
+            currentArrowhead.points[4] = currentArrowhead.points[2] - length;
+            currentArrowhead.points[6] = currentArrowhead.points[0] + barbLength;
             break;
         case "rectangle":
-            const cx = currentArrowhead.x + currentArrowhead.width / 2;
-            currentArrowhead.x = cx - length / 2;
+            currentArrowhead.x += currentArrowhead.width - length;
             currentArrowhead.width = length;
             break;
         default: break;
@@ -75,7 +71,7 @@ export function changeArrowheadBarbLength(stateCopy, action, root) {
     const { length } = action.payload;
     var { currentArrowhead } = stateCopy;
 
-    currentArrowhead.points[0] = currentArrowhead.points[2] + length;
+    currentArrowhead.points[6] = currentArrowhead.points[0] + length;
 
     currentArrowhead.handles = updateHandles(currentArrowhead);
 
@@ -86,6 +82,7 @@ export function changeArrowheadRadiusX(stateCopy, action, root) {
     const { rx } = action.payload;
     var { currentArrowhead } = stateCopy;
 
+    currentArrowhead.cx += currentArrowhead.rx - rx;
     currentArrowhead.rx = rx;
     currentArrowhead.handles = updateHandles(currentArrowhead);
 
