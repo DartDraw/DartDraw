@@ -1,11 +1,14 @@
 import { connect } from 'react-redux';
 import ArrowheadGUI from './ArrowheadGUI';
 import {
-    arrowheadHandleDragStart,
     arrowheadHandleDrag,
-    arrowheadHandleDragStop,
     changeArrowheadType,
-    editArrowhead
+    editArrowhead,
+    changeArrowheadHeight,
+    changeArrowheadLength,
+    changeArrowheadBarbLength,
+    changeArrowheadRadiusX,
+    changeArrowheadRadiusY
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
@@ -19,20 +22,29 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onArrowheadHandleDragStart: (shapeId, handleIndex, draggableData) => {
-            dispatch(arrowheadHandleDragStart(shapeId, handleIndex, draggableData));
-        },
         onArrowheadHandleDrag: (shapeId, handleIndex, draggableData) => {
             dispatch(arrowheadHandleDrag(shapeId, handleIndex, draggableData));
-        },
-        onArrowheadHandleDragStop: (shapeId, handleIndex, draggableData) => {
-            dispatch(arrowheadHandleDragStop(shapeId, handleIndex, draggableData));
         },
         onChangeArrowheadType: (arrowheadType) => {
             dispatch(changeArrowheadType(arrowheadType));
         },
         onEditArrowhead: (arrowhead) => {
             dispatch(editArrowhead(arrowhead));
+        },
+        onHeightChange: (height) => {
+            dispatch(changeArrowheadHeight(height));
+        },
+        onLengthChange: (length) => {
+            dispatch(changeArrowheadLength(length));
+        },
+        onBarbLengthChange: (length) => {
+            dispatch(changeArrowheadBarbLength(length));
+        },
+        onRadiusXChange: (rx) => {
+            dispatch(changeArrowheadRadiusX(rx));
+        },
+        onRadiusYChange: (ry) => {
+            dispatch(changeArrowheadRadiusY(ry));
         }
     };
 };

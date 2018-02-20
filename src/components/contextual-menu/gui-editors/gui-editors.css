@@ -5,3 +5,10 @@
     flex: 1;
     background-color: white;
 }
+
+label {
+    font-family: Catamaran, sans-serif;
+    text-transform: uppercase;
+    font-weight: 200;
+    font-size: 0.7em;
+}

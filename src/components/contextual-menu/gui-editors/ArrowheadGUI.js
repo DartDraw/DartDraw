@@ -11,11 +11,14 @@ class ArrowheadGUI extends Component {
         currentArrowhead: PropTypes.object,
         arrowheadPresets: PropTypes.array,
         propagateEvents: PropTypes.bool,
-        onArrowheadHandleDragStart: PropTypes.func,
         onArrowheadHandleDrag: PropTypes.func,
-        onArrowheadHandleDragStop: PropTypes.func,
         onChangeArrowheadType: PropTypes.func,
-        onEditArrowhead: PropTypes.func
+        onEditArrowhead: PropTypes.func,
+        onHeightChange: PropTypes.func,
+        onLengthChange: PropTypes.func,
+        onBarbLengthChange: PropTypes.func,
+        onRadiusXChange: PropTypes.func,
+        onRadiusYChange: PropTypes.func
     };
 
     constructor(props) {
@@ -27,53 +30,53 @@ class ArrowheadGUI extends Component {
         this.renderReferenceLine = this.renderReferenceLine.bind(this);
         this.renderArrowhead = this.renderArrowhead.bind(this);
         this.renderHandles = this.renderHandles.bind(this);
-        this.handleArrowheadHandleDragStart = this.handleArrowheadHandleDragStart.bind(this);
         this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
-        this.handleArrowheadHandleDragStop = this.handleArrowheadHandleDragStop.bind(this);
         this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
-        this.handleXChange = this.handleXChange.bind(this);
-        this.handleYChange = this.handleYChange.bind(this);
+        this.handleReset = this.handleReset.bind(this);
+        this.handleHeightChange = this.handleHeightChange.bind(this);
+        this.handleLengthChange = this.handleLengthChange.bind(this);
+        this.handleBarbLengthChange = this.handleBarbLengthChange.bind(this);
+        this.handleRadiusXChange = this.handleRadiusXChange.bind(this);
+        this.handleRadiusYChange = this.handleRadiusYChange.bind(this);
         this.handleToggleFill = this.handleToggleFill.bind(this);
     }
 
-    handleXChange(event) {
-        const { currentArrowhead } = this.props;
-        const newArrowhead = Object.assign({}, currentArrowhead, { x: event.target.value });
-        this.props.onEditArrowhead(newArrowhead);
+    handleReset(event) {
+        this.props.onChangeArrowheadType(this.props.currentArrowhead.type);
+        event.preventDefault();
     }
 
-    handleYChange(event) {
-        const { currentArrowhead } = this.props;
-        const newArrowhead = Object.assign({}, currentArrowhead, { y: event.target.value });
-        this.props.onEditArrowhead(newArrowhead);
+    handleHeightChange(event) {
+        this.props.onHeightChange(parseInt(event.target.value, 10));
+        event.preventDefault();
+    }
+
+    handleLengthChange(event) {
+        this.props.onLengthChange(parseInt(event.target.value, 10));
+        event.preventDefault();
+    }
+
+    handleBarbLengthChange(event) {
+        console.log(event.target.value);
+        this.props.onBarbLengthChange(parseInt(event.target.value, 10));
+        event.preventDefault();
+    }
+
+    handleRadiusXChange(event) {
+        this.props.onRadiusXChange(parseInt(event.target.value, 10));
+        event.preventDefault();
+    }
+
+    handleRadiusYChange(event) {
+        this.props.onRadiusYChange(parseInt(event.target.value, 10));
+        event.preventDefault();
     }
 
     handleToggleFill(event) {
-        const { currentArrowhead } = this.props;
-        const { isChecked } = this.state;
-        const newArrowhead = Object.assign({}, currentArrowhead, { fillOpacity: isChecked ? 0 : 1 });
+        this.setState({isChecked: !this.state.isChecked});
+
+        const newArrowhead = Object.assign({}, this.props.currentArrowhead, { fillOpacity: this.state.isChecked ? 0 : 1 });
         this.props.onEditArrowhead(newArrowhead);
-        this.setState({isChecked: !isChecked});
-    }
-
-    handleArrowheadHandleDragStart(shapeId, handleIndex, draggableData) {
-        // should be arrowheadId not shapeID
-        // console.log("start");
-        this.props.onArrowheadHandleDragStart(shapeId, handleIndex, draggableData);
-    }
-
-    handleArrowheadHandleDrag(shapeId, handleIndex, draggableData) {
-        // should be arrowheadId not shapeID
-        // console.log("dragging");
-
-        this.props.onArrowheadHandleDrag(shapeId, handleIndex, draggableData);
-    }
-
-    handleArrowheadHandleDragStop(shapeId, handleIndex, draggableData) {
-        // console.log("stop");
-
-        // should be arrowheadId not shapeID
-        this.props.onArrowheadHandleDragStop(shapeId, handleIndex, draggableData);
     }
 
     handleChangeArrowheadType(event) {
@@ -81,43 +84,140 @@ class ArrowheadGUI extends Component {
         event.preventDefault();
     }
 
-    determineParameterMenu() {
-        const { currentArrowhead } = this.props;
+    handleArrowheadHandleDrag(shapeId, handleIndex, draggableData) {
+        this.props.onArrowheadHandleDrag(shapeId, handleIndex, draggableData);
+    }
+
+    renderHeightInput(defaultValue) {
+        return (
+            <div>
+                <label>Arrowhead Height: </label>
+                <input
+                    id="height"
+                    defaultValue={defaultValue}
+                    type="number"
+                    onChange={this.handleHeightChange}
+                />
+            </div>
+        );
+    }
+
+    renderLengthInput(defaultValue) {
+        return (
+            <div>
+                <label>Arrowhead Length: </label>
+                <input
+                    id="length"
+                    defaultValue={defaultValue}
+                    type="number"
+                    onChange={this.handleLengthChange}
+                />
+            </div>
+        );
+    }
+
+    renderBarbLengthInput(defaultValue) {
+        return (
+            <div>
+                <label>Barb Length: </label>
+                <input
+                    id="barbLength"
+                    defaultValue={defaultValue}
+                    type="number"
+                    onChange={this.handleBarbLengthChange}
+                />
+            </div>
+        );
+    }
+
+    renderRadiusXInput(defaultValue) {
+        return (
+            <div>
+                <label>RadiusX: </label>
+                <input
+                    id="radiusX"
+                    defaultValue={defaultValue}
+                    type="number"
+                    onChange={this.handleRadiusXChange}
+                />
+            </div>
+        );
+    }
+
+    renderRadiusYInput(defaultValue) {
+        return (
+            <div>
+                <label>RadiusY: </label>
+                <input
+                    id="radiusY"
+                    defaultValue={defaultValue}
+                    type="number"
+                    onChange={this.handleRadiusYChange}
+                />
+            </div>
+        );
+    }
+
+    renderFillCheckbox() {
         const { isChecked } = this.state;
+
+        return (
+            <div>
+                <label>Fill: </label>
+                <input
+                    id="fill"
+                    type="checkbox"
+                    onChange={this.handleToggleFill}
+                    checked={isChecked}
+                />
+            </div>
+        );
+    }
+
+    renderArrowheadInputs() {
+        const { currentArrowhead } = this.props;
 
         switch (currentArrowhead.type) {
             case "triangle":
                 return (
-                    <form id="button-icon">
-                        <input
-                            id="width"
-                            defaultValue={300 - (2 * currentArrowhead.points[0])}
-                            type="number"
-                            onChange={this.handleXChange}
-                        />
-                        <input
-                            id="length"
-                            defaultValue={currentArrowhead.points[2] - currentArrowhead.points[0]}
-                            type="number"
-                            onChange={this.handleYChange}
-                        />
-                        <input
-                            id="fill"
-                            type="checkbox"
-                            onChange={this.handleToggleFill}
-                            checked={isChecked}
-                        />
-                        <input id="submit" type="submit" value="submit" />
+                    <form id="form">
+                        {this.renderHeightInput(currentArrowhead.points[5] - currentArrowhead.points[1])}
+                        {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
+                        {this.renderFillCheckbox()}
                     </form>
                 );
             case "barbed":
-                break;
+                return (
+                    <form id="form">
+                        {this.renderHeightInput(currentArrowhead.points[7] - currentArrowhead.points[3])}
+                        {this.renderLengthInput(currentArrowhead.points[4] - currentArrowhead.points[2])}
+                        {this.renderBarbLengthInput(currentArrowhead.points[0] - currentArrowhead.points[2])}
+                        {this.renderFillCheckbox()}
+                    </form>
+                );
             case "ellipse":
-                break;
+                return (
+                    <form id="form">
+                        {this.renderRadiusXInput(currentArrowhead.rx)}
+                        {this.renderRadiusYInput(currentArrowhead.ry)}
+                        {this.renderFillCheckbox()}
+                    </form>
+                );
             case "rectangle":
-                break;
+                return (
+                    <form id="form">
+                        {this.renderHeightInput(currentArrowhead.height)}
+                        {this.renderLengthInput(currentArrowhead.width)}
+                        {this.renderFillCheckbox()}
+                    </form>
+                );
             case "polyline":
-                break;
+                return (
+                    <form id="form">
+                        {this.renderHeightInput(currentArrowhead.points[5] - currentArrowhead.points[1])}
+                        {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
+                    </form>
+                );
             default: break;
         }
     }
@@ -173,9 +273,7 @@ class ArrowheadGUI extends Component {
                     width={width}
                     height={height}
                     strokeWidth={2}
-                    onDragStart={this.handleArrowheadHandleDragStart}
                     onDrag={this.handleArrowheadHandleDrag}
-                    onDragStop={this.handleArrowheadHandleDragStop}
                     propagateEvents={propagateEvents}
                 />
             );
@@ -185,10 +283,11 @@ class ArrowheadGUI extends Component {
     render() {
         const { path, currentArrowhead } = this.props;
 
-        const parameterMenu = this.determineParameterMenu();
+        const arrowheadInputs = this.renderArrowheadInputs();
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
+                <label>Arrowhead Type: </label>
                 <select
                     id="type"
                     defaultValue={currentArrowhead.type}
@@ -205,7 +304,13 @@ class ArrowheadGUI extends Component {
                     {this.renderArrowhead(currentArrowhead)}
                     {this.renderHandles(currentArrowhead)}
                 </svg>
-                {parameterMenu}
+                <input
+                    id="reset"
+                    type="button"
+                    onClick={this.handleReset}
+                    value="Reset to Default"
+                />
+                {arrowheadInputs}
             </div>
         );
     }

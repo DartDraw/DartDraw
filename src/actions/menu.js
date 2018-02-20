@@ -27,11 +27,14 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
-export const ARROWHEAD_HANDLE_DRAG_START = 'ARROWHEAD_HANDLE_DRAG_START';
 export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
-export const ARROWHEAD_HANDLE_DRAG_STOP = 'ARROWHEAD_HANDLE_DRAG_STOP';
 export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
 export const EDIT_ARROWHEAD = 'EDIT_ARROWHEAD';
+export const CHANGE_ARROWHEAD_HEIGHT = 'CHANGE_ARROWHEAD_HEIGHT';
+export const CHANGE_ARROWHEAD_LENGTH = 'CHANGE_ARROWHEAD_LENGTH';
+export const CHANGE_ARROWHEAD_BARB_LENGTH = 'CHANGE_ARROWHEAD_BARB_LENGTH';
+export const CHANGE_ARROWHEAD_RADIUS_X = 'CHANGE_ARROWHEAD_RADIUS_X';
+export const CHANGE_ARROWHEAD_RADIUS_Y = 'CHANGE_ARROWHEAD_RADIUS_Y';
 export const SELECT_RULER = 'SELECT_RULER';
 export const ADD_RULER = 'ADD_RULER';
 export const SAVE_RULER = 'SAVE_RULER';
@@ -194,16 +197,8 @@ export function toggleContextualMenu() {
     return { type: TOGGLE_CONTEXTUAL_MENU };
 }
 
-export function arrowheadHandleDragStart(shapeId, handleIndex, draggableData) {
-    return { type: ARROWHEAD_HANDLE_DRAG_START, payload: { shapeId, handleIndex, draggableData } };
-}
-
 export function arrowheadHandleDrag(shapeId, handleIndex, draggableData) {
     return { type: ARROWHEAD_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
-}
-
-export function arrowheadHandleDragStop(shapeId, handleIndex, draggableData) {
-    return { type: ARROWHEAD_HANDLE_DRAG_STOP, payload: { shapeId, handleIndex, draggableData } };
 }
 
 export function changeArrowheadType(arrowheadType) {
@@ -212,4 +207,24 @@ export function changeArrowheadType(arrowheadType) {
 
 export function editArrowhead(arrowhead) {
     return { type: EDIT_ARROWHEAD, payload: { arrowhead } };
+}
+
+export function changeArrowheadHeight(height) {
+    return { type: CHANGE_ARROWHEAD_HEIGHT, payload: { height } };
+}
+
+export function changeArrowheadLength(length) {
+    return { type: CHANGE_ARROWHEAD_LENGTH, payload: { length } };
+}
+
+export function changeArrowheadBarbLength(length) {
+    return { type: CHANGE_ARROWHEAD_BARB_LENGTH, payload: { length } };
+}
+
+export function changeArrowheadRadiusX(rx) {
+    return { type: CHANGE_ARROWHEAD_RADIUS_X, payload: { rx } };
+}
+
+export function changeArrowheadRadiusY(ry) {
+    return { type: CHANGE_ARROWHEAD_RADIUS_Y, payload: { ry } };
 }

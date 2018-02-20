@@ -51,14 +51,20 @@ function menuState(state = initialState, action, root) {
             return grid.toggleShowSubDivisions(stateCopy, action, root);
         case menuActions.TOGGLE_SHOW_RULER:
             return rulers.toggleShowRulers(stateCopy, action, root);
-        case menuActions.ARROWHEAD_HANDLE_DRAG_START:
-            return arrowhead.arrowheadHandleDragStart(stateCopy, action, root);
         case menuActions.ARROWHEAD_HANDLE_DRAG:
             return arrowhead.arrowheadHandleDrag(stateCopy, action, root);
-        case menuActions.ARROWHEAD_HANDLE_DRAG_STOP:
-            return arrowhead.arrowheadHandleDragStop(stateCopy, action, root);
         case menuActions.CHANGE_ARROWHEAD_TYPE:
             return arrowhead.changeArrowheadType(stateCopy, action, root);
+        case menuActions.CHANGE_ARROWHEAD_HEIGHT:
+            return arrowhead.changeArrowheadHeight(stateCopy, action, root);
+        case menuActions.CHANGE_ARROWHEAD_LENGTH:
+            return arrowhead.changeArrowheadLength(stateCopy, action, root);
+        case menuActions.CHANGE_ARROWHEAD_BARB_LENGTH:
+            return arrowhead.changeArrowheadBarbLength(stateCopy, action, root);
+        case menuActions.CHANGE_ARROWHEAD_RADIUS_X:
+            return arrowhead.changeArrowheadRadiusX(stateCopy, action, root);
+        case menuActions.CHANGE_ARROWHEAD_RADIUS_Y:
+            return arrowhead.changeArrowheadRadiusY(stateCopy, action, root);
         case menuActions.EDIT_ARROWHEAD:
             return arrowhead.editArrowhead(stateCopy, action, root);
         case menuActions.TOGGLE_CONTEXTUAL_MENU:

@@ -403,65 +403,6 @@ class ContextualMenu extends Component {
                             <img src="" alt="width" id="distribute-width" />
                         </button>
                     </div>
-                    <h2>Ruler / Grid / Canvas Settings</h2>
-                    <div className="temp">
-                        <button onClick={this.handleShowRulers} id="button-icon">R</button>
-                        <button onClick={this.handleShowGrid} id="button-icon">G</button>
-                        <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
-                        <button onClick={this.handleToggleRuler} id="button-icon">P</button>
-                        <button onClick={this.handleToggleCanvasOrientation} id="button-icon">O</button>
-                    </div>
-                    <div className="ruler-menu">
-                        <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
-                            {this.createRulerPresetList()}
-                        </select>
-                        <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
-                            <select
-                                id="unitType"
-                                defaultValue={unitType}
-                            >
-                                <option value="in">{"in"}</option>
-                                <option value="ft">ft</option>
-                                <option value="mm">mm</option>
-                                <option value="cm">cm</option>
-                                <option value="m">m</option>
-                                <option value="px">px</option>
-                                <option value="pt">pt</option>
-                            </select>
-                            <input
-                                id="width"
-                                defaultValue={canvasWidthInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="height"
-                                defaultValue={canvasHeightInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="unitDivisions"
-                                defaultValue={unitDivisions}
-                                type="number"
-                            />
-                            <input type="submit" value="resize" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleAddRuler}>
-                            <input type="submit" value="add" />
-                            <input
-                                id="rulerName"
-                                placeholder="name your ruler"
-                                type="text"
-                            />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleSaveRuler}>
-                            <input type="submit" value="save" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleDeleteRuler}>
-                            <input type="submit" value="delete" />
-                        </form>
-                    </div>
                     <div className="dynamic-menu">
                         { menuLayout }
                         { guiEditor }
@@ -496,3 +437,64 @@ class ContextualMenu extends Component {
 }
 
 export default ContextualMenu;
+
+//
+// <h2>Ruler / Grid / Canvas Settings</h2>
+// <div className="temp">
+//     <button onClick={this.handleShowRulers} id="button-icon">R</button>
+//     <button onClick={this.handleShowGrid} id="button-icon">G</button>
+//     <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
+//     <button onClick={this.handleToggleRuler} id="button-icon">P</button>
+//     <button onClick={this.handleToggleCanvasOrientation} id="button-icon">O</button>
+// </div>
+// <div className="ruler-menu">
+//     <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
+//         {this.createRulerPresetList()}
+//     </select>
+//     <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
+//         <select
+//             id="unitType"
+//             defaultValue={unitType}
+//         >
+//             <option value="in">{"in"}</option>
+//             <option value="ft">ft</option>
+//             <option value="mm">mm</option>
+//             <option value="cm">cm</option>
+//             <option value="m">m</option>
+//             <option value="px">px</option>
+//             <option value="pt">pt</option>
+//         </select>
+//         <input
+//             id="width"
+//             defaultValue={canvasWidthInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="height"
+//             defaultValue={canvasHeightInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="unitDivisions"
+//             defaultValue={unitDivisions}
+//             type="number"
+//         />
+//         <input type="submit" value="resize" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleAddRuler}>
+//         <input type="submit" value="add" />
+//         <input
+//             id="rulerName"
+//             placeholder="name your ruler"
+//             type="text"
+//         />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleSaveRuler}>
+//         <input type="submit" value="save" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleDeleteRuler}>
+//         <input type="submit" value="delete" />
+//     </form>
+// </div>

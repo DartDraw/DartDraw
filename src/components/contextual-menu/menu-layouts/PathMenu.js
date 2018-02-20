@@ -19,7 +19,7 @@ class PathMenu extends Component {
 
     handleStrokeDasharrayChange(event) {
         const { path, onEdit } = this.props;
-        const newPath = Object.assign({}, path, { strokeDasharray: event.target.value });
+        const newPath = Object.assign({}, path, { strokeDasharray: toString(event.target.value) });
         onEdit && onEdit(newPath);
     }
 
