@@ -1,4 +1,5 @@
 export const EDIT_SHAPE = 'EDIT_SHAPE';
+export const EDIT_TEXT = 'EDIT_TEXT';
 export const KEY_DOWN = 'KEY_DOWN';
 export const KEY_UP = 'KEY_UP';
 export const MOUSE_MOVE = 'MOUSE_MOVE';
@@ -13,6 +14,7 @@ export const REMOVE_PALETTE = 'REMOVE_PALETTE';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const SET_CUSTOM_ZOOM = 'SET_CUSTOM_ZOOM';
+export const DISTRIBUTE_CLICK = 'DISTRIBUTE_CLICK';
 export const ALIGNMENT_CHANGE = 'ALIGNMENT_CHANGE';
 export const GROUP_BUTTON_CLICK = 'GROUP_BUTTON_CLICK';
 export const UNGROUP_BUTTON_CLICK = 'UNGROUP_BUTTON_CLICK';
@@ -31,9 +33,22 @@ export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
 export const CHANGE_COLOR_TYPE = 'CHANGE_COLOR_TYPE';
+export const SELECT_RULER = 'SELECT_RULER';
+export const ADD_RULER = 'ADD_RULER';
+export const SAVE_RULER = 'SAVE_RULER';
+export const DELETE_RULER = 'DELETE_RULER';
+export const TOGGLE_RULER = 'TOGGLE_RULER';
+export const RESIZE_SHAPE_TO = 'RESIZE_SHAPE_TO';
+export const MOVE_SHAPE_TO = 'MOVE_SHAPE_TO';
+export const ROTATE_SHAPE_TO = 'ROTATE_SHAPE_TO';
+export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
+}
+
+export function editText(shape) {
+    return { type: EDIT_TEXT, payload: { shape } };
 }
 
 export function keyDown(keyCode) {
@@ -112,6 +127,10 @@ export function colorUpdate(colorPart, newValue) {
     return {type: COLOR_UPDATE, payload: {colorPart, newValue}};
 }
 
+export function distributeClick(id) {
+    return { type: DISTRIBUTE_CLICK, payload: { id } };
+}
+
 export function groupButtonClick() {
     return { type: GROUP_BUTTON_CLICK };
 }
@@ -148,6 +167,14 @@ export function toggleGridSnapping() {
     return { type: TOGGLE_GRID_SNAPPING };
 }
 
+export function fileSave(data) {
+    return { type: FILE_SAVE, payload: { data } };
+}
+
+export function fileOpen(data) {
+    return { type: FILE_OPEN, payload: { data } };
+}
+
 export function toggleShowRulers() {
     return { type: TOGGLE_SHOW_RULER };
 }
@@ -162,4 +189,40 @@ export function toggleShowSubDivisions() {
 
 export function setRulerGrid(canvasSpecs) {
     return { type: SET_RULER_GRID, payload: canvasSpecs };
+}
+
+export function resizeShapeTo(width, height) {
+    return { type: RESIZE_SHAPE_TO, payload: {width, height} };
+}
+
+export function moveShapeTo(x, y) {
+    return { type: MOVE_SHAPE_TO, payload: {x, y} };
+}
+
+export function rotateShapeTo(degree) {
+    return { type: ROTATE_SHAPE_TO, payload: {degree} };
+}
+
+export function selectRuler(rulerName) {
+    return { type: SELECT_RULER, payload: { rulerName } };
+}
+
+export function addRuler(rulerSpecs) {
+    return { type: ADD_RULER, payload: rulerSpecs };
+}
+
+export function saveRuler(rulerSpecs) {
+    return { type: SAVE_RULER, payload: rulerSpecs };
+}
+
+export function deleteRuler() {
+    return { type: DELETE_RULER };
+}
+
+export function toggleRuler(forward) {
+    return { type: TOGGLE_RULER, payload: { forward } };
+}
+
+export function toggleContextualMenu() {
+    return { type: TOGGLE_CONTEXTUAL_MENU };
 }

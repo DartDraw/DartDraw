@@ -5,6 +5,7 @@ class Arrowhead extends Component {
     static propTypes = {
         id: PropTypes.string,
         arrowId: PropTypes.string,
+        arrowType: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
@@ -51,16 +52,85 @@ class Arrowhead extends Component {
     }
 
     render() {
-        const { arrowId, stroke, strokeDasharray } = this.props;
+        const { arrowId, arrowType, stroke, strokeDasharray } = this.props;
+        const arrowheadProps = {
+            strokeDasharray: strokeDasharray,
+            vectorEffect: "non-scaling-stroke"
+        };
+
+        var arrowhead, refX, refY;
+
+        switch (arrowType) {
+            case "triangle":
+                refX = 0;
+                refY = 4;
+                arrowhead = (
+                    <path
+                        d="M 0 0 L 8 4 L 0 8 z"
+                        fill={stroke}
+                        {...arrowheadProps}
+                    />
+                );
+                break;
+            case "barbed":
+                refX = 2;
+                refY = 4;
+                arrowhead = (
+                    <path
+                        d="M 0 0 L 10 4 L 0 8 L 2 4 z"
+                        fill={stroke}
+                        {...arrowheadProps}
+                    />
+                );
+                break;
+            case "circle":
+                refX = 0;
+                refY = 4;
+                arrowhead = (
+                    <circle
+                        cx="4"
+                        cy="4"
+                        r="4"
+                        fill={stroke}
+                        {...arrowheadProps}
+                    />
+                );
+                break;
+            case "square":
+                refX = 0;
+                refY = 4;
+                arrowhead = (
+                    <path
+                        d="M 0 0 L 8 0 L 8 8 L 0 8 z"
+                        fill={stroke}
+                        {...arrowheadProps}
+                    />
+                );
+                break;
+            case "line":
+                refX = 8;
+                refY = 4;
+                arrowhead = (
+                    <path
+                        d="M 0 0 L 8 4 L 0 8"
+                        fill="none"
+                        stroke={stroke}
+                        {...arrowheadProps}
+                    />
+                );
+                break;
+            default:
+        }
 
         return (
-            <marker id={arrowId} key={arrowId + "_marker"} orient="auto" markerWidth="50" markerHeight="50"
-                viewBox="-6 -6 12 12" refX="-2" refY="0" markerUnits="userSpaceOnUse" preserveAspectRatio="xMinYMin">
+            <marker id={arrowId} key={arrowId + "_marker"} orient="auto"
+                markerWidth="20" markerHeight="20"
+                refX={refX} refY={refY} >
                 onDragStart={() => console.log("hi")}
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
                 onClick={() => console.log("hi")}>
-                <polygon points="-2,0 -5,5 5,0 -5,-5" fill={stroke} strokeDasharray={strokeDasharray} vectorEffect="non-scaling-stroke" />
+                {arrowhead}
             </marker>
         );
     }

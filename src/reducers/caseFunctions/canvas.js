@@ -48,7 +48,8 @@ export function dragStart(stateCopy, action, root) {
                 stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             } else {
                 stateCopy.shapes = addPolygonPoint(stateCopy.shapes, stateCopy.selected, action, stateCopy.panX, stateCopy.panY, stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
-                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon") {
+                if (stateCopy.shapes.byId[stateCopy.selected[0]].type === "polygon" ||
+                  stateCopy.shapes.byId[stateCopy.selected[0]].open) {
                     stateCopy.mode = '';
                     stateCopy.selected = [];
                     stateCopy.editInProgress = false;
@@ -103,6 +104,7 @@ export function dragStart(stateCopy, action, root) {
             stateCopy.selected = selectShape(stateCopy.selected, addedShapeId);
             break;
         case "selectTool":
+        case "rotateTool":
             if (stateCopy.mode === 'reshape') { return stateCopy; }
             if (!(16 in root.menuState.currentKeys)) {
                 stateCopy.selected = selectShape([], null);
@@ -162,6 +164,7 @@ export function drag(stateCopy, action, root) {
             stateCopy.panX = panX;
             stateCopy.panY = panY;
             break;
+        case "rotateTool":
         case "selectTool":
         case "zoomTool":
             stateCopy.marqueeBox = resizeMarqueeBox(stateCopy.marqueeBox, draggableData, stateCopy.scale);
@@ -210,6 +213,7 @@ export function dragStop(stateCopy, action, root) {
             }
             stateCopy.selected = [];
             break;
+        case "rotateTool":
         case "selectTool":
             let commandSelected = 91 in root.menuState.currentKeys;
             let shiftSelected = 16 in root.menuState.currentKeys;
@@ -260,5 +264,14 @@ export function mouseMove(stateCopy, action, root) {
         default:
             break;
     }
+    return stateCopy;
+}
+
+export function scroll(stateCopy, action, root) {
+    const { deltaX, deltaY } = action.payload;
+    const { ruler, panX, panY } = pan(stateCopy, { deltaX: -deltaX, deltaY: -deltaY });
+    stateCopy.ruler = ruler;
+    stateCopy.panX = panX;
+    stateCopy.panY = panY;
     return stateCopy;
 }

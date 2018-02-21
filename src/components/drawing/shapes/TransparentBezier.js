@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Shape } from '.';
-import { formatCurve, formatTransform } from '../../../utilities/shapes';
+
+import { formatPath } from '../../../utilities/shapes';
 
 class Bezier extends Component {
     static propTypes = {
@@ -10,10 +11,9 @@ class Bezier extends Component {
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        width: PropTypes.number,
-        height: PropTypes.number,
+        index: PropTypes.number,
         points: PropTypes.arrayOf(PropTypes.number),
-        controlPoints: PropTypes.object,
+        controlPoints: PropTypes.arrayOf(PropTypes.object),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
@@ -32,30 +32,12 @@ class Bezier extends Component {
     constructor(props) {
         super(props);
 
-        this.handleDragStart = this.handleDragStart.bind(this);
-        this.handleDrag = this.handleDrag.bind(this);
         this.handleDragStop = this.handleDragStop.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleDragStart(id, draggableData) {
-        const { onDragStart } = this.props;
-        onDragStart && onDragStart(id, draggableData);
-    }
-
-    handleDrag(id, draggableData) {
-        const { onDrag } = this.props;
-        onDrag && onDrag(id, draggableData);
     }
 
     handleDragStop(id, draggableData) {
         const { onDragStop } = this.props;
-        onDragStop && onDragStop(id, draggableData);
-    }
-
-    handleClick(id, event) {
-        const { onClick } = this.props;
-        onClick && onClick(id, event);
+        onDragStop && onDragStop(id, this.props.index, draggableData);
     }
 
     render() {
@@ -66,8 +48,6 @@ class Bezier extends Component {
             stroke,
             strokeWidth,
             fill,
-            transform,
-            propagateEvents,
             reshapeInProgress
         } = this.props;
 
@@ -76,8 +56,12 @@ class Bezier extends Component {
             stroke,
             strokeWidth,
             fill,
-            transform: formatTransform(transform),
-            d: formatCurve(points, controlPoints),
+            d: formatPath([
+                {command: 'M', parameters: [points[0], points[1]]},
+                {command: 'C',
+                    parameters: [controlPoints[0].x, controlPoints[0].y,
+                        controlPoints[1].x, controlPoints[1].y, points[2], points[3]]}
+            ]),
             vectorEffect: "non-scaling-stroke"
         };
 
@@ -92,7 +76,6 @@ class Bezier extends Component {
                 onDrag={this.handleDrag}
                 onDragStop={this.handleDragStop}
                 onClick={this.handleClick}
-                propagateEvents={propagateEvents}
             >
                 <path {...svgProps} />
             </Shape>

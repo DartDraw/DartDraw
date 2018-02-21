@@ -94,7 +94,7 @@ export function setPan(stateCopy, newScale) {
 
 function constrainScale(scale) {
     const minZoom = 0.1;
-    const maxZoom = 24;
+    const maxZoom = 32;
 
     if (scale > maxZoom) {
         scale = maxZoom;

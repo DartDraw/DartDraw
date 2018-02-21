@@ -4,6 +4,7 @@
   "private": true,
   "main": "electron.js",
   "dependencies": {
+    "diff-match-patch": "^1.0.0",
     "draft-js": "^0.10.4",
     "eslint": "4.7.1",
     "eslint-config-semistandard": "11.0.0",
@@ -17,6 +18,7 @@
     "eslint-plugin-react-native": "3.1.0",
     "eslint-plugin-standard": "3.0.1",
     "jsondiffpatch": "0.2.4",
+    "lodash": "^4.17.5",
     "react": "15.6.1",
     "react-color": "2.13.8",
     "react-color-picker": "^4.0.2",

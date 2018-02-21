@@ -18,7 +18,7 @@ class epsShape {
 				break;
 		}
 
-		
+
 
 		console.log(drawing);
 		return drawing;

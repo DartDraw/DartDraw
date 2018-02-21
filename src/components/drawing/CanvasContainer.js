@@ -15,8 +15,10 @@ import {
     handleDragStart,
     handleDrag,
     handleDragStop,
+    scroll,
     updateBoundingBoxes
 } from './../../actions/canvas';
+import { setRulerGrid } from './../../actions/menu';
 
 function formatShape(shape, shapes, scale) {
     const formattedShape = Object.assign({}, shape);
@@ -31,7 +33,7 @@ function formatShape(shape, shapes, scale) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, selected, canvasHeight, canvasWidth, scale } = drawingState;
+    const { shapes, selected, canvasHeight, canvasWidth, panX, panY, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes, scale);
@@ -60,7 +62,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         selected,
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,
-        viewBox: [drawingState.panX, drawingState.panY, canvasWidth, canvasHeight],
+        viewBox: [panX, panY, canvasWidth, canvasHeight],
         propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };
@@ -109,8 +111,14 @@ const mapDispatchToProps = (dispatch) => {
         onHandleDragStop: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStop(shapeId, handleIndex, draggableData));
         },
+        onScroll: (deltaX, deltaY) => {
+            dispatch(scroll(deltaX, deltaY));
+        },
         onBoundingBoxUpdate: (boundingBoxes) => {
             dispatch(updateBoundingBoxes(boundingBoxes));
+        },
+        onSetRulerGrid: () => {
+            dispatch(setRulerGrid());
         }
     };
 };

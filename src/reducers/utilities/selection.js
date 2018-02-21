@@ -86,7 +86,7 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
             return;
         }
 
-        if (selectionBox && selectionBox.mode === mode) {
+        if (selectionBox && selectionBox.mode === mode && !shape.refreshSelection) {
             if (shape.type !== 'text') {
                 updatedSelectionBoxes[id] = updateSelectionBox(shape, selectionBox, boundingBox, mode);
             } else {
@@ -105,6 +105,7 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
                     {x: shape.x, y: shape.y, width: shape.width, height: shape.height}
                 );
             }
+            shape.refreshSelection = false;
         }
 
         if (shape.type === 'line' && mode !== 'reshape') {
@@ -140,16 +141,16 @@ function updateSelectionBox(shape, selectionBox, boundingBox, mode) {
                 if (shape.open) {
                     selectionBox.controls[0].x1 = shape.points[0];
                     selectionBox.controls[index].y1 = shape.points[1];
-                    selectionBox.controls[index].x2 = shape.controlPoints[0][0].x;
-                    selectionBox.controls[index].y2 = shape.controlPoints[0][0].y;
+                    selectionBox.controls[index].x2 = shape.controlPoints[0][1].x;
+                    selectionBox.controls[index].y2 = shape.controlPoints[0][1].y;
                     index += 1;
                 }
                 for (let j = 2; j < shape.points.length; j += 2) {
                     if (shape.open && j + 2 >= shape.points.length) {
                         selectionBox.controls[index].x1 = shape.points[j];
                         selectionBox.controls[index].y1 = shape.points[j + 1];
-                        selectionBox.controls[index].x2 = shape.controlPoints[j / 2][1].x;
-                        selectionBox.controls[index].y2 = shape.controlPoints[j / 2][1].y;
+                        selectionBox.controls[index].x2 = shape.controlPoints[j / 2][0].x;
+                        selectionBox.controls[index].y2 = shape.controlPoints[j / 2][0].y;
                     } else {
                         selectionBox.controls[index].x1 = shape.points[j];
                         selectionBox.controls[index].y1 = shape.points[j + 1];
@@ -253,11 +254,11 @@ function generateSelectionBox(shape, boundingBox, mode) {
             if (shape.controlPoints && (shape.closed || shape.open)) {
                 if (shape.open) {
                     controls.push({id: uuidv1(),
-                        index: 0,
+                        index: 1,
                         x1: shape.points[0],
                         y1: shape.points[1],
-                        x2: shape.controlPoints[0][0].x,
-                        y2: shape.controlPoints[0][0].y});
+                        x2: shape.controlPoints[0][1].x,
+                        y2: shape.controlPoints[0][1].y});
                 }
                 for (let j = 2; j < shape.points.length; j += 2) {
                     let cIndex = j / 2;
@@ -275,9 +276,7 @@ function generateSelectionBox(shape, boundingBox, mode) {
                         y2: shape.controlPoints[cIndex][1].y});
                 }
                 if (shape.open) {
-                    let temp = controls.pop();
                     controls.pop();
-                    controls.push(temp);
                 }
             }
 
@@ -304,6 +303,35 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 handles = [];
             }
 
+            let addPointLines = [];
+            if (shape.type === "polygon" || shape.type === "polyline") {
+                for (let i = 0; i <= shape.points.length - 4; i += 2) {
+                    addPointLines.push(
+                        {id: uuidv1(),
+                            index: i / 2,
+                            stroke: shape.strokeWidth,
+                            points: [shape.points[i], shape.points[i + 1], shape.points[i + 2], shape.points[i + 3]]});
+                }
+            }
+
+            let addPointBeziers = [];
+            if (shape.type === "bezier") {
+                addPointBeziers.push({id: uuidv1(),
+                    index: 0,
+                    stroke: shape.strokeWidth,
+                    points: [shape.points[0], shape.points[1], shape.points[2], shape.points[3]],
+                    controlPoints: [shape.controlPoints[shape.points.length / 2 - 1][1], shape.controlPoints[1][0]]
+                });
+                for (let i = 2; i <= shape.points.length - 4; i += 2) {
+                    addPointBeziers.push(
+                        {id: uuidv1(),
+                            index: i / 2,
+                            stroke: shape.strokeWidth,
+                            points: [shape.points[i], shape.points[i + 1], shape.points[i + 2], shape.points[i + 3]],
+                            controlPoints: [shape.controlPoints[i / 2][1], shape.controlPoints[i / 2 + 1][0]]});
+                }
+            }
+
             return {
                 id: uuidv1(),
                 shapeId: shape.id,
@@ -315,6 +343,8 @@ function generateSelectionBox(shape, boundingBox, mode) {
                 width: 0,
                 transform,
                 handles,
+                addPointLines,
+                addPointBeziers,
                 controls,
                 mode
             };
