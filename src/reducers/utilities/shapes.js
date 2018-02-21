@@ -250,6 +250,7 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
         strokeWidth: 10,
         strokeDasharray: '1, 0',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
+        strokeLinecap: '',
         arrowhead: {},
         arrowId: uuidv1(),
         arrowType: "triangle",
