@@ -19,16 +19,16 @@ const template = [
         label: 'File',
         submenu: [
             {
-                label: 'Save', 
+                label: 'Save',
                 click() {
                     let win = BrowserWindow.getFocusedWindow();
                     if (win == null) return;
-                    dialog.showSaveDialog(function (filename) {
+                    dialog.showSaveDialog(function(filename) {
                         win.webContents.send('file-save', 'writing to file');
                         ipcMain.on('file-save', (event, stateString) => {
                             fs.writeFile(filename, stateString, (err) => {
-                                if(err){
-                                    let message = "An error ocurred creating the file "+ err.message;
+                                if (err) {
+                                    let message = "An error ocurred creating the file " + err.message;
                                     win.webContents.send('error', message);
                                 } else {
                                     win.webContents.send('alert', 'The file has been successfully saved');
@@ -39,11 +39,11 @@ const template = [
                 }
             },
             {
-                label: 'Open', 
+                label: 'Open',
                 click() {
-                    dialog.showOpenDialog(function (filenames) {
+                    dialog.showOpenDialog(function(filenames) {
                         if (filenames[0] === null) {
-                            return;
+
                         } else {
                             let win;
                             var numFiles = filenames.length;
@@ -61,7 +61,7 @@ const template = [
                 }
             },
             {
-                label: 'New', 
+                label: 'New',
                 click() {
                     createWindow();
                 }
@@ -70,7 +70,7 @@ const template = [
     },
     {
         label: 'View',
-          submenu: [
+        submenu: [
             {role: 'reload'},
             {role: 'forcereload'},
             {role: 'toggledevtools'},
@@ -80,6 +80,51 @@ const template = [
             {role: 'zoomout'},
             {type: 'separator'},
             {role: 'togglefullscreen'}
+        ]
+    },
+    {
+        label: 'File',
+        submenu: [
+            {label: 'New',
+                click() {
+                    createWindow();
+                }},
+            {role: 'Save'},
+            {
+                label: 'Open',
+                click() {
+                    dialog.showOpenDialog(function(filenames) {
+                        if (filenames[0] === null) {
+
+                        } else {
+                            let win;
+                            var numFiles = filenames.length;
+                            for (var i = 0; i < numFiles; i++) {
+                                let filename = filenames[i];
+                                win = createWindow();
+                                win.webContents.on('dom-ready', () => {
+                                    fs.readFile(filename, 'utf8', (err, data) => {
+                                        win.webContents.send('file-open', data);
+                                    });
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        ]
+    },
+    {
+        label: 'Settings',
+        submenu: [
+            {label: 'Ruler Settings',
+                click() {
+                    openRulerSettings();
+                }},
+            {label: 'Canvas Settings',
+                click() {
+                    openRulerSettings1();
+                }}
         ]
     }
 ];
@@ -106,6 +151,16 @@ function createWindow() {
     });
 
     return win;
+}
+
+function openRulerSettings() {
+    dialog.showMessageBox({ message: "These are all the ruler settings",
+        checkboxLabel: 'test',
+        buttons: ["OK", "change background color "]});
+}
+
+function openRulerSettings1() {
+    dialog.showMessageBox({browserWindow: './ruler_settings.html'});
 }
 
 // This method will be called when Electron has finished

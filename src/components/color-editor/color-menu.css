@@ -1,0 +1,266 @@
+.color-editor h1, p, label {
+  font-family: Catamaran, sans-serif;
+  text-transform: uppercase;
+  font-weight: 200;
+  font-size: 0.8em;
+  transition: all 2s linear;
+}
+
+label {
+  text-transform: none;
+}
+
+.color-square {
+  height: 20px;
+  width: 20px;
+  /* border: solid 1px white; */
+  border-radius: 3px;
+}
+
+.Select {
+  width: 150px;
+}
+
+.Select-control {
+  height: 10px;
+}
+
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #EBF1F5;
+  position: absolute;
+  z-index: 5;
+  left: 5px;
+  top: -9px;
+}
+
+.arrow-right {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #394B59;
+  position: absolute;
+  z-index: 5;
+  left: 210px;
+}
+
+.arrow-down {
+  margin-left: 10px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #EBF1F5;
+}
+
+.arrow-right-small {
+  margin-left: 10px;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid #EBF1F5;
+}
+
+#color-picker {
+  padding: 5px;
+    width: 200px;
+    height: 200px;
+    z-index: 2;
+    background-color: #394B59;
+    position: absolute;
+    top: 40px;
+    left: -210px;
+    border-radius: 5px;
+
+}
+
+#palette {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#palette div {
+  margin: 3px;
+}
+
+#basic-button {
+  background-color: transparent;
+  width: auto;
+  color: #EBF1F5;
+  border-radius: 2px;
+  font-size: 0.5em;
+}
+
+#basic-button:hover {
+  background-color: #394B59;
+}
+
+#basic-button-1 {
+  background-color: transparent;
+  width: auto;
+  color: #394B59;
+  border-radius: 2px;
+  font-size: 0.5em;
+}
+
+#basic-button-1:hover {
+  background-color: #EBF1F5;
+}
+
+#current-color-display {
+  height: 30px;
+  width: 30px;
+  border-radius: 3px;
+}
+
+#color-input {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+#color-input input {
+  width: 30px;
+  /* margin: 5px; */
+  margin: 0;
+}
+
+#color-input div {
+  font-family: Catamaran sans-serif;
+  /* text-align: center;
+  vertical-align: baseline; */
+  display: hidden;
+}
+
+#api-color-input{
+  background-color: red;
+}
+
+#color-input div {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content:  flex-start;
+  align-items: baseline;
+}
+
+/* #color-input div div {
+  height: 30px;
+} */
+
+
+
+
+input[type=text] {
+  background-color: #182026;
+  border: none;
+  border-bottom: 1px solid #5C7080;
+  outline: none;
+  color: #EBF1F5;
+  text-align: center;
+  font-weight: 100;
+  width:35px;
+}
+
+/* Input range styling from http://brennaobrien.com/blog/2014/05/style-input-type-range-in-every-browser.html */
+
+input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+.range-input {
+  width: 70px;
+  margin: 2px;
+  margin: 10px;
+}
+
+input[type=range] {
+    /*removes default webkit styles*/
+    -webkit-appearance: none;
+
+    /*required for proper track sizing in FF*/
+    width: 70px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 70px;
+    height: 2px;
+    background: #EBF1F5;
+    border: none;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #5C7080;
+    margin-top: -7px;
+}
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #5C7080;
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring{
+
+    outline-offset: -1px;
+}
+
+input[type=range]::-ms-thumb {
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #5C7080;
+}
+
+#inline-apart {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+#inline-apart h1 {
+  margin-right: 20px;
+}
+
+#inline-close {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.horz-div {
+  height: 1px;
+  width: 330px;
+  background-color: #5C7080;
+  align-self: center;
+  margin: 5px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#opacity-form {
+  margin-left: 10px;
+  margin-right: 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2em;
+}
