@@ -333,55 +333,6 @@ class ContextualMenu extends Component {
                     <div className="dynamic-menu">
                         { menuLayout }
                     </div>
-                    <h2>Object Manipulation</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleGroupClick}>
-                            <img src="./assets/group.svg" alt="group" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleUngroupClick}>
-                            <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleMoveForward}>
-                            <img src="./assets/upone.svg" alt="upone" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleMoveBackward}>
-                            <img src="./assets/backone.svg" alt="downone" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleSendToBack}>
-                            <img src="./assets/SendToBack.svg" alt="backall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleBringToFront}>
-                            <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleFlipHorizontal}>
-                            <img src="./assets/flip-horz.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleFlipVertical}>
-                            <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
-                    </div>
-                    <h2>Alignment</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="alignment-horizontal" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/right-alignment.svg" alt="right-alignment" id="alignment-right" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="alignment-bottom" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
-                        </button>
-                    </div>
                     <h2>Distribution</h2>
                     <div className="static-menu">
                         <button onClick={this.handleDistributeClick}>

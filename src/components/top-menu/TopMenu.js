@@ -27,11 +27,9 @@ class TopMenu extends Component {
 
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
-
         this.handleChange = this.handleChange.bind(this);
         this.handleButtonSelect = this.handleButtonSelect.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
-
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleUngroupClick = this.handleUngroupClick.bind(this);
         this.handleMoveBackward = this.handleMoveBackward.bind(this);
@@ -87,30 +85,11 @@ class TopMenu extends Component {
         this.props.onFlipVertical();
     }
 
-    handleColorSelect(color, event) {
-        this.props.onColorSelect(color.rgb);
-    }
-
     handlePaletteSelect(event) {
         // this.props.onPaletteSelect(paletteName);
         // where paletteName is a string (verified on backend)
     }
 
-    handleAddColor(color, event) {
-        this.props.onAddColor(color.rgb); // new color added to the end of the current palette
-    }
-
-    handleRemoveColor(color, event) {
-        this.props.onRemoveColor(color.rgb); // removed from current palette
-    }
-
-    handleZoomIn() {
-        this.props.onZoomIn();
-    }
-
-    handleZoomOut() {
-        this.props.onZoomOut();
-    }
     handleChange(event) {
         this.tempScale = event.target.value / 100.0;
     }
@@ -130,7 +109,7 @@ class TopMenu extends Component {
     }
 
     render() {
-        const { fillColor, strokeColor, currentPalette } = this.props;
+        const { fillColor, strokeColor } = this.props;
         const fillStyle = {
             backgroundColor: `rgba(${fillColor.r}, ${fillColor.g}, ${fillColor.b}, ${fillColor.a} )` // this.props.fillColor
         };

@@ -42,6 +42,8 @@ export const RESIZE_SHAPE_TO = 'RESIZE_SHAPE_TO';
 export const MOVE_SHAPE_TO = 'MOVE_SHAPE_TO';
 export const ROTATE_SHAPE_TO = 'ROTATE_SHAPE_TO';
 export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
+export const FILE_SAVE = 'FILE_SAVE';
+export const FILE_OPEN = 'FILE_OPEN';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
