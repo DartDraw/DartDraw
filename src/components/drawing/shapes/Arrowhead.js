@@ -83,7 +83,7 @@ class Arrowhead extends Component {
                     />
                 );
                 break;
-            case "circle":
+            case "ellipse":
                 refX = 0;
                 refY = 4;
                 arrowhead = (
@@ -96,7 +96,7 @@ class Arrowhead extends Component {
                     />
                 );
                 break;
-            case "square":
+            case "rectangle":
                 refX = 0;
                 refY = 4;
                 arrowhead = (
@@ -107,7 +107,7 @@ class Arrowhead extends Component {
                     />
                 );
                 break;
-            case "line":
+            case "polyline":
                 refX = 8;
                 refY = 4;
                 arrowhead = (

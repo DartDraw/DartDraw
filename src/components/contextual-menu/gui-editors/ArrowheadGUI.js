@@ -181,7 +181,7 @@ class ArrowheadGUI extends Component {
             case "triangle":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(currentArrowhead.points[5] - currentArrowhead.points[1])}
+                        {this.renderHeightInput(Math.abs(currentArrowhead.points[5] - currentArrowhead.points[1]))}
                         {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
                         {this.renderFillCheckbox()}
                     </form>
@@ -189,7 +189,7 @@ class ArrowheadGUI extends Component {
             case "barbed":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(currentArrowhead.points[5] - currentArrowhead.points[1])}
+                        {this.renderHeightInput(Math.abs(currentArrowhead.points[5] - currentArrowhead.points[1]))}
                         {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
                         {this.renderBarbLengthInput(currentArrowhead.points[6] - currentArrowhead.points[0])}
                         {this.renderFillCheckbox()}
@@ -214,7 +214,7 @@ class ArrowheadGUI extends Component {
             case "polyline":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(currentArrowhead.points[5] - currentArrowhead.points[1])}
+                        {this.renderHeightInput(Math.abs(currentArrowhead.points[5] - currentArrowhead.points[1]))}
                         {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
                     </form>
                 );
@@ -223,7 +223,6 @@ class ArrowheadGUI extends Component {
     }
 
     renderReferenceLine(path, arrowhead) {
-        // update so it's not hardcoded!
         var x2;
 
         switch (arrowhead.type) {
