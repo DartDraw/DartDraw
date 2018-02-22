@@ -1,4 +1,4 @@
-import { reshape, updateHandles, setArrowheadType } from '../utilities/arrowhead';
+import { reshape, updateHandles, updateLengthAndRefX, setArrowheadType } from '../utilities/arrowhead';
 
 const editorHeight = 150;
 const editorWidth = 300;
@@ -53,7 +53,6 @@ export function changeArrowheadLength(stateCopy, action, root) {
     var { currentArrowhead } = stateCopy;
 
     length = clamp(length, 0, rightBufferX - leftBufferX);
-    currentArrowhead.arrowlength = length;
 
     switch (currentArrowhead.type) {
         case "triangle":
@@ -66,7 +65,6 @@ export function changeArrowheadLength(stateCopy, action, root) {
             currentArrowhead.points[0] = rightBufferX - length;
             currentArrowhead.points[4] = rightBufferX - length;
             currentArrowhead.points[6] = clamp(currentArrowhead.points[0] + barbLength, leftBufferX, rightBufferX);
-            currentArrowhead.arrowlength = rightBufferX - currentArrowhead.points[6];
             break;
         case "rectangle":
             currentArrowhead.x = rightBufferX - length;
@@ -75,6 +73,7 @@ export function changeArrowheadLength(stateCopy, action, root) {
         default: break;
     }
 
+    currentArrowhead = updateLengthAndRefX(currentArrowhead);
     currentArrowhead.handles = updateHandles(currentArrowhead);
 
     return stateCopy;
@@ -101,8 +100,7 @@ export function changeArrowheadRadiusX(stateCopy, action, root) {
     currentArrowhead.cx += currentArrowhead.rx - rx;
     currentArrowhead.rx = rx;
     currentArrowhead.handles = updateHandles(currentArrowhead);
-    currentArrowhead.arrowlength = rx * 2;
-
+    currentArrowhead = updateLengthAndRefX(currentArrowhead);
     return stateCopy;
 }
 
@@ -120,6 +118,14 @@ export function changeArrowheadRadiusY(stateCopy, action, root) {
 
 export function editArrowhead(stateCopy, action, root) {
     stateCopy.currentArrowhead = action.payload.arrowhead;
+    return stateCopy;
+}
+
+export function applyArrowhead(stateCopy, action) {
+    const { arrowhead, path } = action.payload;
+
+    console.log(arrowhead, path);
+
     return stateCopy;
 }
 

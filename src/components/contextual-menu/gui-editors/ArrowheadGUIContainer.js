@@ -3,6 +3,7 @@ import ArrowheadGUI from './ArrowheadGUI';
 import {
     arrowheadHandleDrag,
     changeArrowheadType,
+    applyArrowhead,
     editArrowhead,
     changeArrowheadHeight,
     changeArrowheadLength,
@@ -10,9 +11,19 @@ import {
     changeArrowheadRadiusX,
     changeArrowheadRadiusY
 } from '../../../actions/menu';
+// import { setArrowheadType } from '../../../reducers/utilities/arrowhead';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { arrowheadPresets, currentArrowhead } = menuState;
+    // const { shapes } = drawingState;
+    //
+    // var currentArrowhead = shapes.allArrows[0];
+    //
+    // console.log(shapes.allArrows[0]);
+    //
+    // if (!currentArrowhead) {
+    //     currentArrowhead = setArrowheadType('triangle');
+    // }
 
     return {
         arrowheadPresets,
@@ -27,6 +38,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onChangeArrowheadType: (arrowheadType) => {
             dispatch(changeArrowheadType(arrowheadType));
+        },
+        onApplyArrowhead: (arrowhead, path) => {
+            dispatch(applyArrowhead(arrowhead, path));
         },
         onEditArrowhead: (arrowhead) => {
             dispatch(editArrowhead(arrowhead));

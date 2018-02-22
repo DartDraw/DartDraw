@@ -7,6 +7,7 @@ import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import * as rulers from './caseFunctions/rulers';
+import * as arrowhead from './caseFunctions/arrowhead';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -214,6 +215,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case canvasActions.SCROLL:
             updatedState = canvas.scroll(stateCopy, action, root);
+            break;
+        case menuActions.APPLY_ARROWHEAD:
+            updatedState = arrowhead.applyArrowhead(stateCopy, action, root);
             break;
         default: break;
     }

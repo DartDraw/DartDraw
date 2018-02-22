@@ -63,36 +63,35 @@ class Arrowhead extends Component {
             vectorEffect: "non-scaling-stroke"
         };
 
-        var arrowhead, refX, refY;
+        var arrowhead;
+        var refX;
+        var refY = 75;
 
         switch (arrowType) {
             case "triangle":
-                refX = 0;
-                refY = 20;
+                refX = 215;
                 arrowhead = (
                     <polygon
-                        points={formatPoints([0, 0, 60, 20, 0, 40])}
+                        points={formatPoints([215, 55, 275, 75, 215, 95])}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "barbed":
-                refX = 20;
-                refY = 20;
+                refX = 235;
                 arrowhead = (
                     <polygon
-                        points={formatPoints([0, 0, 60, 20, 0, 40, 20, 20])}
+                        points={formatPoints([215, 55, 275, 75, 215, 95, 235, 75])}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "ellipse":
-                refX = 0;
-                refY = 15;
+                refX = 245;
                 arrowhead = (
                     <ellipse
-                        cx="15"
-                        cy="15"
+                        cx="260"
+                        cy="75"
                         rx="15"
                         ry="15"
                         {...arrowheadProps}
@@ -100,12 +99,11 @@ class Arrowhead extends Component {
                 );
                 break;
             case "rectangle":
-                refX = 0;
-                refY = 15;
+                refX = 245;
                 arrowhead = (
                     <rect
-                        x="0"
-                        y="0"
+                        x="245"
+                        y="60"
                         width="30"
                         height="30"
                         {...arrowheadProps}
@@ -113,63 +111,15 @@ class Arrowhead extends Component {
                 );
                 break;
             case "polyline":
-                refX = 60;
-                refY = 20;
+                refX = 275;
                 arrowhead = (
                     <polyline
-                        points={formatPoints([0, 0, 60, 20, 0, 40])}
+                        points={formatPoints([215, 55, 275, 75, 215, 95])}
                         fillOpacity="0"
                         {...arrowheadProps}
                     />
                 );
                 break;
-            // case "barbed":
-            //     refX = 2;
-            //     refY = 4;
-            //     arrowhead = (
-            //         <path
-            //             d="M 0 0 L 10 4 L 0 8 L 2 4 z"
-            //             fill={stroke}
-            //             {...arrowheadProps}
-            //         />
-            //     );
-            //     break;
-            // case "ellipse":
-            //     refX = 0;
-            //     refY = 4;
-            //     arrowhead = (
-            //         <circle
-            //             cx="4"
-            //             cy="4"
-            //             r="4"
-            //             fill={stroke}
-            //             {...arrowheadProps}
-            //         />
-            //     );
-            //     break;
-            // case "rectangle":
-            //     refX = 0;
-            //     refY = 4;
-            //     arrowhead = (
-            //         <path
-            //             d="M 0 0 L 8 0 L 8 8 L 0 8 z"
-            //             fill={stroke}
-            //             {...arrowheadProps}
-            //         />
-            //     );
-            //     break;
-            // case "polyline":
-            //     refX = 8;
-            //     refY = 4;
-            //     arrowhead = (
-            //         <path
-            //             d="M 0 0 L 8 4 L 0 8"
-            //             fill="none"
-            //             stroke={stroke}
-            //             {...arrowheadProps}
-            //         />
-            //     );
-            //     break;
             default: break;
         }
 
@@ -178,11 +128,14 @@ class Arrowhead extends Component {
                 id={arrowId}
                 key={arrowId + "_marker"}
                 orient="auto"
-                markerWidth="100"
-                markerHeight="100"
+                markerWidth="300"
+                markerHeight="150"
                 markerUnits="userSpaceOnUse"
                 refX={refX}
                 refY={refY}
+                onDragStart={() => console.log("hi")}
+                onDrag={this.handleDrag}
+                onClick={() => console.log("hi")}>
             >
                 {arrowhead}
             </marker>
@@ -191,13 +144,3 @@ class Arrowhead extends Component {
 }
 
 export default Arrowhead;
-
-// <marker id={arrowId} key={arrowId + "_marker"} orient="auto"
-//     markerWidth="20" markerHeight="20"
-//     refX={refX} refY={refY} >
-//     onDragStart={() => console.log("hi")}
-//     onDrag={this.handleDrag}
-//     onDragStop={this.handleDragStop}
-//     onClick={() => console.log("hi")}>
-//     {arrowhead}
-// </marker>

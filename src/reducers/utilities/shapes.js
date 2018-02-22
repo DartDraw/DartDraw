@@ -250,10 +250,9 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
         strokeWidth: 5,
         strokeDasharray: '1, 0',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
-        arrowhead: {},
         arrowId: uuidv1(),
-        arrowType: "rectangle",
-        arrowLength: 30,
+        arrowType: "barbed",
+        arrowLength: 40,
         arrowShown: 'yes'
     };
 

@@ -315,7 +315,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
-                guiEditor = <ArrowheadGUIContainer path={selectedShape} />;
+                guiEditor = <ArrowheadGUIContainer selectedPath={selectedShape} />;
             } else if (selectedShape.type === 'ellipse') {
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} onMoveShapeTo={this.handleMoveShapeTo} />;
             }

@@ -10,7 +10,8 @@ export function setArrowheadType(arrowheadType) {
                 type: 'triangle',
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 1,
-                arrowlength: 60
+                refX: 215, // points[0]
+                arrowlength: 60 // points[2] - points[0]
             };
             break;
         case 'barbed':
@@ -19,7 +20,8 @@ export function setArrowheadType(arrowheadType) {
                 type: 'barbed',
                 points: [215, 55, 275, 75, 215, 95, 235, 75],
                 fillOpacity: 1,
-                arrowlength: 60
+                refX: 235, // points[6]
+                arrowlength: 40 // points[2] - points[6]
             };
             break;
         case 'ellipse':
@@ -31,7 +33,8 @@ export function setArrowheadType(arrowheadType) {
                 rx: 15,
                 ry: 15,
                 fillOpacity: 1,
-                arrowlength: 30
+                refX: 245, // cx - rx
+                arrowlength: 30 // rx * 2
             };
             break;
         case 'rectangle':
@@ -43,7 +46,8 @@ export function setArrowheadType(arrowheadType) {
                 width: 30,
                 height: 30,
                 fillOpacity: 1,
-                arrowlength: 30
+                refX: 245, // x
+                arrowlength: 30 // width
             };
             break;
         case 'polyline':
@@ -52,7 +56,8 @@ export function setArrowheadType(arrowheadType) {
                 type: 'polyline',
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 0,
-                arrowlength: 60
+                refX: 275, // points[2]
+                arrowlength: 0 // 0
             };
             break;
         default: break;
@@ -97,7 +102,6 @@ export function reshape(arrowhead, draggableData, handleIndex) {
             arrowhead.points[1] = clamp(mouseY, 0, height);
             arrowhead.points[4] = arrowhead.points[0];
             arrowhead.points[5] = height - arrowhead.points[1];
-            arrowhead.arrowlength = rightBufferX - arrowhead.points[0];
             break;
         case 'barbed':
             if (handleIndex === 0) {
@@ -108,7 +112,6 @@ export function reshape(arrowhead, draggableData, handleIndex) {
             } else if (handleIndex === 1) {
                 arrowhead.points[6] = clamp(mouseX, leftBufferX, rightBufferX);
             }
-            arrowhead.arrowlength = rightBufferX - arrowhead.points[6];
             break;
         case 'ellipse':
             if (handleIndex === 0) {
@@ -118,7 +121,6 @@ export function reshape(arrowhead, draggableData, handleIndex) {
                 // arrowhead.ry = clamp(arrowhead.cy - mouseY, -halfHeight, halfHeight);
                 arrowhead.ry = Math.abs(arrowhead.cy - mouseY);
             }
-            arrowhead.arrowlength = rightBufferX - arrowhead.cx - arrowhead.rx;
             break;
         case 'rectangle':
             if (handleIndex === 0) {
@@ -129,12 +131,12 @@ export function reshape(arrowhead, draggableData, handleIndex) {
                 arrowhead.y = clamp(mouseY, 0, height);
                 arrowhead.height = (halfHeight - arrowhead.y) * 2;
             }
-            arrowhead.arrowlength = rightBufferX - arrowhead.width;
             break;
         default:
             break;
     }
 
+    arrowhead = updateLengthAndRefX(arrowhead);
     arrowhead.handles = updateHandles(arrowhead);
 
     return arrowhead;
@@ -194,6 +196,34 @@ export function updateHandles(arrowhead) {
     }
 
     return arrowhead.handles;
+}
+
+export function updateLengthAndRefX(arrowhead) {
+    switch (arrowhead.type) {
+        case 'triangle':
+            arrowhead.refX = arrowhead.points[0];
+            arrowhead.arrowlength = arrowhead.points[2] - arrowhead.points[0];
+            break;
+        case 'barbed':
+            arrowhead.refX = arrowhead.points[6];
+            arrowhead.arrowlength = arrowhead.points[2] - arrowhead.points[6];
+            break;
+        case 'ellipse':
+            arrowhead.refX = arrowhead.cx - arrowhead.rx;
+            arrowhead.arrowlength = arrowhead.rx * 2;
+            break;
+        case 'rectangle':
+            arrowhead.refX = arrowhead.x;
+            arrowhead.arrowlength = arrowhead.width;
+            break;
+        case 'polyline':
+            arrowhead.refX = arrowhead.points[2];
+            arrowhead.arrowlength = 0;
+            break;
+        default: break;
+    }
+
+    return arrowhead;
 }
 
 function clamp(num, min, max) {

@@ -5,13 +5,13 @@ import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/sha
 
 class ArrowheadGUI extends Component {
     static propTypes = {
-        selected: PropTypes.array,
-        path: PropTypes.object,
+        selectedPath: PropTypes.object,
         fillColor: PropTypes.object,
         currentArrowhead: PropTypes.object,
         arrowheadPresets: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDrag: PropTypes.func,
+        onApplyArrowhead: PropTypes.func,
         onChangeArrowheadType: PropTypes.func,
         onEditArrowhead: PropTypes.func,
         onHeightChange: PropTypes.func,
@@ -33,6 +33,7 @@ class ArrowheadGUI extends Component {
         this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
         this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
         this.handleReset = this.handleReset.bind(this);
+        this.handleApplyArrowhead = this.handleApplyArrowhead.bind(this);
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleBarbLengthChange = this.handleBarbLengthChange.bind(this);
@@ -43,6 +44,12 @@ class ArrowheadGUI extends Component {
 
     handleReset(event) {
         this.props.onChangeArrowheadType(this.props.currentArrowhead.type);
+        event.preventDefault();
+    }
+
+    handleApplyArrowhead(event) {
+        const { selectedPath } = this.props;
+        this.props.onApplyArrowhead(this.props.currentArrowhead, selectedPath);
         event.preventDefault();
     }
 
@@ -222,7 +229,7 @@ class ArrowheadGUI extends Component {
         }
     }
 
-    renderReferenceLine(path, arrowhead) {
+    renderReferenceLine(selectedPath, arrowhead) {
         var x2;
 
         switch (arrowhead.type) {
@@ -244,11 +251,11 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={selectedPath.stroke} strokeDasharray={selectedPath.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
-        const { stroke } = this.props.path;
+        const { stroke } = this.props.selectedPath;
 
         const arrowheadProps = {
             ...arrowhead,
@@ -300,7 +307,7 @@ class ArrowheadGUI extends Component {
     }
 
     render() {
-        const { path, currentArrowhead } = this.props;
+        const { selectedPath, currentArrowhead } = this.props;
 
         const arrowheadInputs = this.renderArrowheadInputs();
 
@@ -319,7 +326,7 @@ class ArrowheadGUI extends Component {
                     <option value='polyline'>polyline</option>
                 </select>
                 <svg className="arrowhead-gui">
-                    {this.renderReferenceLine(path, currentArrowhead)}
+                    {this.renderReferenceLine(selectedPath, currentArrowhead)}
                     {this.renderArrowhead(currentArrowhead)}
                     {this.renderHandles(currentArrowhead)}
                 </svg>
@@ -330,6 +337,12 @@ class ArrowheadGUI extends Component {
                     value="Reset to Default"
                 />
                 {arrowheadInputs}
+                <input
+                    id="apply"
+                    type="button"
+                    onClick={this.handleApplyArrowhead}
+                    value="Apply"
+                />
             </div>
         );
     }
