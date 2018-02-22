@@ -11,21 +11,13 @@ import {
     changeArrowheadRadiusX,
     changeArrowheadRadiusY
 } from '../../../actions/menu';
-// import { setArrowheadType } from '../../../reducers/utilities/arrowhead';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { arrowheadPresets, currentArrowhead } = menuState;
-    // const { shapes } = drawingState;
-    //
-    // var currentArrowhead = shapes.allArrows[0];
-    //
-    // console.log(shapes.allArrows[0]);
-    //
-    // if (!currentArrowhead) {
-    //     currentArrowhead = setArrowheadType('triangle');
-    // }
+    const { arrowheads } = drawingState;
 
     return {
+        arrowheads,
         arrowheadPresets,
         currentArrowhead
     };

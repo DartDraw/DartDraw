@@ -261,9 +261,9 @@ class Canvas extends Component {
                         viewBox={viewBox.join(' ')}
                         ref={(ref) => { this.svgRef = ref; }}
                     >
-                        <defs>{this.renderArrows()}</defs>
                         <BackgroundLayerContainer />
                         {this.renderDrawing()}
+                        {this.renderArrows()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
                     </svg>

@@ -6,7 +6,6 @@ class TransparentLine extends Component {
     static propTypes = {
         id: PropTypes.string,
         index: PropTypes.number,
-        arrowId: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
@@ -15,8 +14,9 @@ class TransparentLine extends Component {
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
-        arrowLength: PropTypes.number,
-        arrowShown: PropTypes.string,
+        arrowheadId: PropTypes.string,
+        arrowheadLength: PropTypes.number,
+        arrowheadShown: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,

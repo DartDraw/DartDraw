@@ -5,6 +5,7 @@ import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/sha
 
 class ArrowheadGUI extends Component {
     static propTypes = {
+        arrowheads: PropTypes.object,
         selectedPath: PropTypes.object,
         fillColor: PropTypes.object,
         currentArrowhead: PropTypes.object,
@@ -42,14 +43,21 @@ class ArrowheadGUI extends Component {
         this.handleToggleFill = this.handleToggleFill.bind(this);
     }
 
+    componentWillMount() {
+        const { arrowheads, selectedPath } = this.props;
+
+        // set currentArrowhead to be the same as the selected path's arrowhead
+        this.props.onEditArrowhead(arrowheads.byId[selectedPath.arrowheadId]);
+    }
+
     handleReset(event) {
         this.props.onChangeArrowheadType(this.props.currentArrowhead.type);
         event.preventDefault();
     }
 
     handleApplyArrowhead(event) {
-        const { selectedPath } = this.props;
-        this.props.onApplyArrowhead(this.props.currentArrowhead, selectedPath);
+        const { currentArrowhead, selectedPath } = this.props;
+        this.props.onApplyArrowhead(currentArrowhead, selectedPath);
         event.preventDefault();
     }
 

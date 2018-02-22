@@ -124,7 +124,15 @@ export function editArrowhead(stateCopy, action, root) {
 export function applyArrowhead(stateCopy, action) {
     const { arrowhead, path } = action.payload;
 
-    console.log(arrowhead, path);
+    var original = stateCopy.arrowheads.byId[path.arrowheadId];
+
+    stateCopy.arrowheads.byId[path.arrowheadId] = Object.assign(
+        {},
+        arrowhead,
+        {id: original.id, stroke: original.stroke, strokeWidth: original.strokeWidth, strokeDasharray: original.strokeDasharray}
+    );
+
+    stateCopy.shapes.byId[path.id].arrowheadLength = arrowhead.length;
 
     return stateCopy;
 }

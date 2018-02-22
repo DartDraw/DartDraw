@@ -130,7 +130,7 @@ class SelectionLayer extends Component {
                     shapeId={selectionBox.shapeId}
                     index={index}
                     points={line.points}
-                    arrowLength={0}
+                    arrowheadLength={0}
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     pointerEvents={"stroke"}
@@ -155,7 +155,7 @@ class SelectionLayer extends Component {
                     index={index}
                     points={line.points}
                     controlPoints={line.controlPoints}
-                    arrowLength={0}
+                    arrowheadLength={0}
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     fill={"none"}
@@ -210,7 +210,7 @@ class SelectionLayer extends Component {
                     shapeId={selectionBox.shapeId}
                     index={index}
                     points={[control.x1, control.y1, control.x2, control.y2]}
-                    arrowLength={0}
+                    arrowheadLength={0}
                     strokeWidth={2}
                     stroke={"black"}
                     propagateEvents={propagateEvents}

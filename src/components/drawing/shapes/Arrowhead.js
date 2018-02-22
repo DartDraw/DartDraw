@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Polygon } from '.';
-import { formatPoints, formatPath } from '../../../utilities/shapes';
+import { formatPoints } from '../../../utilities/shapes';
 
 class Arrowhead extends Component {
     static propTypes = {
         id: PropTypes.string,
-        arrowId: PropTypes.string,
-        arrowType: PropTypes.string,
+        type: PropTypes.string,
+        points: PropTypes.array,
+        cx: PropTypes.number,
+        cy: PropTypes.number,
+        rx: PropTypes.number,
+        ry: PropTypes.number,
+        x: PropTypes.number,
+        y: PropTypes.number,
+        width: PropTypes.number,
+        height: PropTypes.number,
+        refX: PropTypes.number,
+        length: PropTypes.number,
+        stroke: PropTypes.string,
+        strokeWidth: PropTypes.number,
+        strokeDasharray: PropTypes.string,
+        fillOpacity: PropTypes.number,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
         onClick: PropTypes.func,
-        points: PropTypes.arrayOf(PropTypes.number),
-        stroke: PropTypes.string,
-        strokeWidth: PropTypes.number,
-        strokeDasharray: PropTypes.string,
-        fill: PropTypes.string,
         propagateEvents: PropTypes.bool
     }
 
@@ -54,7 +62,7 @@ class Arrowhead extends Component {
     }
 
     render() {
-        const { arrowId, arrowType, stroke, strokeWidth, strokeDasharray } = this.props;
+        const { id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
         const arrowheadProps = {
             fill: stroke,
             stroke: stroke,
@@ -64,57 +72,44 @@ class Arrowhead extends Component {
         };
 
         var arrowhead;
-        var refX;
         var refY = 75;
 
-        switch (arrowType) {
+        switch (type) {
             case "triangle":
-                refX = 215;
-                arrowhead = (
-                    <polygon
-                        points={formatPoints([215, 55, 275, 75, 215, 95])}
-                        {...arrowheadProps}
-                    />
-                );
-                break;
             case "barbed":
-                refX = 235;
                 arrowhead = (
                     <polygon
-                        points={formatPoints([215, 55, 275, 75, 215, 95, 235, 75])}
+                        points={formatPoints(points)}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "ellipse":
-                refX = 245;
                 arrowhead = (
                     <ellipse
-                        cx="260"
-                        cy="75"
-                        rx="15"
-                        ry="15"
+                        cx={cx}
+                        cy={cy}
+                        rx={rx}
+                        ry={ry}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "rectangle":
-                refX = 245;
                 arrowhead = (
                     <rect
-                        x="245"
-                        y="60"
-                        width="30"
-                        height="30"
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "polyline":
-                refX = 275;
                 arrowhead = (
                     <polyline
-                        points={formatPoints([215, 55, 275, 75, 215, 95])}
+                        points={formatPoints(points)}
                         fillOpacity="0"
                         {...arrowheadProps}
                     />
@@ -125,8 +120,8 @@ class Arrowhead extends Component {
 
         return (
             <marker
-                id={arrowId}
-                key={arrowId + "_marker"}
+                id={id}
+                key={id + "_marker"}
                 orient="auto"
                 markerWidth="300"
                 markerHeight="150"

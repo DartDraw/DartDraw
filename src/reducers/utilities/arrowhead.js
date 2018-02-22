@@ -11,7 +11,7 @@ export function setArrowheadType(arrowheadType) {
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 1,
                 refX: 215, // points[0]
-                arrowlength: 60 // points[2] - points[0]
+                length: 60 // points[2] - points[0]
             };
             break;
         case 'barbed':
@@ -21,7 +21,7 @@ export function setArrowheadType(arrowheadType) {
                 points: [215, 55, 275, 75, 215, 95, 235, 75],
                 fillOpacity: 1,
                 refX: 235, // points[6]
-                arrowlength: 40 // points[2] - points[6]
+                length: 40 // points[2] - points[6]
             };
             break;
         case 'ellipse':
@@ -34,7 +34,7 @@ export function setArrowheadType(arrowheadType) {
                 ry: 15,
                 fillOpacity: 1,
                 refX: 245, // cx - rx
-                arrowlength: 30 // rx * 2
+                length: 30 // rx * 2
             };
             break;
         case 'rectangle':
@@ -47,7 +47,7 @@ export function setArrowheadType(arrowheadType) {
                 height: 30,
                 fillOpacity: 1,
                 refX: 245, // x
-                arrowlength: 30 // width
+                length: 30 // width
             };
             break;
         case 'polyline':
@@ -57,7 +57,7 @@ export function setArrowheadType(arrowheadType) {
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 0,
                 refX: 275, // points[2]
-                arrowlength: 0 // 0
+                length: 0 // 0
             };
             break;
         default: break;
@@ -202,23 +202,23 @@ export function updateLengthAndRefX(arrowhead) {
     switch (arrowhead.type) {
         case 'triangle':
             arrowhead.refX = arrowhead.points[0];
-            arrowhead.arrowlength = arrowhead.points[2] - arrowhead.points[0];
+            arrowhead.length = arrowhead.points[2] - arrowhead.points[0];
             break;
         case 'barbed':
             arrowhead.refX = arrowhead.points[6];
-            arrowhead.arrowlength = arrowhead.points[2] - arrowhead.points[6];
+            arrowhead.length = arrowhead.points[2] - arrowhead.points[6];
             break;
         case 'ellipse':
             arrowhead.refX = arrowhead.cx - arrowhead.rx;
-            arrowhead.arrowlength = arrowhead.rx * 2;
+            arrowhead.length = arrowhead.rx * 2;
             break;
         case 'rectangle':
             arrowhead.refX = arrowhead.x;
-            arrowhead.arrowlength = arrowhead.width;
+            arrowhead.length = arrowhead.width;
             break;
         case 'polyline':
             arrowhead.refX = arrowhead.points[2];
-            arrowhead.arrowlength = 0;
+            arrowhead.length = 0;
             break;
         default: break;
     }

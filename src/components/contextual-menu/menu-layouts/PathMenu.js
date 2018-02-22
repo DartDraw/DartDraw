@@ -33,7 +33,7 @@ class PathMenu extends Component {
 
     handleArrowShown(event) {
         const { path, onEdit } = this.props;
-        const newPath = Object.assign({}, path, { arrowShown: event.target.value });
+        const newPath = Object.assign({}, path, { arrowheadShown: event.target.value });
         onEdit && onEdit(newPath);
     }
 
@@ -61,7 +61,7 @@ class PathMenu extends Component {
                     <option value="20">20</option>
                 </select>
 
-                <select value={this.props.path.arrowShown} onChange={this.handleArrowShown}>
+                <select value={this.props.path.arrowheadShown} onChange={this.handleArrowShown}>
                     <option value="yes">yes</option>
                     <option value="no">no</option>
                 </select>

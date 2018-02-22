@@ -1,5 +1,6 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
+import { setArrowheadType } from './arrowhead';
 import { deepCopy } from './object';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval, rectangleRadius) {
@@ -235,7 +236,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     return shapes;
 }
 
-export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, gridSnapInterval) {
+export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -248,18 +249,20 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
         strokeWidth: 5,
-        strokeDasharray: '1, 0',
+        strokeDasharray: '',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
-        arrowId: uuidv1(),
-        arrowType: "barbed",
-        arrowLength: 40,
-        arrowShown: 'yes'
+        arrowheadId: uuidv1(),
+        arrowheadLength: 0,
+        arrowheadShown: 'yes'
     };
 
-    const arrow = {
-        id: line.arrowId,
-        shapeId: line.id
-    };
+    const arrowhead = Object.assign(
+        {},
+        setArrowheadType("polyline"),
+        {id: line.arrowheadId, stroke: line.stroke, strokeWidth: line.strokeWidth, strokeDasharray: line.strokeDasharray}
+    );
+
+    line.arrowheadLength = arrowhead.length;
 
     if (gridSnapping) {
         line.points[0] = Math.round(line.points[0] / gridSnapInterval) * gridSnapInterval;
@@ -269,8 +272,8 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
     shapes.byId[line.id] = line;
     shapes.allIds.push(line.id);
 
-    shapes.byArrowId[arrow.id] = line;
-    shapes.allArrows.push(arrow.id);
+    arrowheads.byId[arrowhead.id] = arrowhead;
+    arrowheads.allIds.push(arrowhead.id);
 
     return shapes;
 }
@@ -1216,7 +1219,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
         let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-        if (shape.type === 'line' && shape.arrowShown === 'yes') {
+        if (shape.type === 'line' && shape.arrowheadShown === 'yes') {
             coords0 = {x: selectionBoxes[id].handles[0].x, y: selectionBoxes[id].handles[0].y};
             coords1 = {x: selectionBoxes[id].handles[1].x, y: selectionBoxes[id].handles[1].y};
             coords2 = {x: selectionBoxes[id].handles[2].x, y: selectionBoxes[id].handles[2].y};
@@ -1508,7 +1511,7 @@ function determineScale(shape, boundingBoxes, selectionBoxes, draggableData, han
     let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-    if (shape.type === 'line' && shape.arrowShown === 'yes') {
+    if (shape.type === 'line' && shape.arrowheadShown === 'yes') {
         coords0 = {x: selectionBoxes[shape.id].handles[0].x, y: selectionBoxes[shape.id].handles[0].y};
         coords1 = {x: selectionBoxes[shape.id].handles[1].x, y: selectionBoxes[shape.id].handles[1].y};
         coords2 = {x: selectionBoxes[shape.id].handles[2].x, y: selectionBoxes[shape.id].handles[2].y};
