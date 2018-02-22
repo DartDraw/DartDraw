@@ -247,14 +247,14 @@ export function addLine(shapes, action, fill, panX, panY, scale, gridSnapping, g
             (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
-        strokeWidth: 10,
+        strokeWidth: 5,
         strokeDasharray: '1, 0',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         arrowhead: {},
         arrowId: uuidv1(),
-        arrowType: "triangle",
+        arrowType: "rectangle",
         arrowLength: 30,
-        arrowShown: 'no'
+        arrowShown: 'yes'
     };
 
     const arrow = {

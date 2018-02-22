@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Polygon } from '.';
+import { formatPoints, formatPath } from '../../../utilities/shapes';
 
 class Arrowhead extends Component {
     static propTypes = {
@@ -52,8 +54,11 @@ class Arrowhead extends Component {
     }
 
     render() {
-        const { arrowId, arrowType, stroke, strokeDasharray } = this.props;
+        const { arrowId, arrowType, stroke, strokeWidth, strokeDasharray } = this.props;
         const arrowheadProps = {
+            fill: stroke,
+            stroke: stroke,
+            strokeWidth: strokeWidth,
             strokeDasharray: strokeDasharray,
             vectorEffect: "non-scaling-stroke"
         };
@@ -63,73 +68,122 @@ class Arrowhead extends Component {
         switch (arrowType) {
             case "triangle":
                 refX = 0;
-                refY = 4;
+                refY = 20;
                 arrowhead = (
-                    <path
-                        d="M 0 0 L 8 4 L 0 8 z"
-                        fill={stroke}
+                    <polygon
+                        points={formatPoints([0, 0, 60, 20, 0, 40])}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "barbed":
-                refX = 2;
-                refY = 4;
+                refX = 20;
+                refY = 20;
                 arrowhead = (
-                    <path
-                        d="M 0 0 L 10 4 L 0 8 L 2 4 z"
-                        fill={stroke}
+                    <polygon
+                        points={formatPoints([0, 0, 60, 20, 0, 40, 20, 20])}
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "ellipse":
                 refX = 0;
-                refY = 4;
+                refY = 15;
                 arrowhead = (
-                    <circle
-                        cx="4"
-                        cy="4"
-                        r="4"
-                        fill={stroke}
+                    <ellipse
+                        cx="15"
+                        cy="15"
+                        rx="15"
+                        ry="15"
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "rectangle":
                 refX = 0;
-                refY = 4;
+                refY = 15;
                 arrowhead = (
-                    <path
-                        d="M 0 0 L 8 0 L 8 8 L 0 8 z"
-                        fill={stroke}
+                    <rect
+                        x="0"
+                        y="0"
+                        width="30"
+                        height="30"
                         {...arrowheadProps}
                     />
                 );
                 break;
             case "polyline":
-                refX = 8;
-                refY = 4;
+                refX = 60;
+                refY = 20;
                 arrowhead = (
-                    <path
-                        d="M 0 0 L 8 4 L 0 8"
-                        fill="none"
-                        stroke={stroke}
+                    <polyline
+                        points={formatPoints([0, 0, 60, 20, 0, 40])}
+                        fillOpacity="0"
                         {...arrowheadProps}
                     />
                 );
                 break;
-            default:
+            // case "barbed":
+            //     refX = 2;
+            //     refY = 4;
+            //     arrowhead = (
+            //         <path
+            //             d="M 0 0 L 10 4 L 0 8 L 2 4 z"
+            //             fill={stroke}
+            //             {...arrowheadProps}
+            //         />
+            //     );
+            //     break;
+            // case "ellipse":
+            //     refX = 0;
+            //     refY = 4;
+            //     arrowhead = (
+            //         <circle
+            //             cx="4"
+            //             cy="4"
+            //             r="4"
+            //             fill={stroke}
+            //             {...arrowheadProps}
+            //         />
+            //     );
+            //     break;
+            // case "rectangle":
+            //     refX = 0;
+            //     refY = 4;
+            //     arrowhead = (
+            //         <path
+            //             d="M 0 0 L 8 0 L 8 8 L 0 8 z"
+            //             fill={stroke}
+            //             {...arrowheadProps}
+            //         />
+            //     );
+            //     break;
+            // case "polyline":
+            //     refX = 8;
+            //     refY = 4;
+            //     arrowhead = (
+            //         <path
+            //             d="M 0 0 L 8 4 L 0 8"
+            //             fill="none"
+            //             stroke={stroke}
+            //             {...arrowheadProps}
+            //         />
+            //     );
+            //     break;
+            default: break;
         }
 
         return (
-            <marker id={arrowId} key={arrowId + "_marker"} orient="auto"
-                markerWidth="20" markerHeight="20"
-                refX={refX} refY={refY} >
-                onDragStart={() => console.log("hi")}
-                onDrag={this.handleDrag}
-                onDragStop={this.handleDragStop}
-                onClick={() => console.log("hi")}>
+            <marker
+                id={arrowId}
+                key={arrowId + "_marker"}
+                orient="auto"
+                markerWidth="100"
+                markerHeight="100"
+                markerUnits="userSpaceOnUse"
+                refX={refX}
+                refY={refY}
+            >
                 {arrowhead}
             </marker>
         );
@@ -137,3 +191,13 @@ class Arrowhead extends Component {
 }
 
 export default Arrowhead;
+
+// <marker id={arrowId} key={arrowId + "_marker"} orient="auto"
+//     markerWidth="20" markerHeight="20"
+//     refX={refX} refY={refY} >
+//     onDragStart={() => console.log("hi")}
+//     onDrag={this.handleDrag}
+//     onDragStop={this.handleDragStop}
+//     onClick={() => console.log("hi")}>
+//     {arrowhead}
+// </marker>
