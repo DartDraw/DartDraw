@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Input, Select } from '../ui';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
 import { ColorMenuContainer } from '../color-editor';
 import { PaletteEditorContainer } from '../palette-editor';
@@ -192,12 +193,11 @@ class ContextualMenu extends Component {
         this.props.onShowSubDivisions();
     }
 
-    handleSubmitCustomZoom(event) {
-        var scale = parseFloat(event.target.value) / 100.0;
+    handleSubmitCustomZoom(value) {
+        var scale = parseFloat(value) / 100.0;
         if (scale >= 0.1 && scale <= 32) {
             this.props.onSetCustomZoom(scale);
         }
-        event.preventDefault();
     }
 
     handleSubmitRulerGrid(event) {
@@ -323,10 +323,8 @@ class ContextualMenu extends Component {
         }
 
         return (
-            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -352 : 0 }}>
-                <div className="hide-button-column">
-                    <div className="hide-button" onClick={this.handleToggleHidden} />
-                </div>
+            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -CONTEXTUAL_MENU_WIDTH : 0 }}>
+                <div className="hide-button" onClick={this.handleToggleHidden} />
                 <div className="menu-column">
                     <ColorMenuContainer />
                     <PaletteEditorContainer />
@@ -419,31 +417,29 @@ class ContextualMenu extends Component {
                             <input type="submit" value="delete" />
                         </form>
                     </div>
-                    <div className="dynamic-menu">
-                        { menuLayout }
-                    </div>
-                    <h2>Zoom Settings</h2>
                     <div className="zoom-menu">
-                        <button onClick={this.handleZoomIn} id="button-icon">+</button>
-                        <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                        <button onClick={this.handleToggleScale} id="button-icon">z</button>
-                        <form id="button-icon" onSubmit={(event) => event.preventDefault()}>
+                        <div>
+                            <button onClick={this.handleZoomIn} id="button-icon">+</button>
+                            <button onClick={this.handleZoomOut} id="button-icon">-</button>
+                            <button onClick={this.handleToggleScale} id="button-icon">z</button>
+                        </div>
+                        <div>
+                        </div>
+                        <div>
                             <input
-                                id="zoomSlider"
+                                className="zoom-slider"
                                 type="range"
                                 defaultValue={Math.round(scale * 100.0)}
                                 min="10"
                                 max="3200"
                                 onInput={this.handleSubmitCustomZoom}
                             />
-                            <input
-                                id="zoomText"
-                                type="number"
-                                defaultValue={Math.round(scale * 100.0)}
-                                onInput={this.handleSubmitCustomZoom}
+                            <Input
+                                className="zoom-input"
+                                value={Math.round(scale * 100.0)}
+                                onChange={this.handleSubmitCustomZoom}
                             />
-                            {Math.round(scale * 100.0) + "% "}
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

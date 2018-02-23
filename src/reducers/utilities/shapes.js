@@ -16,6 +16,7 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
         height: 1,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
+        strokeWidth: 0,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         info: {}
     };
@@ -42,6 +43,7 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
         ry: 0.5,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
+        strokeWidth: 0,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         info: {}
     };

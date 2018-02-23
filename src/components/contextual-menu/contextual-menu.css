@@ -7,7 +7,10 @@
   transition: right 500ms ease-in-out;
   color: #EBF1F5;
   padding: 0;
+  padding-left: 13px;
+  padding-right: 13px;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .contextual-menu h2 {
@@ -19,7 +22,8 @@
 
 .menu-column {
     display: flex;
-    flex: 1;
+    flex: initial;
+    width: 100%;
     flex-direction: column;
 }
 
@@ -41,21 +45,20 @@
 .zoom-menu {
     display: flex;
     flex: 0.05;
-    height: 80px;
+    flex-direction: column;
     background-color: #202B33;
 }
 
-.hide-button-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 8px;
+.zoom-input {
+    width: 9px;
 }
 
 .hide-button {
     width: 30px;
     height: 30px;
-    background-color: #182026;
+    position: absolute;
+    top: 48%;
+    left: -20px;
+    background-color: #202B33;
     border-radius: 50%;
 }

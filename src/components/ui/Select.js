@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import './ui.css';
 
 class Select extends Component {
     static propTypes = {
-        value: PropTypes.object,
+        value: PropTypes.any,
+        label: PropTypes.string,
+        style: PropTypes.object,
         onChange: PropTypes.func,
         children: PropTypes.array
     };
@@ -19,9 +22,11 @@ class Select extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.value
-        });
+        if (this.props.value !== nextProps.value) {
+            this.setState({
+                value: nextProps.value
+            });
+        }
     }
 
     handleChange(event) {
@@ -30,9 +35,14 @@ class Select extends Component {
     }
 
     render() {
-        const { children } = this.props;
+        const { children, label, style } = this.props;
         const { value } = this.state;
-        return <select value={value} onChange={this.handleChange}>{children}</select>;
+        return (
+            <div style={style} className="select-container">
+                <select value={value} onChange={this.handleChange} className="select">{children}</select>
+                <div className="select-label">{label}</div>
+            </div>
+        );
     }
 }
 
