@@ -2,9 +2,7 @@ import * as menuActions from '../actions/menu';
 import * as menu from './caseFunctions/menu';
 import * as grid from './caseFunctions/grid';
 import * as rulers from './caseFunctions/rulers';
-import * as arrowhead from './caseFunctions/arrowhead';
 import { deepCopy } from './utilities/object';
-import { setArrowheadType } from './utilities/arrowhead';
 
 const initialState = {
     color: { r: 33, g: 150, b: 243, a: 1 },
@@ -22,9 +20,7 @@ const initialState = {
     showRulers: true,
     showSubDivisions: true,
     showGrid: true,
-    showContextualMenu: true,
-    currentArrowhead: setArrowheadType('triangle'),
-    arrowheadPresets: []
+    showContextualMenu: true
 };
 
 function menuState(state = initialState, action, root) {
@@ -51,22 +47,6 @@ function menuState(state = initialState, action, root) {
             return grid.toggleShowSubDivisions(stateCopy, action, root);
         case menuActions.TOGGLE_SHOW_RULER:
             return rulers.toggleShowRulers(stateCopy, action, root);
-        case menuActions.ARROWHEAD_HANDLE_DRAG:
-            return arrowhead.arrowheadHandleDrag(stateCopy, action, root);
-        case menuActions.CHANGE_ARROWHEAD_TYPE:
-            return arrowhead.changeArrowheadType(stateCopy, action, root);
-        case menuActions.CHANGE_ARROWHEAD_HEIGHT:
-            return arrowhead.changeArrowheadHeight(stateCopy, action, root);
-        case menuActions.CHANGE_ARROWHEAD_LENGTH:
-            return arrowhead.changeArrowheadLength(stateCopy, action, root);
-        case menuActions.CHANGE_ARROWHEAD_BARB_LENGTH:
-            return arrowhead.changeArrowheadBarbLength(stateCopy, action, root);
-        case menuActions.CHANGE_ARROWHEAD_RADIUS_X:
-            return arrowhead.changeArrowheadRadiusX(stateCopy, action, root);
-        case menuActions.CHANGE_ARROWHEAD_RADIUS_Y:
-            return arrowhead.changeArrowheadRadiusY(stateCopy, action, root);
-        case menuActions.EDIT_ARROWHEAD:
-            return arrowhead.editArrowhead(stateCopy, action, root);
         case menuActions.TOGGLE_CONTEXTUAL_MENU:
             stateCopy.showContextualMenu = !stateCopy.showContextualMenu;
             return stateCopy;

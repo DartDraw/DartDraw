@@ -6,7 +6,6 @@ export function setArrowheadType(arrowheadType) {
     switch (arrowheadType) {
         case 'triangle':
             arrowhead = {
-                id: 'triangle',
                 type: 'triangle',
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 1,
@@ -16,7 +15,6 @@ export function setArrowheadType(arrowheadType) {
             break;
         case 'barbed':
             arrowhead = {
-                id: 'barbed',
                 type: 'barbed',
                 points: [215, 55, 275, 75, 215, 95, 235, 75],
                 fillOpacity: 1,
@@ -26,7 +24,6 @@ export function setArrowheadType(arrowheadType) {
             break;
         case 'ellipse':
             arrowhead = {
-                id: 'ellipse',
                 type: 'ellipse',
                 cx: 260,
                 cy: 75,
@@ -39,7 +36,6 @@ export function setArrowheadType(arrowheadType) {
             break;
         case 'rectangle':
             arrowhead = {
-                id: 'rectangle',
                 type: 'rectangle',
                 x: 245,
                 y: 60,
@@ -52,7 +48,6 @@ export function setArrowheadType(arrowheadType) {
             break;
         case 'polyline':
             arrowhead = {
-                id: 'polyline',
                 type: 'polyline',
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 0,
@@ -69,7 +64,7 @@ export function setArrowheadType(arrowheadType) {
     return arrowhead;
 }
 
-export function reshape(arrowhead, draggableData, handleIndex) {
+export function reshape(arrowhead, draggableData, handleIndex, height, width, buffer) {
     const { x, y, deltaX, node } = draggableData;
 
     let offsetLeft = 0;
@@ -83,17 +78,11 @@ export function reshape(arrowhead, draggableData, handleIndex) {
     let mouseX = x - offsetLeft;
     let mouseY = y - offsetTop;
 
-    const height = node.parentNode.clientHeight;
-    const width = node.parentNode.clientWidth;
-    const buffer = 25;
-
     const leftBufferX = buffer;
     const rightBufferX = width - buffer;
 
     const halfHeight = height / 2;
     const halfWidth = width / 2;
-
-    // clean up this logic
 
     switch (arrowhead.type) {
         case 'triangle':
@@ -118,7 +107,6 @@ export function reshape(arrowhead, draggableData, handleIndex) {
                 arrowhead.rx = clamp(arrowhead.rx - (deltaX / 2), 0, (rightBufferX - leftBufferX) / 2);
                 arrowhead.cx = clamp(arrowhead.cx + (deltaX / 2), halfWidth, rightBufferX);
             } else if (handleIndex === 1) {
-                // arrowhead.ry = clamp(arrowhead.cy - mouseY, -halfHeight, halfHeight);
                 arrowhead.ry = Math.abs(arrowhead.cy - mouseY);
             }
             break;
@@ -127,7 +115,6 @@ export function reshape(arrowhead, draggableData, handleIndex) {
                 arrowhead.x = clamp(mouseX, leftBufferX, rightBufferX);
                 arrowhead.width = rightBufferX - arrowhead.x;
             } else if (handleIndex === 1) {
-                // arrowhead.height = clamp(height - (mouseY * 2), 0, height);
                 arrowhead.y = clamp(mouseY, 0, height);
                 arrowhead.height = (halfHeight - arrowhead.y) * 2;
             }
@@ -226,6 +213,15 @@ export function updateLengthAndRefX(arrowhead) {
     return arrowhead;
 }
 
-function clamp(num, min, max) {
+export function getArrowInfo(shapes, arrowheads, selected) {
+    const arrowheadId = shapes.byId[selected[0]].arrowheadId;
+    const arrowhead = arrowheads.byId[arrowheadId];
+    const pathId = selected[0];
+    const path = shapes.byId[pathId];
+
+    return { arrowheadId, arrowhead, pathId, path };
+}
+
+export function clamp(num, min, max) {
     return Math.max(min, Math.min(num, max));
 }

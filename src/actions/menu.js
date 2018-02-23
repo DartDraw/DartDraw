@@ -29,7 +29,6 @@ export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
 export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
 export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
-export const APPLY_ARROWHEAD = 'APPLY_ARROWHEAD';
 export const EDIT_ARROWHEAD = 'EDIT_ARROWHEAD';
 export const CHANGE_ARROWHEAD_HEIGHT = 'CHANGE_ARROWHEAD_HEIGHT';
 export const CHANGE_ARROWHEAD_LENGTH = 'CHANGE_ARROWHEAD_LENGTH';
@@ -204,10 +203,6 @@ export function arrowheadHandleDrag(shapeId, handleIndex, draggableData) {
 
 export function changeArrowheadType(arrowheadType) {
     return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
-}
-
-export function applyArrowhead(arrowhead, path) {
-    return { type: APPLY_ARROWHEAD, payload: { arrowhead, path } };
 }
 
 export function editArrowhead(arrowhead) {

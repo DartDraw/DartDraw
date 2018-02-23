@@ -17,7 +17,8 @@ const initialState = {
     },
     arrowheads: {
         byId: {},
-        allIds: []
+        allIds: [],
+        presets: []
     },
     selected: [],
     boundingBoxes: {},
@@ -218,8 +219,29 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.SCROLL:
             updatedState = canvas.scroll(stateCopy, action, root);
             break;
-        case menuActions.APPLY_ARROWHEAD:
-            updatedState = arrowhead.applyArrowhead(stateCopy, action, root);
+        case menuActions.ARROWHEAD_HANDLE_DRAG:
+            updatedState = arrowhead.arrowheadHandleDrag(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROWHEAD_TYPE:
+            updatedState = arrowhead.changeArrowheadType(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROWHEAD_HEIGHT:
+            updatedState = arrowhead.changeArrowheadHeight(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROWHEAD_LENGTH:
+            updatedState = arrowhead.changeArrowheadLength(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROWHEAD_BARB_LENGTH:
+            updatedState = arrowhead.changeArrowheadBarbLength(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROWHEAD_RADIUS_X:
+            updatedState = arrowhead.changeArrowheadRadiusX(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROWHEAD_RADIUS_Y:
+            updatedState = arrowhead.changeArrowheadRadiusY(stateCopy, action, root);
+            break;
+        case menuActions.EDIT_ARROWHEAD:
+            updatedState = arrowhead.editArrowhead(stateCopy, action, root);
             break;
         default: break;
     }

@@ -7,9 +7,8 @@ class ArrowheadGUI extends Component {
     static propTypes = {
         arrowheads: PropTypes.object,
         selectedPath: PropTypes.object,
+        selectedArrowhead: PropTypes.object,
         fillColor: PropTypes.object,
-        currentArrowhead: PropTypes.object,
-        arrowheadPresets: PropTypes.array,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDrag: PropTypes.func,
         onApplyArrowhead: PropTypes.func,
@@ -25,7 +24,7 @@ class ArrowheadGUI extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isChecked: this.props.currentArrowhead.fillOpacity === 1
+            isChecked: this.props.selectedArrowhead.fillOpacity === 1
         };
 
         this.renderReferenceLine = this.renderReferenceLine.bind(this);
@@ -34,7 +33,6 @@ class ArrowheadGUI extends Component {
         this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
         this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
         this.handleReset = this.handleReset.bind(this);
-        this.handleApplyArrowhead = this.handleApplyArrowhead.bind(this);
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleBarbLengthChange = this.handleBarbLengthChange.bind(this);
@@ -43,21 +41,9 @@ class ArrowheadGUI extends Component {
         this.handleToggleFill = this.handleToggleFill.bind(this);
     }
 
-    componentWillMount() {
-        const { arrowheads, selectedPath } = this.props;
-
-        // set currentArrowhead to be the same as the selected path's arrowhead
-        this.props.onEditArrowhead(arrowheads.byId[selectedPath.arrowheadId]);
-    }
-
     handleReset(event) {
-        this.props.onChangeArrowheadType(this.props.currentArrowhead.type);
-        event.preventDefault();
-    }
-
-    handleApplyArrowhead(event) {
-        const { currentArrowhead, selectedPath } = this.props;
-        this.props.onApplyArrowhead(currentArrowhead, selectedPath);
+        const { selectedArrowhead } = this.props;
+        this.props.onChangeArrowheadType(selectedArrowhead.type);
         event.preventDefault();
     }
 
@@ -72,7 +58,6 @@ class ArrowheadGUI extends Component {
     }
 
     handleBarbLengthChange(event) {
-        console.log(event.target.value);
         this.props.onBarbLengthChange(parseInt(event.target.value, 10));
         event.preventDefault();
     }
@@ -87,10 +72,10 @@ class ArrowheadGUI extends Component {
         event.preventDefault();
     }
 
+    // change this??????
     handleToggleFill(event) {
         this.setState({isChecked: !this.state.isChecked});
-
-        const newArrowhead = Object.assign({}, this.props.currentArrowhead, { fillOpacity: this.state.isChecked ? 0 : 1 });
+        const newArrowhead = Object.assign({}, this.props.selectedArrowhead, { fillOpacity: this.state.isChecked ? 0 : 1 });
         this.props.onEditArrowhead(newArrowhead);
     }
 
@@ -190,47 +175,47 @@ class ArrowheadGUI extends Component {
     }
 
     renderArrowheadInputs() {
-        const { currentArrowhead } = this.props;
+        const { selectedArrowhead } = this.props;
 
-        switch (currentArrowhead.type) {
+        switch (selectedArrowhead.type) {
             case "triangle":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(Math.abs(currentArrowhead.points[5] - currentArrowhead.points[1]))}
-                        {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
+                        {this.renderHeightInput(Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1]))}
+                        {this.renderLengthInput(selectedArrowhead.points[2] - selectedArrowhead.points[0])}
                         {this.renderFillCheckbox()}
                     </form>
                 );
             case "barbed":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(Math.abs(currentArrowhead.points[5] - currentArrowhead.points[1]))}
-                        {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
-                        {this.renderBarbLengthInput(currentArrowhead.points[6] - currentArrowhead.points[0])}
+                        {this.renderHeightInput(Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1]))}
+                        {this.renderLengthInput(selectedArrowhead.points[2] - selectedArrowhead.points[0])}
+                        {this.renderBarbLengthInput(selectedArrowhead.points[6] - selectedArrowhead.points[0])}
                         {this.renderFillCheckbox()}
                     </form>
                 );
             case "ellipse":
                 return (
                     <form id="form">
-                        {this.renderRadiusXInput(currentArrowhead.rx)}
-                        {this.renderRadiusYInput(currentArrowhead.ry)}
+                        {this.renderRadiusXInput(selectedArrowhead.rx)}
+                        {this.renderRadiusYInput(selectedArrowhead.ry)}
                         {this.renderFillCheckbox()}
                     </form>
                 );
             case "rectangle":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(currentArrowhead.height)}
-                        {this.renderLengthInput(currentArrowhead.width)}
+                        {this.renderHeightInput(selectedArrowhead.height)}
+                        {this.renderLengthInput(selectedArrowhead.width)}
                         {this.renderFillCheckbox()}
                     </form>
                 );
             case "polyline":
                 return (
                     <form id="form">
-                        {this.renderHeightInput(Math.abs(currentArrowhead.points[5] - currentArrowhead.points[1]))}
-                        {this.renderLengthInput(currentArrowhead.points[2] - currentArrowhead.points[0])}
+                        {this.renderHeightInput(Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1]))}
+                        {this.renderLengthInput(selectedArrowhead.points[2] - selectedArrowhead.points[0])}
                     </form>
                 );
             default: break;
@@ -315,7 +300,7 @@ class ArrowheadGUI extends Component {
     }
 
     render() {
-        const { selectedPath, currentArrowhead } = this.props;
+        const { selectedPath, selectedArrowhead } = this.props;
 
         const arrowheadInputs = this.renderArrowheadInputs();
 
@@ -324,7 +309,7 @@ class ArrowheadGUI extends Component {
                 <label>Arrowhead Type: </label>
                 <select
                     id="type"
-                    defaultValue={currentArrowhead.type}
+                    defaultValue={selectedArrowhead.type}
                     onChange={this.handleChangeArrowheadType}
                 >
                     <option value='triangle'>triangle</option>
@@ -334,9 +319,9 @@ class ArrowheadGUI extends Component {
                     <option value='polyline'>polyline</option>
                 </select>
                 <svg className="arrowhead-gui">
-                    {this.renderReferenceLine(selectedPath, currentArrowhead)}
-                    {this.renderArrowhead(currentArrowhead)}
-                    {this.renderHandles(currentArrowhead)}
+                    {this.renderReferenceLine(selectedPath, selectedArrowhead)}
+                    {this.renderArrowhead(selectedArrowhead)}
+                    {this.renderHandles(selectedArrowhead)}
                 </svg>
                 <input
                     id="reset"
@@ -345,12 +330,6 @@ class ArrowheadGUI extends Component {
                     value="Reset to Default"
                 />
                 {arrowheadInputs}
-                <input
-                    id="apply"
-                    type="button"
-                    onClick={this.handleApplyArrowhead}
-                    value="Apply"
-                />
             </div>
         );
     }

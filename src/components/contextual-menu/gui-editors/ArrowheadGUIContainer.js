@@ -13,13 +13,13 @@ import {
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { arrowheadPresets, currentArrowhead } = menuState;
-    const { arrowheads } = drawingState;
+    const { shapes, arrowheads, selected } = drawingState;
+
+    const selectedArrowhead = arrowheads.byId[shapes.byId[selected[0]].arrowheadId];
 
     return {
         arrowheads,
-        arrowheadPresets,
-        currentArrowhead
+        selectedArrowhead
     };
 };
 
@@ -30,9 +30,6 @@ const mapDispatchToProps = (dispatch) => {
         },
         onChangeArrowheadType: (arrowheadType) => {
             dispatch(changeArrowheadType(arrowheadType));
-        },
-        onApplyArrowhead: (arrowhead, path) => {
-            dispatch(applyArrowhead(arrowhead, path));
         },
         onEditArrowhead: (arrowhead) => {
             dispatch(editArrowhead(arrowhead));
