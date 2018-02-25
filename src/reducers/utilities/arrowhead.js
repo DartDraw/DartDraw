@@ -7,52 +7,47 @@ export function setArrowheadType(arrowheadType) {
         case 'triangle':
             arrowhead = {
                 type: 'triangle',
+                // preset: 'default',
                 points: [215, 55, 275, 75, 215, 95],
-                fillOpacity: 1,
-                refX: 215, // points[0]
-                length: 60 // points[2] - points[0]
+                fillOpacity: 1
             };
             break;
         case 'barbed':
             arrowhead = {
                 type: 'barbed',
+                // preset: 'default',
                 points: [215, 55, 275, 75, 215, 95, 235, 75],
-                fillOpacity: 1,
-                refX: 235, // points[6]
-                length: 40 // points[2] - points[6]
+                fillOpacity: 1
             };
             break;
         case 'ellipse':
             arrowhead = {
                 type: 'ellipse',
+                // preset: 'default',
                 cx: 260,
                 cy: 75,
                 rx: 15,
                 ry: 15,
-                fillOpacity: 1,
-                refX: 245, // cx - rx
-                length: 30 // rx * 2
+                fillOpacity: 1
             };
             break;
         case 'rectangle':
             arrowhead = {
                 type: 'rectangle',
+                // preset: 'default',
                 x: 245,
                 y: 60,
                 width: 30,
                 height: 30,
-                fillOpacity: 1,
-                refX: 245, // x
-                length: 30 // width
+                fillOpacity: 1
             };
             break;
         case 'polyline':
             arrowhead = {
                 type: 'polyline',
+                // preset: 'default',
                 points: [215, 55, 275, 75, 215, 95],
-                fillOpacity: 0,
-                refX: 275, // points[2]
-                length: 0 // 0
+                fillOpacity: 0
             };
             break;
         default: break;
@@ -60,6 +55,7 @@ export function setArrowheadType(arrowheadType) {
 
     arrowhead.handles = generateHandles(arrowhead);
     arrowhead.handles = updateHandles(arrowhead);
+    arrowhead = updateLengthAndRefX(arrowhead);
 
     return arrowhead;
 }
@@ -211,6 +207,20 @@ export function updateLengthAndRefX(arrowhead) {
     }
 
     return arrowhead;
+}
+
+export function changeArrowheadPreset(presetName, shapes, arrowheads, selected) {
+    var { arrowhead, path } = getArrowInfo(shapes, arrowheads, selected);
+
+    const newArrowhead = arrowheads.presets[presetName];
+
+    const updatedArrowhead = Object.assign({}, arrowhead, {...newArrowhead});
+    updatedArrowhead.handles = generateHandles(updatedArrowhead);
+    updatedArrowhead.handles = updateHandles(updatedArrowhead);
+
+    const updatedPath = Object.assign({}, path, {arrowheadLength: newArrowhead.length});
+
+    return { updatedArrowhead, updatedPath };
 }
 
 export function getArrowInfo(shapes, arrowheads, selected) {

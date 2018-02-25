@@ -18,7 +18,7 @@ const initialState = {
     arrowheads: {
         byId: {},
         allIds: [],
-        presets: []
+        presets: {}
     },
     selected: [],
     boundingBoxes: {},
@@ -240,8 +240,20 @@ function drawingState(state = initialState, action, root) {
         case menuActions.CHANGE_ARROWHEAD_RADIUS_Y:
             updatedState = arrowhead.changeArrowheadRadiusY(stateCopy, action, root);
             break;
-        case menuActions.EDIT_ARROWHEAD:
-            updatedState = arrowhead.editArrowhead(stateCopy, action, root);
+        case menuActions.SELECT_ARROWHEAD_PRESET:
+            updatedState = arrowhead.selectArrowheadPreset(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_ARROWHEAD_FILL:
+            updatedState = arrowhead.toggleArrowheadFill(stateCopy, action, root);
+            break;
+        case menuActions.ADD_ARROWHEAD_PRESET:
+            updatedState = arrowhead.addArrowheadPreset(stateCopy, action, root);
+            break;
+        case menuActions.SAVE_ARROWHEAD_PRESET:
+            updatedState = arrowhead.saveArrowheadPreset(stateCopy, action, root);
+            break;
+        case menuActions.DELETE_ARROWHEAD_PRESET:
+            updatedState = arrowhead.deleteArrowheadPreset(stateCopy, action, root);
             break;
         default: break;
     }

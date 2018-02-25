@@ -8,17 +8,22 @@ class ArrowheadGUI extends Component {
         arrowheads: PropTypes.object,
         selectedPath: PropTypes.object,
         selectedArrowhead: PropTypes.object,
+        presetNames: PropTypes.array,
         fillColor: PropTypes.object,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDrag: PropTypes.func,
         onApplyArrowhead: PropTypes.func,
         onChangeArrowheadType: PropTypes.func,
-        onEditArrowhead: PropTypes.func,
+        onToggleArrowheadFill: PropTypes.func,
         onHeightChange: PropTypes.func,
         onLengthChange: PropTypes.func,
         onBarbLengthChange: PropTypes.func,
         onRadiusXChange: PropTypes.func,
-        onRadiusYChange: PropTypes.func
+        onRadiusYChange: PropTypes.func,
+        onSelectArrowheadPreset: PropTypes.func,
+        onAddArrowheadPreset: PropTypes.func,
+        onSaveArrowheadPreset: PropTypes.func,
+        onDeleteArrowheadPreset: PropTypes.func
     };
 
     constructor(props) {
@@ -32,18 +37,29 @@ class ArrowheadGUI extends Component {
         this.renderHandles = this.renderHandles.bind(this);
         this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
         this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
-        this.handleReset = this.handleReset.bind(this);
+        this.handleResetToDefault = this.handleResetToDefault.bind(this);
+        this.handleResetToPreset = this.handleResetToPreset.bind(this);
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleBarbLengthChange = this.handleBarbLengthChange.bind(this);
         this.handleRadiusXChange = this.handleRadiusXChange.bind(this);
         this.handleRadiusYChange = this.handleRadiusYChange.bind(this);
         this.handleToggleFill = this.handleToggleFill.bind(this);
+        this.handleSelectArrowheadPreset = this.handleSelectArrowheadPreset.bind(this);
+        this.handleAddArrowheadPreset = this.handleAddArrowheadPreset.bind(this);
+        this.handleSaveArrowheadPreset = this.handleSaveArrowheadPreset.bind(this);
+        this.handleDeleteArrowheadPreset = this.handleDeleteArrowheadPreset.bind(this);
     }
 
-    handleReset(event) {
+    handleResetToDefault(event) {
         const { selectedArrowhead } = this.props;
         this.props.onChangeArrowheadType(selectedArrowhead.type);
+        event.preventDefault();
+    }
+
+    handleResetToPreset(event) {
+        const { selectedArrowhead } = this.props;
+        this.props.onSelectArrowheadPreset(selectedArrowhead.preset);
         event.preventDefault();
     }
 
@@ -75,8 +91,7 @@ class ArrowheadGUI extends Component {
     // change this??????
     handleToggleFill(event) {
         this.setState({isChecked: !this.state.isChecked});
-        const newArrowhead = Object.assign({}, this.props.selectedArrowhead, { fillOpacity: this.state.isChecked ? 0 : 1 });
-        this.props.onEditArrowhead(newArrowhead);
+        this.props.onToggleArrowheadFill();
     }
 
     handleChangeArrowheadType(event) {
@@ -86,6 +101,65 @@ class ArrowheadGUI extends Component {
 
     handleArrowheadHandleDrag(shapeId, handleIndex, draggableData) {
         this.props.onArrowheadHandleDrag(shapeId, handleIndex, draggableData);
+    }
+
+    handleSelectArrowheadPreset(event) {
+        this.props.onSelectArrowheadPreset(event.target.value);
+        event.preventDefault();
+    }
+
+    handleAddArrowheadPreset(event) {
+        const { presetNames, selectedArrowhead } = this.props;
+        var name = document.getElementById("presetName").value;
+
+        if (name === "") {
+            console.error("Please name your new arrowhead preset.");
+        } else if (presetNames.indexOf(name) === -1) {
+            this.props.onAddArrowheadPreset(name, selectedArrowhead);
+        } else {
+            console.error("The name '%s' is already taken. Please enter a different name for your arrowhead preset.", name);
+        }
+        event.preventDefault();
+    }
+
+    handleSaveArrowheadPreset(event) {
+        const { selectedArrowhead } = this.props;
+        this.props.onSaveArrowheadPreset(selectedArrowhead);
+        event.preventDefault();
+    }
+
+    handleDeleteArrowheadPreset(event) {
+        const { preset } = this.props.selectedArrowhead;
+        this.props.onDeleteArrowheadPreset(preset);
+        event.preventDefault();
+    }
+
+    renderArrowheadPresets() {
+        const { presetNames, selectedArrowhead } = this.props;
+
+        if (presetNames.length > 0) {
+            let list = [];
+
+            presetNames.map((presetName) => {
+                list.push(<option key={presetName} value={presetName}>{presetName}</option>);
+            });
+
+            return (
+                <div>
+
+                    <label>Saved Arrowhead Presets: </label>
+                    <select id="selectPreset" value={selectedArrowhead.preset} onChange={this.handleSelectArrowheadPreset}>
+                        {list}
+                    </select>
+                    <input
+                        id="resetPreset"
+                        type="button"
+                        onClick={this.handleResetToPreset}
+                        value="Restore Preset"
+                    />
+                </div>
+            );
+        }
     }
 
     renderHeightInput(defaultValue) {
@@ -300,9 +374,12 @@ class ArrowheadGUI extends Component {
     }
 
     render() {
-        const { selectedPath, selectedArrowhead } = this.props;
+        const { selectedPath, selectedArrowhead, arrowheads } = this.props;
 
         const arrowheadInputs = this.renderArrowheadInputs();
+        const presetDropdown = this.renderArrowheadPresets();
+
+        const showPresets = Object.keys(arrowheads.presets).length !== 0;
 
         return (
             <div style={{flex: 1, overflow: 'hidden'}}>
@@ -324,12 +401,37 @@ class ArrowheadGUI extends Component {
                     {this.renderHandles(selectedArrowhead)}
                 </svg>
                 <input
-                    id="reset"
+                    id="resetDefault"
                     type="button"
-                    onClick={this.handleReset}
-                    value="Reset to Default"
+                    onClick={this.handleResetToDefault}
+                    value="Restore Default"
                 />
                 {arrowheadInputs}
+                <input
+                    id="presetName"
+                    type="text"
+                    placeholder="name this arrowhead"
+                />
+                <input
+                    type="submit"
+                    onClick={this.handleAddArrowheadPreset}
+                    value="Add +"
+                />
+                <input
+                    id="save"
+                    type="button"
+                    onClick={this.handleSaveArrowheadPreset}
+                    value="Save"
+                    style={{flexDirection: 'row', display: showPresets ? 'flex' : 'none'}}
+                />
+                <input
+                    id="delete"
+                    type="button"
+                    onClick={this.handleDeleteArrowheadPreset}
+                    value="Delete"
+                    style={{flexDirection: 'row', display: showPresets ? 'flex' : 'none'}}
+                />
+                {presetDropdown}
             </div>
         );
     }

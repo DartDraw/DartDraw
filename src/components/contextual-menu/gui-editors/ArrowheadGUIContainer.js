@@ -3,13 +3,16 @@ import ArrowheadGUI from './ArrowheadGUI';
 import {
     arrowheadHandleDrag,
     changeArrowheadType,
-    applyArrowhead,
-    editArrowhead,
+    toggleArrowheadFill,
     changeArrowheadHeight,
     changeArrowheadLength,
     changeArrowheadBarbLength,
     changeArrowheadRadiusX,
-    changeArrowheadRadiusY
+    changeArrowheadRadiusY,
+    selectArrowheadPreset,
+    addArrowheadPreset,
+    saveArrowheadPreset,
+    deleteArrowheadPreset
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
@@ -19,7 +22,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         arrowheads,
-        selectedArrowhead
+        selectedArrowhead,
+        presetNames: Object.keys(arrowheads.presets)
     };
 };
 
@@ -31,8 +35,8 @@ const mapDispatchToProps = (dispatch) => {
         onChangeArrowheadType: (arrowheadType) => {
             dispatch(changeArrowheadType(arrowheadType));
         },
-        onEditArrowhead: (arrowhead) => {
-            dispatch(editArrowhead(arrowhead));
+        onToggleArrowheadFill: () => {
+            dispatch(toggleArrowheadFill());
         },
         onHeightChange: (height) => {
             dispatch(changeArrowheadHeight(height));
@@ -48,6 +52,18 @@ const mapDispatchToProps = (dispatch) => {
         },
         onRadiusYChange: (ry) => {
             dispatch(changeArrowheadRadiusY(ry));
+        },
+        onSelectArrowheadPreset: (name) => {
+            dispatch(selectArrowheadPreset(name));
+        },
+        onAddArrowheadPreset: (name, arrowhead) => {
+            dispatch(addArrowheadPreset(name, arrowhead));
+        },
+        onSaveArrowheadPreset: (arrowhead) => {
+            dispatch(saveArrowheadPreset(arrowhead));
+        },
+        onDeleteArrowheadPreset: (presetName) => {
+            dispatch(deleteArrowheadPreset(presetName));
         }
     };
 };

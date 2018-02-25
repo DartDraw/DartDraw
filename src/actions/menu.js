@@ -29,12 +29,16 @@ export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
 export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
 export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
-export const EDIT_ARROWHEAD = 'EDIT_ARROWHEAD';
+export const TOGGLE_ARROWHEAD_FILL = 'TOGGLE_ARROWHEAD_FILL';
 export const CHANGE_ARROWHEAD_HEIGHT = 'CHANGE_ARROWHEAD_HEIGHT';
 export const CHANGE_ARROWHEAD_LENGTH = 'CHANGE_ARROWHEAD_LENGTH';
 export const CHANGE_ARROWHEAD_BARB_LENGTH = 'CHANGE_ARROWHEAD_BARB_LENGTH';
 export const CHANGE_ARROWHEAD_RADIUS_X = 'CHANGE_ARROWHEAD_RADIUS_X';
 export const CHANGE_ARROWHEAD_RADIUS_Y = 'CHANGE_ARROWHEAD_RADIUS_Y';
+export const SELECT_ARROWHEAD_PRESET = 'SELECT_ARROWHEAD_PRESET';
+export const ADD_ARROWHEAD_PRESET = 'ADD_ARROWHEAD_PRESET';
+export const SAVE_ARROWHEAD_PRESET = 'SAVE_ARROWHEAD_PRESET';
+export const DELETE_ARROWHEAD_PRESET = 'DELETE_ARROWHEAD_PRESET';
 export const SELECT_RULER = 'SELECT_RULER';
 export const ADD_RULER = 'ADD_RULER';
 export const SAVE_RULER = 'SAVE_RULER';
@@ -205,8 +209,8 @@ export function changeArrowheadType(arrowheadType) {
     return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
 }
 
-export function editArrowhead(arrowhead) {
-    return { type: EDIT_ARROWHEAD, payload: { arrowhead } };
+export function toggleArrowheadFill() {
+    return { type: TOGGLE_ARROWHEAD_FILL };
 }
 
 export function changeArrowheadHeight(height) {
@@ -227,4 +231,20 @@ export function changeArrowheadRadiusX(rx) {
 
 export function changeArrowheadRadiusY(ry) {
     return { type: CHANGE_ARROWHEAD_RADIUS_Y, payload: { ry } };
+}
+
+export function selectArrowheadPreset(name) {
+    return { type: SELECT_ARROWHEAD_PRESET, payload: { name } };
+}
+
+export function addArrowheadPreset(name, arrowhead) {
+    return { type: ADD_ARROWHEAD_PRESET, payload: { name, arrowhead } };
+}
+
+export function saveArrowheadPreset(arrowhead) {
+    return { type: SAVE_ARROWHEAD_PRESET, payload: { arrowhead } };
+}
+
+export function deleteArrowheadPreset(presetName) {
+    return { type: DELETE_ARROWHEAD_PRESET, payload: { presetName } };
 }

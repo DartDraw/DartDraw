@@ -62,13 +62,13 @@ class Arrowhead extends Component {
     }
 
     render() {
-        const { id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
+        const { id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray, fillOpacity } = this.props;
         const arrowheadProps = {
             fill: stroke,
-            stroke: stroke,
-            strokeWidth: strokeWidth,
-            strokeDasharray: strokeDasharray,
-            vectorEffect: "non-scaling-stroke"
+            fillOpacity,
+            stroke,
+            strokeWidth,
+            strokeDasharray
         };
 
         var arrowhead;
