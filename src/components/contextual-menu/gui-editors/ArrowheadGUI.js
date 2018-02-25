@@ -8,6 +8,7 @@ class ArrowheadGUI extends Component {
         arrowheads: PropTypes.object,
         selectedPath: PropTypes.object,
         selectedArrowhead: PropTypes.object,
+        lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
         fillColor: PropTypes.object,
         propagateEvents: PropTypes.bool,
@@ -15,6 +16,7 @@ class ArrowheadGUI extends Component {
         onApplyArrowhead: PropTypes.func,
         onChangeArrowheadType: PropTypes.func,
         onToggleArrowheadFill: PropTypes.func,
+        onToggleArrowheadAspect: PropTypes.func,
         onHeightChange: PropTypes.func,
         onLengthChange: PropTypes.func,
         onBarbLengthChange: PropTypes.func,
@@ -29,7 +31,8 @@ class ArrowheadGUI extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isChecked: this.props.selectedArrowhead.fillOpacity === 1
+            isFillChecked: this.props.selectedArrowhead.fillOpacity === 1,
+            isAspectChecked: this.props.lockAspectRatio
         };
 
         this.renderReferenceLine = this.renderReferenceLine.bind(this);
@@ -45,6 +48,7 @@ class ArrowheadGUI extends Component {
         this.handleRadiusXChange = this.handleRadiusXChange.bind(this);
         this.handleRadiusYChange = this.handleRadiusYChange.bind(this);
         this.handleToggleFill = this.handleToggleFill.bind(this);
+        this.handleToggleAspect = this.handleToggleAspect.bind(this);
         this.handleSelectArrowheadPreset = this.handleSelectArrowheadPreset.bind(this);
         this.handleAddArrowheadPreset = this.handleAddArrowheadPreset.bind(this);
         this.handleSaveArrowheadPreset = this.handleSaveArrowheadPreset.bind(this);
@@ -88,10 +92,14 @@ class ArrowheadGUI extends Component {
         event.preventDefault();
     }
 
-    // change this??????
     handleToggleFill(event) {
-        this.setState({isChecked: !this.state.isChecked});
+        this.setState({isFillChecked: !this.state.isFillChecked});
         this.props.onToggleArrowheadFill();
+    }
+
+    handleToggleAspect(event) {
+        this.setState({isAspectChecked: !this.state.isAspectChecked});
+        this.props.onToggleArrowheadAspect();
     }
 
     handleChangeArrowheadType(event) {
@@ -233,7 +241,7 @@ class ArrowheadGUI extends Component {
     }
 
     renderFillCheckbox() {
-        const { isChecked } = this.state;
+        const { isFillChecked } = this.state;
 
         return (
             <div>
@@ -242,7 +250,23 @@ class ArrowheadGUI extends Component {
                     id="fill"
                     type="checkbox"
                     onChange={this.handleToggleFill}
-                    checked={isChecked}
+                    checked={isFillChecked}
+                />
+            </div>
+        );
+    }
+
+    renderAspectCheckbox() {
+        const { isAspectChecked } = this.state;
+
+        return (
+            <div>
+                <label>Lock Aspect: </label>
+                <input
+                    id="aspect"
+                    type="checkbox"
+                    onChange={this.handleToggleAspect}
+                    checked={isAspectChecked}
                 />
             </div>
         );
@@ -274,6 +298,7 @@ class ArrowheadGUI extends Component {
                     <form id="form">
                         {this.renderRadiusXInput(selectedArrowhead.rx)}
                         {this.renderRadiusYInput(selectedArrowhead.ry)}
+                        {this.renderAspectCheckbox()}
                         {this.renderFillCheckbox()}
                     </form>
                 );
@@ -282,6 +307,7 @@ class ArrowheadGUI extends Component {
                     <form id="form">
                         {this.renderHeightInput(selectedArrowhead.height)}
                         {this.renderLengthInput(selectedArrowhead.width)}
+                        {this.renderAspectCheckbox()}
                         {this.renderFillCheckbox()}
                     </form>
                 );
@@ -318,7 +344,7 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={selectedPath.stroke} strokeDasharray={selectedPath.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={10} stroke={selectedPath.stroke} strokeDasharray={selectedPath.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
@@ -329,7 +355,7 @@ class ArrowheadGUI extends Component {
             transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
             fill: stroke,
             stroke: stroke,
-            strokeWidth: 5
+            strokeWidth: 10
         };
 
         switch (arrowhead.type) {

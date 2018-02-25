@@ -4,6 +4,7 @@ import {
     arrowheadHandleDrag,
     changeArrowheadType,
     toggleArrowheadFill,
+    toggleArrowheadAspect,
     changeArrowheadHeight,
     changeArrowheadLength,
     changeArrowheadBarbLength,
@@ -16,13 +17,14 @@ import {
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, arrowheads, selected } = drawingState;
+    const { shapes, arrowheads, lockAspectRatio, selected } = drawingState;
 
     const selectedArrowhead = arrowheads.byId[shapes.byId[selected[0]].arrowheadId];
 
     return {
         arrowheads,
         selectedArrowhead,
+        lockAspectRatio,
         presetNames: Object.keys(arrowheads.presets)
     };
 };
@@ -37,6 +39,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onToggleArrowheadFill: () => {
             dispatch(toggleArrowheadFill());
+        },
+        onToggleArrowheadAspect: () => {
+            dispatch(toggleArrowheadAspect());
         },
         onHeightChange: (height) => {
             dispatch(changeArrowheadHeight(height));

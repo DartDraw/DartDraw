@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { scaleArrowheadPoints, scaleRefX } from '../../../reducers/utilities/arrowhead';
 import { formatPoints } from '../../../utilities/shapes';
 
 class Arrowhead extends Component {
@@ -82,6 +83,7 @@ class Arrowhead extends Component {
                         points={formatPoints(points)}
                         {...arrowheadProps}
                     />
+                    // points={scaleArrowheadPoints(points, strokeWidth)}
                 );
                 break;
             case "ellipse":

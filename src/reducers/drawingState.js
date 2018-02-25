@@ -20,6 +20,7 @@ const initialState = {
         allIds: [],
         presets: {}
     },
+    lockAspectRatio: false,
     selected: [],
     boundingBoxes: {},
     selectionBoxes: {},
@@ -245,6 +246,9 @@ function drawingState(state = initialState, action, root) {
             break;
         case menuActions.TOGGLE_ARROWHEAD_FILL:
             updatedState = arrowhead.toggleArrowheadFill(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_ARROWHEAD_ASPECT:
+            updatedState = arrowhead.toggleArrowheadAspect(stateCopy, action, root);
             break;
         case menuActions.ADD_ARROWHEAD_PRESET:
             updatedState = arrowhead.addArrowheadPreset(stateCopy, action, root);

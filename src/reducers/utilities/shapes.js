@@ -248,7 +248,7 @@ export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gri
             (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
-        strokeWidth: 5,
+        strokeWidth: 10,
         strokeDasharray: '',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         arrowheadId: uuidv1(),
