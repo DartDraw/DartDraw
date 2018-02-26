@@ -68,7 +68,6 @@ class App extends Component {
                 <BottomScrollContainer />
                 <RightScrollContainer />
                 <ContextualMenuContainer />
-
             </div>
         );
     }
