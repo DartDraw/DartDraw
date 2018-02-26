@@ -33,7 +33,8 @@ const initialState = {
     showRulers: true,
     showSubDivisions: true,
     showGrid: true,
-    showContextualMenu: true
+    showContextualMenu: true,
+    showSettingsModal: false
 };
 
 function menuState(state = initialState, action, root) {
@@ -79,6 +80,9 @@ function menuState(state = initialState, action, root) {
             return rulers.toggleShowRulers(stateCopy, action, root);
         case menuActions.TOGGLE_CONTEXTUAL_MENU:
             stateCopy.showContextualMenu = !stateCopy.showContextualMenu;
+            return stateCopy;
+        case menuActions.TOGGLE_SETTINGS_MODAL:
+            stateCopy.showSettingsModal = !stateCopy.showSettingsModal;
             return stateCopy;
         default:
             return stateCopy;

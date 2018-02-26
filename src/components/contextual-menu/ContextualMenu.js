@@ -309,7 +309,6 @@ class ContextualMenu extends Component {
         const { hidden, selectedShape, scale, unitType, unitDivisions, currentRuler, canvasWidthInUnits, canvasHeightInUnits } = this.props;
 
         let menuLayout = null;
-        let colorLayout = null;
         if (selectedShape) {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} onEditText={this.handleEditText} />;

@@ -7,6 +7,7 @@ import { LeftMenuContainer } from './components/left-menu';
 import { BottomScrollContainer, RightScrollContainer } from './components/scroll-bars';
 import { RulerLayerContainer } from './components/drawing/layers';
 import { ContextualMenuContainer } from './components/contextual-menu';
+import { ElectronMenuContainer } from './components/dd-modal';
 
 class App extends Component {
     static propTypes = {
@@ -51,6 +52,7 @@ class App extends Component {
                 onMouseMove={this.handleMouseMove}
                 tabIndex={-1}
             >
+                <ElectronMenuContainer />
                 <TopMenuContainer />
                 <div className="outerBody">
                     <LeftMenuContainer />
