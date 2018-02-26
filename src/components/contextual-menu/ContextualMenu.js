@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Input, SelectRow } from '../ui';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
 import { ColorMenuContainer } from '../color-editor';
 import { PaletteEditorContainer } from '../palette-editor';
@@ -34,6 +35,7 @@ class ContextualMenu extends Component {
         onFlipVertical: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
         onSetCustomZoom: PropTypes.func,
+        onSelectZoomTool: PropTypes.func,
         onShowGrid: PropTypes.func,
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
@@ -75,6 +77,7 @@ class ContextualMenu extends Component {
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
+        this.handleSelectZoomTool = this.handleSelectZoomTool.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
         this.handleSelectRuler = this.handleSelectRuler.bind(this);
         this.handleAddRuler = this.handleAddRuler.bind(this);
@@ -180,6 +183,10 @@ class ContextualMenu extends Component {
         }
     }
 
+    handleSelectZoomTool() {
+        this.props.onSelectZoomTool();
+    }
+
     handleShowRulers() {
         this.props.onShowRulers();
     }
@@ -192,12 +199,11 @@ class ContextualMenu extends Component {
         this.props.onShowSubDivisions();
     }
 
-    handleSubmitCustomZoom(event) {
-        var scale = parseFloat(event.target.value) / 100.0;
+    handleSubmitCustomZoom(value) {
+        var scale = parseFloat(value) / 100.0;
         if (scale >= 0.1 && scale <= 32) {
             this.props.onSetCustomZoom(scale);
         }
-        event.preventDefault();
     }
 
     handleSubmitRulerGrid(event) {
@@ -322,127 +328,51 @@ class ContextualMenu extends Component {
         }
 
         return (
-            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -352 : 0 }}>
-                <div className="hide-button-column">
-                    <div className="hide-button" onClick={this.handleToggleHidden} />
-                </div>
+            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -CONTEXTUAL_MENU_WIDTH : 0 }}>
+                <div className="hide-button" onClick={this.handleToggleHidden} />
                 <div className="menu-column">
-                    <ColorMenuContainer />
-                    <PaletteEditorContainer />
-                    <div className="dynamic-menu">
-                        { menuLayout }
+                    <div className="menu-column-top">
+                        <div className="color-menu">
+                            <ColorMenuContainer />
+                            <PaletteEditorContainer />
+                        </div>
+                        <div className="dynamic-menu">
+                            { menuLayout }
+                        </div>
                     </div>
-                    <h2>Distribution</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="top" id="distribute-top" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="center" id="distribute-vertical" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="bottom" id="distribute-bottom" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="height" id="distribute-height" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="left" id="distribute-left" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="center" id="distribute-horizontal" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="right" id="distribute-right" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="width" id="distribute-width" />
-                        </button>
-                    </div>
-                    <h2>Ruler / Grid / Canvas Settings</h2>
-                    <div className="temp">
-                        <button onClick={this.handleShowRulers} id="button-icon">R</button>
-                        <button onClick={this.handleShowGrid} id="button-icon">G</button>
-                        <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
-                        <button onClick={this.handleToggleRuler} id="button-icon">P</button>
-                        <button onClick={this.handleToggleCanvasOrientation} id="button-icon">O</button>
-                    </div>
-                    <div className="ruler-menu">
-                        <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
-                            {this.createRulerPresetList()}
-                        </select>
-                        <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
-                            <select
-                                id="unitType"
-                                defaultValue={unitType}
-                            >
-                                <option value="in">{"in"}</option>
-                                <option value="ft">ft</option>
-                                <option value="mm">mm</option>
-                                <option value="cm">cm</option>
-                                <option value="m">m</option>
-                                <option value="px">px</option>
-                                <option value="pt">pt</option>
-                            </select>
-                            <input
-                                id="width"
-                                defaultValue={canvasWidthInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="height"
-                                defaultValue={canvasHeightInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="unitDivisions"
-                                defaultValue={unitDivisions}
-                                type="number"
-                            />
-                            <input type="submit" value="resize" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleAddRuler}>
-                            <input type="submit" value="add" />
-                            <input
-                                id="rulerName"
-                                placeholder="name your ruler"
-                                type="text"
-                            />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleSaveRuler}>
-                            <input type="submit" value="save" />
-                        </form>
-                        <form id="button-icon" onSubmit={this.handleDeleteRuler}>
-                            <input type="submit" value="delete" />
-                        </form>
-                    </div>
-                    <div className="dynamic-menu">
-                        { menuLayout }
-                    </div>
-                    <h2>Zoom Settings</h2>
                     <div className="zoom-menu">
-                        <button onClick={this.handleZoomIn} id="button-icon">+</button>
-                        <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                        <button onClick={this.handleToggleScale} id="button-icon">z</button>
-                        <form id="button-icon" onSubmit={(event) => event.preventDefault()}>
-                            <input
-                                id="zoomSlider"
-                                type="range"
-                                defaultValue={Math.round(scale * 100.0)}
-                                min="10"
-                                max="3200"
-                                onInput={this.handleSubmitCustomZoom}
-                            />
-                            <input
-                                id="zoomText"
-                                type="number"
-                                defaultValue={Math.round(scale * 100.0)}
-                                onInput={this.handleSubmitCustomZoom}
-                            />
-                            {Math.round(scale * 100.0) + "% "}
-                        </form>
+                        <div>
+                            <button onClick={this.handleZoomIn} id="button-icon">+</button>
+                            <button onClick={this.handleZoomOut} id="button-icon">-</button>
+                            <button onClick={this.handleToggleScale} id="button-icon">z</button>
+                        </div>
+                        <div className="zoom-row">
+                            <SelectRow value="1">
+                                <div key="1" style={{ width: 10, height: 10, backgroundColor: '#FFFFFF' }} />
+                                <div key="2" style={{ width: 10, height: 10, backgroundColor: '#FFFFFF' }} />
+                                <div key="3" style={{ width: 10, height: 10, backgroundColor: '#FFFFFF' }} />
+                            </SelectRow>
+                        </div>
+                        <div className="zoom-row">
+                            <button onClick={this.handleSelectZoomTool}>
+                                <img src="./assets/marquee-zoom.svg" />
+                            </button>
+                            <div className="zoom-input-row">
+                                <input
+                                    className="zoom-slider"
+                                    type="range"
+                                    defaultValue={Math.round(scale * 100.0)}
+                                    min="10"
+                                    max="3200"
+                                    onInput={this.handleSubmitCustomZoom}
+                                />
+                                <Input
+                                    className="zoom-input"
+                                    value={Math.round(scale * 100.0)}
+                                    onChange={this.handleSubmitCustomZoom}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
