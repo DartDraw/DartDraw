@@ -46,7 +46,7 @@ class Input extends Component {
         const { label, className, style } = this.props;
         const { value } = this.state;
         return (
-            <div className={`input-container ${className}`} style={style}>
+            <div className={`input-container ${className || ''}`} style={style}>
                 <form onSubmit={this.handleSubmit}>
                     <input value={value ? Math.round(value * 100) / 100 : value} onChange={this.handleChange} className="input" />
                 </form>
