@@ -18,6 +18,7 @@ class Path extends Component {
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
+        strokeLinecap: PropTypes.string,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -60,13 +61,14 @@ class Path extends Component {
     }
 
     render() {
-        const { id, arrowheadId, d, stroke, strokeWidth, strokeDasharray, fill, transform, propagateEvents } = this.props;
+        const { id, arrowheadId, d, stroke, strokeWidth, strokeDasharray, strokeLinecap, fill, transform, propagateEvents } = this.props;
         const svgProps = {
             id,
             d: formatPath(d),
             stroke,
             strokeWidth,
             strokeDasharray,
+            strokeLinecap,
             fill: fill || 'none',
             transform: formatTransform(transform),
             vectorEffect: "non-scaling-stroke",

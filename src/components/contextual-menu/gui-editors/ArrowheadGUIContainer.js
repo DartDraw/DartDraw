@@ -25,7 +25,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         arrowheads,
         selectedArrowhead,
         lockAspectRatio,
-        presetNames: Object.keys(arrowheads.presets)
+        presetNames: Object.keys(arrowheads.presets),
+        typeNames: ['triangle', 'barbed', 'ellipse', 'rectangle', 'polyline']
     };
 };
 

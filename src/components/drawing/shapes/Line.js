@@ -12,6 +12,7 @@ class Line extends Component {
         points: PropTypes.arrayOf(PropTypes.number),
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
+        strokeLinecap: PropTypes.string,
         strokeDasharray: PropTypes.string,
         arrowheadId: PropTypes.string,
         arrowheadLength: PropTypes.number,
@@ -58,7 +59,7 @@ class Line extends Component {
     }
 
     render() {
-        const { id, arrowheadId, arrowheadLength, arrowheadShown, points, stroke, strokeWidth, strokeDasharray, propagateEvents } = this.props;
+        const { id, arrowheadId, arrowheadLength, arrowheadShown, points, stroke, strokeWidth, strokeDasharray, strokeLinecap, propagateEvents } = this.props;
 
         let l = Math.sqrt((points[2] - points[0]) ** 2 + (points[3] - points[1]) ** 2);
 
@@ -70,7 +71,8 @@ class Line extends Component {
             stroke,
             strokeWidth,
             strokeDasharray,
-            arrowheadId
+            arrowheadId,
+            strokeLinecap
         };
 
         if (arrowheadShown === 'no') {

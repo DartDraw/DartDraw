@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import {
     editShape,
     editText,
+    selectTool,
     alignmentClick,
     distributeClick,
     groupButtonClick,
@@ -44,7 +45,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         rulerNames: Object.keys(ruler.byName),
         currentRuler: ruler.current,
         currentKeys: currentKeys,
-        hidden: !menuState.showContextualMenu
+        hidden: !menuState.showContextualMenu,
+        fillColor: menuState.fillColor
     };
 };
 
@@ -91,6 +93,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetCustomZoom: (customScale) => {
             dispatch(setCustomZoom(customScale));
+        },
+        onSelectZoomTool: () => {
+            dispatch(selectTool('zoomTool'));
         },
         onShowGrid: () => {
             dispatch(toggleShowGrid());

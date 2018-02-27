@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
+import { Input } from '../../ui';
+import Dropdown from 'react-dropdown';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
 class ArrowheadGUI extends Component {
     static propTypes = {
         arrowheads: PropTypes.object,
-        selectedPath: PropTypes.object,
+        path: PropTypes.object,
         selectedArrowhead: PropTypes.object,
         lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
+        typeNames: PropTypes.array,
         fillColor: PropTypes.object,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDrag: PropTypes.func,
@@ -55,41 +58,34 @@ class ArrowheadGUI extends Component {
         this.handleDeleteArrowheadPreset = this.handleDeleteArrowheadPreset.bind(this);
     }
 
-    handleResetToDefault(event) {
+    handleResetToDefault() {
         const { selectedArrowhead } = this.props;
         this.props.onChangeArrowheadType(selectedArrowhead.type);
-        event.preventDefault();
     }
 
-    handleResetToPreset(event) {
+    handleResetToPreset() {
         const { selectedArrowhead } = this.props;
         this.props.onSelectArrowheadPreset(selectedArrowhead.preset);
-        event.preventDefault();
     }
 
-    handleHeightChange(event) {
-        this.props.onHeightChange(parseInt(event.target.value, 10));
-        event.preventDefault();
+    handleHeightChange(value) {
+        this.props.onHeightChange(parseInt(value, 10));
     }
 
-    handleLengthChange(event) {
-        this.props.onLengthChange(parseInt(event.target.value, 10));
-        event.preventDefault();
+    handleLengthChange(value) {
+        this.props.onLengthChange(parseInt(value, 10));
     }
 
-    handleBarbLengthChange(event) {
-        this.props.onBarbLengthChange(parseInt(event.target.value, 10));
-        event.preventDefault();
+    handleBarbLengthChange(value) {
+        this.props.onBarbLengthChange(parseInt(value, 10));
     }
 
-    handleRadiusXChange(event) {
-        this.props.onRadiusXChange(parseInt(event.target.value, 10));
-        event.preventDefault();
+    handleRadiusXChange(value) {
+        this.props.onRadiusXChange(parseInt(value, 10));
     }
 
-    handleRadiusYChange(event) {
-        this.props.onRadiusYChange(parseInt(event.target.value, 10));
-        event.preventDefault();
+    handleRadiusYChange(value) {
+        this.props.onRadiusYChange(parseInt(value, 10));
     }
 
     handleToggleFill(event) {
@@ -102,228 +98,111 @@ class ArrowheadGUI extends Component {
         this.props.onToggleArrowheadAspect();
     }
 
-    handleChangeArrowheadType(event) {
-        this.props.onChangeArrowheadType(event.target.value);
-        event.preventDefault();
-    }
-
     handleArrowheadHandleDrag(shapeId, handleIndex, draggableData) {
         this.props.onArrowheadHandleDrag(shapeId, handleIndex, draggableData);
     }
 
-    handleSelectArrowheadPreset(event) {
-        this.props.onSelectArrowheadPreset(event.target.value);
-        event.preventDefault();
+    handleSelectArrowheadPreset(preset) {
+        this.props.onSelectArrowheadPreset(preset.value);
     }
 
-    handleAddArrowheadPreset(event) {
+    handleChangeArrowheadType(type) {
+        this.props.onChangeArrowheadType(type.value);
+    }
+
+    handleAddArrowheadPreset() {
         const { presetNames, selectedArrowhead } = this.props;
+        const { dialog } = window.require('electron').remote;
+
         var name = document.getElementById("presetName").value;
 
         if (name === "") {
-            console.error("Please name your new arrowhead preset.");
+            dialog.showMessageBox({options: ["warning"], message: 'Please name your new arrowhead preset.'});
         } else if (presetNames.indexOf(name) === -1) {
             this.props.onAddArrowheadPreset(name, selectedArrowhead);
         } else {
-            console.error("The name '%s' is already taken. Please enter a different name for your arrowhead preset.", name);
-        }
-        event.preventDefault();
-    }
-
-    handleSaveArrowheadPreset(event) {
-        const { selectedArrowhead } = this.props;
-        this.props.onSaveArrowheadPreset(selectedArrowhead);
-        event.preventDefault();
-    }
-
-    handleDeleteArrowheadPreset(event) {
-        const { preset } = this.props.selectedArrowhead;
-        this.props.onDeleteArrowheadPreset(preset);
-        event.preventDefault();
-    }
-
-    renderArrowheadPresets() {
-        const { presetNames, selectedArrowhead } = this.props;
-
-        if (presetNames.length > 0) {
-            let list = [];
-
-            presetNames.map((presetName) => {
-                list.push(<option key={presetName} value={presetName}>{presetName}</option>);
-            });
-
-            return (
-                <div>
-
-                    <label>Saved Arrowhead Presets: </label>
-                    <select id="selectPreset" value={selectedArrowhead.preset} onChange={this.handleSelectArrowheadPreset}>
-                        {list}
-                    </select>
-                    <input
-                        id="resetPreset"
-                        type="button"
-                        onClick={this.handleResetToPreset}
-                        value="Restore Preset"
-                    />
-                </div>
-            );
+            dialog.showMessageBox({options: ["warning"], message: "The name '" + name + "' is already taken. Please enter a different name for your new arrowhead preset."});
         }
     }
 
-    renderHeightInput(defaultValue) {
-        return (
-            <div>
-                <label>Arrowhead Height: </label>
-                <input
-                    id="height"
-                    defaultValue={defaultValue}
-                    type="number"
-                    onChange={this.handleHeightChange}
-                />
-            </div>
-        );
-    }
-
-    renderLengthInput(defaultValue) {
-        return (
-            <div>
-                <label>Arrowhead Length: </label>
-                <input
-                    id="length"
-                    defaultValue={defaultValue}
-                    type="number"
-                    onChange={this.handleLengthChange}
-                />
-            </div>
-        );
-    }
-
-    renderBarbLengthInput(defaultValue) {
-        return (
-            <div>
-                <label>Barb Length: </label>
-                <input
-                    id="barbLength"
-                    defaultValue={defaultValue}
-                    type="number"
-                    onChange={this.handleBarbLengthChange}
-                />
-            </div>
-        );
-    }
-
-    renderRadiusXInput(defaultValue) {
-        return (
-            <div>
-                <label>RadiusX: </label>
-                <input
-                    id="radiusX"
-                    defaultValue={defaultValue}
-                    type="number"
-                    onChange={this.handleRadiusXChange}
-                />
-            </div>
-        );
-    }
-
-    renderRadiusYInput(defaultValue) {
-        return (
-            <div>
-                <label>RadiusY: </label>
-                <input
-                    id="radiusY"
-                    defaultValue={defaultValue}
-                    type="number"
-                    onChange={this.handleRadiusYChange}
-                />
-            </div>
-        );
-    }
-
-    renderFillCheckbox() {
-        const { isFillChecked } = this.state;
-
-        return (
-            <div>
-                <label>Fill: </label>
-                <input
-                    id="fill"
-                    type="checkbox"
-                    onChange={this.handleToggleFill}
-                    checked={isFillChecked}
-                />
-            </div>
-        );
-    }
-
-    renderAspectCheckbox() {
-        const { isAspectChecked } = this.state;
-
-        return (
-            <div>
-                <label>Lock Aspect: </label>
-                <input
-                    id="aspect"
-                    type="checkbox"
-                    onChange={this.handleToggleAspect}
-                    checked={isAspectChecked}
-                />
-            </div>
-        );
-    }
-
-    renderArrowheadInputs() {
+    handleSaveArrowheadPreset() {
         const { selectedArrowhead } = this.props;
+        if (selectedArrowhead.preset) {
+            this.props.onSaveArrowheadPreset(selectedArrowhead);
+        }
+    }
+
+    handleDeleteArrowheadPreset() {
+        const { selectedArrowhead } = this.props;
+        if (selectedArrowhead.preset) {
+            this.props.onDeleteArrowheadPreset(selectedArrowhead.preset);
+        }
+    }
+
+    renderTypeSpecificInputs() {
+        const { selectedArrowhead } = this.props;
+        const { isFillChecked, isAspectChecked } = this.state;
 
         switch (selectedArrowhead.type) {
             case "triangle":
                 return (
-                    <form id="form">
-                        {this.renderHeightInput(Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1]))}
-                        {this.renderLengthInput(selectedArrowhead.points[2] - selectedArrowhead.points[0])}
-                        {this.renderFillCheckbox()}
-                    </form>
+                    <div className="editor-row">
+                        <div className="editor-row-title">Size:</div>
+                        <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
+                        <div className="editor-row-title">Fill:</div>
+                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} checked={isFillChecked} />
+                    </div>
                 );
             case "barbed":
                 return (
-                    <form id="form">
-                        {this.renderHeightInput(Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1]))}
-                        {this.renderLengthInput(selectedArrowhead.points[2] - selectedArrowhead.points[0])}
-                        {this.renderBarbLengthInput(selectedArrowhead.points[6] - selectedArrowhead.points[0])}
-                        {this.renderFillCheckbox()}
-                    </form>
+                    <div className="editor-row">
+                        <div className="editor-row-title">Size:</div>
+                        <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 11 }} onChange={this.handleLengthChange} />
+                        <Input value={selectedArrowhead.points[6] - selectedArrowhead.points[0]} label="Barb Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleBarbLengthChange} />
+                        <div className="editor-row-title">Fill:</div>
+                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} checked={isFillChecked} />
+                    </div>
                 );
             case "ellipse":
                 return (
-                    <form id="form">
-                        {this.renderRadiusXInput(selectedArrowhead.rx)}
-                        {this.renderRadiusYInput(selectedArrowhead.ry)}
-                        {this.renderAspectCheckbox()}
-                        {this.renderFillCheckbox()}
-                    </form>
+                    <div className="editor-row">
+                        <div className="editor-row-title">Size:</div>
+                        <Input value={selectedArrowhead.rx} label="RX" style={{ width: 49, marginRight: 11 }} onChange={this.handleRadiusXChange} />
+                        <Input value={selectedArrowhead.ry} label="RY" style={{ width: 49, marginRight: 21 }} onChange={this.handleRadiusYChange} />
+                        <div className="editor-row-title">Fill:</div>
+                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} checked={isFillChecked} />
+                        <div className="editor-row-title">Lock:</div>
+                        <input id="aspect" type="checkbox" onChange={this.handleToggleAspect} checked={isAspectChecked} />
+                    </div>
                 );
             case "rectangle":
                 return (
-                    <form id="form">
-                        {this.renderHeightInput(selectedArrowhead.height)}
-                        {this.renderLengthInput(selectedArrowhead.width)}
-                        {this.renderAspectCheckbox()}
-                        {this.renderFillCheckbox()}
-                    </form>
+                    <div className="editor-row">
+                        <div className="editor-row-title">Size:</div>
+                        <Input value={selectedArrowhead.height} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={selectedArrowhead.width} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
+                        <div className="editor-row-title">Fill:</div>
+                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} style={{ marginRight: 21 }} checked={isFillChecked} />
+                        <div className="editor-row-title">Lock:</div>
+                        <input id="aspect" type="checkbox" onChange={this.handleToggleAspect} checked={isAspectChecked} />
+                    </div>
                 );
             case "polyline":
                 return (
-                    <form id="form">
-                        {this.renderHeightInput(Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1]))}
-                        {this.renderLengthInput(selectedArrowhead.points[2] - selectedArrowhead.points[0])}
-                    </form>
+                    <div className="editor-row">
+                        <div className="editor-row-title">Size:</div>
+                        <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
+                    </div>
                 );
             default: break;
         }
     }
 
-    renderReferenceLine(selectedPath, arrowhead) {
-        var x2;
+    renderReferenceLine(path, arrowhead) {
+        var x2 = null;
 
         switch (arrowhead.type) {
             case "triangle":
@@ -344,11 +223,11 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={10} stroke={selectedPath.stroke} strokeDasharray={selectedPath.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={10} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
-        const { stroke } = this.props.selectedPath;
+        const { stroke } = this.props.path;
 
         const arrowheadProps = {
             ...arrowhead,
@@ -400,64 +279,39 @@ class ArrowheadGUI extends Component {
     }
 
     render() {
-        const { selectedPath, selectedArrowhead, arrowheads } = this.props;
+        const { path, selectedArrowhead, presetNames, typeNames } = this.props;
 
-        const arrowheadInputs = this.renderArrowheadInputs();
-        const presetDropdown = this.renderArrowheadPresets();
+        var presetInputs = null;
 
-        const showPresets = Object.keys(arrowheads.presets).length !== 0;
+        if (presetNames.length > 0) {
+            presetInputs = <div className="editor-row">
+                <button id="basic-button" onClick={this.handleSaveArrowheadPreset}>Save</button>
+                <button id="basic-button" onClick={this.handleDeleteArrowheadPreset}>Delete</button>
+                <Dropdown options={presetNames} onChange={(e) => { this.handleSelectArrowheadPreset(e); }} value={selectedArrowhead.preset} placeholder="Select an option" />
+            </div>;
+            // <button id="basic-button" onClick={this.handleResetToPreset}>Reset to Preset</button>
+        } else {
+            presetInputs = <div />;
+        }
 
         return (
-            <div style={{flex: 1, overflow: 'hidden'}}>
-                <label>Arrowhead Type: </label>
-                <select
-                    id="type"
-                    defaultValue={selectedArrowhead.type}
-                    onChange={this.handleChangeArrowheadType}
-                >
-                    <option value='triangle'>triangle</option>
-                    <option value='barbed'>barbed</option>
-                    <option value='ellipse'>ellipse</option>
-                    <option value='rectangle'>rectangle</option>
-                    <option value='polyline'>polyline</option>
-                </select>
+            <div className="editor">
+                <div className="editor-row">
+                    <div className="editor-row-title">Type:</div>
+                    <Dropdown options={typeNames} onChange={(e) => { this.handleChangeArrowheadType(e); }} value={selectedArrowhead.type} />
+                    <button id="basic-button" onClick={this.handleResetToDefault}>Reset</button>
+                </div>
                 <svg className="arrowhead-gui">
-                    {this.renderReferenceLine(selectedPath, selectedArrowhead)}
+                    {this.renderReferenceLine(path, selectedArrowhead)}
                     {this.renderArrowhead(selectedArrowhead)}
                     {this.renderHandles(selectedArrowhead)}
                 </svg>
-                <input
-                    id="resetDefault"
-                    type="button"
-                    onClick={this.handleResetToDefault}
-                    value="Restore Default"
-                />
-                {arrowheadInputs}
-                <input
-                    id="presetName"
-                    type="text"
-                    placeholder="name this arrowhead"
-                />
-                <input
-                    type="submit"
-                    onClick={this.handleAddArrowheadPreset}
-                    value="Add +"
-                />
-                <input
-                    id="save"
-                    type="button"
-                    onClick={this.handleSaveArrowheadPreset}
-                    value="Save"
-                    style={{flexDirection: 'row', display: showPresets ? 'flex' : 'none'}}
-                />
-                <input
-                    id="delete"
-                    type="button"
-                    onClick={this.handleDeleteArrowheadPreset}
-                    value="Delete"
-                    style={{flexDirection: 'row', display: showPresets ? 'flex' : 'none'}}
-                />
-                {presetDropdown}
+                {this.renderTypeSpecificInputs()}
+                <div className="editor-row">
+                    <input id="presetName" className='text-input' type="text" placeholder="name" style={{ width: 49 }} />
+                    <button id="basic-button" onClick={this.handleAddArrowheadPreset}>Add</button>
+                    {presetInputs}
+                </div>
             </div>
         );
     }

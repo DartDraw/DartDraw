@@ -6,6 +6,11 @@ export const MOUSE_MOVE = 'MOUSE_MOVE';
 export const SELECT_TOOL = 'SELECT_TOOL';
 export const EXPORT_CLICK = 'EXPORT_CLICK';
 export const SELECT_COLOR = 'SELECT_COLOR';
+export const SELECT_PALETTE = 'SELECT_PALETTE';
+export const ADD_COLOR = 'ADD_COLOR';
+export const REMOVE_COLOR = 'REMOVE_COLOR';
+export const ADD_PALETTE = 'ADD_PALETTE';
+export const REMOVE_PALETTE = 'REMOVE_PALETTE';
 export const UNDO_CLICK = 'UNDO_CLICK';
 export const REDO_CLICK = 'REDO_CLICK';
 export const SET_CUSTOM_ZOOM = 'SET_CUSTOM_ZOOM';
@@ -21,8 +26,8 @@ export const FLIP_HORIZONTAL = 'FLIP_HORIZONTAL';
 export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
-export const FILE_OPEN = 'FILE_OPEN';
-export const FILE_SAVE = 'FILE_SAVE';
+export const UPDATE_OPACITY = 'UPDATE_OPACITY';
+export const COLOR_UPDATE = 'COLOR_UPDATE';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
@@ -40,6 +45,7 @@ export const SELECT_ARROWHEAD_PRESET = 'SELECT_ARROWHEAD_PRESET';
 export const ADD_ARROWHEAD_PRESET = 'ADD_ARROWHEAD_PRESET';
 export const SAVE_ARROWHEAD_PRESET = 'SAVE_ARROWHEAD_PRESET';
 export const DELETE_ARROWHEAD_PRESET = 'DELETE_ARROWHEAD_PRESET';
+export const CHANGE_COLOR_TYPE = 'CHANGE_COLOR_TYPE';
 export const SELECT_RULER = 'SELECT_RULER';
 export const ADD_RULER = 'ADD_RULER';
 export const SAVE_RULER = 'SAVE_RULER';
@@ -49,9 +55,16 @@ export const RESIZE_SHAPE_TO = 'RESIZE_SHAPE_TO';
 export const MOVE_SHAPE_TO = 'MOVE_SHAPE_TO';
 export const ROTATE_SHAPE_TO = 'ROTATE_SHAPE_TO';
 export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
+export const FILE_SAVE = 'FILE_SAVE';
+export const FILE_OPEN = 'FILE_OPEN';
+export const TOGGLE_SETTINGS_MODAL = 'TOGGLE_SETTINGS_MODAL';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
+}
+
+export function toggleSettingsModal() {
+    return { type: TOGGLE_SETTINGS_MODAL };
 }
 
 export function editText(shape) {
@@ -86,6 +99,30 @@ export function selectColor(color) {
     return { type: SELECT_COLOR, payload: { color } };
 }
 
+export function selectPalette(paletteName) {
+    return { type: SELECT_PALETTE, payload: { paletteName } };
+}
+
+export function addColor(color) {
+    return { type: ADD_COLOR, payload: { color } };
+}
+
+export function removeColor(color) {
+    return { type: REMOVE_COLOR, payload: { color } };
+}
+
+export function addPalette(paletteName) {
+    return { type: ADD_PALETTE, payload: { paletteName } };
+}
+
+export function removePalette(paletteName) {
+    return { type: REMOVE_PALETTE, payload: { paletteName } };
+}
+
+export function changeColorType(colorType) {
+    return { type: CHANGE_COLOR_TYPE, payload: { colorType } };
+}
+
 export function undoClick() {
     return { type: UNDO_CLICK };
 }
@@ -100,6 +137,14 @@ export function setCustomZoom(customScale) {
 
 export function alignmentClick(id) {
     return { type: ALIGNMENT_CHANGE, payload: { id } };
+}
+
+export function updateOpacity(opacity) {
+    return { type: UPDATE_OPACITY, payload: { opacity } };
+}
+
+export function colorUpdate(colorPart, newValue) {
+    return {type: COLOR_UPDATE, payload: {colorPart, newValue}};
 }
 
 export function distributeClick(id) {

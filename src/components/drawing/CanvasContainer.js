@@ -45,6 +45,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     const propagateEventTools = [
         'rectangleTool',
+        'roundedRectangleTool',
         'ellipseTool',
         'polygonTool',
         'bezierTool',

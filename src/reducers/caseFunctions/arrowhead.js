@@ -224,13 +224,15 @@ export function deleteArrowheadPreset(stateCopy, action) {
 }
 
 export function selectArrowheadPreset(stateCopy, action, root) {
-    const { name } = action.payload;
+    var { name } = action.payload;
     const { arrowheadId, pathId } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
 
-    const { updatedArrowhead, updatedPath } = changeArrowheadPreset(name, stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
+    if (name) {
+        const { updatedArrowhead, updatedPath } = changeArrowheadPreset(name, stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
 
-    stateCopy.arrowheads.byId[arrowheadId] = updatedArrowhead;
-    stateCopy.shapes.byId[pathId] = updatedPath;
+        stateCopy.arrowheads.byId[arrowheadId] = updatedArrowhead;
+        stateCopy.shapes.byId[pathId] = updatedPath;
+    }
 
     return stateCopy;
 }

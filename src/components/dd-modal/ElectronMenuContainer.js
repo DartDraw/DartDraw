@@ -1,46 +1,44 @@
 import { connect } from 'react-redux';
-import TopMenu from './TopMenu';
 import {
-    undoClick,
-    redoClick,
-    selectColor,
-    selectButton,
-    alignmentClick,
+    toggleSettingsModal,
+    moveForward,
+    toggleShowRulers,
+    toggleShowGrid,
+    toggleShowSubDivisions,
     groupButtonClick,
     ungroupButtonClick,
     moveBackward,
-    moveForward,
     sendToBack,
     flipHorizontal,
     flipVertical,
     bringToFront,
-    toggleGridSnapping
-} from './../../actions/menu';
+    setCustomZoom,
+    selectTool
+} from '../../actions/menu';
+import ElectronMenu from './ElectronMenu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     return {
-        scale: drawingState.scale,
-        fillColor: menuState.fillColor,
-        strokeColor: menuState.strokeColor
+        settingsModalVisible: menuState.showSettingsModal
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onUndoClick: () => {
-            dispatch(undoClick());
+        onToggleSettingsModal: () => {
+            dispatch(toggleSettingsModal());
         },
-        onRedoClick: () => {
-            dispatch(redoClick());
+        onMoveForward: () => {
+            dispatch(moveForward());
         },
-        onColorSelect: (color) => { // replace with onColorSelect
-            dispatch(selectColor(color));
+        onShowRulers: () => {
+            dispatch(toggleShowRulers());
         },
-        onButtonSelect: (buttonInfo) => {
-            dispatch(selectButton(buttonInfo));
+        onShowGrid: () => {
+            dispatch(toggleShowGrid());
         },
-        onAllignmentClick: (id) => {
-            dispatch(alignmentClick(id));
+        onShowSubDivisions: () => {
+            dispatch(toggleShowSubDivisions());
         },
         onGroupClick: () => {
             dispatch(groupButtonClick());
@@ -50,9 +48,6 @@ const mapDispatchToProps = (dispatch) => {
         },
         onMoveBackward: () => {
             dispatch(moveBackward());
-        },
-        onMoveForward: () => {
-            dispatch(moveForward());
         },
         onSendToBack: () => {
             dispatch(sendToBack());
@@ -66,8 +61,11 @@ const mapDispatchToProps = (dispatch) => {
         onFlipVertical: () => {
             dispatch(flipVertical());
         },
-        onToggleGridSnapping: () => {
-            dispatch(toggleGridSnapping());
+        onSetCustomZoom: (customScale) => {
+            dispatch(setCustomZoom(customScale));
+        },
+        onToolSelect: (toolType) => {
+            dispatch(selectTool(toolType));
         }
     };
 };
@@ -75,4 +73,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(TopMenu);
+)(ElectronMenu);

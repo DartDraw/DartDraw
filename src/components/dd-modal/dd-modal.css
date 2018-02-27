@@ -1,0 +1,17 @@
+.modal {
+  padding: 30px;
+  position: fixed;
+  align-self: center;
+  height: auto;
+  width: 600px;
+  z-index: 100;
+  background-color: #10161A;
+  color: white;
+  left: 20vw;
+  box-shadow: 10px 10px 50px grey;
+}
+
+.modal h1 {
+  font-family: Catamaran, sans-serif;
+  font-size: 1.2em;
+}
