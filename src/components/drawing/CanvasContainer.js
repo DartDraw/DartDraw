@@ -28,8 +28,22 @@ function formatShape(shape, shapes, scale) {
         });
     } else {
         formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
+        if (formattedShape.type === 'line') {
+            formattedShape.arrowheadLength = formattedShape.arrowheadLength * formattedShape.strokeWidth / 10;
+        }
     }
+
     return formattedShape;
+}
+
+function formatArrowhead(arrowhead, shapes, scale) {
+    const line = shapes.byId[arrowhead.lineId];
+    const strokeProps = {
+        stroke: line.stroke,
+        strokeWidth: line.strokeWidth,
+        strokeDasharray: line.strokeDasharray
+    };
+    return Object.assign({}, arrowhead, strokeProps);
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
@@ -40,7 +54,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     });
 
     const arrowsArray = arrowheads.allIds.map((id) => {
-        return arrowheads.byId[id];
+        return formatArrowhead(arrowheads.byId[id], shapes);
     });
 
     const propagateEventTools = [
@@ -59,7 +73,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         shapes: shapesArray,
-        arrows: arrowsArray,
+        arrowheads: arrowsArray,
         selected,
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,

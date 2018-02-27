@@ -223,7 +223,7 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={10} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
@@ -287,7 +287,7 @@ class ArrowheadGUI extends Component {
             presetInputs = <div className="editor-row">
                 <button id="basic-button" onClick={this.handleSaveArrowheadPreset}>Save</button>
                 <button id="basic-button" onClick={this.handleDeleteArrowheadPreset}>Delete</button>
-                <Dropdown options={presetNames} onChange={(e) => { this.handleSelectArrowheadPreset(e); }} value={selectedArrowhead.preset} placeholder="Select an option" />
+                <Dropdown options={presetNames} onChange={(e) => { this.handleSelectArrowheadPreset(e); }} value={selectedArrowhead.preset} placeholder="Select a preset" />
             </div>;
             // <button id="basic-button" onClick={this.handleResetToPreset}>Reset to Preset</button>
         } else {

@@ -314,26 +314,13 @@ export function changeArrowheadPreset(presetName, shapes, arrowheads, selected) 
     return { updatedArrowhead, updatedPath };
 }
 
-export function scaleArrowheadPoints(points, strokeWidth) {
+export function scaleViewBox(width, height, strokeWidth) {
     const originalStrokeWidth = 10;
     const scale = strokeWidth / originalStrokeWidth;
 
-    console.log(scale);
+    var viewBox = "0 0 " + (width / scale) + " " + (height / scale);
 
-    for (let i = 0; i < points.length; i++) {
-        points[i] = points[i] * scale;
-    }
-
-    console.log(points);
-    return formatPoints(points);
-}
-
-export function scaleRefX(refX, strokeWidth) {
-    const originalStrokeWidth = 10;
-    const scale = strokeWidth / originalStrokeWidth;
-    console.log(refX * scale);
-
-    return refX * scale;
+    return viewBox;
 }
 
 export function getArrowInfo(shapes, arrowheads, selected) {

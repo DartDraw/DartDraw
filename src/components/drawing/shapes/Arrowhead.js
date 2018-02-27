@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { scaleArrowheadPoints, scaleRefX } from '../../../reducers/utilities/arrowhead';
+import { scaleViewBox } from '../../../reducers/utilities/arrowhead';
 import { formatPoints } from '../../../utilities/shapes';
 
 class Arrowhead extends Component {
     static propTypes = {
         id: PropTypes.string,
+        viewBox: PropTypes.array,
         type: PropTypes.string,
         points: PropTypes.array,
         cx: PropTypes.number,
@@ -69,7 +70,8 @@ class Arrowhead extends Component {
             fillOpacity,
             stroke,
             strokeWidth,
-            strokeDasharray
+            strokeDasharray,
+            vectorEffect: "non-scaling-stroke"
         };
 
         var arrowhead;
@@ -83,7 +85,6 @@ class Arrowhead extends Component {
                         points={formatPoints(points)}
                         {...arrowheadProps}
                     />
-                    // points={scaleArrowheadPoints(points, strokeWidth)}
                 );
                 break;
             case "ellipse":
@@ -120,13 +121,16 @@ class Arrowhead extends Component {
             default: break;
         }
 
+        const viewBox = scaleViewBox(3000, 1500, strokeWidth);
+
         return (
             <marker
                 id={id}
                 key={id + "_marker"}
+                viewBox={viewBox}
                 orient="auto"
-                markerWidth="300"
-                markerHeight="150"
+                markerWidth="3000"
+                markerHeight="1500"
                 markerUnits="userSpaceOnUse"
                 refX={refX}
                 refY={refY}

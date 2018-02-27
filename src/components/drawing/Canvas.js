@@ -27,7 +27,7 @@ import {
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
-        arrows: PropTypes.array,
+        arrowheads: PropTypes.array,
         selected: PropTypes.array,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
@@ -55,7 +55,7 @@ class Canvas extends Component {
         super(props);
 
         this.renderDrawing = this.renderDrawing.bind(this);
-        this.renderArrows = this.renderArrows.bind(this);
+        this.renderArrowheads = this.renderArrowheads.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleDragStart = this.handleDragStart.bind(this);
@@ -235,10 +235,10 @@ class Canvas extends Component {
         });
     }
 
-    renderArrows() {
-        const { arrows } = this.props;
-        return arrows.map((shape) => {
-            return <Arrowhead key={shape.arrowId} {...shape} />;
+    renderArrowheads() {
+        const { arrowheads } = this.props;
+        return arrowheads.map((arrowhead) => {
+            return <Arrowhead key={arrowhead.id} {...arrowhead} />;
         });
     }
 
@@ -261,7 +261,7 @@ class Canvas extends Component {
                     >
                         <BackgroundLayerContainer />
                         {this.renderDrawing()}
-                        {this.renderArrows()}
+                        {this.renderArrowheads()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
                     </svg>

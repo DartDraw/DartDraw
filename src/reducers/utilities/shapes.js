@@ -250,7 +250,7 @@ export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gri
             (x + (panX * scale) - node.getBoundingClientRect().left) / scale,
             (y + (panY * scale) - node.getBoundingClientRect().top) / scale],
         stroke: formatColor(fill),
-        strokeWidth: 10,
+        strokeWidth: 5,
         strokeDasharray: '',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         strokeLinecap: 'round',
@@ -262,7 +262,7 @@ export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gri
     const arrowhead = Object.assign(
         {},
         setArrowheadType("triangle"),
-        {id: line.arrowheadId, stroke: line.stroke, strokeWidth: line.strokeWidth, strokeDasharray: line.strokeDasharray}
+        {id: line.arrowheadId, lineId: line.id, stroke: line.stroke, strokeWidth: line.strokeWidth, strokeDasharray: line.strokeDasharray}
     );
 
     line.arrowheadLength = arrowhead.length;
