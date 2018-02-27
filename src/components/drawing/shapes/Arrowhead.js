@@ -121,13 +121,11 @@ class Arrowhead extends Component {
             default: break;
         }
 
-        const viewBox = scaleViewBox(3000, 1500, strokeWidth);
-
         return (
             <marker
                 id={id}
                 key={id + "_marker"}
-                viewBox={viewBox}
+                viewBox={scaleViewBox(3000, 1500, strokeWidth)}
                 orient="auto"
                 markerWidth="3000"
                 markerHeight="1500"

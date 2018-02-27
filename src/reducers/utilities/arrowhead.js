@@ -1,5 +1,4 @@
 import uuidv1 from 'uuid';
-import { formatPoints } from '../../utilities/shapes';
 
 export function setArrowheadType(arrowheadType) {
     var arrowhead = {};
@@ -8,7 +7,6 @@ export function setArrowheadType(arrowheadType) {
         case 'triangle':
             arrowhead = {
                 type: 'triangle',
-                // preset: 'default',
                 points: [215, 55, 275, 75, 215, 95],
                 fillOpacity: 1
             };
@@ -16,7 +14,6 @@ export function setArrowheadType(arrowheadType) {
         case 'barbed':
             arrowhead = {
                 type: 'barbed',
-                // preset: 'default',
                 points: [215, 55, 275, 75, 215, 95, 235, 75],
                 fillOpacity: 1
             };
@@ -54,85 +51,76 @@ export function setArrowheadType(arrowheadType) {
         default: break;
     }
 
-    arrowhead.handles = generateHandles(arrowhead);
-    arrowhead.handles = updateHandles(arrowhead);
     arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead = generateHandles(arrowhead);
 
     return arrowhead;
 }
 
-export function setArrowheadHeight(height, arrowhead, halfHeight, editorHeight) {
+export function setArrowheadHeight(arrowhead, newHeight, min, max) {
+    newHeight = clamp(newHeight, min, max - min);
+
     switch (arrowhead.type) {
         case "triangle":
         case "polyline":
         case "barbed":
-            arrowhead.points[1] = clamp(halfHeight - height / 2, 0, halfHeight);
-            arrowhead.points[5] = editorHeight - arrowhead.points[1];
+            arrowhead.points[1] = (max - newHeight) / 2;
+            arrowhead.points[5] = (max + newHeight) / 2;
             break;
         case "rectangle":
-            arrowhead.y = clamp(halfHeight - height / 2, 0, halfHeight);
-            arrowhead.height = clamp(height, 0, editorHeight);
+            arrowhead.y = (max - newHeight) / 2;
+            arrowhead.height = newHeight;
             break;
         default: break;
     }
 
-    arrowhead.handles = updateHandles(arrowhead);
-
     return arrowhead;
 }
 
-export function setArrowheadLength(length, arrowhead, leftBufferX, rightBufferX) {
-    length = clamp(length, 0, rightBufferX - leftBufferX);
+export function setArrowheadLength(arrowhead, newLength, min, max) {
+    newLength = clamp(newLength, 0, max - min);
 
     switch (arrowhead.type) {
         case "triangle":
         case "polyline":
-            arrowhead.points[0] = rightBufferX - length;
-            arrowhead.points[4] = rightBufferX - length;
+            arrowhead.points[0] = max - newLength;
+            arrowhead.points[4] = max - newLength;
             break;
         case "barbed":
             const barbLength = arrowhead.points[6] - arrowhead.points[0];
-            arrowhead.points[0] = rightBufferX - length;
-            arrowhead.points[4] = rightBufferX - length;
-            arrowhead.points[6] = clamp(arrowhead.points[0] + barbLength, leftBufferX, rightBufferX);
+            arrowhead.points[0] = max - newLength;
+            arrowhead.points[4] = max - newLength;
+            arrowhead.points[6] = clamp(arrowhead.points[0] + barbLength, min, max);
             break;
         case "rectangle":
-            arrowhead.x = rightBufferX - length;
-            arrowhead.width = length;
+            arrowhead.x = max - newLength;
+            arrowhead.width = newLength;
             break;
         default: break;
     }
 
-    arrowhead = updateLengthAndRefX(arrowhead);
-    arrowhead.handles = updateHandles(arrowhead);
+    return arrowhead;
+}
+
+export function setArrowheadRadiusX(arrowhead, newRx, min, max) {
+    newRx = clamp(newRx, 0, (max - min) / 2);
+
+    arrowhead.cx += arrowhead.rx - newRx;
+    arrowhead.rx = newRx;
 
     return arrowhead;
 }
 
-export function setArrowheadRadiusX(rx, arrowhead, leftBufferX, rightBufferX) {
-    rx = clamp(rx, 0, (rightBufferX - leftBufferX) / 2);
+export function setArrowheadRadiusY(arrowhead, newRy, min, max) {
+    newRy = clamp(newRy, 0, (max - min) / 2);
 
-    arrowhead.cx += arrowhead.rx - rx;
-    arrowhead.rx = rx;
-
-    arrowhead.handles = updateHandles(arrowhead);
-    arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead.ry = newRy;
 
     return arrowhead;
 }
 
-export function setArrowheadRadiusY(ry, arrowhead, halfHeight) {
-    ry = clamp(ry, 0, halfHeight);
-
-    arrowhead.ry = ry;
-
-    arrowhead.handles = updateHandles(arrowhead);
-
-    return arrowhead;
-}
-
-export function reshape(arrowhead, draggableData, handleIndex, height, width, buffer, lockAspectRatio) {
-    const { x, y, deltaX, node } = draggableData;
+export function reshape(arrowhead, draggableData, handleIndex, editorHeight, editorWidth, buffer, lockAspectRatio) {
+    const { x, y, node } = draggableData;
 
     let offsetLeft = 0;
     let offsetTop = 0;
@@ -142,67 +130,71 @@ export function reshape(arrowhead, draggableData, handleIndex, height, width, bu
         offsetTop = node.parentNode.getBoundingClientRect().top;
     }
 
-    let mouseX = x - offsetLeft;
-    let mouseY = y - offsetTop;
-
     const leftBufferX = buffer;
-    const rightBufferX = width - buffer;
+    const rightBufferX = editorWidth - buffer;
 
-    const halfHeight = height / 2;
-    const halfWidth = width / 2;
+    const halfHeight = editorHeight / 2;
+
+    const mouseX = clamp(x - offsetLeft, leftBufferX, rightBufferX);
+    const mouseY = clamp(y - offsetTop, 0, halfHeight);
 
     switch (arrowhead.type) {
         case 'triangle':
         case 'polyline':
-            arrowhead.points[0] = clamp(mouseX, leftBufferX, rightBufferX);
-            arrowhead.points[1] = clamp(mouseY, 0, height);
-            arrowhead.points[4] = arrowhead.points[0];
-            arrowhead.points[5] = height - arrowhead.points[1];
+            arrowhead.points[0] = mouseX;
+            arrowhead.points[1] = mouseY;
+            arrowhead.points[4] = mouseX;
+            arrowhead.points[5] = editorHeight - mouseY;
             break;
         case 'barbed':
             if (handleIndex === 0) {
-                arrowhead.points[0] = clamp(mouseX, leftBufferX, rightBufferX);
-                arrowhead.points[1] = clamp(mouseY, 0, height);
-                arrowhead.points[4] = arrowhead.points[0];
-                arrowhead.points[5] = height - arrowhead.points[1];
+                arrowhead.points[0] = mouseX;
+                arrowhead.points[1] = mouseY;
+                arrowhead.points[4] = mouseX;
+                arrowhead.points[5] = editorHeight - mouseY;
             } else if (handleIndex === 1) {
-                arrowhead.points[6] = clamp(mouseX, leftBufferX, rightBufferX);
+                arrowhead.points[6] = mouseX;
             }
             break;
         case 'ellipse':
             if (handleIndex === 0) {
+                var rx = (rightBufferX - mouseX) / 2;
+
                 if (lockAspectRatio) {
-                    arrowhead.rx = clamp(arrowhead.rx - (deltaX / 2), 0, halfHeight);
-                    arrowhead.cx = clamp(arrowhead.cx + (deltaX / 2), rightBufferX - halfHeight, rightBufferX);
-                    arrowhead = setArrowheadRadiusY(arrowhead.rx, arrowhead, halfHeight);
+                    arrowhead = setArrowheadRadiusX(arrowhead, rx, 0, editorHeight);
+                    arrowhead = setArrowheadRadiusY(arrowhead, rx, 0, editorHeight);
                 } else {
-                    arrowhead.rx = clamp(arrowhead.rx - (deltaX / 2), 0, (rightBufferX - leftBufferX) / 2);
-                    arrowhead.cx = clamp(arrowhead.cx + (deltaX / 2), halfWidth, rightBufferX);
+                    arrowhead = setArrowheadRadiusX(arrowhead, rx, leftBufferX, rightBufferX);
                 }
             } else if (handleIndex === 1) {
+                var ry = halfHeight - mouseY;
+
                 if (lockAspectRatio) {
-                    arrowhead.ry = clamp(Math.abs(arrowhead.cy - mouseY), 0, halfHeight);
-                    arrowhead = setArrowheadRadiusX(arrowhead.ry, arrowhead, rightBufferX - height, rightBufferX);
+                    arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
+                    arrowhead = setArrowheadRadiusX(arrowhead, ry, 0, editorHeight);
                 } else {
-                    arrowhead.ry = Math.abs(arrowhead.cy - mouseY);
+                    arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
                 }
             }
             break;
         case 'rectangle':
             if (handleIndex === 0) {
+                var length = rightBufferX - mouseX;
+
                 if (lockAspectRatio) {
-                    arrowhead.x = clamp(mouseX, rightBufferX - height, rightBufferX);
-                    arrowhead.width = rightBufferX - arrowhead.x;
-                    arrowhead = setArrowheadHeight(arrowhead.width, arrowhead, halfHeight, height);
+                    arrowhead = setArrowheadLength(arrowhead, length, rightBufferX - editorHeight, rightBufferX);
+                    arrowhead = setArrowheadHeight(arrowhead, length, 0, editorHeight);
                 } else {
-                    arrowhead.x = clamp(mouseX, leftBufferX, rightBufferX);
-                    arrowhead.width = rightBufferX - arrowhead.x;
+                    arrowhead = setArrowheadLength(arrowhead, length, leftBufferX, rightBufferX);
                 }
             } else if (handleIndex === 1) {
-                arrowhead.y = clamp(mouseY, 0, height);
-                arrowhead.height = (halfHeight - arrowhead.y) * 2;
+                var height = editorHeight - (mouseY * 2);
+
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadLength(arrowhead.height, arrowhead, leftBufferX, rightBufferX);
+                    arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
+                    arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - editorHeight, rightBufferX);
+                } else {
+                    arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
                 }
             }
             break;
@@ -211,7 +203,7 @@ export function reshape(arrowhead, draggableData, handleIndex, height, width, bu
     }
 
     arrowhead = updateLengthAndRefX(arrowhead);
-    arrowhead.handles = updateHandles(arrowhead);
+    arrowhead = updateHandles(arrowhead);
 
     return arrowhead;
 }
@@ -232,13 +224,13 @@ function generateHandles(arrowhead) {
         default: break;
     }
 
-    let handles = [];
+    arrowhead.handles = [];
 
     for (let i = 0; i < numHandles; i++) {
-        handles.push({id: uuidv1(), index: i});
+        arrowhead.handles.push({id: uuidv1(), index: i});
     }
 
-    return handles;
+    return updateHandles(arrowhead);
 }
 
 export function updateHandles(arrowhead) {
@@ -269,7 +261,7 @@ export function updateHandles(arrowhead) {
         default: break;
     }
 
-    return arrowhead.handles;
+    return arrowhead;
 }
 
 export function updateLengthAndRefX(arrowhead) {
@@ -305,9 +297,8 @@ export function changeArrowheadPreset(presetName, shapes, arrowheads, selected) 
 
     const newArrowhead = arrowheads.presets[presetName];
 
-    const updatedArrowhead = Object.assign({}, arrowhead, {...newArrowhead});
-    updatedArrowhead.handles = generateHandles(updatedArrowhead);
-    updatedArrowhead.handles = updateHandles(updatedArrowhead);
+    var updatedArrowhead = Object.assign({}, arrowhead, {...newArrowhead});
+    updatedArrowhead = generateHandles(updatedArrowhead);
 
     const updatedPath = Object.assign({}, path, {arrowheadLength: newArrowhead.length});
 
@@ -315,7 +306,7 @@ export function changeArrowheadPreset(presetName, shapes, arrowheads, selected) 
 }
 
 export function scaleViewBox(width, height, strokeWidth) {
-    const originalStrokeWidth = 10;
+    const originalStrokeWidth = 5;
     const scale = strokeWidth / originalStrokeWidth;
 
     var viewBox = "0 0 " + (width / scale) + " " + (height / scale);

@@ -234,7 +234,7 @@ class ArrowheadGUI extends Component {
             transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
             fill: stroke,
             stroke: stroke,
-            strokeWidth: 10
+            strokeWidth: 5
         };
 
         switch (arrowhead.type) {

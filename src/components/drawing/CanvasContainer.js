@@ -29,7 +29,7 @@ function formatShape(shape, shapes, scale) {
     } else {
         formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
         if (formattedShape.type === 'line') {
-            formattedShape.arrowheadLength = formattedShape.arrowheadLength * formattedShape.strokeWidth / 10;
+            formattedShape.arrowheadLength = formattedShape.arrowheadLength * formattedShape.strokeWidth / 5;
         }
     }
 

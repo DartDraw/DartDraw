@@ -19,11 +19,9 @@ const buffer = 25;
 const leftBufferX = buffer;
 const rightBufferX = editorWidth - buffer;
 
-const halfHeight = editorHeight / 2;
-
 export function arrowheadHandleDrag(stateCopy, action, root) {
-    const { draggableData, handleIndex } = action.payload;
     var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
+    const { draggableData, handleIndex } = action.payload;
 
     stateCopy.arrowheads.byId[arrowheadId] = reshape(arrowhead, draggableData, handleIndex, editorHeight, editorWidth, buffer, stateCopy.lockAspectRatio);
     stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: stateCopy.arrowheads.byId[arrowheadId].length});
@@ -32,8 +30,8 @@ export function arrowheadHandleDrag(stateCopy, action, root) {
 }
 
 export function changeArrowheadType(stateCopy, action, root) {
-    const { arrowheadType } = action.payload;
     var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
+    const { arrowheadType } = action.payload;
 
     const newArrowhead = setArrowheadType(arrowheadType);
 
@@ -44,32 +42,39 @@ export function changeArrowheadType(stateCopy, action, root) {
 }
 
 export function changeArrowheadHeight(stateCopy, action, root) {
+    var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
     const { lockAspectRatio } = stateCopy;
     const { height } = action.payload;
-    var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
 
-    arrowhead = setArrowheadHeight(height, arrowhead, halfHeight, editorHeight);
+    arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
 
-    if (lockAspectRatio) {
-        arrowhead = setArrowheadLength(height, arrowhead, rightBufferX - editorHeight, rightBufferX);
-        stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: arrowhead.length});
+    if (lockAspectRatio && arrowhead.type !== "polyline") {
+        arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - editorHeight, rightBufferX);
     }
 
+    arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead = updateHandles(arrowhead);
+
     stateCopy.arrowheads.byId[arrowheadId] = arrowhead;
+    stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: arrowhead.length});
 
     return stateCopy;
 }
 
 export function changeArrowheadLength(stateCopy, action, root) {
-    const { lockAspectRatio } = stateCopy;
-    var { length } = action.payload;
     var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
+    const { lockAspectRatio } = stateCopy;
+    const { length } = action.payload;
 
-    arrowhead = setArrowheadLength(length, arrowhead, rightBufferX - editorHeight, rightBufferX);
-
-    if (lockAspectRatio) {
-        arrowhead = setArrowheadHeight(length, arrowhead, halfHeight, editorHeight);
+    if (lockAspectRatio && arrowhead.type !== "polyline") {
+        arrowhead = setArrowheadHeight(arrowhead, length, 0, editorHeight);
+        arrowhead = setArrowheadLength(arrowhead, length, rightBufferX - editorHeight, rightBufferX);
+    } else {
+        arrowhead = setArrowheadLength(arrowhead, length, leftBufferX, rightBufferX);
     }
+
+    arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead = updateHandles(arrowhead);
 
     stateCopy.arrowheads.byId[arrowheadId] = arrowhead;
     stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: arrowhead.length});
@@ -78,14 +83,15 @@ export function changeArrowheadLength(stateCopy, action, root) {
 }
 
 export function changeArrowheadBarbLength(stateCopy, action, root) {
-    var { length } = action.payload;
     var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
+    var { length } = action.payload;
 
     length = clamp(length, leftBufferX - arrowhead.points[0], rightBufferX - arrowhead.points[0]);
 
     arrowhead.points[6] = arrowhead.points[0] + length;
 
-    arrowhead.handles = updateHandles(arrowhead);
+    arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead = updateHandles(arrowhead);
 
     stateCopy.arrowheads.byId[arrowheadId] = arrowhead;
     stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: arrowhead.length});
@@ -94,15 +100,19 @@ export function changeArrowheadBarbLength(stateCopy, action, root) {
 }
 
 export function changeArrowheadRadiusX(stateCopy, action, root) {
-    const { lockAspectRatio } = stateCopy;
-    var { rx } = action.payload;
     var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
-
-    arrowhead = setArrowheadRadiusX(rx, arrowhead, rightBufferX - editorHeight, rightBufferX);
+    const { lockAspectRatio } = stateCopy;
+    const { rx } = action.payload;
 
     if (lockAspectRatio) {
-        arrowhead = setArrowheadRadiusY(rx, arrowhead, halfHeight);
+        arrowhead = setArrowheadRadiusY(arrowhead, rx, 0, editorHeight);
+        arrowhead = setArrowheadRadiusX(arrowhead, rx, rightBufferX - editorHeight, rightBufferX);
+    } else {
+        arrowhead = setArrowheadRadiusX(arrowhead, rx, leftBufferX, rightBufferX);
     }
+
+    arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead = updateHandles(arrowhead);
 
     stateCopy.arrowheads.byId[arrowheadId] = arrowhead;
     stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: arrowhead.length});
@@ -111,15 +121,18 @@ export function changeArrowheadRadiusX(stateCopy, action, root) {
 }
 
 export function changeArrowheadRadiusY(stateCopy, action, root) {
-    const { lockAspectRatio } = stateCopy;
-    var { ry } = action.payload;
     var { arrowheadId, arrowhead, pathId, path } = getArrowInfo(stateCopy.shapes, stateCopy.arrowheads, stateCopy.selected);
+    const { lockAspectRatio } = stateCopy;
+    const { ry } = action.payload;
 
-    arrowhead = setArrowheadRadiusY(ry, arrowhead, halfHeight);
+    arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
 
     if (lockAspectRatio) {
-        arrowhead = setArrowheadRadiusX(ry, arrowhead, rightBufferX - editorHeight, rightBufferX);
+        arrowhead = setArrowheadRadiusX(arrowhead, ry, rightBufferX - editorHeight, rightBufferX);
     }
+
+    arrowhead = updateLengthAndRefX(arrowhead);
+    arrowhead = updateHandles(arrowhead);
 
     stateCopy.arrowheads.byId[arrowheadId] = arrowhead;
     stateCopy.shapes.byId[pathId] = Object.assign({}, path, {arrowheadLength: arrowhead.length});
@@ -141,8 +154,6 @@ export function toggleArrowheadFill(stateCopy, action, root) {
 
 export function toggleArrowheadAspect(stateCopy) {
     stateCopy.lockAspectRatio = !stateCopy.lockAspectRatio;
-
-    console.log(stateCopy.lockAspectRatio);
 
     return stateCopy;
 }
