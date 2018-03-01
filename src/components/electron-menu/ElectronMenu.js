@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Modal from './Modal';
+import Modal from '../dd-modal/Modal';
 
 const { remote } = window.require('electron');
 const { Menu, MenuItem, BrowserWindow } = remote;
@@ -46,6 +46,7 @@ class ElectronMenu extends Component {
 
     componentDidMount() {
         const template = [
+            {label: 'File'},
             {
                 label: 'Edit',
                 submenu: [
@@ -122,10 +123,6 @@ class ElectronMenu extends Component {
                     {label: 'Canvas Settings',
                         click: () => {
                             this.handleToggleSettingsModal();
-                        }},
-                    {label: 'Grid Settings',
-                        click() {
-
                         }}
                 ]
             },
@@ -187,17 +184,16 @@ class ElectronMenu extends Component {
 
     render() {
         let settingsModal = null;
-        let canvasSettings = <div>
-            <form onSubmit={this.handleFormSubmit}>
+        let canvasSettings =
+            <div>
                 <label>Width:</label><input />
                 <label>Height:</label><input />
                 <input type="submit" value="Submit" id="basic-button" />
-            </form>
-            <button id="basic-button" onClick={this.handleToggleSettingsModal}>Cancel</button>
-        </div>;
+                <button id="basic-button" onClick={this.handleToggleSettingsModal}>Cancel</button>
+            </div>;
         if (this.props.settingsModalVisible) {
             settingsModal = <div>
-                <Modal form={canvasSettings} modalName="Canvas Settings" /></div>;
+                <Modal formContent={canvasSettings} formValues={{canvasWidth: 50, canvasHeight: 50}} modalName="Canvas Settings" /></div>;
         } else {
             settingsModal = <div />;
         }
