@@ -5,7 +5,6 @@ import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCo
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
-import { checkOffScreen } from '../caseFunctions/shape';
 
 export function dragStart(stateCopy, action, root) {
     const prevEditState = stateCopy.editInProgress;
@@ -232,7 +231,6 @@ export function dragStop(stateCopy, action, root) {
                 stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
             }
             stateCopy.selected = [];
-            break;
             break;
         case "zoomTool":
             if (stateCopy.marqueeBox.width !== 0 || stateCopy.marqueeBox.height !== 0) {
