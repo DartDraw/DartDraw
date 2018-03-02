@@ -1,6 +1,7 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
 import { deepCopy } from './object';
+import { getShapeInfo } from './info';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval, rectangleRadius) {
     const { draggableData } = action.payload;
@@ -1732,7 +1733,7 @@ function deltaTransformPoint(matrix, point) {
     return { x: dx, y: dy };
 }
 
-function decomposeMatrix(matrix) {
+export function decomposeMatrix(matrix) {
     // @see https://gist.github.com/2052247
 
     // calculate delta transform point
@@ -1790,29 +1791,6 @@ function getCenter(boundingBox, shapeMatrix) {
     center.y = (coords0.y + coords1.y + coords2.y + coords3.y) / 4;
 
     return center;
-}
-
-function getShapeInfo(shape, boundingBox) {
-    const shapeInfo = {};
-
-    if (shape.x && shape.y) {
-        shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
-        shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
-    }
-
-    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
-    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
-
-    let coords = [];
-    coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
-    coords[1] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-    coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-    coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
-
-    shapeInfo.width = Math.sqrt((coords[0].x - coords[3].x) ** 2 + (coords[0].y - coords[3].y) ** 2);
-    shapeInfo.height = Math.sqrt((coords[0].x - coords[1].x) ** 2 + (coords[0].y - coords[1].y) ** 2);
-
-    return shapeInfo;
 }
 
 export function moveShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {

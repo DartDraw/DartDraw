@@ -55,8 +55,7 @@ class RectangleMenu extends Component {
 
     handleRotationChange(value) {
         const {onRotateShapeTo} = this.props;
-        const degree = value;
-        onRotateShapeTo && onRotateShapeTo(degree);
+        onRotateShapeTo && onRotateShapeTo(value);
     }
 
     render() {
@@ -86,7 +85,7 @@ class RectangleMenu extends Component {
                 </div>
                 <div className="menu-row">
                     <div className="menu-row-title">Rotation:</div>
-                    <Input value={this.props.rectangle.degree} label="Rotation" onChange={this.handleRotationChange} />
+                    <Input value={this.props.rectangle.info.rotation} label="Rotation" onChange={this.handleRotationChange} />
                 </div>
             </div>
         );
