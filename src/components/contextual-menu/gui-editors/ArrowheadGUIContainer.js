@@ -2,8 +2,6 @@ import { connect } from 'react-redux';
 import ArrowheadGUI from './ArrowheadGUI';
 import {
     arrowheadHandleDrag,
-    // changeArrowheadType,
-    toggleArrowheadFill,
     toggleArrowheadAspect,
     changeArrowheadHeight,
     changeArrowheadLength,
@@ -34,12 +32,6 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onArrowheadHandleDrag: (shapeId, handleIndex, draggableData) => {
             dispatch(arrowheadHandleDrag(shapeId, handleIndex, draggableData));
-        },
-        // onChangeArrowheadType: (arrowheadType) => {
-        //     dispatch(changeArrowheadType(arrowheadType));
-        // },
-        onToggleArrowheadFill: () => {
-            dispatch(toggleArrowheadFill());
         },
         onToggleArrowheadAspect: () => {
             dispatch(toggleArrowheadAspect());

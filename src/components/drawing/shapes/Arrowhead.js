@@ -18,15 +18,14 @@ class Arrowhead extends Component {
         width: PropTypes.number,
         height: PropTypes.number,
         refX: PropTypes.number,
-        length: PropTypes.number,
+        // length: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
-        fillOpacity: PropTypes.number,
-        onDragStart: PropTypes.func,
-        onDrag: PropTypes.func,
-        onDragStop: PropTypes.func,
-        onClick: PropTypes.func,
+        // onDragStart: PropTypes.func,
+        // onDrag: PropTypes.func,
+        // onDragStop: PropTypes.func,
+        // onClick: PropTypes.func,
         propagateEvents: PropTypes.bool
     }
 
@@ -34,40 +33,39 @@ class Arrowhead extends Component {
         propagateEvents: false
     }
 
-    constructor(props) {
-        super(props);
+    // constructor(props) {
+    //     super(props);
+    //
+    //     // this.handleDragStart = this.handleDragStart.bind(this);
+    //     // this.handleDrag = this.handleDrag.bind(this);
+    //     // this.handleDragStop = this.handleDragStop.bind(this);
+    //     // this.handleClick = this.handleClick.bind(this);
+    // }
 
-        this.handleDragStart = this.handleDragStart.bind(this);
-        this.handleDrag = this.handleDrag.bind(this);
-        this.handleDragStop = this.handleDragStop.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleDragStart(id, draggableData) {
-        const { onDragStart } = this.props;
-        onDragStart && onDragStart(this.props.id, draggableData);
-    }
-
-    handleDrag(id, draggableData) {
-        const { onDrag } = this.props;
-        onDrag && onDrag(this.props.id, draggableData);
-    }
-
-    handleDragStop(id, draggableData) {
-        const { onDragStop } = this.props;
-        onDragStop && onDragStop(this.props.id, draggableData);
-    }
-
-    handleClick(id, event) {
-        const { onClick } = this.props;
-        onClick && onClick(this.props.id, event);
-    }
+    // handleDragStart(id, draggableData) {
+    //     const { onDragStart } = this.props;
+    //     onDragStart && onDragStart(this.props.id, draggableData);
+    // }
+    //
+    // handleDrag(id, draggableData) {
+    //     const { onDrag } = this.props;
+    //     onDrag && onDrag(this.props.id, draggableData);
+    // }
+    //
+    // handleDragStop(id, draggableData) {
+    //     const { onDragStop } = this.props;
+    //     onDragStop && onDragStop(this.props.id, draggableData);
+    // }
+    //
+    // handleClick(id, event) {
+    //     const { onClick } = this.props;
+    //     onClick && onClick(this.props.id, event);
+    // }
 
     render() {
-        const { id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray, fillOpacity } = this.props;
+        const { id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
         const arrowheadProps = {
             fill: stroke,
-            fillOpacity,
             stroke,
             strokeWidth,
             strokeDasharray
@@ -82,39 +80,42 @@ class Arrowhead extends Component {
             case "barbed":
                 arrowhead = (
                     <polygon
-                        points={formatPoints(points)}
                         {...arrowheadProps}
+                        points={formatPoints(points)}
+                        strokeWidth={0}
                     />
                 );
                 break;
             case "ellipse":
                 arrowhead = (
                     <ellipse
+                        {...arrowheadProps}
                         cx={cx}
                         cy={cy}
                         rx={rx}
                         ry={ry}
-                        {...arrowheadProps}
+                        strokeWidth={0}
                     />
                 );
                 break;
             case "rectangle":
                 arrowhead = (
                     <rect
+                        {...arrowheadProps}
                         x={x}
                         y={y}
                         width={width}
                         height={height}
-                        {...arrowheadProps}
+                        strokeWidth={0}
                     />
                 );
                 break;
             case "polyline":
                 arrowhead = (
                     <polyline
-                        points={formatPoints(points)}
-                        fillOpacity="0"
                         {...arrowheadProps}
+                        points={formatPoints(points)}
+                        fillOpacity={0}
                     />
                 );
                 break;
@@ -132,9 +133,9 @@ class Arrowhead extends Component {
                 markerUnits="userSpaceOnUse"
                 refX={refX}
                 refY={refY}
-                onDragStart={() => console.log("hi")}
-                onDrag={this.handleDrag}
-                onClick={() => console.log("hi")}>
+                // onDragStart={() => console.log("hi")}
+                // onDrag={this.handleDrag}
+                // onClick={() => console.log("hi")}>
             >
                 {arrowhead}
             </marker>

@@ -34,7 +34,6 @@ export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
 export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
 export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
-export const TOGGLE_ARROWHEAD_FILL = 'TOGGLE_ARROWHEAD_FILL';
 export const TOGGLE_ARROWHEAD_ASPECT = 'TOGGLE_ARROWHEAD_ASPECT';
 export const CHANGE_ARROWHEAD_HEIGHT = 'CHANGE_ARROWHEAD_HEIGHT';
 export const CHANGE_ARROWHEAD_LENGTH = 'CHANGE_ARROWHEAD_LENGTH';
@@ -249,14 +248,6 @@ export function toggleContextualMenu() {
 
 export function arrowheadHandleDrag(shapeId, handleIndex, draggableData) {
     return { type: ARROWHEAD_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
-}
-// 
-// export function changeArrowheadType(arrowheadType) {
-//     return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
-// }
-
-export function toggleArrowheadFill() {
-    return { type: TOGGLE_ARROWHEAD_FILL };
 }
 
 export function toggleArrowheadAspect() {

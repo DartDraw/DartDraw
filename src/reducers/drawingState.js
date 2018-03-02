@@ -245,9 +245,6 @@ function drawingState(state = initialState, action, root) {
         case menuActions.SELECT_ARROWHEAD_PRESET:
             updatedState = arrowhead.selectArrowheadPreset(stateCopy, action, root);
             break;
-        case menuActions.TOGGLE_ARROWHEAD_FILL:
-            updatedState = arrowhead.toggleArrowheadFill(stateCopy, action, root);
-            break;
         case menuActions.TOGGLE_ARROWHEAD_ASPECT:
             updatedState = arrowhead.toggleArrowheadAspect(stateCopy, action, root);
             break;

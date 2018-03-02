@@ -12,11 +12,9 @@ class ArrowheadGUI extends Component {
         lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
         defaultPresets: PropTypes.array,
-        fillColor: PropTypes.object,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDrag: PropTypes.func,
         onApplyArrowhead: PropTypes.func,
-        onToggleArrowheadFill: PropTypes.func,
         onToggleArrowheadAspect: PropTypes.func,
         onHeightChange: PropTypes.func,
         onLengthChange: PropTypes.func,
@@ -32,7 +30,6 @@ class ArrowheadGUI extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isFillChecked: this.props.selectedArrowhead.fillOpacity === 1,
             isAspectChecked: this.props.lockAspectRatio
         };
 
@@ -46,7 +43,6 @@ class ArrowheadGUI extends Component {
         this.handleBarbLengthChange = this.handleBarbLengthChange.bind(this);
         this.handleRadiusXChange = this.handleRadiusXChange.bind(this);
         this.handleRadiusYChange = this.handleRadiusYChange.bind(this);
-        this.handleToggleFill = this.handleToggleFill.bind(this);
         this.handleToggleAspect = this.handleToggleAspect.bind(this);
         this.handleSelectArrowheadPreset = this.handleSelectArrowheadPreset.bind(this);
         this.handleAddArrowheadPreset = this.handleAddArrowheadPreset.bind(this);
@@ -76,11 +72,6 @@ class ArrowheadGUI extends Component {
 
     handleRadiusYChange(value) {
         this.props.onRadiusYChange(parseInt(value, 10));
-    }
-
-    handleToggleFill(event) {
-        this.setState({isFillChecked: !this.state.isFillChecked});
-        this.props.onToggleArrowheadFill();
     }
 
     handleToggleAspect(event) {
@@ -134,16 +125,14 @@ class ArrowheadGUI extends Component {
     }
 
     generatePresetList() {
-        const { presetNames } = this.props;
-
-        return presetNames.map((preset) => {
-            return <option value={preset}>{preset}</option>;
+        return this.props.presetNames.map((preset) => {
+            return <option key={preset} value={preset}>{preset}</option>;
         });
     }
 
     renderTypeSpecificInputs() {
         const { selectedArrowhead } = this.props;
-        const { isFillChecked, isAspectChecked } = this.state;
+        const { isAspectChecked } = this.state;
 
         switch (selectedArrowhead.type) {
             case "triangle":
@@ -152,8 +141,6 @@ class ArrowheadGUI extends Component {
                         <div className="editor-row-title">Size:</div>
                         <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
                         <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
-                        <div className="editor-row-title">Fill:</div>
-                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} checked={isFillChecked} />
                     </div>
                 );
             case "barbed":
@@ -163,8 +150,6 @@ class ArrowheadGUI extends Component {
                         <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
                         <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 11 }} onChange={this.handleLengthChange} />
                         <Input value={selectedArrowhead.points[6] - selectedArrowhead.points[0]} label="Barb Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleBarbLengthChange} />
-                        <div className="editor-row-title">Fill:</div>
-                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} checked={isFillChecked} />
                     </div>
                 );
             case "ellipse":
@@ -173,8 +158,6 @@ class ArrowheadGUI extends Component {
                         <div className="editor-row-title">Size:</div>
                         <Input value={selectedArrowhead.rx} label="RX" style={{ width: 49, marginRight: 11 }} onChange={this.handleRadiusXChange} />
                         <Input value={selectedArrowhead.ry} label="RY" style={{ width: 49, marginRight: 21 }} onChange={this.handleRadiusYChange} />
-                        <div className="editor-row-title">Fill:</div>
-                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} checked={isFillChecked} />
                         <div className="editor-row-title">Lock:</div>
                         <input id="aspect" type="checkbox" onChange={this.handleToggleAspect} checked={isAspectChecked} />
                     </div>
@@ -185,8 +168,6 @@ class ArrowheadGUI extends Component {
                         <div className="editor-row-title">Size:</div>
                         <Input value={selectedArrowhead.height} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
                         <Input value={selectedArrowhead.width} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
-                        <div className="editor-row-title">Fill:</div>
-                        <input id="fill" type="checkbox" onChange={this.handleToggleFill} style={{ marginRight: 21 }} checked={isFillChecked} />
                         <div className="editor-row-title">Lock:</div>
                         <input id="aspect" type="checkbox" onChange={this.handleToggleAspect} checked={isAspectChecked} />
                     </div>
@@ -231,24 +212,16 @@ class ArrowheadGUI extends Component {
     renderArrowhead(arrowhead) {
         const { stroke } = this.props.path;
 
-        const arrowheadProps = {
-            ...arrowhead,
-            transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
-            fill: stroke,
-            stroke: stroke,
-            strokeWidth: 5
-        };
-
         switch (arrowhead.type) {
             case 'triangle':
             case 'barbed':
-                return <Polygon {...arrowheadProps} />;
+                return <Polygon {...arrowhead} fill={stroke} strokeWidth={0} />;
             case 'ellipse':
-                return <Ellipse {...arrowheadProps} />;
+                return <Ellipse {...arrowhead} fill={stroke} strokeWidth={0} />;
             case 'rectangle':
-                return <Rectangle {...arrowheadProps} />;
+                return <Rectangle {...arrowhead} fill={stroke} strokeWidth={0} />;
             case 'polyline':
-                return <Polyline {...arrowheadProps} />;
+                return <Polyline {...arrowhead} fill={stroke} fillOpacity={0} />;
             default: break;
         }
     }
@@ -297,7 +270,7 @@ class ArrowheadGUI extends Component {
         return (
             <div className="editor">
                 <div className="editor-row">
-                    <div className="editor-row-title">Type:</div>
+                    <div className="editor-row-title">Selected Arrowhead:</div>
                     <Select value={selectedArrowhead.preset} onChange={this.handleSelectArrowheadPreset}>
                         {this.generatePresetList()}
                     </Select>

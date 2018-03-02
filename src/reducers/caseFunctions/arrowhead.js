@@ -172,20 +172,6 @@ export function changeArrowheadRadiusY(stateCopy, action, root) {
     return stateCopy;
 }
 
-export function toggleArrowheadFill(stateCopy, action, root) {
-    stateCopy.selected.map((lineId) => {
-        if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowheadId } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
-
-            let opacity = stateCopy.arrowheads.byId[arrowheadId].fillOpacity;
-
-            stateCopy.arrowheads.byId[arrowheadId].fillOpacity = opacity === 1 ? 0 : 1;
-        }
-    });
-
-    return stateCopy;
-}
-
 export function toggleArrowheadAspect(stateCopy) {
     stateCopy.lockAspectRatio = !stateCopy.lockAspectRatio;
 
