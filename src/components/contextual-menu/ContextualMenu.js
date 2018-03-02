@@ -328,7 +328,7 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { hidden, selectedShape, scale, unitType, unitDivisions, currentRuler, canvasWidthInUnits, canvasHeightInUnits } = this.props;
+        const { hidden, selectedShape, scale } = this.props;
 
         let menuLayout = null;
         if (selectedShape) {
@@ -337,21 +337,22 @@ class ContextualMenu extends Component {
             } else if (selectedShape.type === 'rectangle') {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
-                menuLayout = <LineMenu line={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <LineMenu line={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'ellipse') {
-                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} onMoveShapeTo={this.handleMoveShapeTo} />;
+                // needs onMoveShape to and onResizeShapeTo for rx, ry, cx, cy
+                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'polygon') {
-                menuLayout = <PolygonMenu polygon={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <PolygonMenu polygon={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'polyline') {
-                menuLayout = <PolylineMenu polyline={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <PolylineMenu polyline={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'bezier') {
-                menuLayout = <BezierMenu bezier={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <BezierMenu bezier={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'arc') {
-                menuLayout = <ArcMenu arc={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <ArcMenu arc={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'path') {
-                menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'freehandPath') {
-                menuLayout = <FreehandPathMenu path={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <FreehandPathMenu freehandPath={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             }
         }
 

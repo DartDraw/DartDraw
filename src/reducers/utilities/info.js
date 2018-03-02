@@ -65,41 +65,112 @@ function getEllipseInfo(shape) {
 }
 
 function getPolygonInfo(shape) {
-    const shapeInfo = {};
+    // Sample info:
+    const shapeInfo = { points: [
+        { x: 0, y: 0 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 }
+    ] };
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getPolylineInfo(shape) {
-    const shapeInfo = {};
+    // Sample info:
+    const shapeInfo = { points: [
+        { x: 0, y: 0 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 },
+        { x: 50, y: 50 }
+    ] };
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getBezierInfo(shape) {
     const shapeInfo = {};
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getArcInfo(shape) {
     const shapeInfo = {};
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getPathInfo(shape) {
     const shapeInfo = {};
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getFreehandPathInfo(shape) {
     const shapeInfo = {};
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getLineInfo(shape) {
     const shapeInfo = {};
+
+    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
+    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
+
     return shapeInfo;
 }
 
 function getTextInfo(shape) {
     const shapeInfo = {};
+
     return shapeInfo;
 }

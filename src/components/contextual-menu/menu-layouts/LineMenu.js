@@ -6,7 +6,8 @@ import './menu-layouts.css';
 class LineMenu extends Component {
     static propTypes = {
         line: PropTypes.object,
-        onEdit: PropTypes.func
+        onEdit: PropTypes.func,
+        onRotateShapeTo: PropTypes.func
     };
 
     constructor(props) {
@@ -16,6 +17,7 @@ class LineMenu extends Component {
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
         this.handleArrowShown = this.handleArrowShown.bind(this);
         this.handleArrowType = this.handleArrowType.bind(this);
+        this.handleRotationChange = this.handleRotationChange.bind(this);
     }
 
     handleX1Change(value) {
@@ -72,6 +74,11 @@ class LineMenu extends Component {
         onEdit && onEdit(newLine);
     }
 
+    handleRotationChange(value) {
+        const {onRotateShapeTo} = this.props;
+        onRotateShapeTo && onRotateShapeTo(value);
+    }
+
     render() {
         return (
             <div className="line-menu menu">
@@ -85,6 +92,10 @@ class LineMenu extends Component {
                     <div className="menu-row-title">Point 2:</div>
                     <Input value={this.props.line.points[2]} label="X2" style={{ width: 49, marginRight: 11 }} onChange={this.handleX2Change} />
                     <Input value={this.props.line.points[3]} label="Y2" style={{ width: 49 }} onChange={this.handleY2Change} />
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Rotation:</div>
+                    <Input value={this.props.line.info.rotation} label="Rotation" onChange={this.handleRotationChange} />
                 </div>
                 <div className="menu-row">
                     <div className="menu-row-title">Stroke Pattern:</div>
