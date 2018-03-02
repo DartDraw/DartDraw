@@ -292,8 +292,6 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, gr
         stroke: formatColor(fill),
         strokeWidth: 10,
         largeArc: 0,
-        startAngle: 0,
-        sweepAngle: Math.PI / 2,
         flipArc: false,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
@@ -2489,4 +2487,36 @@ export function snapToGrid(shapes, selected, action, scale, boundingBoxes, selec
         shapes = moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, true, gridSnapInterval, align);
     });
     return shapes;
+}
+
+export function shapesOffScreen(shapes, boundingBoxes, offset, height, width) {
+    let offScreen = false;
+
+    for (var i = 0; i < shapes.allIds.length; i++) {
+        const id = shapes.allIds[i];
+        const shapeMatrix = shapes.byId[id].transform[0].parameters;
+        const boundingBox = boundingBoxes[id];
+
+        if (boundingBox) {
+            let inBox = 0;
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
+
+            if (inBox !== 4) {
+                offScreen = true;
+                break;
+            }
+        }
+    }
+
+    return offScreen;
+}
+
+function pointInCanvas(offset, height, width, p) {
+    if (offset.x <= p.x && p.x <= (width) && offset.y <= p.y && p.y <= (height)) {
+        return 1;
+    }
+    return 0;
 }

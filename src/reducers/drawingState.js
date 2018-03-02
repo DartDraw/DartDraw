@@ -220,6 +220,10 @@ function drawingState(state = initialState, action, root) {
 
     if (action.type !== menuActions.UNDO_CLICK && action.type !== menuActions.REDO_CLICK) {
         if (!updatedState.editInProgress) {
+            if (shape.checkOffScreen(stateCopy)) {
+                updatedState.shapes = deepCopy(updatedState.lastSavedShapes);
+            }
+
             let delta;
             if (state.editInProgress) {
                 delta = jsondiffpatch.create().diff(state.lastSavedShapes, updatedState.shapes);
