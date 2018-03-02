@@ -1,6 +1,6 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
-import { setArrowheadType } from './arrowhead';
+import { setArrowheadPreset } from './arrowhead';
 import { deepCopy } from './object';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval, rectangleRadius) {
@@ -259,23 +259,25 @@ export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gri
         arrowheadShown: 'yes'
     };
 
-    const arrowhead = Object.assign(
-        {},
-        setArrowheadType("triangle"),
-        {id: line.arrowheadId, lineId: line.id, stroke: line.stroke, strokeWidth: line.strokeWidth, strokeDasharray: line.strokeDasharray}
-    );
-
-    line.arrowheadLength = arrowhead.length;
+    var arrowhead = {
+        id: line.arrowheadId,
+        lineId: line.id,
+        stroke: line.stroke,
+        strokeWidth: line.strokeWidth,
+        strokeDasharray: line.strokeDasharray
+    };
 
     if (gridSnapping) {
         line.points[0] = Math.round(line.points[0] / gridSnapInterval) * gridSnapInterval;
         line.points[1] = Math.round(line.points[1] / gridSnapInterval) * gridSnapInterval;
     }
 
-    shapes.byId[line.id] = line;
+    const { updatedArrowhead, updatedLine } = setArrowheadPreset(arrowheads.presets["triangle"], arrowhead, line);
+
+    shapes.byId[line.id] = updatedLine;
     shapes.allIds.push(line.id);
 
-    arrowheads.byId[arrowhead.id] = arrowhead;
+    arrowheads.byId[arrowhead.id] = updatedArrowhead;
     arrowheads.allIds.push(arrowhead.id);
 
     return shapes;

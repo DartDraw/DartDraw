@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import ArrowheadGUI from './ArrowheadGUI';
 import {
     arrowheadHandleDrag,
-    changeArrowheadType,
+    // changeArrowheadType,
     toggleArrowheadFill,
     toggleArrowheadAspect,
     changeArrowheadHeight,
@@ -26,7 +26,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         selectedArrowhead,
         lockAspectRatio,
         presetNames: Object.keys(arrowheads.presets),
-        typeNames: ['triangle', 'barbed', 'ellipse', 'rectangle', 'polyline']
+        defaultPresets: ["triangle", "barbed", "ellipse", "rectangle", "polyline"]
     };
 };
 
@@ -35,9 +35,9 @@ const mapDispatchToProps = (dispatch) => {
         onArrowheadHandleDrag: (shapeId, handleIndex, draggableData) => {
             dispatch(arrowheadHandleDrag(shapeId, handleIndex, draggableData));
         },
-        onChangeArrowheadType: (arrowheadType) => {
-            dispatch(changeArrowheadType(arrowheadType));
-        },
+        // onChangeArrowheadType: (arrowheadType) => {
+        //     dispatch(changeArrowheadType(arrowheadType));
+        // },
         onToggleArrowheadFill: () => {
             dispatch(toggleArrowheadFill());
         },

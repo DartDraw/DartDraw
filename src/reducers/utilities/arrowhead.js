@@ -1,60 +1,44 @@
 import uuidv1 from 'uuid';
 
-export function setArrowheadType(arrowheadType) {
-    var arrowhead = {};
-
-    switch (arrowheadType) {
-        case 'triangle':
-            arrowhead = {
-                type: 'triangle',
-                points: [215, 55, 275, 75, 215, 95],
-                fillOpacity: 1
-            };
-            break;
-        case 'barbed':
-            arrowhead = {
-                type: 'barbed',
-                points: [215, 55, 275, 75, 215, 95, 235, 75],
-                fillOpacity: 1
-            };
-            break;
-        case 'ellipse':
-            arrowhead = {
-                type: 'ellipse',
-                // preset: 'default',
-                cx: 260,
-                cy: 75,
-                rx: 15,
-                ry: 15,
-                fillOpacity: 1
-            };
-            break;
-        case 'rectangle':
-            arrowhead = {
-                type: 'rectangle',
-                // preset: 'default',
-                x: 245,
-                y: 60,
-                width: 30,
-                height: 30,
-                fillOpacity: 1
-            };
-            break;
-        case 'polyline':
-            arrowhead = {
-                type: 'polyline',
-                // preset: 'default',
-                points: [215, 55, 275, 75, 215, 95],
-                fillOpacity: 0
-            };
-            break;
-        default: break;
-    }
-
-    arrowhead = updateLengthAndRefX(arrowhead);
-    arrowhead = generateHandles(arrowhead);
-
-    return arrowhead;
+export function getArrowheadDefaultPresets() {
+    return ({
+        "triangle": {
+            type: 'triangle',
+            preset: 'triangle',
+            fillOpacity: 1,
+            points: [215, 55, 275, 75, 215, 95]
+        },
+        "barbed": {
+            type: 'barbed',
+            preset: 'barbed',
+            fillOpacity: 1,
+            points: [215, 55, 275, 75, 215, 95, 235, 75]
+        },
+        "ellipse": {
+            type: 'ellipse',
+            preset: 'ellipse',
+            fillOpacity: 1,
+            cx: 260,
+            cy: 75,
+            rx: 15,
+            ry: 15
+        },
+        "rectangle": {
+            type: 'rectangle',
+            preset: 'rectangle',
+            fillOpacity: 1,
+            x: 245,
+            y: 60,
+            width: 30,
+            height: 30
+        },
+        "polyline": {
+            type: 'polyline',
+            preset: 'polyline',
+            fillOpacity: 0,
+            points: [215, 55, 275, 75, 215, 95]
+        }
+    });
 }
 
 export function setArrowheadHeight(arrowhead, newHeight, min, max) {
@@ -169,11 +153,10 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
             } else if (handleIndex === 1) {
                 var ry = halfHeight - mouseY;
 
+                arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
+
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
                     arrowhead = setArrowheadRadiusX(arrowhead, ry, 0, editorHeight);
-                } else {
-                    arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
                 }
             }
             break;
@@ -190,11 +173,10 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
             } else if (handleIndex === 1) {
                 var height = editorHeight - (mouseY * 2);
 
+                arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
+
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
                     arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - editorHeight, rightBufferX);
-                } else {
-                    arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
                 }
             }
             break;
@@ -206,31 +188,6 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
     arrowhead = updateHandles(arrowhead);
 
     return arrowhead;
-}
-
-function generateHandles(arrowhead) {
-    let numHandles;
-
-    switch (arrowhead.type) {
-        case 'barbed':
-        case 'ellipse':
-        case 'rectangle':
-            numHandles = 2;
-            break;
-        case 'triangle':
-        case 'polyline':
-            numHandles = 1;
-            break;
-        default: break;
-    }
-
-    arrowhead.handles = [];
-
-    for (let i = 0; i < numHandles; i++) {
-        arrowhead.handles.push({id: uuidv1(), index: i});
-    }
-
-    return updateHandles(arrowhead);
 }
 
 export function updateHandles(arrowhead) {
@@ -292,17 +249,19 @@ export function updateLengthAndRefX(arrowhead) {
     return arrowhead;
 }
 
-export function changeArrowheadPreset(presetName, shapes, arrowheads, selected) {
-    var { arrowhead, path } = getArrowInfo(shapes, arrowheads, selected);
+export function setArrowheadPreset(preset, arrowhead, line) {
+    var updatedArrowhead = Object.assign(
+        {},
+        preset,
+        {id: arrowhead.id, lineId: arrowhead.lineId, stroke: arrowhead.stroke, strokeWidth: arrowhead.strokeWidth, strokeDasharray: arrowhead.strokeDasharray}
+    );
 
-    const newArrowhead = arrowheads.presets[presetName];
-
-    var updatedArrowhead = Object.assign({}, arrowhead, {...newArrowhead});
     updatedArrowhead = generateHandles(updatedArrowhead);
+    updatedArrowhead = updateLengthAndRefX(updatedArrowhead);
 
-    const updatedPath = Object.assign({}, path, {arrowheadLength: newArrowhead.length});
+    const updatedLine = Object.assign({}, line, {arrowheadLength: updatedArrowhead.length});
 
-    return { updatedArrowhead, updatedPath };
+    return { updatedArrowhead, updatedLine };
 }
 
 export function scaleViewBox(width, height, strokeWidth) {
@@ -314,15 +273,70 @@ export function scaleViewBox(width, height, strokeWidth) {
     return viewBox;
 }
 
-export function getArrowInfo(shapes, arrowheads, selected) {
-    const arrowheadId = shapes.byId[selected[0]].arrowheadId;
+export function getArrowInfo(lineId, shapes, arrowheads) {
+    const arrowheadId = shapes.byId[lineId].arrowheadId;
     const arrowhead = arrowheads.byId[arrowheadId];
-    const pathId = selected[0];
-    const path = shapes.byId[pathId];
+    const line = shapes.byId[lineId];
 
-    return { arrowheadId, arrowhead, pathId, path };
+    return { arrowheadId, arrowhead, line };
 }
 
 export function clamp(num, min, max) {
     return Math.max(min, Math.min(num, max));
+}
+
+export function newArrowheadPreset(name, arrowhead) {
+    var newArrowheadPreset = {
+        type: arrowhead.type,
+        preset: name,
+        fillOpacity: arrowhead.fillOpacity
+    };
+
+    switch (arrowhead.type) {
+        case "triangle":
+        case "barbed":
+        case "polyline":
+            newArrowheadPreset.points = arrowhead.points;
+            break;
+        case "ellipse":
+            newArrowheadPreset.cx = arrowhead.cx;
+            newArrowheadPreset.cy = arrowhead.cy;
+            newArrowheadPreset.rx = arrowhead.rx;
+            newArrowheadPreset.ry = arrowhead.ry;
+            break;
+        case "rectangle":
+            newArrowheadPreset.x = arrowhead.x;
+            newArrowheadPreset.y = arrowhead.y;
+            newArrowheadPreset.width = arrowhead.width;
+            newArrowheadPreset.height = arrowhead.height;
+            break;
+        default: break;
+    }
+
+    return newArrowheadPreset;
+}
+
+function generateHandles(arrowhead) {
+    let numHandles;
+
+    switch (arrowhead.type) {
+        case 'barbed':
+        case 'ellipse':
+        case 'rectangle':
+            numHandles = 2;
+            break;
+        case 'triangle':
+        case 'polyline':
+            numHandles = 1;
+            break;
+        default: break;
+    }
+
+    arrowhead.handles = [];
+
+    for (let i = 0; i < numHandles; i++) {
+        arrowhead.handles.push({id: uuidv1(), index: i});
+    }
+
+    return updateHandles(arrowhead);
 }

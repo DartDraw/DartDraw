@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
-import { Input } from '../../ui';
-import Dropdown from 'react-dropdown';
+import { Input, Select } from '../../ui';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
 class ArrowheadGUI extends Component {
@@ -12,12 +11,11 @@ class ArrowheadGUI extends Component {
         selectedArrowhead: PropTypes.object,
         lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
-        typeNames: PropTypes.array,
+        defaultPresets: PropTypes.array,
         fillColor: PropTypes.object,
         propagateEvents: PropTypes.bool,
         onArrowheadHandleDrag: PropTypes.func,
         onApplyArrowhead: PropTypes.func,
-        onChangeArrowheadType: PropTypes.func,
         onToggleArrowheadFill: PropTypes.func,
         onToggleArrowheadAspect: PropTypes.func,
         onHeightChange: PropTypes.func,
@@ -42,8 +40,6 @@ class ArrowheadGUI extends Component {
         this.renderArrowhead = this.renderArrowhead.bind(this);
         this.renderHandles = this.renderHandles.bind(this);
         this.handleArrowheadHandleDrag = this.handleArrowheadHandleDrag.bind(this);
-        this.handleChangeArrowheadType = this.handleChangeArrowheadType.bind(this);
-        this.handleResetToDefault = this.handleResetToDefault.bind(this);
         this.handleResetToPreset = this.handleResetToPreset.bind(this);
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
@@ -58,14 +54,8 @@ class ArrowheadGUI extends Component {
         this.handleDeleteArrowheadPreset = this.handleDeleteArrowheadPreset.bind(this);
     }
 
-    handleResetToDefault() {
-        const { selectedArrowhead } = this.props;
-        this.props.onChangeArrowheadType(selectedArrowhead.type);
-    }
-
     handleResetToPreset() {
-        const { selectedArrowhead } = this.props;
-        this.props.onSelectArrowheadPreset(selectedArrowhead.preset);
+        this.props.onSelectArrowheadPreset(this.props.selectedArrowhead.preset);
     }
 
     handleHeightChange(value) {
@@ -102,12 +92,8 @@ class ArrowheadGUI extends Component {
         this.props.onArrowheadHandleDrag(shapeId, handleIndex, draggableData);
     }
 
-    handleSelectArrowheadPreset(preset) {
-        this.props.onSelectArrowheadPreset(preset.value);
-    }
-
-    handleChangeArrowheadType(type) {
-        this.props.onChangeArrowheadType(type.value);
+    handleSelectArrowheadPreset(value) {
+        this.props.onSelectArrowheadPreset(value);
     }
 
     handleAddArrowheadPreset() {
@@ -126,17 +112,33 @@ class ArrowheadGUI extends Component {
     }
 
     handleSaveArrowheadPreset() {
-        const { selectedArrowhead } = this.props;
-        if (selectedArrowhead.preset) {
+        const { selectedArrowhead, defaultPresets } = this.props;
+        const { dialog } = window.require('electron').remote;
+
+        if (defaultPresets.indexOf(selectedArrowhead.preset) === -1) {
             this.props.onSaveArrowheadPreset(selectedArrowhead);
+        } else {
+            dialog.showMessageBox({options: ["warning"], message: 'You cannot update the default arrowhead preset, "' + selectedArrowhead.preset + '".'});
         }
     }
 
     handleDeleteArrowheadPreset() {
-        const { selectedArrowhead } = this.props;
-        if (selectedArrowhead.preset) {
+        const { selectedArrowhead, defaultPresets } = this.props;
+        const { dialog } = window.require('electron').remote;
+
+        if (defaultPresets.indexOf(selectedArrowhead.preset) === -1) {
             this.props.onDeleteArrowheadPreset(selectedArrowhead.preset);
+        } else {
+            dialog.showMessageBox({options: ["warning"], message: 'You cannot delete the default arrowhead preset, "' + selectedArrowhead.preset + '".'});
         }
+    }
+
+    generatePresetList() {
+        const { presetNames } = this.props;
+
+        return presetNames.map((preset) => {
+            return <option value={preset}>{preset}</option>;
+        });
     }
 
     renderTypeSpecificInputs() {
@@ -279,17 +281,15 @@ class ArrowheadGUI extends Component {
     }
 
     render() {
-        const { path, selectedArrowhead, presetNames, typeNames } = this.props;
+        const { path, selectedArrowhead, presetNames, defaultPresets } = this.props;
 
         var presetInputs = null;
 
-        if (presetNames.length > 0) {
+        if (presetNames.length > defaultPresets.length) {
             presetInputs = <div className="editor-row">
-                <button id="basic-button" onClick={this.handleSaveArrowheadPreset}>Save</button>
+                <button id="basic-button" onClick={this.handleSaveArrowheadPreset}>Update</button>
                 <button id="basic-button" onClick={this.handleDeleteArrowheadPreset}>Delete</button>
-                <Dropdown options={presetNames} onChange={(e) => { this.handleSelectArrowheadPreset(e); }} value={selectedArrowhead.preset} placeholder="Select a preset" />
             </div>;
-            // <button id="basic-button" onClick={this.handleResetToPreset}>Reset to Preset</button>
         } else {
             presetInputs = <div />;
         }
@@ -298,8 +298,10 @@ class ArrowheadGUI extends Component {
             <div className="editor">
                 <div className="editor-row">
                     <div className="editor-row-title">Type:</div>
-                    <Dropdown options={typeNames} onChange={(e) => { this.handleChangeArrowheadType(e); }} value={selectedArrowhead.type} />
-                    <button id="basic-button" onClick={this.handleResetToDefault}>Reset</button>
+                    <Select value={selectedArrowhead.preset} onChange={this.handleSelectArrowheadPreset}>
+                        {this.generatePresetList()}
+                    </Select>
+                    <button id="basic-button" onClick={this.handleResetToPreset}>Reset</button>
                 </div>
                 <svg className="arrowhead-gui">
                     {this.renderReferenceLine(path, selectedArrowhead)}

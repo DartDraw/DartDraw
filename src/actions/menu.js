@@ -250,10 +250,10 @@ export function toggleContextualMenu() {
 export function arrowheadHandleDrag(shapeId, handleIndex, draggableData) {
     return { type: ARROWHEAD_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
 }
-
-export function changeArrowheadType(arrowheadType) {
-    return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
-}
+// 
+// export function changeArrowheadType(arrowheadType) {
+//     return { type: CHANGE_ARROWHEAD_TYPE, payload: { arrowheadType } };
+// }
 
 export function toggleArrowheadFill() {
     return { type: TOGGLE_ARROWHEAD_FILL };

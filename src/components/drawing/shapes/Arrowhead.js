@@ -70,8 +70,8 @@ class Arrowhead extends Component {
             fillOpacity,
             stroke,
             strokeWidth,
-            strokeDasharray,
-            vectorEffect: "non-scaling-stroke"
+            strokeDasharray
+            // vectorEffect: "non-scaling-stroke"
         };
 
         var arrowhead;

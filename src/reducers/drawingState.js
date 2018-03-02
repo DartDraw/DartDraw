@@ -8,6 +8,7 @@ import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import * as rulers from './caseFunctions/rulers';
 import * as arrowhead from './caseFunctions/arrowhead';
+import { getArrowheadDefaultPresets } from './utilities/arrowhead';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
@@ -18,7 +19,7 @@ const initialState = {
     arrowheads: {
         byId: {},
         allIds: [],
-        presets: {}
+        presets: getArrowheadDefaultPresets()
     },
     lockAspectRatio: false,
     selected: [],
@@ -223,9 +224,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.ARROWHEAD_HANDLE_DRAG:
             updatedState = arrowhead.arrowheadHandleDrag(stateCopy, action, root);
             break;
-        case menuActions.CHANGE_ARROWHEAD_TYPE:
-            updatedState = arrowhead.changeArrowheadType(stateCopy, action, root);
-            break;
+        // case menuActions.CHANGE_ARROWHEAD_TYPE:
+        //     updatedState = arrowhead.changeArrowheadType(stateCopy, action, root);
+        //     break;
         case menuActions.CHANGE_ARROWHEAD_HEIGHT:
             updatedState = arrowhead.changeArrowheadHeight(stateCopy, action, root);
             break;
