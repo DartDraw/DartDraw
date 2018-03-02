@@ -2,9 +2,9 @@ import 'react-select/dist/react-select.css';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './color-menu.css';
-import Dropdown from 'react-dropdown';
 import DDColorPicker from './DDColorPicker';
 import {ColorInput, ColorPicker} from 'react-colors';
+import { Select } from '../ui';
 
 class ColorMenu extends Component {
     static propTypes = {
@@ -86,9 +86,9 @@ class ColorMenu extends Component {
         this.props.onAddColor(this.props.currentColor);
     }
 
-    handleChangeColorType(event) {
-        console.log(event.value);
-        this.props.onChangeColorType(String(event.value));
+    handleChangeColorType(value) {
+        console.log(value);
+        this.props.onChangeColorType(String(value));
     }
 
     handleColorChange(colorInfo) {
@@ -117,11 +117,11 @@ class ColorMenu extends Component {
         const currentColorStyle = {
             backgroundColor: `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         };
-        const inputStyles =
-        {
+        const rowStyle = { flex: 1, display: 'flex', flexDirection: 'row' };
+        const inputStyles = {
             display: 'flex',
-            flexFlow: 'row nowrap',
             fontFamily: 'Catamaran',
+            width: 50,
             margin: 0,
             padding: 0
         };
@@ -131,39 +131,31 @@ class ColorMenu extends Component {
         };
 
         const CMYKEditor =
-            <div id="color-input">
-                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
-                    <ColorInput model='cmyk.c' style={inputStyles} />
-                    <ColorInput model='cmyk.m' style={inputStyles} />
-                    <ColorInput model='cmyk.y' style={inputStyles} />
-                    <ColorInput model='cmyk.k' style={inputStyles} />
-                </ColorPicker>
-            </div>;
+            <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange} style={rowStyle}>
+                <ColorInput model='cmyk.c' style={inputStyles} />
+                <ColorInput model='cmyk.m' style={inputStyles} />
+                <ColorInput model='cmyk.y' style={inputStyles} />
+                <ColorInput model='cmyk.k' style={inputStyles} />
+            </ColorPicker>;
 
         const RGBEditor =
-            <div id="color-input">
-                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
-                    <ColorInput model='rgb.r' style={inputStyles} />
-                    <ColorInput model='rgb.g' style={inputStyles} />
-                    <ColorInput model='rgb.b' style={inputStyles} />
-                </ColorPicker>
-            </div>;
+            <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange} style={rowStyle}>
+                <ColorInput model='rgb.r' style={inputStyles} />
+                <ColorInput model='rgb.g' style={inputStyles} />
+                <ColorInput model='rgb.b' style={inputStyles} />
+            </ColorPicker>;
 
         const HSVEditor =
-            <div id="color-input">
-                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
-                    <ColorInput model='hsv.h' style={inputStyles} />
-                    <ColorInput model='hsv.s' style={inputStyles} />
-                    <ColorInput model='hsv.v' style={inputStyles} />
-                </ColorPicker>
-            </div>;
+            <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange} style={rowStyle}>
+                <ColorInput model='hsv.h' style={inputStyles} />
+                <ColorInput model='hsv.s' style={inputStyles} />
+                <ColorInput model='hsv.v' style={inputStyles} />
+            </ColorPicker>;
 
         const HEXEditor =
-            <div id="color-input">
-                <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange}>
-                    <ColorInput model='hex' style={hexStyle} />
-                </ColorPicker>
-            </div>;
+            <ColorPicker color={[this.props.currentColor.r, this.props.currentColor.g, this.props.currentColor.b]} onChange={this.handleColorInputChange} style={rowStyle}>
+                <ColorInput model='hex' style={hexStyle} />
+            </ColorPicker>;
 
         let colorPicker = null;
         if (!this.state.showColorPicker) {
@@ -195,7 +187,11 @@ class ColorMenu extends Component {
                         <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
                         {colorPicker}
                         <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
-                        <Dropdown id="dropwdown" options={colorOptions} onChange={this.handleChangeColorType} value={colorType} placeholder={colorType} />
+                        <Select value={colorType} onChange={this.handleChangeColorType}>
+                            {colorOptions.map(({ value, label }) => {
+                                return <option value={value}>{label}</option>
+                            })}
+                        </Select>
                         <form id="opacity-form" onSubmit={this.handleSubmit}>
                             <label>Opacity:</label>
                             <input className="range-input" type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
