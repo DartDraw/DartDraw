@@ -68,17 +68,17 @@ class EllipseMenu extends Component {
                 </div>
                 <div className="menu-row">
                     <div className="menu-row-title">Position:</div>
-                    <Input value={this.props.ellipse.info.cx} label="X" style={{ width: 49, marginRight: 11 }} onChange={this.handleXChange} />
-                    <Input value={this.props.ellipse.info.cy} label="Y" style={{ width: 49 }} onChange={this.handleYChange} />
+                    <Input value={this.props.ellipse.info.cx} label="Center Coordinate X" style={{ width: 49, marginRight: 11 }} onChange={this.handleXChange} />
+                    <Input value={this.props.ellipse.info.cy} label="Center Coordinate Y" style={{ width: 49 }} onChange={this.handleYChange} />
                 </div>
                 <div className="menu-row">
                     <div className="menu-row-title">Size:</div>
-                    <Input value={this.props.ellipse.info.width} label="Width" style={{ width: 49, marginRight: 11 }} onChange={this.handleWidthChange} />
-                    <Input value={this.props.ellipse.info.height} label="Height" style={{ width: 49 }} onChange={this.handleHeightChange} />
+                    <Input value={this.props.ellipse.info.rx} label="X Radius" style={{ width: 49, marginRight: 11 }} onChange={this.handleWidthChange} />
+                    <Input value={this.props.ellipse.info.ry} label="Y Radius" style={{ width: 49 }} onChange={this.handleHeightChange} />
                 </div>
                 <div className="menu-row">
                     <div className="menu-row-title">Rotation:</div>
-                    <Input value={this.props.ellipse.info.degree} label="Rotation" onChange={this.handleRotationChange} />
+                    <Input value={this.props.ellipse.info.rotation} label="Rotation" onChange={this.handleRotationChange} />
                 </div>
             </div>
         );

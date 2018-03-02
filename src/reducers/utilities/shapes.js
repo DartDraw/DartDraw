@@ -633,7 +633,7 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
 
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+        shape.info = getShapeInfo(shape);
     });
 
     return shapes;
@@ -680,7 +680,7 @@ export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+        shape.info = getShapeInfo(shape);
     });
 
     return shapes;
@@ -726,7 +726,7 @@ export function flipShape(shapes, selected, selectionBoxes, boundingBoxes, verti
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, 1, -1, coord.x, coord.y);
         }
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+        shape.info = getShapeInfo(shape);
     });
     return shapes;
 }
@@ -1414,7 +1414,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
 
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+        shape.info = getShapeInfo(shape);
     });
 
     return shapes;
@@ -1652,7 +1652,7 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData,
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
 
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+        shape.info = getShapeInfo(shape);
     });
     return shapes;
 }
@@ -1858,7 +1858,7 @@ export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, se
         let c = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
         let degree = (action.payload.degree - shape.info.rotation);
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree * (Math.PI / 180), c.x, c.y);
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
+        shape.info = getShapeInfo(shape);
     });
     return shapes;
 }
