@@ -7,6 +7,7 @@ class Arrowhead extends Component {
     static propTypes = {
         id: PropTypes.string,
         viewBox: PropTypes.array,
+        scale: PropTypes.number,
         type: PropTypes.string,
         points: PropTypes.array,
         cx: PropTypes.number,
@@ -63,13 +64,13 @@ class Arrowhead extends Component {
     // }
 
     render() {
-        const { id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
+        const { scale, id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
         const arrowheadProps = {
             fill: stroke,
             stroke,
             strokeWidth,
-            strokeDasharray
-            // vectorEffect: "non-scaling-stroke"
+            strokeDasharray,
+            vectorEffect: "non-scaling-stroke"
         };
 
         var arrowhead;
@@ -126,7 +127,7 @@ class Arrowhead extends Component {
             <marker
                 id={id}
                 key={id + "_marker"}
-                viewBox={scaleViewBox(3000, 1500, strokeWidth)}
+                viewBox={scaleViewBox(3000, 1500, strokeWidth, scale)}
                 orient="auto"
                 markerWidth="3000"
                 markerHeight="1500"

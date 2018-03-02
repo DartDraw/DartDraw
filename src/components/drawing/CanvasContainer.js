@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import Canvas from './Canvas';
+import { ARROWHEAD_STROKE_WIDTH } from '../../constants';
 import {
     canvasDragStart,
     canvasDrag,
@@ -27,10 +28,11 @@ function formatShape(shape, shapes, scale) {
             return formatShape(shapes.byId[shapeId], shapes, scale);
         });
     } else {
-        formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
         if (formattedShape.type === 'line') {
-            formattedShape.arrowheadLength = formattedShape.arrowheadLength * formattedShape.strokeWidth / 5;
+            formattedShape.arrowheadLength = formattedShape.arrowheadLength * formattedShape.strokeWidth / ARROWHEAD_STROKE_WIDTH;
         }
+
+        formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
     }
 
     return formattedShape;
@@ -40,7 +42,7 @@ function formatArrowhead(arrowhead, shapes, scale) {
     const line = shapes.byId[arrowhead.lineId];
     const strokeProps = {
         stroke: line.stroke,
-        strokeWidth: line.strokeWidth,
+        strokeWidth: line.strokeWidth * scale,
         strokeDasharray: line.strokeDasharray
     };
     return Object.assign({}, arrowhead, strokeProps);
@@ -54,7 +56,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     });
 
     const arrowsArray = arrowheads.allIds.map((id) => {
-        return formatArrowhead(arrowheads.byId[id], shapes);
+        return formatArrowhead(arrowheads.byId[id], shapes, scale);
     });
 
     const propagateEventTools = [
@@ -78,6 +80,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,
         viewBox: [panX, panY, canvasWidth, canvasHeight],
+        scale,
         propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };

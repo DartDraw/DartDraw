@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
 import { Input, Select } from '../../ui';
+import { ARROWHEAD_STROKE_WIDTH } from '../../../constants';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
 class ArrowheadGUI extends Component {
@@ -206,22 +207,28 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={5} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={ARROWHEAD_STROKE_WIDTH} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
         const { stroke } = this.props.path;
 
+        const arrowheadProps = {
+            ...arrowhead,
+            fill: stroke,
+            stroke
+        };
+
         switch (arrowhead.type) {
             case 'triangle':
             case 'barbed':
-                return <Polygon {...arrowhead} fill={stroke} strokeWidth={0} />;
+                return <Polygon {...arrowheadProps} strokeWidth={0} />;
             case 'ellipse':
-                return <Ellipse {...arrowhead} fill={stroke} strokeWidth={0} />;
+                return <Ellipse {...arrowheadProps} strokeWidth={0} />;
             case 'rectangle':
-                return <Rectangle {...arrowhead} fill={stroke} strokeWidth={0} />;
+                return <Rectangle {...arrowheadProps} strokeWidth={0} />;
             case 'polyline':
-                return <Polyline {...arrowhead} fill={stroke} fillOpacity={0} />;
+                return <Polyline {...arrowheadProps} fillOpacity={0} />;
             default: break;
         }
     }

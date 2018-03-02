@@ -91,11 +91,11 @@ class PathMenu extends Component {
                 <div className="menu-row">
                     <div className="menu-row-title">Stroke Width:</div>
                     <Select value={this.props.path.strokeWidth} onChange={this.handleStrokeWidth}>
-                        <option value="1">1</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
+                        <option value={1}>1</option>
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={15}>15</option>
+                        <option value={20}>20</option>
                     </Select>
                 </div>
                 <div className="menu-row">

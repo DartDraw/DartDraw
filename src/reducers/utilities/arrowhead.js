@@ -1,4 +1,5 @@
 import uuidv1 from 'uuid';
+import { ARROWHEAD_STROKE_WIDTH } from '../../constants';
 
 export function getArrowheadDefaultPresets() {
     return ({
@@ -264,11 +265,10 @@ export function setArrowheadPreset(preset, arrowhead, line) {
     return { updatedArrowhead, updatedLine };
 }
 
-export function scaleViewBox(width, height, strokeWidth) {
-    const originalStrokeWidth = 5;
-    const scale = strokeWidth / originalStrokeWidth;
+export function scaleViewBox(width, height, strokeWidth, scale) {
+    const strokeScale = strokeWidth / ARROWHEAD_STROKE_WIDTH;
 
-    var viewBox = "0 0 " + (width / scale) + " " + (height / scale);
+    var viewBox = "0 0 " + (width / strokeScale * scale) + " " + (height / strokeScale * scale);
 
     return viewBox;
 }

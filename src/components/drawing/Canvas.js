@@ -32,6 +32,7 @@ class Canvas extends Component {
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
         viewBox: PropTypes.array,
+        scale: PropTypes.number,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -236,9 +237,9 @@ class Canvas extends Component {
     }
 
     renderArrowheads() {
-        const { arrowheads } = this.props;
+        const { arrowheads, scale } = this.props;
         return arrowheads.map((arrowhead) => {
-            return <Arrowhead key={arrowhead.id} {...arrowhead} />;
+            return <Arrowhead key={arrowhead.id} scale={scale} {...arrowhead} />;
         });
     }
 
