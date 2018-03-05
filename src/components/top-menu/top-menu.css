@@ -14,19 +14,6 @@ button {
   width:40px;
 }
 
-button img:hover {
-  color: #605870;
-  background-color: rgba(255, 0, 0, 0);
-}
-
-#button-icon {
-  /* filter: grayscale(100%); */
-
-  /*just temporary!*/
-  font-size: 20px;
-  color: #EBF1F5;
-}
-
 #color-palette {
   margin-left: 20px;
 }
@@ -43,7 +30,6 @@ input[type='radio'] {
 }
 
 #fill-toggle input[type='radio'] + label {
-  /*background-color: red;*/
   display: block;
   /*min-height: 25px;
 	padding-left: 35px;*/

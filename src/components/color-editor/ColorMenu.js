@@ -31,7 +31,6 @@ class ColorMenu extends Component {
 
         this.tempOpacityValue = this.props.currentColor.a;
 
-        this.handleUpdate = this.handleUpdate.bind(this);
         this.showColorInfo = this.showColorInfo.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -44,13 +43,7 @@ class ColorMenu extends Component {
         this.toggleColorEditor = this.toggleColorEditor.bind(this);
     }
 
-    handleUpdate(event) {
-        console.log(event.target.value);
-        // event.value;
-    }
-
     showColorInfo(event) {
-        console.log(this.props.currentColor);
         this.setState({showColorPicker: !this.state.showColorPicker});
         // this.props.onAddColor(this.props.currentColor);
     }
@@ -58,7 +51,6 @@ class ColorMenu extends Component {
     handleChange(event) {
         this.tempOpacityValue = event.target.value / 100.0;
         this.props.onUpdateOpacity(event.target.value / 100.0);
-        console.log(this.tempOpacityValue);
         // console.log(event);
     }
 
@@ -77,8 +69,6 @@ class ColorMenu extends Component {
             this.setState({b: event.target.value});
         }
         this.props.onColorUpdate(colorPart, newValue);
-        console.log(event.target.value);
-        console.log(colorPart);
     }
 
     handleAddColor() {
@@ -87,19 +77,15 @@ class ColorMenu extends Component {
     }
 
     handleChangeColorType(value) {
-        console.log(value);
         this.props.onChangeColorType(String(value));
     }
 
     handleColorChange(colorInfo) {
-        console.log(colorInfo.rgb);
         this.props.onSelectColor(colorInfo.rgb);
         // pick color
     }
 
     handleColorInputChange(stuff) {
-        console.log("changed input from api");
-        console.log(stuff);
         this.props.onSelectColor(this.convertRGBArrayToObj(stuff));
     }
 
@@ -109,7 +95,6 @@ class ColorMenu extends Component {
 
     toggleColorEditor() {
         this.setState({showColorEditor: !this.state.showColorEditor});
-        console.log(this.state.showColorEditor);
     }
 
     render() {
@@ -189,7 +174,7 @@ class ColorMenu extends Component {
                         <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
                         <Select value={colorType} onChange={this.handleChangeColorType}>
                             {colorOptions.map(({ value, label }) => {
-                                return <option value={value}>{label}</option>
+                                return <option value={value}>{label}</option>;
                             })}
                         </Select>
                         <form id="opacity-form" onSubmit={this.handleSubmit}>

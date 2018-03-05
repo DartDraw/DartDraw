@@ -8,15 +8,6 @@
   text-align: center;
 }
 
-button {
-  border: none;
-  background-color: rgba(0,0,0,0);
-  margin: 3px;
-  height: 28px;
-  width:28px;
-  text-align: left;
-}
-
 button:focus {
   outline: 0;
 }
@@ -25,9 +16,17 @@ button:hover {
   background-color: rgba(10,10,10,0.5);
 }
 
-#separator {
-  height: 1px;
+.separator {
   width: 33px;
   background-color: #5C7080;
-  margin: 10px 6px 10px 6px;
+  display: block;
+  /* margin: 10px 6px 10px 6px; */
+  margin-left: 10px;
+  margin-right: 10px;
+  /* position: absolute; */
+  height: 1px;
+}
+
+#button-icon {
+  margin: 3px;
 }

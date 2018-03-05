@@ -43,7 +43,7 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("rotateTool")} className={this.isSelected("rotateTool")} >
                         <img src="./assets/rotate.svg" alt="rotate" id="button-icon" />
                     </button>
-                    <div id="separator" />
+                    <span className="separator" />
                     <button onClick={() => this.handleToolSelect("rectangleTool")} className={this.isSelected("rectangleTool")}>
                         <img src="./assets/rectangle.svg" alt="rect" id="button-icon" />
                     </button>
@@ -56,10 +56,10 @@ class LeftMenu extends Component {
                     <button onClick={() => this.handleToolSelect("polygonTool")} className={this.isSelected("polygonTool")}>
                         <img src="./assets/hexagon.svg" alt="polygon" id="button-icon" />
                     </button>
+                    <span className="separator" />
                     <button onClick={() => this.handleToolSelect("lineTool")} className={this.isSelected("lineTool")}>
                         <img src="./assets/drawline.svg" alt="line" id="button-icon" />
                     </button>
-                    <div id="separator" />
                     <button onClick={() => this.handleToolSelect("textTool")} className={this.isSelected("textTool")}>
                         <img src="./assets/text.svg" alt="rect" id="button-icon" />
                     </button>
