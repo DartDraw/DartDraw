@@ -25,7 +25,9 @@ class ElectronMenu extends Component {
         onToolSelect: PropTypes.func,
         onSetCustomZoom: PropTypes.func,
         onUndoClick: PropTypes.func,
-        onRedoClick: PropTypes.func
+        onRedoClick: PropTypes.func,
+        onFileSave: PropTypes.func,
+        onFileOpen: PropTypes.func
     };
 
     constructor(props) {
@@ -34,6 +36,7 @@ class ElectronMenu extends Component {
         this.openDialog = this.openDialog.bind(this);
         this.handleToggleSettingsModal = this.handleToggleSettingsModal.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
+        // this.handleFileSave = this.handleFileSave.bind(this);
     }
 
     handleZoomIn() {
@@ -44,9 +47,45 @@ class ElectronMenu extends Component {
         this.props.onSetCustomZoom(this.props.scale / 2);
     }
 
+    // handleFileSave() {
+    //     let win = remote.BrowserWindow.getFocusedWindow();
+    //     let fs = window.require('fs');
+    //     if (win == null) return;
+    //
+    //     remote.dialog.showSaveDialog((filename) => {
+    //         this.props.onFileSave(filename);
+    //         fs.writeFile(filename, (err) => {
+    //             if (err) {
+    //                 console.log("error");
+    //             } else {
+    //                 console.log("save successful");
+    //             }
+    //         });
+    //     });
+    // }
+
+    handleFileOpen() {
+
+    }
+
     componentDidMount() {
         const template = [
-            {label: 'File'},
+            {label: 'DartDraw'},
+            {label: 'File',
+                submenu: [
+                    {label: 'Save',
+                        click: () => {
+                            this.handleFileSave();
+                        }},
+                    {label: 'Open',
+                        click: () => {
+
+                        }},
+                    {label: 'New',
+                        click: () => {
+
+                        }}
+                ]},
             {
                 label: 'Edit',
                 submenu: [
@@ -59,6 +98,7 @@ class ElectronMenu extends Component {
                     {label: 'Clear'},
                     {type: 'separator'},
                     {label: 'Duplicate', accelerator: 'CmdOrCtrl+D'},
+                    {accelerator: 'Backspace', click: () => { console.log("deleting a shape"); }},
                     {role: 'selectall'},
                     {type: 'separator'},
                     {label: 'Round Corners...'},
@@ -145,6 +185,11 @@ class ElectronMenu extends Component {
         ];
 
         const menu = Menu.buildFromTemplate(template);
+        let currentMenu = remote.Menu.getApplicationMenu;
+        console.log(currentMenu);
+        // console.log(currentMenu.remote.append(menu));
+        // remote.Menu.getApplicationMenu().append(menu);
+        // Menu.append(menu);
         Menu.setApplicationMenu(menu);
 
         // show whole menu on right click
@@ -152,15 +197,6 @@ class ElectronMenu extends Component {
             e.preventDefault();
             menu.popup(remote.getCurrentWindow());
         }, false);
-    }
-
-    componentWillReceiveNextProps() {
-        console.log(remote);
-        let currentMenu = remote.Menu.getApplicationMenu();
-        currentMenu.menu[2].submenu.push(
-            {labe: 'why why'}
-        );
-        Menu.setApplicationMenu(currentMenu);
     }
 
     handleToggleSettingsModal() {
