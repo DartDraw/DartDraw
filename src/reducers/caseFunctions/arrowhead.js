@@ -13,12 +13,8 @@ import {
 } from '../utilities/arrowhead';
 import * as constants from '../../constants';
 
-const editorHeight = 150;
-const editorWidth = 300;
-const buffer = 25;
-
-const leftBufferX = buffer;
-const rightBufferX = editorWidth - buffer;
+const leftBufferX = constants.ARROWHEAD_GUI_BUFFER;
+const rightBufferX = constants.ARROWHEAD_GUI_WIDTH - constants.ARROWHEAD_GUI_BUFFER;
 
 export function arrowheadHandleDrag(stateCopy, action, root) {
     const { draggableData, handleIndex } = action.payload;
@@ -27,7 +23,7 @@ export function arrowheadHandleDrag(stateCopy, action, root) {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             var { arrowheadId, arrowhead } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
 
-            stateCopy.arrowheads.byId[arrowheadId] = reshape(arrowhead, draggableData, handleIndex, editorHeight, editorWidth, buffer, stateCopy.lockAspectRatio);
+            stateCopy.arrowheads.byId[arrowheadId] = reshape(arrowhead, draggableData, handleIndex, stateCopy.lockAspectRatio);
             stateCopy.shapes.byId[lineId].arrowheadLength = stateCopy.arrowheads.byId[arrowheadId].length;
         }
     });
@@ -59,10 +55,10 @@ export function changeArrowheadHeight(stateCopy, action, root) {
                 default: break;
             }
 
-            arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
+            arrowhead = setArrowheadHeight(arrowhead, height, 0, constants.ARROWHEAD_GUI_HEIGHT);
 
             if (lockAspectRatio && arrowhead.type !== "polyline") {
-                arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - editorHeight, rightBufferX);
+                arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - constants.ARROWHEAD_GUI_HEIGHT, rightBufferX);
             }
 
             arrowhead = updateLengthAndRefX(arrowhead);
@@ -101,8 +97,8 @@ export function changeArrowheadLength(stateCopy, action, root) {
             }
 
             if (lockAspectRatio && arrowhead.type !== "polyline") {
-                arrowhead = setArrowheadHeight(arrowhead, length, 0, editorHeight);
-                arrowhead = setArrowheadLength(arrowhead, length, rightBufferX - editorHeight, rightBufferX);
+                arrowhead = setArrowheadHeight(arrowhead, length, 0, constants.ARROWHEAD_GUI_HEIGHT);
+                arrowhead = setArrowheadLength(arrowhead, length, rightBufferX - constants.ARROWHEAD_GUI_HEIGHT, rightBufferX);
             } else {
                 arrowhead = setArrowheadLength(arrowhead, length, leftBufferX, rightBufferX);
             }
@@ -149,8 +145,8 @@ export function changeArrowheadRadiusX(stateCopy, action, root) {
             var { arrowheadId, arrowhead } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
 
             if (lockAspectRatio) {
-                arrowhead = setArrowheadRadiusY(arrowhead, rx, 0, editorHeight);
-                arrowhead = setArrowheadRadiusX(arrowhead, rx, rightBufferX - editorHeight, rightBufferX);
+                arrowhead = setArrowheadRadiusY(arrowhead, rx, 0, constants.ARROWHEAD_GUI_HEIGHT);
+                arrowhead = setArrowheadRadiusX(arrowhead, rx, rightBufferX - constants.ARROWHEAD_GUI_HEIGHT, rightBufferX);
             } else {
                 arrowhead = setArrowheadRadiusX(arrowhead, rx, leftBufferX, rightBufferX);
             }
@@ -176,10 +172,10 @@ export function changeArrowheadRadiusY(stateCopy, action, root) {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             var { arrowheadId, arrowhead } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
 
-            arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
+            arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, constants.ARROWHEAD_GUI_HEIGHT);
 
             if (lockAspectRatio) {
-                arrowhead = setArrowheadRadiusX(arrowhead, ry, rightBufferX - editorHeight, rightBufferX);
+                arrowhead = setArrowheadRadiusX(arrowhead, ry, rightBufferX - constants.ARROWHEAD_GUI_HEIGHT, rightBufferX);
             }
 
             arrowhead = updateLengthAndRefX(arrowhead);

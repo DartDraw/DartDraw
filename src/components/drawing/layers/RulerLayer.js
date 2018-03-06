@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { MENU_WIDTH } from '../../../constants';
 
 class RulerLayer extends Component {
     static propTypes = {
@@ -111,7 +112,7 @@ class RulerLayer extends Component {
 
         switch (dir) {
             case "horizontal":
-                trackerLoc = Math.max(0, Math.min(mouseCoords.x - ruler.width - 45, width));
+                trackerLoc = Math.max(0, Math.min(mouseCoords.x - ruler.width - MENU_WIDTH, width));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -126,7 +127,7 @@ class RulerLayer extends Component {
                     </svg>
                 );
             case "vertical":
-                trackerLoc = Math.max(0, Math.min(mouseCoords.y - ruler.width - 45, height));
+                trackerLoc = Math.max(0, Math.min(mouseCoords.y - ruler.width - MENU_WIDTH, height));
                 return (
                     <svg className="ruler"
                         id={dir}

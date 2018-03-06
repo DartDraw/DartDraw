@@ -1,6 +1,7 @@
 // used as reference: https://github.com/Robbbb/VectorRuler/blob/master/rulerGenerator.js
 
 import { setPan } from './zoom';
+import { MENU_WIDTH } from '../../constants';
 
 export function toggleShowRulers(stateCopy) {
     stateCopy.showRulers = !stateCopy.showRulers;
@@ -149,8 +150,8 @@ export function updateRulerGrid(stateCopy, scale, panX, panY) {
 
     const subUnitExponent = getBaseLog(subUnitBase, ruler.unitDivisions);
     const scaledPixelsPerUnit = ruler.pixelsPerUnit * scale;
-    const windowWidth = window.innerWidth - ruler.width - 45;
-    const windowHeight = window.innerHeight - ruler.width - 45;
+    const windowWidth = window.innerWidth - ruler.width - MENU_WIDTH;
+    const windowHeight = window.innerHeight - ruler.width - MENU_WIDTH;
 
     // need adjust min spacing to account for the # of digits in the ruler labels
     const minLabelSpacing = Math.ceil((canvasWidth / ruler.pixelsPerUnit)).toString().length * pixelsPerDigit * 2;
@@ -333,7 +334,7 @@ function constrainInput(payload) {
 
     width = parseFloat(width);
     height = parseFloat(height);
-    unitDivisions = parseInt(unitDivisions);
+    unitDivisions = parseInt(unitDivisions, 10);
 
     var minDim;
     var maxDim;

@@ -113,7 +113,7 @@ export function setArrowheadRadiusY(arrowhead, newRy, min, max) {
     return arrowhead;
 }
 
-export function reshape(arrowhead, draggableData, handleIndex, editorHeight, editorWidth, buffer, lockAspectRatio) {
+export function reshape(arrowhead, draggableData, handleIndex, lockAspectRatio) {
     const { x, y, node } = draggableData;
 
     let offsetLeft = 0;
@@ -124,10 +124,10 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
         offsetTop = node.parentNode.getBoundingClientRect().top;
     }
 
-    const leftBufferX = buffer;
-    const rightBufferX = editorWidth - buffer;
+    const leftBufferX = constants.ARROWHEAD_GUI_BUFFER;
+    const rightBufferX = constants.ARROWHEAD_GUI_WIDTH - constants.ARROWHEAD_GUI_BUFFER;
 
-    const halfHeight = editorHeight / 2;
+    const halfHeight = constants.ARROWHEAD_GUI_HEIGHT / 2;
 
     const mouseX = clamp(x - offsetLeft, leftBufferX, rightBufferX);
     const mouseY = clamp(y - offsetTop, 0, halfHeight);
@@ -138,14 +138,14 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
             arrowhead.points[0] = mouseX;
             arrowhead.points[1] = mouseY;
             arrowhead.points[4] = mouseX;
-            arrowhead.points[5] = editorHeight - mouseY;
+            arrowhead.points[5] = constants.ARROWHEAD_GUI_HEIGHT - mouseY;
             break;
         case 'barbed':
             if (handleIndex === 0) {
                 arrowhead.points[0] = mouseX;
                 arrowhead.points[1] = mouseY;
                 arrowhead.points[4] = mouseX;
-                arrowhead.points[5] = editorHeight - mouseY;
+                arrowhead.points[5] = constants.ARROWHEAD_GUI_HEIGHT - mouseY;
             } else if (handleIndex === 1) {
                 arrowhead.points[6] = mouseX;
             }
@@ -155,18 +155,18 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
                 var rx = (rightBufferX - mouseX) / 2;
 
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadRadiusX(arrowhead, rx, 0, editorHeight);
-                    arrowhead = setArrowheadRadiusY(arrowhead, rx, 0, editorHeight);
+                    arrowhead = setArrowheadRadiusX(arrowhead, rx, 0, constants.ARROWHEAD_GUI_HEIGHT);
+                    arrowhead = setArrowheadRadiusY(arrowhead, rx, 0, constants.ARROWHEAD_GUI_HEIGHT);
                 } else {
                     arrowhead = setArrowheadRadiusX(arrowhead, rx, leftBufferX, rightBufferX);
                 }
             } else if (handleIndex === 1) {
                 var ry = halfHeight - mouseY;
 
-                arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, editorHeight);
+                arrowhead = setArrowheadRadiusY(arrowhead, ry, 0, constants.ARROWHEAD_GUI_HEIGHT);
 
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadRadiusX(arrowhead, ry, 0, editorHeight);
+                    arrowhead = setArrowheadRadiusX(arrowhead, ry, 0, constants.ARROWHEAD_GUI_HEIGHT);
                 }
             }
             break;
@@ -175,18 +175,18 @@ export function reshape(arrowhead, draggableData, handleIndex, editorHeight, edi
                 var length = rightBufferX - mouseX;
 
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadLength(arrowhead, length, rightBufferX - editorHeight, rightBufferX);
-                    arrowhead = setArrowheadHeight(arrowhead, length, 0, editorHeight);
+                    arrowhead = setArrowheadLength(arrowhead, length, rightBufferX - constants.ARROWHEAD_GUI_HEIGHT, rightBufferX);
+                    arrowhead = setArrowheadHeight(arrowhead, length, 0, constants.ARROWHEAD_GUI_HEIGHT);
                 } else {
                     arrowhead = setArrowheadLength(arrowhead, length, leftBufferX, rightBufferX);
                 }
             } else if (handleIndex === 1) {
-                var height = editorHeight - (mouseY * 2);
+                var height = constants.ARROWHEAD_GUI_HEIGHT - (mouseY * 2);
 
-                arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
+                arrowhead = setArrowheadHeight(arrowhead, height, 0, constants.ARROWHEAD_GUI_HEIGHT);
 
                 if (lockAspectRatio) {
-                    arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - editorHeight, rightBufferX);
+                    arrowhead = setArrowheadLength(arrowhead, height, rightBufferX - constants.ARROWHEAD_GUI_HEIGHT, rightBufferX);
                 }
             }
             break;

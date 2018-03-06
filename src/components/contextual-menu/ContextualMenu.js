@@ -4,7 +4,7 @@ import { Input, SelectRow } from '../ui';
 import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
 import { ColorMenuContainer } from '../color-editor';
 import { PaletteEditorContainer } from '../palette-editor';
-import { CONTEXTUAL_MENU_WIDTH } from '../../constants';
+import { CONTEXTUAL_MENU_WIDTH, MAX_ZOOM, MIN_ZOOM } from '../../constants';
 import { ArrowheadGUIContainer } from './gui-editors';
 import './contextual-menu.css';
 
@@ -202,18 +202,11 @@ class ContextualMenu extends Component {
     }
 
     handleSubmitCustomZoomText(value) {
-        var scale = parseFloat(value) / 100.0;
-        if (scale >= 0.1 && scale <= 32) {
-            this.props.onSetCustomZoom(scale);
-        }
+        this.props.onSetCustomZoom(parseFloat(value) / 100.0);
     }
 
     handleSubmitCustomZoomSlider(event) {
-        var scale = parseFloat(event.target.value) / 100.0;
-        console.log(scale);
-        if (scale >= 0.1 && scale <= 32) {
-            this.props.onSetCustomZoom(scale);
-        }
+        this.props.onSetCustomZoom(parseFloat(event.target.value) / 100.0);
     }
 
     handleSubmitRulerGrid(event) {
@@ -375,8 +368,8 @@ class ContextualMenu extends Component {
                                     className="zoom-slider"
                                     type="range"
                                     defaultValue={Math.round(scale * 100.0)}
-                                    min="10"
-                                    max="3200"
+                                    min={MIN_ZOOM * 100}
+                                    max={MAX_ZOOM * 100}
                                     onChange={this.handleSubmitCustomZoomSlider}
                                 />
                                 <Input
