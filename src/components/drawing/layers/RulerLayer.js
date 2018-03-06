@@ -10,7 +10,6 @@ class RulerLayer extends Component {
         height: PropTypes.number,
         widthInUnits: PropTypes.number,
         heightInUnits: PropTypes.number,
-        mouseTrackers: PropTypes.object,
         showRulers: PropTypes.bool
     };
 
@@ -106,7 +105,7 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { ruler, mouseTrackers, showRulers, dir, width, height } = this.props;
+        const { ruler, showRulers, dir, width, height } = this.props;
 
         switch (dir) {
             case "horizontal":
@@ -120,7 +119,7 @@ class RulerLayer extends Component {
                     >
                         {this.renderTicks(ruler.horizontal.ticks)}
                         {this.renderLabels(ruler.horizontal.labels)}
-                        {this.buildTracker(mouseTrackers.x, 0, mouseTrackers.x, ruler.width)}
+                        {this.buildTracker(ruler.mouseTrackers.x, 0, ruler.mouseTrackers.x, ruler.width)}
                     </svg>
                 );
             case "vertical":
@@ -133,7 +132,7 @@ class RulerLayer extends Component {
                     >
                         {this.renderTicks(ruler.vertical.ticks)}
                         {this.renderLabels(ruler.vertical.labels)}
-                        {this.buildTracker(0, mouseTrackers.y, ruler.width, mouseTrackers.y)}
+                        {this.buildTracker(0, ruler.mouseTrackers.y, ruler.width, ruler.mouseTrackers.y)}
                     </svg>
                 );
             default: break;

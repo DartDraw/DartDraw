@@ -48,7 +48,10 @@ const initialState = {
         unitDivisions: 2,
         width: 30,
         pixelsPerUnit: 96,
-        mouseTracker: {x: 0, y: 0},
+        mouseTrackers: {
+            x: 0,
+            y: 0
+        },
         horizontal: {
             ticks: [],
             labels: []

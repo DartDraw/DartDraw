@@ -252,7 +252,7 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
 export function mouseMove(stateCopy, action, root) {
     const { x, y } = action.payload;
 
-    stateCopy.rulers.mouseTracker = updateMouseTrackers(x, y, stateCopy.ruler.width, stateCopy.canvasWidth, stateCopy.canvasHeight, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
+    stateCopy.ruler.mouseTrackers = updateMouseTrackers(x, y, stateCopy.scale, stateCopy.panX, stateCopy.panY, stateCopy.ruler.width, stateCopy.canvasWidth, stateCopy.canvasHeight, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
 
     stateCopy.mouseCoords.x = x;
     stateCopy.mouseCoords.y = y;

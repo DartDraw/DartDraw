@@ -1,4 +1,4 @@
-import { updateRulerGrid } from './rulers';
+import { updateRulerGrid } from '../utilities/rulers';
 import { MENU_WIDTH, MAX_ZOOM, MIN_ZOOM } from '../../constants';
 
 export function setCustomZoom(stateCopy, action) {
