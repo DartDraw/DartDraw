@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
 import { Input, Select } from '../../ui';
-import { ARROWHEAD_STROKE_WIDTH } from '../../../constants';
+import { ARROWHEAD_STROKE_WIDTH, ARROWHEAD_GUI_HEIGHT } from '../../../constants';
 import {findHeightPercentage, findLengthPercentage, findBarbLengthPercentage, findRxPercentage, findRyPercentage} from '../../../reducers/utilities/arrowhead';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
@@ -201,7 +201,7 @@ class ArrowheadGUI extends Component {
             default: break;
         }
 
-        return <line x1={0} y1={75} x2={x2} y2={75} strokeWidth={ARROWHEAD_STROKE_WIDTH} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
+        return <line x1={0} y1={ARROWHEAD_GUI_HEIGHT / 2} x2={x2} y2={ARROWHEAD_GUI_HEIGHT / 2} strokeWidth={ARROWHEAD_STROKE_WIDTH} stroke={path.stroke} strokeDasharray={path.strokeDasharray} />;
     }
 
     renderArrowhead(arrowhead) {
@@ -284,7 +284,7 @@ class ArrowheadGUI extends Component {
                 </svg>
                 {this.renderTypeSpecificInputs()}
                 <div className="editor-row">
-                    <input id="presetName" className='text-input' type="text" placeholder="name" style={{ width: 49 }} />
+                    <input id="presetName" className='text-input' type="text" placeholder="name" style={{ width: 49, height: 16 }} />
                     <button id="basic-button" onClick={this.handleAddArrowheadPreset}>Add</button>
                     {presetInputs}
                 </div>

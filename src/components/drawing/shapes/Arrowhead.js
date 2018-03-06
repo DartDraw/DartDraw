@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { scaleViewBox } from '../../../reducers/utilities/arrowhead';
 import { formatPoints } from '../../../utilities/shapes';
+import { ARROWHEAD_GUI_HEIGHT } from '../../../constants';
 
 class Arrowhead extends Component {
     static propTypes = {
@@ -19,7 +20,6 @@ class Arrowhead extends Component {
         width: PropTypes.number,
         height: PropTypes.number,
         refX: PropTypes.number,
-        // length: PropTypes.number,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
@@ -74,7 +74,7 @@ class Arrowhead extends Component {
         };
 
         var arrowhead;
-        var refY = 75;
+        var refY = ARROWHEAD_GUI_HEIGHT / 2;
 
         switch (type) {
             case "triangle":

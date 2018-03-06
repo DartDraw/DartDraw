@@ -1,4 +1,4 @@
-export const CONTEXTUAL_MENU_WIDTH = 400;
+export const CONTEXTUAL_MENU_WIDTH = 220;
 export const SCROLL_BAR_WIDTH = 18;
 
 // menu
@@ -28,9 +28,9 @@ export const ARROWHEAD_STROKE_WIDTH = 5;
 // export const POLYLINE_HEIGHT = POLYLINE_POINTS[5] - POLYLINE_POINTS[1];
 // export const POLYLINE_LENGTH = POLYLINE_POINTS[2] - POLYLINE_POINTS[0];
 
-export const ARROWHEAD_GUI_WIDTH = 300;
-export const ARROWHEAD_GUI_HEIGHT = 150;
-export const ARROWHEAD_GUI_BUFFER = 25;
+export const ARROWHEAD_GUI_WIDTH = 176;
+export const ARROWHEAD_GUI_HEIGHT = 135;
+export const ARROWHEAD_GUI_BUFFER = 10;
 
 export const TRIANGLE_HEIGHT = 40;
 export const TRIANGLE_LENGTH = 60;
