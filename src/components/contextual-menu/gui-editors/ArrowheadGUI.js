@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import './gui-editors.css';
 import { Input, Select } from '../../ui';
 import { ARROWHEAD_STROKE_WIDTH } from '../../../constants';
+import {findHeightPercentage, findLengthPercentage, findBarbLengthPercentage, findRxPercentage, findRyPercentage} from '../../../reducers/utilities/arrowhead';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
 class ArrowheadGUI extends Component {
@@ -137,28 +138,29 @@ class ArrowheadGUI extends Component {
 
         switch (selectedArrowhead.type) {
             case "triangle":
+            case "polyline":
                 return (
                     <div className="editor-row">
                         <div className="editor-row-title">Size:</div>
-                        <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
-                        <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
+                        <Input value={findHeightPercentage(selectedArrowhead)} label="Height %" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={findLengthPercentage(selectedArrowhead)} label="Length %" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
                     </div>
                 );
             case "barbed":
                 return (
                     <div className="editor-row">
                         <div className="editor-row-title">Size:</div>
-                        <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
-                        <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 11 }} onChange={this.handleLengthChange} />
-                        <Input value={selectedArrowhead.points[6] - selectedArrowhead.points[0]} label="Barb Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleBarbLengthChange} />
+                        <Input value={findHeightPercentage(selectedArrowhead)} label="Height %" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={findLengthPercentage(selectedArrowhead)} label="Length %" style={{ width: 49, marginRight: 11 }} onChange={this.handleLengthChange} />
+                        <Input value={findBarbLengthPercentage(selectedArrowhead)} label="Point as % of Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleBarbLengthChange} />
                     </div>
                 );
             case "ellipse":
                 return (
                     <div className="editor-row">
                         <div className="editor-row-title">Size:</div>
-                        <Input value={selectedArrowhead.rx} label="RX" style={{ width: 49, marginRight: 11 }} onChange={this.handleRadiusXChange} />
-                        <Input value={selectedArrowhead.ry} label="RY" style={{ width: 49, marginRight: 21 }} onChange={this.handleRadiusYChange} />
+                        <Input value={findRxPercentage(selectedArrowhead.rx)} label="RX %" style={{ width: 49, marginRight: 11 }} onChange={this.handleRadiusXChange} />
+                        <Input value={findRyPercentage(selectedArrowhead.ry)} label="RY %" style={{ width: 49, marginRight: 21 }} onChange={this.handleRadiusYChange} />
                         <div className="editor-row-title">Lock:</div>
                         <input id="aspect" type="checkbox" onChange={this.handleToggleAspect} checked={isAspectChecked} />
                     </div>
@@ -167,18 +169,10 @@ class ArrowheadGUI extends Component {
                 return (
                     <div className="editor-row">
                         <div className="editor-row-title">Size:</div>
-                        <Input value={selectedArrowhead.height} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
-                        <Input value={selectedArrowhead.width} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
+                        <Input value={findHeightPercentage(selectedArrowhead)} label="Height %" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
+                        <Input value={findLengthPercentage(selectedArrowhead)} label="Length %" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
                         <div className="editor-row-title">Lock:</div>
                         <input id="aspect" type="checkbox" onChange={this.handleToggleAspect} checked={isAspectChecked} />
-                    </div>
-                );
-            case "polyline":
-                return (
-                    <div className="editor-row">
-                        <div className="editor-row-title">Size:</div>
-                        <Input value={Math.abs(selectedArrowhead.points[5] - selectedArrowhead.points[1])} label="Height" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
-                        <Input value={selectedArrowhead.points[2] - selectedArrowhead.points[0]} label="Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
                     </div>
                 );
             default: break;

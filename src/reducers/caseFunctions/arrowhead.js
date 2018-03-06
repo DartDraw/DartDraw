@@ -3,14 +3,15 @@ import {
     updateHandles,
     updateLengthAndRefX,
     getArrowInfo,
-    clamp,
     setArrowheadPreset,
     setArrowheadHeight,
     setArrowheadLength,
+    setArrowheadBarbLength,
     setArrowheadRadiusX,
     setArrowheadRadiusY,
     newArrowheadPreset
 } from '../utilities/arrowhead';
+import * as constants from '../../constants';
 
 const editorHeight = 150;
 const editorWidth = 300;
@@ -34,28 +35,29 @@ export function arrowheadHandleDrag(stateCopy, action, root) {
     return stateCopy;
 }
 
-// export function changeArrowheadType(stateCopy, action, root) {
-//     const { arrowheadType } = action.payload;
-//
-//     stateCopy.selected.map((lineId) => {
-//         var { arrowheadId, arrowhead, line } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
-//
-//         const newArrowhead = setArrowheadType(arrowheadType);
-//
-//         stateCopy.arrowheads.byId[arrowheadId] = Object.assign({}, arrowhead, {...newArrowhead});
-//         stateCopy.shapes.byId[lineId] = Object.assign({}, line, {arrowheadLength: newArrowhead.length});
-//     });
-//
-//     return stateCopy;
-// }
-
 export function changeArrowheadHeight(stateCopy, action, root) {
     const { lockAspectRatio } = stateCopy;
-    const { height } = action.payload;
+    var { height } = action.payload;
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             var { arrowheadId, arrowhead } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
+
+            switch (arrowhead.type) {
+                case "triangle":
+                    height = height / 100.0 * constants.TRIANGLE_HEIGHT;
+                    break;
+                case "polyline":
+                    height = height / 100.0 * constants.POLYLINE_HEIGHT;
+                    break;
+                case "barbed":
+                    height = height / 100.0 * constants.BARBED_HEIGHT;
+                    break;
+                case "rectangle":
+                    height = height / 100.0 * constants.RECTANGLE_HEIGHT;
+                    break;
+                default: break;
+            }
 
             arrowhead = setArrowheadHeight(arrowhead, height, 0, editorHeight);
 
@@ -76,11 +78,27 @@ export function changeArrowheadHeight(stateCopy, action, root) {
 
 export function changeArrowheadLength(stateCopy, action, root) {
     const { lockAspectRatio } = stateCopy;
-    const { length } = action.payload;
+    var { length } = action.payload;
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             var { arrowheadId, arrowhead } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
+
+            switch (arrowhead.type) {
+                case "triangle":
+                    length = length / 100.0 * constants.TRIANGLE_LENGTH;
+                    break;
+                case "polyline":
+                    length = length / 100.0 * constants.POLYLINE_LENGTH;
+                    break;
+                case "barbed":
+                    length = length / 100.0 * constants.BARBED_LENGTH;
+                    break;
+                case "rectangle":
+                    length = length / 100.0 * constants.RECTANGLE_LENGTH;
+                    break;
+                default: break;
+            }
 
             if (lockAspectRatio && arrowhead.type !== "polyline") {
                 arrowhead = setArrowheadHeight(arrowhead, length, 0, editorHeight);
@@ -101,14 +119,13 @@ export function changeArrowheadLength(stateCopy, action, root) {
 }
 
 export function changeArrowheadBarbLength(stateCopy, action, root) {
-    var { length } = action.payload;
+    const { length } = action.payload;
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             var { arrowheadId, arrowhead } = getArrowInfo(lineId, stateCopy.shapes, stateCopy.arrowheads);
-            length = clamp(length, leftBufferX - arrowhead.points[0], rightBufferX - arrowhead.points[0]);
 
-            arrowhead.points[6] = arrowhead.points[0] + length;
+            arrowhead = setArrowheadBarbLength(arrowhead, length, leftBufferX, rightBufferX);
 
             arrowhead = updateLengthAndRefX(arrowhead);
             arrowhead = updateHandles(arrowhead);
@@ -123,7 +140,9 @@ export function changeArrowheadBarbLength(stateCopy, action, root) {
 
 export function changeArrowheadRadiusX(stateCopy, action, root) {
     const { lockAspectRatio } = stateCopy;
-    const { rx } = action.payload;
+    var { rx } = action.payload;
+
+    rx = rx / 100.0 * constants.ELLIPSE_RX;
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
@@ -149,7 +168,9 @@ export function changeArrowheadRadiusX(stateCopy, action, root) {
 
 export function changeArrowheadRadiusY(stateCopy, action, root) {
     const { lockAspectRatio } = stateCopy;
-    const { ry } = action.payload;
+    var { ry } = action.payload;
+
+    ry = ry / 100.0 * constants.ELLIPSE_RY;
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {

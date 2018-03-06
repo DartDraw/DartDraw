@@ -1190,15 +1190,21 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
     return shapes;
 }
 
-export function deleteShapes(shapes, selected) {
+export function deleteShapes(stateCopy, selected) {
+    var { shapes, arrowheads } = stateCopy;
+
     selected.map((id) => {
         if (shapes.byId[id].type === "group") {
-            shapes = deleteShapes(shapes, shapes.byId[id].members);
+            stateCopy = deleteShapes(stateCopy, shapes.byId[id].members);
+        } else if (shapes.byId[id].type === "line") {
+            let arrowheadId = shapes.byId[id].arrowheadId;
+            delete arrowheads.byId[arrowheadId];
+            arrowheads.allIds.splice(arrowheads.allIds.indexOf(arrowheadId), 1);
         }
         delete shapes.byId[id];
         shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
     });
-    return shapes;
+    return stateCopy;
 }
 
 export function resizeShape(shapes, boundingBoxes, selected, draggableData, handleIndex,

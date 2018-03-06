@@ -1,5 +1,5 @@
 import uuidv1 from 'uuid';
-import { ARROWHEAD_STROKE_WIDTH } from '../../constants';
+import * as constants from '../../constants';
 
 export function getArrowheadDefaultPresets() {
     return ({
@@ -7,37 +7,37 @@ export function getArrowheadDefaultPresets() {
             type: 'triangle',
             preset: 'triangle',
             fillOpacity: 1,
-            points: [215, 55, 275, 75, 215, 95]
+            points: constants.TRIANGLE_POINTS
         },
         "barbed": {
             type: 'barbed',
             preset: 'barbed',
             fillOpacity: 1,
-            points: [215, 55, 275, 75, 215, 95, 235, 75]
+            points: constants.BARBED_POINTS
         },
         "ellipse": {
             type: 'ellipse',
             preset: 'ellipse',
             fillOpacity: 1,
-            cx: 260,
-            cy: 75,
-            rx: 15,
-            ry: 15
+            cx: constants.ELLIPSE_POINTS[0],
+            cy: constants.ELLIPSE_POINTS[1],
+            rx: constants.ELLIPSE_POINTS[2],
+            ry: constants.ELLIPSE_POINTS[3]
         },
         "rectangle": {
             type: 'rectangle',
             preset: 'rectangle',
             fillOpacity: 1,
-            x: 245,
-            y: 60,
-            width: 30,
-            height: 30
+            x: constants.RECTANGLE_POINTS[0],
+            y: constants.RECTANGLE_POINTS[1],
+            width: constants.RECTANGLE_POINTS[2],
+            height: constants.RECTANGLE_POINTS[3]
         },
         "polyline": {
             type: 'polyline',
             preset: 'polyline',
             fillOpacity: 0,
-            points: [215, 55, 275, 75, 215, 95]
+            points: constants.POLYLINE_POINTS
         }
     });
 }
@@ -72,10 +72,9 @@ export function setArrowheadLength(arrowhead, newLength, min, max) {
             arrowhead.points[4] = max - newLength;
             break;
         case "barbed":
-            const barbLength = arrowhead.points[6] - arrowhead.points[0];
-            arrowhead.points[0] = max - newLength;
-            arrowhead.points[4] = max - newLength;
-            arrowhead.points[6] = clamp(arrowhead.points[0] + barbLength, min, max);
+            const barbLength = findBarbLengthPercentage(arrowhead);
+            arrowhead.points[6] = max - newLength;
+            arrowhead = setArrowheadBarbLength(arrowhead, barbLength, min, max);
             break;
         case "rectangle":
             arrowhead.x = max - newLength;
@@ -83,6 +82,16 @@ export function setArrowheadLength(arrowhead, newLength, min, max) {
             break;
         default: break;
     }
+
+    return arrowhead;
+}
+
+export function setArrowheadBarbLength(arrowhead, newBarbLength, min, max) {
+    newBarbLength = newBarbLength / 100.0 * (arrowhead.points[2] - arrowhead.points[6]);
+    newBarbLength = clamp(newBarbLength, 0, max - min);
+
+    arrowhead.points[0] = max - newBarbLength;
+    arrowhead.points[4] = max - newBarbLength;
 
     return arrowhead;
 }
@@ -266,7 +275,7 @@ export function setArrowheadPreset(preset, arrowhead, line) {
 }
 
 export function scaleViewBox(width, height, strokeWidth, scale) {
-    const strokeScale = strokeWidth / ARROWHEAD_STROKE_WIDTH;
+    const strokeScale = strokeWidth / constants.ARROWHEAD_STROKE_WIDTH;
 
     var viewBox = "0 0 " + (width / strokeScale * scale) + " " + (height / strokeScale * scale);
 
@@ -339,4 +348,44 @@ function generateHandles(arrowhead) {
     }
 
     return updateHandles(arrowhead);
+}
+
+export function findHeightPercentage(arrowhead) {
+    switch (arrowhead.type) {
+        case 'triangle':
+            return Math.round(((arrowhead.points[5] - arrowhead.points[1]) / constants.TRIANGLE_HEIGHT) * 100);
+        case 'barbed':
+            return Math.round(((arrowhead.points[5] - arrowhead.points[1]) / constants.BARBED_HEIGHT) * 100);
+        case 'rectangle':
+            return Math.round(((arrowhead.height) / constants.RECTANGLE_HEIGHT) * 100);
+        case 'polyline':
+            return Math.round(((arrowhead.points[5] - arrowhead.points[1]) / constants.POLYLINE_HEIGHT) * 100);
+        default: break;
+    }
+}
+
+export function findLengthPercentage(arrowhead) {
+    switch (arrowhead.type) {
+        case 'triangle':
+            return Math.round(((arrowhead.points[2] - arrowhead.points[0]) / constants.TRIANGLE_LENGTH) * 100);
+        case 'barbed':
+            return Math.round(((arrowhead.points[2] - arrowhead.points[6]) / constants.BARBED_LENGTH) * 100);
+        case 'rectangle':
+            return Math.round(((arrowhead.width) / constants.RECTANGLE_LENGTH) * 100);
+        case 'polyline':
+            return Math.round(((arrowhead.points[2] - arrowhead.points[0]) / constants.POLYLINE_LENGTH) * 100);
+        default: break;
+    }
+}
+
+export function findBarbLengthPercentage(arrowhead) {
+    return Math.round((arrowhead.points[2] - arrowhead.points[0]) / (arrowhead.points[2] - arrowhead.points[6]) * 100);
+}
+
+export function findRxPercentage(rx) {
+    return Math.round((rx / constants.ELLIPSE_RX) * 100);
+}
+
+export function findRyPercentage(ry) {
+    return Math.round((ry / constants.ELLIPSE_RY) * 100);
 }
