@@ -36,10 +36,10 @@ class Select extends Component {
     }
 
     render() {
-        const { children, label, style } = this.props;
+        const { children, label, className, style } = this.props;
         const { value } = this.state;
         return (
-            <div style={style} className={`select-container className`}>
+            <div style={style} className={`select-container ${className || ''}`}>
                 <select value={value} onChange={this.handleChange} className="select">{children}</select>
                 <div className="select-label">{label}</div>
             </div>

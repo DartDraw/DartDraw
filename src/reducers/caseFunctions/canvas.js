@@ -13,6 +13,8 @@ export function dragStart(stateCopy, action, root) {
         stateCopy.lastSavedShapes = root.drawingState.shapes;
     }
     stateCopy.editInProgress = true;
+    stateCopy.offset = { x: action.payload.draggableData.node.getBoundingClientRect().left, y: action.payload.draggableData.node.getBoundingClientRect().left };
+
     switch (root.menuState.toolType) {
         case "rectangleTool":
             stateCopy.shapes = addRectangle(stateCopy.shapes, action, root.menuState.fillColor,
@@ -221,6 +223,16 @@ export function dragStop(stateCopy, action, root) {
             stateCopy.selected = selectShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.marqueeBox, commandSelected, shiftSelected);
             stateCopy.marqueeBox = null;
             break;
+        case "arcTool":
+            shapeIds = stateCopy.shapes.allIds;
+            addedShapeId = shapeIds[shapeIds.length - 1];
+            let addedArc = stateCopy.shapes.byId[addedShapeId];
+
+            if (addedArc.rx === 0 && addedArc.ry === 0) {
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
+            }
+            stateCopy.selected = [];
+            break;
         case "zoomTool":
             if (stateCopy.marqueeBox.width !== 0 || stateCopy.marqueeBox.height !== 0) {
                 const { ruler, panX, panY, scale } = zoomToMarqueeBox(stateCopy);
@@ -246,6 +258,7 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.boundingBoxes = boundingBoxes;
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
+
     return stateCopy;
 }
 

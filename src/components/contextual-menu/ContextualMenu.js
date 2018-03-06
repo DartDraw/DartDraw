@@ -1,7 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Input, SelectRow } from '../ui';
-import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
+import {
+    TextMenu,
+    PathMenu,
+    RectangleMenu,
+    EllipseMenu,
+    LineMenu,
+    PolygonMenu,
+    PolylineMenu,
+    BezierMenu,
+    ArcMenu,
+    FreehandPathMenu
+} from './menu-layouts';
 import { ColorMenuContainer } from '../color-editor';
 import { PaletteEditorContainer } from '../palette-editor';
 import { CONTEXTUAL_MENU_WIDTH, MAX_ZOOM, MIN_ZOOM } from '../../constants';
@@ -79,6 +90,7 @@ class ContextualMenu extends Component {
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
         this.handleSubmitCustomZoomText = this.handleSubmitCustomZoomText.bind(this);
         this.handleSubmitCustomZoomSlider = this.handleSubmitCustomZoomSlider.bind(this);
+        this.handleSelectScale = this.handleSelectScale.bind(this);
         this.handleSelectZoomTool = this.handleSelectZoomTool.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
         this.handleSelectRuler = this.handleSelectRuler.bind(this);
@@ -209,6 +221,10 @@ class ContextualMenu extends Component {
         this.props.onSetCustomZoom(parseFloat(event.target.value) / 100.0);
     }
 
+    handleSelectScale(value) {
+        this.props.onSetCustomZoom(value);
+    }
+
     handleSubmitRulerGrid(event) {
         this.props.onSetRulerGrid({
             unitType: document.getElementById("unitType").value,
@@ -315,7 +331,7 @@ class ContextualMenu extends Component {
     }
 
     render() {
-        const { hidden, selectedShape, scale, unitType, unitDivisions, currentRuler, canvasWidthInUnits, canvasHeightInUnits } = this.props;
+        const { hidden, selectedShape, scale } = this.props;
 
         let menuLayout = null;
         let guiEditor = null;
@@ -325,10 +341,23 @@ class ContextualMenu extends Component {
             } else if (selectedShape.type === 'rectangle') {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
-                menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <LineMenu line={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
                 guiEditor = <ArrowheadGUIContainer path={selectedShape} />;
             } else if (selectedShape.type === 'ellipse') {
-                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} onMoveShapeTo={this.handleMoveShapeTo} />;
+                // needs onMoveShape to and onResizeShapeTo for rx, ry, cx, cy
+                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'polygon') {
+                menuLayout = <PolygonMenu polygon={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'polyline') {
+                menuLayout = <PolylineMenu polyline={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'bezier') {
+                menuLayout = <BezierMenu bezier={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'arc') {
+                menuLayout = <ArcMenu arc={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'path') {
+                menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'freehandPath') {
+                menuLayout = <FreehandPathMenu freehandPath={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             }
         }
 
@@ -347,16 +376,13 @@ class ContextualMenu extends Component {
                         </div>
                     </div>
                     <div className="zoom-menu">
-                        <div>
-                            <button onClick={this.handleZoomIn} id="button-icon">+</button>
-                            <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                            <button onClick={this.handleToggleScale} id="button-icon">z</button>
-                        </div>
-                        <div className="zoom-row">
-                            <SelectRow value="1">
-                                <div key="1" style={{ width: 10, height: 10, backgroundColor: '#FFFFFF' }} />
-                                <div key="2" style={{ width: 10, height: 10, backgroundColor: '#FFFFFF' }} />
-                                <div key="3" style={{ width: 10, height: 10, backgroundColor: '#FFFFFF' }} />
+                        <div className="zoom-select-row">
+                            <SelectRow value={scale} onChange={this.handleSelectScale}>
+                                <div value={0.1} className="zoom-button">10%</div>
+                                <div value={0.5} className="zoom-button">50%</div>
+                                <div value={1} className="zoom-button">100%</div>
+                                <div value={1.5} className="zoom-button">150%</div>
+                                <div value={2.0} className="zoom-button">200%</div>
                             </SelectRow>
                         </div>
                         <div className="zoom-row">

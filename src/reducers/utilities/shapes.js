@@ -296,8 +296,6 @@ export function addArc(shapes, action, fill, panX, panY, scale, gridSnapping, gr
         stroke: formatColor(fill),
         strokeWidth: 10,
         largeArc: 0,
-        startAngle: 0,
-        sweepAngle: Math.PI / 2,
         flipArc: false,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
@@ -635,8 +633,6 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
             }
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
-
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -683,7 +679,6 @@ export function keyboardMoveShape(shapes, selected, action, scale, boundingBoxes
             let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
             shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -729,7 +724,6 @@ export function flipShape(shapes, selected, selectionBoxes, boundingBoxes, verti
         } else {
             shape.transform[0].parameters = resizeTransform(shape.transform[0].parameters, 1, -1, coord.x, coord.y);
         }
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -1422,8 +1416,6 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
             shape.members = applyGroupTransformations(shape, shapes);
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
-
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
 
     return shapes;
@@ -1660,8 +1652,6 @@ export function rotateShape(shapes, boundingBoxes, selected, draggableData,
             }
             shape.transform[0].parameters = [1, 0, 0, 1, 0, 0];
         }
-
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -1742,7 +1732,7 @@ function deltaTransformPoint(matrix, point) {
     return { x: dx, y: dy };
 }
 
-function decomposeMatrix(matrix) {
+export function decomposeMatrix(matrix) {
     // @see https://gist.github.com/2052247
 
     // calculate delta transform point
@@ -1800,29 +1790,6 @@ function getCenter(boundingBox, shapeMatrix) {
     center.y = (coords0.y + coords1.y + coords2.y + coords3.y) / 4;
 
     return center;
-}
-
-function getShapeInfo(shape, boundingBox) {
-    const shapeInfo = {};
-
-    if (shape.x && shape.y) {
-        shapeInfo.x = transformPoint(shape.x, shape.y, shape.transform[0].parameters).x;
-        shapeInfo.y = transformPoint(shape.x, shape.y, shape.transform[0].parameters).y;
-    }
-
-    shapeInfo.rotation = decomposeMatrix(shape.transform[0].parameters).skewX * 180 / Math.PI % 360;
-    if (shapeInfo.rotation < 0) shapeInfo.rotation += 360;
-
-    let coords = [];
-    coords[0] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shape.transform[0].parameters);
-    coords[1] = transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-    coords[2] = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shape.transform[0].parameters);
-    coords[3] = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
-
-    shapeInfo.width = Math.sqrt((coords[0].x - coords[3].x) ** 2 + (coords[0].y - coords[3].y) ** 2);
-    shapeInfo.height = Math.sqrt((coords[0].x - coords[1].x) ** 2 + (coords[0].y - coords[1].y) ** 2);
-
-    return shapeInfo;
 }
 
 export function moveShapeTo(shapes, selected, action, scale, boundingBoxes, selectionBoxes) {
@@ -1890,7 +1857,6 @@ export function rotateShapeTo(shapes, selected, action, scale, boundingBoxes, se
         let c = transformPoint(boundingBox.x, boundingBox.y, shape.transform[0].parameters);
         let degree = (action.payload.degree - shape.info.rotation);
         shape.transform[0].parameters = rotateTransform(shape.transform[0].parameters, degree * (Math.PI / 180), c.x, c.y);
-        shape.info = getShapeInfo(shape, boundingBoxes[id]);
     });
     return shapes;
 }
@@ -2499,4 +2465,36 @@ export function snapToGrid(shapes, selected, action, scale, boundingBoxes, selec
         shapes = moveShape(shapes, selected, action, scale, boundingBoxes, selectionBoxes, true, gridSnapInterval, align);
     });
     return shapes;
+}
+
+export function shapesOffScreen(shapes, boundingBoxes, offset, height, width) {
+    let offScreen = false;
+
+    for (var i = 0; i < shapes.allIds.length; i++) {
+        const id = shapes.allIds[i];
+        const shapeMatrix = shapes.byId[id].transform[0].parameters;
+        const boundingBox = boundingBoxes[id];
+
+        if (boundingBox) {
+            let inBox = 0;
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
+
+            if (inBox !== 4) {
+                offScreen = true;
+                break;
+            }
+        }
+    }
+
+    return offScreen;
+}
+
+function pointInCanvas(offset, height, width, p) {
+    if (offset.x <= p.x && p.x <= (width) && offset.y <= p.y && p.y <= (height)) {
+        return 1;
+    }
+    return 0;
 }
