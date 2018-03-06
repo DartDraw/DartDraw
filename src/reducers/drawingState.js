@@ -8,6 +8,7 @@ import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import * as rulers from './caseFunctions/rulers';
 import { deepCopy } from './utilities/object';
+import { getShapeInfo } from './utilities/info';
 
 const initialState = {
     shapes: {
@@ -217,6 +218,11 @@ function drawingState(state = initialState, action, root) {
             break;
         default: break;
     }
+
+    // Update shape info:
+    updatedState.shapes.allIds.map(id => {
+        updatedState.shapes.byId[id].info = getShapeInfo(updatedState.shapes.byId[id]);
+    });
 
     if (action.type !== menuActions.UNDO_CLICK && action.type !== menuActions.REDO_CLICK) {
         if (!updatedState.editInProgress) {

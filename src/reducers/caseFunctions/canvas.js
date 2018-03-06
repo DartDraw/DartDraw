@@ -257,6 +257,7 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
     stateCopy.boundingBoxes = boundingBoxes;
     stateCopy.selectionBoxes = updateSelectionBoxes(stateCopy.selected, stateCopy.shapes, stateCopy.selectionBoxes, stateCopy.boundingBoxes, stateCopy.mode);
     stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes, stateCopy.mode);
+
     return stateCopy;
 }
 
