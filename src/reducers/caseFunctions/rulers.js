@@ -97,17 +97,6 @@ export function toggleRuler(stateCopy, action) {
     return stateCopy;
 }
 
-function changeRulerPreset(ruler, newRulerName) {
-    var rulerObj = ruler.byName[newRulerName];
-
-    ruler.current = newRulerName;
-    ruler.unitDivisions = rulerObj.unitDivisions;
-    ruler.unitType = rulerObj.unitType;
-    ruler.pixelsPerUnit = setPixelsPerUnit(rulerObj.unitType);
-
-    return ruler;
-}
-
 export function setRulerGrid(stateCopy, action) {
     if (action.payload) {
         const { unitType, width, height, unitDivisions } = constrainInput(action.payload);
@@ -165,6 +154,17 @@ export function updateRulerGrid(stateCopy, scale, panX, panY) {
     // construct rulers!
     ruler.horizontal = buildRuler(windowWidth, xPanOffset, scaledPixelsPerUnit, minLabelSpacing, minTickSpacing, ruler.width, subUnitBase, subUnitExponent);
     ruler.vertical = buildRuler(windowHeight, yPanOffset, scaledPixelsPerUnit, minLabelSpacing, minTickSpacing, ruler.width, subUnitBase, subUnitExponent);
+
+    return ruler;
+}
+
+function changeRulerPreset(ruler, newRulerName) {
+    var rulerObj = ruler.byName[newRulerName];
+
+    ruler.current = newRulerName;
+    ruler.unitDivisions = rulerObj.unitDivisions;
+    ruler.unitType = rulerObj.unitType;
+    ruler.pixelsPerUnit = setPixelsPerUnit(rulerObj.unitType);
 
     return ruler;
 }

@@ -5,6 +5,7 @@ import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCo
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
+import { updateMouseTrackers } from '../utilities/rulers';
 
 export function dragStart(stateCopy, action, root) {
     const prevEditState = stateCopy.editInProgress;
@@ -250,6 +251,8 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
 
 export function mouseMove(stateCopy, action, root) {
     const { x, y } = action.payload;
+
+    stateCopy.rulers.mouseTracker = updateMouseTrackers(x, y, stateCopy.ruler.width, stateCopy.canvasWidth, stateCopy.canvasHeight, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
 
     stateCopy.mouseCoords.x = x;
     stateCopy.mouseCoords.y = y;

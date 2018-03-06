@@ -4,7 +4,7 @@ import { setRulerGrid } from './../../../actions/menu';
 import { MENU_WIDTH } from '../../../constants';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { ruler, mouseCoords, canvasWidth, canvasHeight, scale } = drawingState;
+    const { ruler, canvasWidth, canvasHeight, scale } = drawingState;
     const { showRulers } = menuState;
     return {
         ruler: ruler,
@@ -12,7 +12,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         height: Math.min(canvasHeight * scale, window.innerHeight - ruler.width - MENU_WIDTH),
         widthInUnits: canvasWidth / ruler.pixelsPerUnit,
         heightInUnits: canvasHeight / ruler.pixelsPerUnit,
-        mouseCoords: mouseCoords,
+        mouseCoords: ruler.mouseTrackers,
         showRulers: showRulers
     };
 };
