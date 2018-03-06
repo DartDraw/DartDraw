@@ -18,12 +18,10 @@ button:hover {
 
 .separator {
   width: 33px;
-  background-color: #5C7080;
+  background-color: #394B59;
   display: block;
-  /* margin: 10px 6px 10px 6px; */
   margin-left: 10px;
   margin-right: 10px;
-  /* position: absolute; */
   height: 1px;
 }
 

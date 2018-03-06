@@ -45,13 +45,11 @@ class ColorMenu extends Component {
 
     showColorInfo(event) {
         this.setState({showColorPicker: !this.state.showColorPicker});
-        // this.props.onAddColor(this.props.currentColor);
     }
 
     handleChange(event) {
         this.tempOpacityValue = event.target.value / 100.0;
         this.props.onUpdateOpacity(event.target.value / 100.0);
-        // console.log(event);
     }
 
     handleSubmit(event) {
@@ -82,7 +80,6 @@ class ColorMenu extends Component {
 
     handleColorChange(colorInfo) {
         this.props.onSelectColor(colorInfo.rgb);
-        // pick color
     }
 
     handleColorInputChange(stuff) {
@@ -167,23 +164,27 @@ class ColorMenu extends Component {
                     <h1>Color Editor</h1>
                     <div className={this.state.showColorEditor ? 'arrow-right-small' : 'arrow-down'} />
                 </div>
-                <div className="color-editor" style={this.state.showColorEditor ? {display: "none"} : {display: 'block'}}>
-                    <div id="inline-close">
-                        <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
-                        {colorPicker}
-                        <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
-                        <Select value={colorType} onChange={this.handleChangeColorType}>
-                            {colorOptions.map(({ value, label }) => {
-                                return <option value={value}>{label}</option>;
-                            })}
-                        </Select>
-                        <form id="opacity-form" onSubmit={this.handleSubmit}>
-                            <label>Opacity:</label>
-                            <input className="range-input" type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
-                            <input type="text" value={this.tempOpacityValue * 100.0} onChange={this.handleChange} />
-                        </form>
+                <div className="color-editor" style={this.state.showColorEditor ? {display: "none"} : {display: 'flex'}}>
+                    <div id="inline-apart">
+                        <div id="inline-close">
+                            <div style={currentColorStyle} id="current-color-display" onClick={this.showColorInfo} />
+                            {colorPicker}
+                            <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
+                            <Select value={colorType} onChange={this.handleChangeColorType}>
+                                {colorOptions.map(({ value, label }) => {
+                                    return <option value={value}>{label}</option>;
+                                })}
+                            </Select>
+                        </div>
+
                     </div>
+                    <form id="opacity-form" onSubmit={this.handleSubmit}>
+                        <label>Opacity:</label>
+                        <input className="range-input" type="range" min="1" max="100" value={this.tempValue} defaultValue="100" step="1" onChange={this.handleChange} />
+                        <input type="text" className="input" value={this.tempOpacityValue * 100.0} onChange={this.handleChange} />
+                    </form>
                     <div id="inline-close">
+
                         { colorInput }
                     </div>
                     <div className="horz-div" />

@@ -74,6 +74,10 @@
     color: #CED9E0;
 }
 
+.zoom-button:hover {
+  cursor: auto;
+}
+
 .zoom-input-row {
     display: flex;
     flex-direction: row;
