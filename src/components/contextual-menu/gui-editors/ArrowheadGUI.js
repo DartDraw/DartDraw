@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
 import { Input, Select } from '../../ui';
-import { ARROWHEAD_STROKE_WIDTH, ARROWHEAD_GUI_HEIGHT } from '../../../constants';
+import { ARROWHEAD_STROKE_WIDTH, ARROWHEAD_GUI_HEIGHT, ARROWHEAD_GUI_WIDTH } from '../../../constants';
 import {findHeightPercentage, findLengthPercentage, findBarbLengthPercentage, findRxPercentage, findRyPercentage} from '../../../reducers/utilities/arrowhead';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
 
@@ -277,7 +277,7 @@ class ArrowheadGUI extends Component {
                     </Select>
                     <button id="basic-button" onClick={this.handleResetToPreset}>Reset</button>
                 </div>
-                <svg className="arrowhead-gui">
+                <svg className="arrowhead-gui" style={{ width: ARROWHEAD_GUI_WIDTH, height: ARROWHEAD_GUI_HEIGHT }}>
                     {this.renderReferenceLine(path, selectedArrowhead)}
                     {this.renderArrowhead(selectedArrowhead)}
                     {this.renderHandles(selectedArrowhead)}
