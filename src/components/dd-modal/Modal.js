@@ -47,22 +47,38 @@ class Modal extends Component {
         const {canvasWidthInUnits, canvasHeightInUnits, unitDivisions, unitType} = this.props;
         let settingsModal = null;
         if (this.props.settingsModalVisible) {
-            settingsModal =
-                <div className="modal">
-                    <h1>Settings</h1>
+            settingsModal = <div />;
+        } else {
+            settingsModal = <div />;
+        }
+        return (
+            <div>
+
+                <div className="modal" style={{ height: 250, top: !this.props.settingsModalVisible ? -400 : 0 }}>
+                    <h1>Canvas Settings</h1>
                     <form id="button-icon" onSubmit={(event) => { this.handleSubmitRulerGrid(event); }}>
-                        <select
-                            id="unitType"
-                            defaultValue={unitType}
-                        >
-                            <option value="in">{"in"}</option>
-                            <option value="ft">ft</option>
-                            <option value="mm">mm</option>
-                            <option value="cm">cm</option>
-                            <option value="m">m</option>
-                            <option value="px">px</option>
-                            <option value="pt">pt</option>
-                        </select>
+                        <div id="inline-close">
+                            <p>Unit:</p>
+                            <select
+                                id="unitType"
+                                defaultValue={unitType}
+                            >
+                                <option value="in">{"in"}</option>
+                                <option value="ft">ft</option>
+                                <option value="mm">mm</option>
+                                <option value="cm">cm</option>
+                                <option value="m">m</option>
+                                <option value="px">px</option>
+                                <option value="pt">pt</option>
+                            </select>
+                        </div>
+                        <div id="inline-close">
+                            <p>Unit Divisions:</p><input
+                                id="unitDivisions"
+                                defaultValue={unitDivisions}
+                                type="number"
+                            />
+                        </div>
                         <div id="inline-close">
                             <p>Width:</p><input
                                 id="width"
@@ -78,23 +94,14 @@ class Modal extends Component {
                                 step="0.1"
                             />
                         </div>
-                        <p>Unit Divisions:</p><input
-                            id="unitDivisions"
-                            defaultValue={unitDivisions}
-                            type="number"
-                        />
-                        <p />
-                        <input type="submit" value="resize" id="basic-button" />
-                    </form>
-                    <button id="basic-button" onClick={this.handleToggleSettingsModal}>Done</button>
 
-                </div>;
-        } else {
-            settingsModal = <div />;
-        }
-        return (
-            <div>
-                {settingsModal}
+                        <div id="inline-apart" style={{marginTop: '20px'}}>
+                            <input type="submit" value="resize" id="primary-action-button" />
+                            <button id="secondary-action-button" onClick={this.handleToggleSettingsModal}>Done</button>
+                        </div>
+                    </form>
+
+                </div>
             </div>
         );
     }
