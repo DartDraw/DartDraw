@@ -29,6 +29,7 @@ input {
   border-radius: 2px;
   background-color: #5C7080;
   padding: 4px;
+  color: white;
 }
 
 .modal span {
