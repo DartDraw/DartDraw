@@ -5,6 +5,9 @@ import './color-menu.css';
 import DDColorPicker from './DDColorPicker';
 import {ColorInput, ColorPicker} from 'react-colors';
 import { Select } from '../ui';
+import { SwatchesPicker, CompactPicker } from 'react-color';
+import ColorList from './ColorList';
+import { GRID_PALETTE } from '../../constants';
 
 class ColorMenu extends Component {
     static propTypes = {
@@ -17,7 +20,9 @@ class ColorMenu extends Component {
         onAddColor: PropTypes.func,
         colorType: PropTypes.string,
         onChangeColorType: PropTypes.func,
-        onSelectColor: PropTypes.func
+        onSelectColor: PropTypes.func,
+        onSetPickerType: PropTypes.func,
+        pickerType: PropTypes.string
     };
 
     constructor(props) {
@@ -41,6 +46,8 @@ class ColorMenu extends Component {
         this.handleColorInputChange = this.handleColorInputChange.bind(this);
         this.convertRGBArrayToObj = this.convertRGBArrayToObj.bind(this);
         this.toggleColorEditor = this.toggleColorEditor.bind(this);
+        this.handlePickerRender = this.handlePickerRender.bind(this);
+        this.handlePickerTypeChange = this.handlePickerTypeChange.bind(this);
     }
 
     showColorInfo(event) {
@@ -86,8 +93,20 @@ class ColorMenu extends Component {
         this.props.onSelectColor(this.convertRGBArrayToObj(stuff));
     }
 
+    handlePickerTypeChange(pickerType) {
+        this.props.onSetPickerType(pickerType);
+    }
+
     convertRGBArrayToObj(colorInfo) {
         return {r: colorInfo.rgb[0], g: colorInfo.rgb[1], b: colorInfo.rgb[2], a: colorInfo.alpha};
+    }
+
+    handlePickerRender() {
+        if (this.props.pickerType === 'Gradient') {
+            return <DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} />;
+        } else {
+            return <ColorList colorList={GRID_PALETTE} />;
+        }
     }
 
     toggleColorEditor() {
@@ -143,7 +162,12 @@ class ColorMenu extends Component {
         if (!this.state.showColorPicker) {
             colorPicker = <div />;
         } else {
-            colorPicker = <div id="color-picker"><div className="arrow-right" /><DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} /></div>;
+            colorPicker = <div id="color-picker"><div className="arrow-right" />
+                <button id="basic-button-1" onClick={() => { this.handlePickerTypeChange('Gradient'); }}>Gradient</button>
+                <button id="basic-button-1" onClick={() => { this.handlePickerTypeChange('Grid'); }}>Grid</button>
+                {this.handlePickerRender()}
+
+            </div>;
         }
         let colorInput = null;
         if (this.props.colorType === "CMYK") {

@@ -45,6 +45,7 @@ export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
 export const FILE_SAVE = 'FILE_SAVE';
 export const FILE_OPEN = 'FILE_OPEN';
 export const TOGGLE_SETTINGS_MODAL = 'TOGGLE_SETTINGS_MODAL';
+export const SET_PICKER_TYPE = 'SET_PICKER_TYPE';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -120,6 +121,10 @@ export function redoClick() {
 
 export function setCustomZoom(customScale) {
     return { type: SET_CUSTOM_ZOOM, payload: { customScale } };
+}
+
+export function setPickerType(pickerType) {
+    return { type: SET_PICKER_TYPE, payload: { pickerType } };
 }
 
 export function alignmentClick(id) {

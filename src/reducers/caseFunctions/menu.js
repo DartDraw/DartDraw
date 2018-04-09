@@ -251,3 +251,9 @@ export function changeColorType(stateCopy, action) {
     stateCopy.colorType = action.payload.colorType;
     return stateCopy;
 }
+
+export function setPickerType(stateCopy, action) {
+    stateCopy.colorPickerType = action.payload.pickerType;
+    console.log(stateCopy.colorPickerType);
+    return stateCopy;
+}

@@ -4,7 +4,8 @@ import {
     colorUpdate,
     addColor,
     changeColorType,
-    selectColor
+    selectColor,
+    setPickerType
 } from '../../actions/menu';
 import ColorMenu from './ColorMenu';
 
@@ -17,7 +18,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         currentColor: menuState.color,
         palettes: menuState.palettes,
         currentPalette: menuState.currentPalette,
-        colorType: menuState.colorType
+        colorType: menuState.colorType,
+        pickerType: menuState.colorPickerType
     };
 };
 
@@ -37,6 +39,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSelectColor: (colorObj) => {
             dispatch(selectColor(colorObj));
+        },
+        onSetPickerType: (pickerType) => {
+            dispatch(setPickerType(pickerType));
         }
     };
 };

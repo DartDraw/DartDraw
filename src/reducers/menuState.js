@@ -27,6 +27,9 @@ const initialState = {
         },
         'Primary': {
             colors: [{r: 255, g: 0, b: 0, a: 1}, {r: 0, g: 0, b: 255, a: 1}, {r: 255, g: 255, b: 0, a: 1}]
+        },
+        'Grid': { // {r: , g: , b: , a:1}
+            colors: [{r: 0, g: 0, b: 0, a: 1}, {r: 51, g: 51, b: 51, a: 1}, {r: 102, g: 102, b: 102, a: 1}, {r: 140, g: 140, b: 140, a: 1}, {r: 179, g: 179, b: 179, a: 1}, {r: 204, g: 204, b: 204, a: 1}, {r: 255, g: 255, b: 255, a: 1}]
         }
     },
     gridSnapping: false,
@@ -34,7 +37,8 @@ const initialState = {
     showSubDivisions: true,
     showGrid: true,
     showContextualMenu: true,
-    showSettingsModal: false
+    showSettingsModal: false,
+    colorPickerType: 'gradient'
 };
 
 function menuState(state = initialState, action, root) {
@@ -71,6 +75,8 @@ function menuState(state = initialState, action, root) {
             return menu.removePalette(stateCopy, action);
         case menuActions.REMOVE_COLOR:
             return menu.removeColor(stateCopy, action);
+        case menuActions.SET_PICKER_TYPE:
+            return menu.setPickerType(stateCopy, action);
 
         case menuActions.TOGGLE_SHOW_GRID:
             return grid.toggleShowGrid(stateCopy, action, root);
@@ -84,6 +90,7 @@ function menuState(state = initialState, action, root) {
         case menuActions.TOGGLE_SETTINGS_MODAL:
             stateCopy.showSettingsModal = !stateCopy.showSettingsModal;
             return stateCopy;
+
         default:
             return stateCopy;
     }
