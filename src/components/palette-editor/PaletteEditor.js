@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import './palette-menu.css';
 import ColorSquare from './ColorSquare';
 import Dropdown from 'react-dropdown';
+import { Select } from '../ui';
 
 class PaletteEditor extends Component {
     static propTypes = {
@@ -40,7 +41,7 @@ class PaletteEditor extends Component {
     }
 
     keydownHandler(e) {
-        if (e.ctrlKey && !this.state.deleteMode) { // && e.repeat
+        if (e.ctrlKey && !this.state.deleteMode) {
             console.log('delete mode on');
             this.setState({deleteMode: true});
         } else {
@@ -57,12 +58,10 @@ class PaletteEditor extends Component {
     }
 
     handleChangePalette(paletteName) {
-        console.log(paletteName);
-        this.props.onSelectPalette(paletteName.value);
+        this.props.onSelectPalette(paletteName);
     }
     handleAddPalette(event) {
         event.preventDefault();
-        console.log(this.state.paletteName);
         this.props.onAddPalette(this.state.paletteName);
         this.toggleCreatePalette();
         this.props.onSelectPalette(this.state.paletteName);
@@ -83,18 +82,14 @@ class PaletteEditor extends Component {
 
     handleDeletePalette() {
         const { dialog } = window.require('electron').remote;
-        // console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}));
         // cancel = 1, yes = 0
         if (dialog.showMessageBox({options: ["warning"], message: 'Are you sure you want to delete the current palette?', buttons: ['Yes', 'Cancel']}) === 0) {
             console.log("deleting palette");
             this.props.onDeletePalette(this.props.currentPalette);
         }
-        // console.log(dialog.showMessageBox({options: ["warning"], message: 'Are you sure you want to delete the current palette?', buttons: ['Yes', 'Cancel']}));
-        // this.props.onDeletePalette(this.props.currentPalette);
     }
 
     render() {
-        // const colorList = this.getCurrentColorList();
         const { palettes, currentPalette } = this.props;
         const colorList = palettes[currentPalette].colors;
         let deleteColorStyle = {};
@@ -115,11 +110,6 @@ class PaletteEditor extends Component {
         );
         let newPalette = null;
         let paletteStyle = null;
-        if (this.state.colorMode) {
-            paletteStyle = {backgroundColor: 'transparent'};
-        } else {
-            paletteStyle = {backgroundColor: 'white'};
-        }
         if (this.state.showNewPaletteCreate) {
             newPalette = <div>
                 <form onSubmit={this.handleAddPalette} >
@@ -135,11 +125,16 @@ class PaletteEditor extends Component {
                 <div id="inline-apart">
                     <div id="inline-close">
                         <label>Palette:</label>
-                        <Dropdown id="dropwdown" options={Object.keys(palettes)} onChange={(e) => { this.handleChangePalette(e); }} value={currentPalette} placeholder="Select an option" />
                         <button id="basic-button" onClick={this.toggleCreatePalette}>Create new Palette</button>
                     </div>
+
                     <button id="basic-button" onClick={this.handleDeletePalette}>Delete</button>
                 </div>
+                <Select value={currentPalette} onChange={this.handleChangePalette}>
+                    {Object.keys(palettes).map((p) => {
+                        return <option value={p}>{p}</option>;
+                    })}
+                </Select>
                 {newPalette}
                 <div id="palette">
                     { palette }

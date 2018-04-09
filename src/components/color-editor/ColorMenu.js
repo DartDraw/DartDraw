@@ -176,7 +176,6 @@ class ColorMenu extends Component {
                                 })}
                             </Select>
                         </div>
-
                     </div>
                     <form id="opacity-form" onSubmit={this.handleSubmit}>
                         <label>Opacity:</label>
