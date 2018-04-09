@@ -272,7 +272,7 @@ function drawingState(state = initialState, action, root) {
 
     if (action.type !== menuActions.UNDO_CLICK && action.type !== menuActions.REDO_CLICK) {
         if (!updatedState.editInProgress) {
-            if (shape.checkOffScreen(stateCopy)) {
+            if (shape.checkOffScreen(stateCopy) && updatedState.lastSavedShapes) {
                 updatedState.shapes = deepCopy(updatedState.lastSavedShapes);
             }
 

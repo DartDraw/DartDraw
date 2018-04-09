@@ -648,5 +648,5 @@ export function distributeClick(stateCopy, action, root) {
 }
 
 export function checkOffScreen(stateCopy) {
-    return shapesOffScreen(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.offset, stateCopy.canvasHeight, stateCopy.canvasWidth);
+    return shapesOffScreen(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.canvasHeight, stateCopy.canvasWidth);
 }

@@ -2467,7 +2467,7 @@ export function snapToGrid(shapes, selected, action, scale, boundingBoxes, selec
     return shapes;
 }
 
-export function shapesOffScreen(shapes, boundingBoxes, offset, height, width) {
+export function shapesOffScreen(shapes, boundingBoxes, height, width) {
     let offScreen = false;
 
     for (var i = 0; i < shapes.allIds.length; i++) {
@@ -2477,10 +2477,10 @@ export function shapesOffScreen(shapes, boundingBoxes, offset, height, width) {
 
         if (boundingBox) {
             let inBox = 0;
-            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
-            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
-            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
-            inBox += pointInCanvas(offset, height, width, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
+            inBox += pointInCanvas(height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y, shapeMatrix));
+            inBox += pointInCanvas(height, width, transformPoint(boundingBox.x + boundingBox.width, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInCanvas(height, width, transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix));
+            inBox += pointInCanvas(height, width, transformPoint(boundingBox.x, boundingBox.y, shapeMatrix));
 
             if (inBox !== 4) {
                 offScreen = true;
@@ -2492,8 +2492,8 @@ export function shapesOffScreen(shapes, boundingBoxes, offset, height, width) {
     return offScreen;
 }
 
-function pointInCanvas(offset, height, width, p) {
-    if (offset.x <= p.x && p.x <= (width) && offset.y <= p.y && p.y <= (height)) {
+function pointInCanvas(height, width, p) {
+    if (p.x >= 0 && p.x <= (width) && p.y >= 0 && p.y <= (height)) {
         return 1;
     }
     return 0;
