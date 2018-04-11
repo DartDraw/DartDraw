@@ -633,22 +633,12 @@ export function moveShape(shapes, selected, action, scale, boundingBoxes,
                 let newX = Math.round((shape.xOffset + shape.dragX) / gridSnapInterval) * gridSnapInterval;
                 let newY = Math.round((shape.yOffset + shape.dragY) / gridSnapInterval) * gridSnapInterval;
 
-                if (shape.type === 'text') {
-                    shape.x = Math.round((shape.dragX) / gridSnapInterval) * gridSnapInterval - coord.x;
-                    shape.y = Math.round((shape.dragY) / gridSnapInterval) * gridSnapInterval - coord.y;
-                } else {
-                    let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
-                    shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
-                }
-            }
-        } else {
-            if (shape.type === 'text') {
-                shape.x = shape.x + scaledDeltaX;
-                shape.y = shape.y + scaledDeltaY;
-            } else {
-                let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+                let moveMatrix = [1, 0, 0, 1, newX - coord.x, newY - coord.y];
                 shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
             }
+        } else {
+            let moveMatrix = [1, 0, 0, 1, scaledDeltaX, scaledDeltaY];
+            shape.transform[0].parameters = multiplyMatrices(moveMatrix, shape.transform[0].parameters);
         }
 
         if (shape.type === 'line') {
