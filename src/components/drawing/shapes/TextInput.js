@@ -195,6 +195,8 @@ class TextInput extends Component {
         const {
             id,
             text,
+            // still need to do selectionrange
+            selectionRange,
             tspans,
             x,
             y,
@@ -244,6 +246,37 @@ class TextInput extends Component {
             />
         );
 
+        const spans = tspans.length === 0 ? text : tspans.map(tspan => {
+            const {
+                fill,
+                fontFamily,
+                fontSize,
+                fontWeight,
+                fontStyle,
+                textAlign,
+                textDecoration,
+                lineHeight
+            } = tspan.style;
+
+            return (
+                <span
+                    key={tspan.range[0]}
+                    style={{
+                        color: fill,
+                        fontFamily,
+                        fontSize: fontSize + 'px',
+                        fontWeight,
+                        fontStyle,
+                        textAlign,
+                        textDecoration,
+                        lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px'
+                    }}
+                >
+                    {text.substring(tspan.range[0], tspan.range[1])}
+                </span>
+            );
+        });
+
         const textElement = (
             <div
                 style={{
@@ -251,16 +284,6 @@ class TextInput extends Component {
                     whiteSpace: 'pre-wrap',
                     wordWrap: 'break-word',
                     overflowWrap: 'break-word',
-                    width: Math.abs(width),
-                    height: Math.abs(height),
-                    color: fill,
-                    fontFamily,
-                    fontSize: fontSize + 'px',
-                    fontWeight,
-                    fontStyle,
-                    textAlign,
-                    textDecoration,
-                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
                     userSelect: 'none'
                 }}
                 onDoubleClick={(event) => {
@@ -268,7 +291,7 @@ class TextInput extends Component {
                     this.setState({ editing: true }, () => { this.textInput.focus(); });
                 }}
             >
-                {text}
+                {spans}
             </div>
         );
 
