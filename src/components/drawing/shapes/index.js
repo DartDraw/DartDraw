@@ -13,6 +13,6 @@ export {default as Rectangle} from './Rectangle';
 export {default as Shape} from './Shape';
 export {default as Text} from './Text';
 export {default as TextInput} from './TextInput';
-export {default as Arrowhead} from './Arrowhead';
+export {default as Arrow} from './Arrow';
 export {default as Bezier} from './Bezier';
 export {default as TransparentBezier} from './TransparentBezier';

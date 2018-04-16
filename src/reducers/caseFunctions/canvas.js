@@ -79,7 +79,7 @@ export function dragStart(stateCopy, action, root) {
             }
             break;
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, stateCopy.arrowheads, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addLine(stateCopy.shapes, stateCopy.arrows, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];

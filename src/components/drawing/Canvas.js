@@ -20,14 +20,14 @@ import {
     Line,
     TransparentLine,
     Text,
-    Arrowhead,
+    Arrow,
     Bezier
 } from './shapes';
 
 class Canvas extends Component {
     static propTypes = {
         shapes: PropTypes.array,
-        arrowheads: PropTypes.array,
+        arrows: PropTypes.array,
         selected: PropTypes.array,
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
@@ -56,7 +56,7 @@ class Canvas extends Component {
         super(props);
 
         this.renderDrawing = this.renderDrawing.bind(this);
-        this.renderArrowheads = this.renderArrowheads.bind(this);
+        this.renderArrows = this.renderArrows.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
         this.handleRedoClick = this.handleRedoClick.bind(this);
         this.handleDragStart = this.handleDragStart.bind(this);
@@ -236,10 +236,10 @@ class Canvas extends Component {
         });
     }
 
-    renderArrowheads() {
-        const { arrowheads, scale } = this.props;
-        return arrowheads.map((arrowhead) => {
-            return <Arrowhead key={arrowhead.id} scale={scale} {...arrowhead} />;
+    renderArrows() {
+        const { arrows, scale } = this.props;
+        return arrows.map((arrow) => {
+            return <Arrow key={arrow.id} scale={scale} {...arrow} />;
         });
     }
 
@@ -262,7 +262,7 @@ class Canvas extends Component {
                     >
                         <BackgroundLayerContainer />
                         {this.renderDrawing()}
-                        {this.renderArrowheads()}
+                        {this.renderArrows()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
                     </svg>

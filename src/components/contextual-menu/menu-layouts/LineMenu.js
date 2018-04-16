@@ -15,7 +15,6 @@ class LineMenu extends Component {
 
         this.handleStrokeDasharrayChange = this.handleStrokeDasharrayChange.bind(this);
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
-        this.handleArrowShown = this.handleArrowShown.bind(this);
         this.handleRotationChange = this.handleRotationChange.bind(this);
     }
 
@@ -61,12 +60,6 @@ class LineMenu extends Component {
         }
     }
 
-    handleArrowShown(value) {
-        const { line, onEdit } = this.props;
-        const newLine = Object.assign({}, line, { arrowShown: value });
-        onEdit && onEdit(newLine);
-    }
-
     handleRotationChange(value) {
         const {onRotateShapeTo} = this.props;
         onRotateShapeTo && onRotateShapeTo(value);
@@ -107,13 +100,6 @@ class LineMenu extends Component {
                         <option value="10">10</option>
                         <option value="15">15</option>
                         <option value="20">20</option>
-                    </Select>
-                </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Arrow:</div>
-                    <Select value={this.props.line.arrowShown} onChange={this.handleArrowShown}>
-                        <option value="yes">yes</option>
-                        <option value="no">no</option>
                     </Select>
                 </div>
             </div>

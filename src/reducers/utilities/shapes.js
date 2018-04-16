@@ -1,6 +1,6 @@
 import uuidv1 from 'uuid';
 import { multiplyMatrices, transformPoint } from './matrix';
-import { setArrowheadPreset } from './arrowhead';
+import { setArrowPreset } from './arrow';
 import { deepCopy } from './object';
 
 export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gridSnapping, gridSnapInterval, rectangleRadius) {
@@ -238,7 +238,7 @@ export function addTempBezierPoint(shapes, selected, action, offset, panX, panY,
     return shapes;
 }
 
-export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gridSnapping, gridSnapInterval) {
+export function addLine(shapes, arrows, action, fill, panX, panY, scale, gridSnapping, gridSnapInterval) {
     const { draggableData } = action.payload;
     const { x, y, node } = draggableData;
 
@@ -253,10 +253,12 @@ export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gri
         strokeWidth: 5,
         strokeDasharray: '',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
-        strokeLinecap: 'round',
+        strokeLinecap: 'butt',
         arrowheadId: uuidv1(),
-        arrowheadLength: 0,
-        arrowheadShown: 'yes'
+        arrowtailId: uuidv1(),
+        arrowHeadShown: true,
+        arrowTailShown: true,
+        arrowHeadLength: 0
     };
 
     var arrowhead = {
@@ -267,18 +269,31 @@ export function addLine(shapes, arrowheads, action, fill, panX, panY, scale, gri
         strokeDasharray: line.strokeDasharray
     };
 
+    const updatedArrow = setArrowPreset(arrows.presets["triangle"], arrowhead, line);
+
+    arrows.byId[arrowhead.id] = updatedArrow;
+    arrows.allIds.push(arrowhead.id);
+
+    line.arrowHeadLength = updatedArrow.length;
+
+    shapes.byId[line.id] = line;
+    shapes.allIds.push(line.id);
+
+    var arrowtail = {
+        id: line.arrowtailId,
+        lineId: line.id,
+        stroke: line.stroke,
+        strokeWidth: line.strokeWidth,
+        strokeDasharray: line.strokeDasharray
+    };
+
+    arrows.byId[arrowtail.id] = setArrowPreset(arrows.presets["triangle"], arrowtail, line);
+    arrows.allIds.push(arrowtail.id);
+
     if (gridSnapping) {
         line.points[0] = Math.round(line.points[0] / gridSnapInterval) * gridSnapInterval;
         line.points[1] = Math.round(line.points[1] / gridSnapInterval) * gridSnapInterval;
     }
-
-    const { updatedArrowhead, updatedLine } = setArrowheadPreset(arrowheads.presets["triangle"], arrowhead, line);
-
-    shapes.byId[line.id] = updatedLine;
-    shapes.allIds.push(line.id);
-
-    arrowheads.byId[arrowhead.id] = updatedArrowhead;
-    arrowheads.allIds.push(arrowhead.id);
 
     return shapes;
 }
@@ -1185,15 +1200,19 @@ export function moveControl(shapes, selected, draggableData, handleIndex, panX, 
 }
 
 export function deleteShapes(stateCopy, selected) {
-    var { shapes, arrowheads } = stateCopy;
+    var { shapes, arrows } = stateCopy;
 
     selected.map((id) => {
         if (shapes.byId[id].type === "group") {
             stateCopy = deleteShapes(stateCopy, shapes.byId[id].members);
         } else if (shapes.byId[id].type === "line") {
             let arrowheadId = shapes.byId[id].arrowheadId;
-            delete arrowheads.byId[arrowheadId];
-            arrowheads.allIds.splice(arrowheads.allIds.indexOf(arrowheadId), 1);
+            delete arrows.byId[arrowheadId];
+            arrows.allIds.splice(arrows.allIds.indexOf(arrowheadId), 1);
+
+            let arrowtailId = shapes.byId[id].arrowtailId;
+            delete arrows.byId[arrowtailId];
+            arrows.allIds.splice(arrows.allIds.indexOf(arrowtailId), 1);
         }
         delete shapes.byId[id];
         shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
@@ -1224,7 +1243,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
         let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-        if (shape.type === 'line' && shape.arrowheadShown === 'yes') {
+        if (shape.type === 'line' && shape.arrowHeadShown) {
             coords0 = {x: selectionBoxes[id].handles[0].x, y: selectionBoxes[id].handles[0].y};
             coords1 = {x: selectionBoxes[id].handles[1].x, y: selectionBoxes[id].handles[1].y};
             coords2 = {x: selectionBoxes[id].handles[2].x, y: selectionBoxes[id].handles[2].y};
@@ -1514,7 +1533,7 @@ function determineScale(shape, boundingBoxes, selectionBoxes, draggableData, han
     let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-    if (shape.type === 'line' && shape.arrowheadShown === 'yes') {
+    if (shape.type === 'line' && shape.arrowHeadShown) {
         coords0 = {x: selectionBoxes[shape.id].handles[0].x, y: selectionBoxes[shape.id].handles[0].y};
         coords1 = {x: selectionBoxes[shape.id].handles[1].x, y: selectionBoxes[shape.id].handles[1].y};
         coords2 = {x: selectionBoxes[shape.id].handles[2].x, y: selectionBoxes[shape.id].handles[2].y};

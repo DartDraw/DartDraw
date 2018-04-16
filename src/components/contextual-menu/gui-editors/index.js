@@ -1,2 +1,2 @@
-export {default as ArrowheadGUI} from './ArrowheadGUI';
-export {default as ArrowheadGUIContainer} from './ArrowheadGUIContainer';
+export {default as ArrowGUI} from './ArrowGUI';
+export {default as ArrowGUIContainer} from './ArrowGUIContainer';

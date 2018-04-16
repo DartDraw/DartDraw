@@ -16,7 +16,7 @@ import {
 import { ColorMenuContainer } from '../color-editor';
 import { PaletteEditorContainer } from '../palette-editor';
 import { CONTEXTUAL_MENU_WIDTH, MAX_ZOOM, MIN_ZOOM } from '../../constants';
-import { ArrowheadGUIContainer } from './gui-editors';
+import { ArrowGUIContainer } from './gui-editors';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -343,7 +343,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <LineMenu line={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
-                guiEditor = <ArrowheadGUIContainer path={selectedShape} />;
+                guiEditor = <ArrowGUIContainer path={selectedShape} />;
             } else if (selectedShape.type === 'ellipse') {
                 // needs onMoveShape to and onResizeShapeTo for rx, ry, cx, cy
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;

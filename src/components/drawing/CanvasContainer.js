@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Canvas from './Canvas';
-import { ARROWHEAD_STROKE_WIDTH } from '../../constants';
+import { ARROW_STROKE_WIDTH } from '../../constants';
 import {
     canvasDragStart,
     canvasDrag,
@@ -29,7 +29,7 @@ function formatShape(shape, shapes, scale) {
         });
     } else {
         if (formattedShape.type === 'line') {
-            formattedShape.arrowheadLength = formattedShape.arrowheadLength * formattedShape.strokeWidth / ARROWHEAD_STROKE_WIDTH;
+            formattedShape.arrowHeadLength = formattedShape.arrowHeadLength * formattedShape.strokeWidth / ARROW_STROKE_WIDTH;
         }
 
         formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
@@ -38,25 +38,25 @@ function formatShape(shape, shapes, scale) {
     return formattedShape;
 }
 
-function formatArrowhead(arrowhead, shapes, scale) {
-    const line = shapes.byId[arrowhead.lineId];
+function formatArrow(arrow, shapes, scale) {
+    const line = shapes.byId[arrow.lineId];
     const strokeProps = {
         stroke: line.stroke,
         strokeWidth: line.strokeWidth * scale,
         strokeDasharray: line.strokeDasharray
     };
-    return Object.assign({}, arrowhead, strokeProps);
+    return Object.assign({}, arrow, strokeProps);
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, arrowheads, selected, canvasHeight, canvasWidth, panX, panY, scale } = drawingState;
+    const { shapes, arrows, selected, canvasHeight, canvasWidth, panX, panY, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes, scale);
     });
 
-    const arrowsArray = arrowheads.allIds.map((id) => {
-        return formatArrowhead(arrowheads.byId[id], shapes, scale);
+    const arrowsArray = arrows.allIds.map((id) => {
+        return formatArrow(arrows.byId[id], shapes, scale);
     });
 
     const propagateEventTools = [
@@ -75,7 +75,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
 
     return {
         shapes: shapesArray,
-        arrowheads: arrowsArray,
+        arrows: arrowsArray,
         selected,
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,

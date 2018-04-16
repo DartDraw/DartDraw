@@ -15,8 +15,10 @@ class Line extends Component {
         strokeLinecap: PropTypes.string,
         strokeDasharray: PropTypes.string,
         arrowheadId: PropTypes.string,
-        arrowheadLength: PropTypes.number,
-        arrowheadShown: PropTypes.string,
+        arrowtailId: PropTypes.string,
+        arrowHeadLength: PropTypes.number,
+        arrowHeadShown: PropTypes.bool,
+        arrowTailShown: PropTypes.bool,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
@@ -59,12 +61,12 @@ class Line extends Component {
     }
 
     render() {
-        const { id, arrowheadId, arrowheadLength, arrowheadShown, points, stroke, strokeWidth, strokeDasharray, strokeLinecap, propagateEvents } = this.props;
+        const { id, arrowheadId, arrowtailId, arrowHeadLength, arrowHeadShown, arrowTailShown, points, stroke, strokeWidth, strokeDasharray, strokeLinecap, propagateEvents } = this.props;
 
         let l = Math.sqrt((points[2] - points[0]) ** 2 + (points[3] - points[1]) ** 2);
 
-        let arrowEndX = (1 - (l - arrowheadLength) / l) * points[0] + (l - arrowheadLength) / l * points[2];
-        let arrowEndY = (1 - (l - arrowheadLength) / l) * points[1] + (l - arrowheadLength) / l * points[3];
+        let arrowEndX = (1 - (l - arrowHeadLength) / l) * points[0] + (l - arrowHeadLength) / l * points[2];
+        let arrowEndY = (1 - (l - arrowHeadLength) / l) * points[1] + (l - arrowHeadLength) / l * points[3];
 
         const svgProps = {
             d: [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [arrowEndX, arrowEndY]}],
@@ -72,16 +74,23 @@ class Line extends Component {
             strokeWidth,
             strokeDasharray,
             arrowheadId,
-            strokeLinecap
+            arrowtailId,
+            strokeLinecap,
+            markerStart: "url(#" + arrowtailId + ")",
+            markerEnd: "url(#" + arrowheadId + ")"
         };
 
-        if (arrowheadShown === 'no') {
-            svgProps.arrowheadId = null;
+        if (!arrowHeadShown) {
+            svgProps.markerEnd = "none";
             svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}];
-        } else if (l < arrowheadLength || isNaN(arrowEndX) || isNaN(arrowEndY)) {
+        } else if (l < arrowHeadLength || isNaN(arrowEndX) || isNaN(arrowEndY)) {
             let lineEndX = (1 - (l - 0.01) / l) * points[2] + (l - 0.01) / l * points[0];
             let lineEndY = (1 - (l - 0.01) / l) * points[3] + (l - 0.01) / l * points[1];
             svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [lineEndX, lineEndY]}];
+        }
+
+        if (!arrowTailShown) {
+            svgProps.markerStart = "none";
         }
 
         if (isNaN(svgProps.d[1].parameters[0])) svgProps.d[1].parameters[0] = points[0];

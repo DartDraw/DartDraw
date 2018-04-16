@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { scaleViewBox } from '../../../reducers/utilities/arrowhead';
+import { scaleViewBox } from '../../../reducers/utilities/arrow';
 import { formatPoints } from '../../../utilities/shapes';
-import { ARROWHEAD_GUI_HEIGHT } from '../../../constants';
+import { ARROW_GUI_HEIGHT } from '../../../constants';
 
-class Arrowhead extends Component {
+class Arrow extends Component {
     static propTypes = {
         id: PropTypes.string,
         viewBox: PropTypes.array,
@@ -65,7 +65,7 @@ class Arrowhead extends Component {
 
     render() {
         const { scale, id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
-        const arrowheadProps = {
+        const arrowProps = {
             fill: stroke,
             stroke,
             strokeWidth,
@@ -73,24 +73,24 @@ class Arrowhead extends Component {
             vectorEffect: "non-scaling-stroke"
         };
 
-        var arrowhead;
-        var refY = ARROWHEAD_GUI_HEIGHT / 2;
+        var arrow;
+        var refY = ARROW_GUI_HEIGHT / 2;
 
         switch (type) {
             case "triangle":
             case "barbed":
-                arrowhead = (
+                arrow = (
                     <polygon
-                        {...arrowheadProps}
+                        {...arrowProps}
                         points={formatPoints(points)}
                         strokeWidth={0}
                     />
                 );
                 break;
             case "ellipse":
-                arrowhead = (
+                arrow = (
                     <ellipse
-                        {...arrowheadProps}
+                        {...arrowProps}
                         cx={cx}
                         cy={cy}
                         rx={rx}
@@ -100,9 +100,9 @@ class Arrowhead extends Component {
                 );
                 break;
             case "rectangle":
-                arrowhead = (
+                arrow = (
                     <rect
-                        {...arrowheadProps}
+                        {...arrowProps}
                         x={x}
                         y={y}
                         width={width}
@@ -112,9 +112,9 @@ class Arrowhead extends Component {
                 );
                 break;
             case "polyline":
-                arrowhead = (
+                arrow = (
                     <polyline
-                        {...arrowheadProps}
+                        {...arrowProps}
                         points={formatPoints(points)}
                         fillOpacity={0}
                     />
@@ -138,10 +138,10 @@ class Arrowhead extends Component {
                 // onDrag={this.handleDrag}
                 // onClick={() => console.log("hi")}>
             >
-                {arrowhead}
+                {arrow}
             </marker>
         );
     }
 }
 
-export default Arrowhead;
+export default Arrow;

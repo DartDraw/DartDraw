@@ -32,18 +32,19 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
-export const ARROWHEAD_HANDLE_DRAG = 'ARROWHEAD_HANDLE_DRAG';
-export const CHANGE_ARROWHEAD_TYPE = 'CHANGE_ARROWHEAD_TYPE';
-export const TOGGLE_ARROWHEAD_ASPECT = 'TOGGLE_ARROWHEAD_ASPECT';
-export const CHANGE_ARROWHEAD_HEIGHT = 'CHANGE_ARROWHEAD_HEIGHT';
-export const CHANGE_ARROWHEAD_LENGTH = 'CHANGE_ARROWHEAD_LENGTH';
-export const CHANGE_ARROWHEAD_BARB_LENGTH = 'CHANGE_ARROWHEAD_BARB_LENGTH';
-export const CHANGE_ARROWHEAD_RADIUS_X = 'CHANGE_ARROWHEAD_RADIUS_X';
-export const CHANGE_ARROWHEAD_RADIUS_Y = 'CHANGE_ARROWHEAD_RADIUS_Y';
-export const SELECT_ARROWHEAD_PRESET = 'SELECT_ARROWHEAD_PRESET';
-export const ADD_ARROWHEAD_PRESET = 'ADD_ARROWHEAD_PRESET';
-export const SAVE_ARROWHEAD_PRESET = 'SAVE_ARROWHEAD_PRESET';
-export const DELETE_ARROWHEAD_PRESET = 'DELETE_ARROWHEAD_PRESET';
+export const ARROW_HANDLE_DRAG = 'ARROW_HANDLE_DRAG';
+export const CHANGE_ARROW_TYPE = 'CHANGE_ARROW_TYPE';
+export const TOGGLE_ARROW_ASPECT = 'TOGGLE_ARROW_ASPECT';
+export const TOGGLE_ARROW_SHOWN = 'TOGGLE_ARROW_SHOWN';
+export const CHANGE_ARROW_HEIGHT = 'CHANGE_ARROW_HEIGHT';
+export const CHANGE_ARROW_LENGTH = 'CHANGE_ARROW_LENGTH';
+export const CHANGE_ARROW_BARB_LENGTH = 'CHANGE_ARROW_BARB_LENGTH';
+export const CHANGE_ARROW_RADIUS_X = 'CHANGE_ARROW_RADIUS_X';
+export const CHANGE_ARROW_RADIUS_Y = 'CHANGE_ARROW_RADIUS_Y';
+export const SELECT_ARROW_PRESET = 'SELECT_ARROW_PRESET';
+export const ADD_ARROW_PRESET = 'ADD_ARROW_PRESET';
+export const SAVE_ARROW_PRESET = 'SAVE_ARROW_PRESET';
+export const DELETE_ARROW_PRESET = 'DELETE_ARROW_PRESET';
 export const CHANGE_COLOR_TYPE = 'CHANGE_COLOR_TYPE';
 export const SELECT_RULER = 'SELECT_RULER';
 export const ADD_RULER = 'ADD_RULER';
@@ -246,46 +247,50 @@ export function toggleContextualMenu() {
     return { type: TOGGLE_CONTEXTUAL_MENU };
 }
 
-export function arrowheadHandleDrag(shapeId, handleIndex, draggableData) {
-    return { type: ARROWHEAD_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
+export function arrowHandleDrag(shapeId, handleIndex, draggableData) {
+    return { type: ARROW_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
 }
 
-export function toggleArrowheadAspect() {
-    return { type: TOGGLE_ARROWHEAD_ASPECT };
+export function toggleArrowAspect() {
+    return { type: TOGGLE_ARROW_ASPECT };
 }
 
-export function changeArrowheadHeight(height) {
-    return { type: CHANGE_ARROWHEAD_HEIGHT, payload: { height } };
+export function toggleArrowShown(mode) {
+    return { type: TOGGLE_ARROW_SHOWN, payload: { mode } };
 }
 
-export function changeArrowheadLength(length) {
-    return { type: CHANGE_ARROWHEAD_LENGTH, payload: { length } };
+export function changeArrowHeight(height) {
+    return { type: CHANGE_ARROW_HEIGHT, payload: { height } };
 }
 
-export function changeArrowheadBarbLength(length) {
-    return { type: CHANGE_ARROWHEAD_BARB_LENGTH, payload: { length } };
+export function changearrowHeadLength(length) {
+    return { type: CHANGE_ARROW_LENGTH, payload: { length } };
 }
 
-export function changeArrowheadRadiusX(rx) {
-    return { type: CHANGE_ARROWHEAD_RADIUS_X, payload: { rx } };
+export function changeArrowBarbLength(length) {
+    return { type: CHANGE_ARROW_BARB_LENGTH, payload: { length } };
 }
 
-export function changeArrowheadRadiusY(ry) {
-    return { type: CHANGE_ARROWHEAD_RADIUS_Y, payload: { ry } };
+export function changeArrowRadiusX(rx) {
+    return { type: CHANGE_ARROW_RADIUS_X, payload: { rx } };
 }
 
-export function selectArrowheadPreset(name) {
-    return { type: SELECT_ARROWHEAD_PRESET, payload: { name } };
+export function changeArrowRadiusY(ry) {
+    return { type: CHANGE_ARROW_RADIUS_Y, payload: { ry } };
 }
 
-export function addArrowheadPreset(name, arrowhead) {
-    return { type: ADD_ARROWHEAD_PRESET, payload: { name, arrowhead } };
+export function selectArrowPreset(name) {
+    return { type: SELECT_ARROW_PRESET, payload: { name } };
 }
 
-export function saveArrowheadPreset(arrowhead) {
-    return { type: SAVE_ARROWHEAD_PRESET, payload: { arrowhead } };
+export function addArrowPreset(name, arrow) {
+    return { type: ADD_ARROW_PRESET, payload: { name, arrow } };
 }
 
-export function deleteArrowheadPreset(presetName) {
-    return { type: DELETE_ARROWHEAD_PRESET, payload: { presetName } };
+export function saveArrowPreset(arrow) {
+    return { type: SAVE_ARROW_PRESET, payload: { arrow } };
+}
+
+export function deleteArrowPreset(presetName) {
+    return { type: DELETE_ARROW_PRESET, payload: { presetName } };
 }

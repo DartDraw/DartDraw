@@ -7,8 +7,8 @@ import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import * as rulers from './caseFunctions/rulers';
-import * as arrowhead from './caseFunctions/arrowhead';
-import { getArrowheadDefaultPresets } from './utilities/arrowhead';
+import * as arrow from './caseFunctions/arrow';
+import { getArrowDefaultPresets } from './utilities/arrow';
 import { deepCopy } from './utilities/object';
 import { getShapeInfo } from './utilities/info';
 
@@ -17,11 +17,12 @@ const initialState = {
         byId: {},
         allIds: []
     },
-    arrowheads: {
+    arrows: {
         byId: {},
         allIds: [],
-        presets: getArrowheadDefaultPresets()
+        presets: getArrowDefaultPresets()
     },
+    arrowMode: "head",
     lockAspectRatio: false,
     selected: [],
     boundingBoxes: {},
@@ -226,41 +227,44 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.SCROLL:
             updatedState = canvas.scroll(stateCopy, action, root);
             break;
-        case menuActions.ARROWHEAD_HANDLE_DRAG:
-            updatedState = arrowhead.arrowheadHandleDrag(stateCopy, action, root);
+        case menuActions.ARROW_HANDLE_DRAG:
+            updatedState = arrow.arrowHandleDrag(stateCopy, action, root);
             break;
-        // case menuActions.CHANGE_ARROWHEAD_TYPE:
-        //     updatedState = arrowhead.changeArrowheadType(stateCopy, action, root);
+        // case menuActions.CHANGE_ARROW_TYPE:
+        //     updatedState = arrow.changeArrowType(stateCopy, action, root);
         //     break;
-        case menuActions.CHANGE_ARROWHEAD_HEIGHT:
-            updatedState = arrowhead.changeArrowheadHeight(stateCopy, action, root);
+        case menuActions.CHANGE_ARROW_HEIGHT:
+            updatedState = arrow.changeArrowHeight(stateCopy, action, root);
             break;
-        case menuActions.CHANGE_ARROWHEAD_LENGTH:
-            updatedState = arrowhead.changeArrowheadLength(stateCopy, action, root);
+        case menuActions.CHANGE_ARROW_LENGTH:
+            updatedState = arrow.changearrowHeadLength(stateCopy, action, root);
             break;
-        case menuActions.CHANGE_ARROWHEAD_BARB_LENGTH:
-            updatedState = arrowhead.changeArrowheadBarbLength(stateCopy, action, root);
+        case menuActions.CHANGE_ARROW_BARB_LENGTH:
+            updatedState = arrow.changeArrowBarbLength(stateCopy, action, root);
             break;
-        case menuActions.CHANGE_ARROWHEAD_RADIUS_X:
-            updatedState = arrowhead.changeArrowheadRadiusX(stateCopy, action, root);
+        case menuActions.CHANGE_ARROW_RADIUS_X:
+            updatedState = arrow.changeArrowRadiusX(stateCopy, action, root);
             break;
-        case menuActions.CHANGE_ARROWHEAD_RADIUS_Y:
-            updatedState = arrowhead.changeArrowheadRadiusY(stateCopy, action, root);
+        case menuActions.CHANGE_ARROW_RADIUS_Y:
+            updatedState = arrow.changeArrowRadiusY(stateCopy, action, root);
             break;
-        case menuActions.SELECT_ARROWHEAD_PRESET:
-            updatedState = arrowhead.selectArrowheadPreset(stateCopy, action, root);
+        case menuActions.SELECT_ARROW_PRESET:
+            updatedState = arrow.selectArrowPreset(stateCopy, action, root);
             break;
-        case menuActions.TOGGLE_ARROWHEAD_ASPECT:
-            updatedState = arrowhead.toggleArrowheadAspect(stateCopy, action, root);
+        case menuActions.TOGGLE_ARROW_ASPECT:
+            updatedState = arrow.toggleArrowAspect(stateCopy, action, root);
             break;
-        case menuActions.ADD_ARROWHEAD_PRESET:
-            updatedState = arrowhead.addArrowheadPreset(stateCopy, action, root);
+        case menuActions.TOGGLE_ARROW_SHOWN:
+            updatedState = arrow.toggleArrowShown(stateCopy, action, root);
             break;
-        case menuActions.SAVE_ARROWHEAD_PRESET:
-            updatedState = arrowhead.saveArrowheadPreset(stateCopy, action, root);
+        case menuActions.ADD_ARROW_PRESET:
+            updatedState = arrow.addArrowPreset(stateCopy, action, root);
             break;
-        case menuActions.DELETE_ARROWHEAD_PRESET:
-            updatedState = arrowhead.deleteArrowheadPreset(stateCopy, action, root);
+        case menuActions.SAVE_ARROW_PRESET:
+            updatedState = arrow.saveArrowPreset(stateCopy, action, root);
+            break;
+        case menuActions.DELETE_ARROW_PRESET:
+            updatedState = arrow.deleteArrowPreset(stateCopy, action, root);
             break;
         default: break;
     }
