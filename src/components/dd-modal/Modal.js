@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './dd-modal.css';
 import { Select } from '../ui';
+const { remote } = window.require('electron');
 
 class Modal extends Component {
     static propTypes = {
@@ -48,12 +49,8 @@ class Modal extends Component {
     }
 
     handleColorModeChange(value) {
-        const {onColorModeChange} = this.props;
         const colorMode = value;
-        console.log(colorMode);
-        // onColorModeChange && onColorModeChange(colorMode);
-        console.log('Doc color model:' + this.props.colorMode);
-        this.props.onColorModeChange(colorMode);
+        remote.dialog.showMessageBox({"type": "question", "buttons": ["Ok", "Cancel"], "message": "You are changing the color mode for your whole document from " + this.props.colorMode + " to " + colorMode + " .\nColor conversion loss may occur and cannot be undone. \nAre you sure you want to continue?"}, (e) => { if (e === 0) { this.props.onColorModeChange(colorMode); } });
     }
 
     render() {
@@ -66,15 +63,16 @@ class Modal extends Component {
         }
         return (
             <div>
-
                 <div className="modal" style={{ height: 250, top: !this.props.settingsModalVisible ? -400 : 0 }}>
                     <h1>Canvas Settings</h1>
-                    <Select label="Document Color Mode:" value={colorMode} onChange={this.handleColorModeChange} className="modal-select">
-                        <option value="RGB">RGB</option>
-                        <option value="CMYK">CMYK</option>
-                        <option value="HEX">HEX</option>
-                        <option value="HSL">HSL</option>
-                    </Select>
+                    <div>
+                        <Select label="Document Color Mode:" value={colorMode} onChange={this.handleColorModeChange} className="modal-select" >
+                            <option value="RGB">RGB</option>
+                            <option value="CMYK">CMYK</option>
+                            <option value="HEX">HEX</option>
+                            <option value="HSL">HSL</option>
+                        </Select>
+                    </div>
                     <form id="button-icon" onSubmit={(event) => { this.handleSubmitRulerGrid(event); }}>
                         <div id="inline-close">
                             <p>Unit:</p>
