@@ -269,7 +269,7 @@ export function addLine(shapes, arrows, action, fill, panX, panY, scale, gridSna
         strokeDasharray: line.strokeDasharray
     };
 
-    const updatedArrow = setArrowPreset(arrows.presets["triangle"], arrowhead, line);
+    const updatedArrow = setArrowPreset(arrows.presets["triangle"], arrowhead, "head", line);
 
     arrows.byId[arrowhead.id] = updatedArrow;
     arrows.allIds.push(arrowhead.id);
@@ -287,7 +287,7 @@ export function addLine(shapes, arrows, action, fill, panX, panY, scale, gridSna
         strokeDasharray: line.strokeDasharray
     };
 
-    arrows.byId[arrowtail.id] = setArrowPreset(arrows.presets["triangle"], arrowtail, line);
+    arrows.byId[arrowtail.id] = setArrowPreset(arrows.presets["triangle"], arrowtail, "head", line);
     arrows.allIds.push(arrowtail.id);
 
     if (gridSnapping) {

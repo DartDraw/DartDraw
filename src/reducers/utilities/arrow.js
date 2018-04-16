@@ -62,26 +62,30 @@ export function setArrowHeight(arrow, newHeight, min, max) {
     return arrow;
 }
 
-export function setarrowHeadLength(arrow, newLength, min, max) {
-    newLength = clamp(newLength, 0, max - min);
-
-    switch (arrow.type) {
-        case "triangle":
-        case "polyline":
-            arrow.points[0] = max - newLength;
-            arrow.points[4] = max - newLength;
-            break;
-        case "barbed":
-            const barbLength = findBarbLengthPercentage(arrow);
-            arrow.points[6] = max - newLength;
-            arrow = setArrowBarbLength(arrow, barbLength, min, max);
-            break;
-        case "rectangle":
-            arrow.x = max - newLength;
-            arrow.width = newLength;
-            break;
-        default: break;
-    }
+export function setarrowHeadLength(arrow, arrowMode, newLength, min, max) {
+    // if (arrowMode === "tail") {
+    //     return arrow;
+    // }
+    //
+    // newLength = clamp(newLength, 0, max - min);
+    //
+    // switch (arrow.type) {
+    //     case "triangle":
+    //     case "polyline":
+    //         arrow.points[0] = max - newLength;
+    //         arrow.points[4] = max - newLength;
+    //         break;
+    //     case "barbed":
+    //         const barbLength = findBarbLengthPercentage(arrow);
+    //         arrow.points[6] = max - newLength;
+    //         arrow = setArrowBarbLength(arrow, barbLength, min, max);
+    //         break;
+    //     case "rectangle":
+    //         arrow.x = max - newLength;
+    //         arrow.width = newLength;
+    //         break;
+    //     default: break;
+    // }
 
     return arrow;
 }
@@ -113,7 +117,7 @@ export function setArrowRadiusY(arrow, newRy, min, max) {
     return arrow;
 }
 
-export function reshape(arrow, draggableData, handleIndex, lockAspectRatio) {
+export function reshape(arrow, arrowMode, draggableData, handleIndex, lockAspectRatio) {
     const { x, y, node } = draggableData;
 
     let offsetLeft = 0;
@@ -130,7 +134,7 @@ export function reshape(arrow, draggableData, handleIndex, lockAspectRatio) {
     const halfHeight = constants.ARROW_GUI_HEIGHT / 2;
 
     const mouseX = clamp(x - offsetLeft, leftBufferX, rightBufferX);
-    const mouseY = clamp(y - offsetTop, 0, halfHeight);
+    const mouseY = clamp(y - offsetTop, 0, halfHeight - (arrow.strokeWidth / 2));
 
     switch (arrow.type) {
         case 'triangle':
@@ -175,10 +179,10 @@ export function reshape(arrow, draggableData, handleIndex, lockAspectRatio) {
                 var length = rightBufferX - mouseX;
 
                 if (lockAspectRatio) {
-                    arrow = setarrowHeadLength(arrow, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                    arrow = setarrowHeadLength(arrow, arrowMode, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
                     arrow = setArrowHeight(arrow, length, 0, constants.ARROW_GUI_HEIGHT);
                 } else {
-                    arrow = setarrowHeadLength(arrow, length, leftBufferX, rightBufferX);
+                    arrow = setarrowHeadLength(arrow, arrowMode, length, leftBufferX, rightBufferX);
                 }
             } else if (handleIndex === 1) {
                 var height = constants.ARROW_GUI_HEIGHT - (mouseY * 2);
@@ -186,7 +190,7 @@ export function reshape(arrow, draggableData, handleIndex, lockAspectRatio) {
                 arrow = setArrowHeight(arrow, height, 0, constants.ARROW_GUI_HEIGHT);
 
                 if (lockAspectRatio) {
-                    arrow = setarrowHeadLength(arrow, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                    arrow = setarrowHeadLength(arrow, arrowMode, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
                 }
             }
             break;
@@ -194,7 +198,7 @@ export function reshape(arrow, draggableData, handleIndex, lockAspectRatio) {
             break;
     }
 
-    arrow = updateLengthAndRefX(arrow);
+    arrow = updateLengthAndRefX(arrow, arrowMode);
     arrow = updateHandles(arrow);
 
     return arrow;
@@ -231,27 +235,37 @@ export function updateHandles(arrow) {
     return arrow;
 }
 
-export function updateLengthAndRefX(arrow) {
+export function updateLengthAndRefX(arrow, arrowMode) {
     switch (arrow.type) {
         case 'triangle':
             arrow.refX = arrow.points[0];
-            arrow.length = arrow.points[2] - arrow.points[0];
+            if (arrowMode === "head") {
+                arrow.length = arrow.points[2] - arrow.points[0];
+            }
             break;
         case 'barbed':
             arrow.refX = arrow.points[6];
-            arrow.length = arrow.points[2] - arrow.points[6];
+            if (arrowMode === "head") {
+                arrow.length = arrow.points[2] - arrow.points[6];
+            }
             break;
         case 'ellipse':
             arrow.refX = arrow.cx - arrow.rx;
-            arrow.length = arrow.rx * 2;
+            if (arrowMode === "head") {
+                arrow.length = arrow.rx * 2;
+            }
             break;
         case 'rectangle':
             arrow.refX = arrow.x;
-            arrow.length = arrow.width;
+            if (arrowMode === "head") {
+                arrow.length = arrow.width;
+            }
             break;
         case 'polyline':
             arrow.refX = arrow.points[2];
-            arrow.length = 0;
+            if (arrowMode === "head") {
+                arrow.length = 0;
+            }
             break;
         default: break;
     }
@@ -259,7 +273,7 @@ export function updateLengthAndRefX(arrow) {
     return arrow;
 }
 
-export function setArrowPreset(preset, arrow, line) {
+export function setArrowPreset(preset, arrow, arrowMode, line) {
     var updatedArrow;
 
     updatedArrow = Object.assign(
@@ -269,7 +283,7 @@ export function setArrowPreset(preset, arrow, line) {
     );
 
     updatedArrow = generateHandles(updatedArrow);
-    updatedArrow = updateLengthAndRefX(updatedArrow);
+    updatedArrow = updateLengthAndRefX(updatedArrow, arrowMode);
 
     // updatedLine = Object.assign({}, line, {arrowHeadLength: updatedArrow.length});
 

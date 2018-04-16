@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './gui-editors.css';
-import { Input, Select } from '../../ui';
+import { Input, Select, SelectRow } from '../../ui';
 import { ARROW_STROKE_WIDTH, ARROW_GUI_HEIGHT, ARROW_GUI_WIDTH } from '../../../constants';
 import {findHeightPercentage, findLengthPercentage, findBarbLengthPercentage, findRxPercentage, findRyPercentage} from '../../../reducers/utilities/arrow';
 import { Polygon, Ellipse, Rectangle, Polyline, Handle } from '../../drawing/shapes';
@@ -10,6 +10,7 @@ class ArrowGUI extends Component {
     static propTypes = {
         arrows: PropTypes.object,
         path: PropTypes.object,
+        arrowMode: PropTypes.string,
         selectedArrow: PropTypes.object,
         lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
@@ -18,7 +19,7 @@ class ArrowGUI extends Component {
         onArrowHandleDrag: PropTypes.func,
         onApplyArrow: PropTypes.func,
         onToggleArrowAspect: PropTypes.func,
-        onToggleArrowShown: PropTypes.func,
+        ontoggleArrowMode: PropTypes.func,
         onHeightChange: PropTypes.func,
         onLengthChange: PropTypes.func,
         onBarbLengthChange: PropTypes.func,
@@ -33,9 +34,7 @@ class ArrowGUI extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAspectChecked: this.props.lockAspectRatio,
-            isHeadChecked: this.props.path.arrowHeadShown,
-            isTailChecked: this.props.path.arrowTailShown
+            isAspectChecked: this.props.lockAspectRatio
         };
         this.renderReferenceLine = this.renderReferenceLine.bind(this);
         this.renderArrow = this.renderArrow.bind(this);
@@ -48,8 +47,7 @@ class ArrowGUI extends Component {
         this.handleRadiusXChange = this.handleRadiusXChange.bind(this);
         this.handleRadiusYChange = this.handleRadiusYChange.bind(this);
         this.handleToggleAspect = this.handleToggleAspect.bind(this);
-        this.handleToggleHead = this.handleToggleHead.bind(this);
-        this.handleToggleTail = this.handleToggleTail.bind(this);
+        this.handleToggleArrowMode = this.handleToggleArrowMode.bind(this);
         this.handleSelectArrowPreset = this.handleSelectArrowPreset.bind(this);
         this.handleAddArrowPreset = this.handleAddArrowPreset.bind(this);
         this.handleSaveArrowPreset = this.handleSaveArrowPreset.bind(this);
@@ -85,14 +83,8 @@ class ArrowGUI extends Component {
         this.props.onToggleArrowAspect();
     }
 
-    handleToggleHead(event) {
-        this.setState({isHeadChecked: !this.state.isHeadChecked});
-        this.props.onToggleArrowShown("head");
-    }
-
-    handleToggleTail(event) {
-        this.setState({isTailChecked: !this.state.isTailChecked});
-        this.props.onToggleArrowShown("tail");
+    handleToggleArrowMode(value) {
+        this.props.ontoggleArrowMode(value);
     }
 
     handleArrowHandleDrag(shapeId, handleIndex, draggableData) {
@@ -269,8 +261,7 @@ class ArrowGUI extends Component {
     }
 
     render() {
-        const { path, selectedArrow, presetNames, defaultPresets } = this.props;
-        const { isHeadChecked, isTailChecked } = this.state;
+        const { path, selectedArrow, arrowMode, presetNames, defaultPresets } = this.props;
 
         var presetInputs = null;
 
@@ -286,15 +277,11 @@ class ArrowGUI extends Component {
         return (
             <div className="editor">
                 <div className="editor-title">Arrow</div>
-                <div className="editor-row">
-                    <div className="editor-row-title">Head:</div>
-                    <input id="head" type="checkbox" onChange={this.handleToggleHead} checked={isHeadChecked} />
-                    <div className="editor-row-title">Tail:</div>
-                    <input id="tail" type="checkbox" onChange={this.handleToggleTail} checked={isTailChecked} />
-                </div>
-                <div className="tab">
-                    <button className="tablinks">Head</button>
-                    <button className="tablinks">Tail</button>
+                <div className="editor-select-row">
+                    <SelectRow value={arrowMode} onChange={this.handleToggleArrowMode}>
+                        <div value={"head"} className="editor-button">Head</div>
+                        <div value={"tail"} className="editor-button">Tail</div>
+                    </SelectRow>
                 </div>
                 <div className="editor-row">
                     <div className="editor-row-title">Preset:</div>

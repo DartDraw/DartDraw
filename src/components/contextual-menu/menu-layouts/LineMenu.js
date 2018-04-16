@@ -70,16 +70,6 @@ class LineMenu extends Component {
             <div className="line-menu menu">
                 <div className="menu-title">Line</div>
                 <div className="menu-row">
-                    <div className="menu-row-title">Point 1:</div>
-                    <Input value={this.props.line.points[0]} label="X1" style={{ width: 49, marginRight: 11 }} onChange={this.handleX1Change} />
-                    <Input value={this.props.line.points[1]} label="Y1" style={{ width: 49 }} onChange={this.handleY1Change} />
-                </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Point 2:</div>
-                    <Input value={this.props.line.points[2]} label="X2" style={{ width: 49, marginRight: 11 }} onChange={this.handleX2Change} />
-                    <Input value={this.props.line.points[3]} label="Y2" style={{ width: 49 }} onChange={this.handleY2Change} />
-                </div>
-                <div className="menu-row">
                     <div className="menu-row-title">Rotation:</div>
                     <Input value={this.props.line.info.rotation} label="Rotation" onChange={this.handleRotationChange} />
                 </div>
@@ -108,3 +98,14 @@ class LineMenu extends Component {
 }
 
 export default LineMenu;
+
+// <div className="menu-row">
+//     <div className="menu-row-title">Point 1:</div>
+//     <Input value={this.props.line.points[0]} label="X1" style={{ width: 49, marginRight: 11 }} onChange={this.handleX1Change} />
+//     <Input value={this.props.line.points[1]} label="Y1" style={{ width: 49 }} onChange={this.handleY1Change} />
+// </div>
+// <div className="menu-row">
+//     <div className="menu-row-title">Point 2:</div>
+//     <Input value={this.props.line.points[2]} label="X2" style={{ width: 49, marginRight: 11 }} onChange={this.handleX2Change} />
+//     <Input value={this.props.line.points[3]} label="Y2" style={{ width: 49 }} onChange={this.handleY2Change} />
+// </div>

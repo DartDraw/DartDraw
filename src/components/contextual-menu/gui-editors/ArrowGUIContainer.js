@@ -3,7 +3,7 @@ import ArrowGUI from './ArrowGUI';
 import {
     arrowHandleDrag,
     toggleArrowAspect,
-    toggleArrowShown,
+    toggleArrowMode,
     changeArrowHeight,
     changearrowHeadLength,
     changeArrowBarbLength,
@@ -16,12 +16,13 @@ import {
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, arrows, lockAspectRatio, selected } = drawingState;
+    const { shapes, arrows, arrowMode, lockAspectRatio, selected } = drawingState;
 
-    const selectedArrow = arrows.byId[shapes.byId[selected[0]].arrowheadId];
+    const selectedArrow = arrowMode === "head" ? arrows.byId[shapes.byId[selected[0]].arrowheadId] : arrows.byId[shapes.byId[selected[0]].arrowtailId];
 
     return {
         arrows,
+        arrowMode,
         selectedArrow,
         lockAspectRatio,
         presetNames: Object.keys(arrows.presets),
@@ -37,8 +38,8 @@ const mapDispatchToProps = (dispatch) => {
         onToggleArrowAspect: () => {
             dispatch(toggleArrowAspect());
         },
-        onToggleArrowShown: (mode) => {
-            dispatch(toggleArrowShown(mode));
+        ontoggleArrowMode: (mode) => {
+            dispatch(toggleArrowMode(mode));
         },
         onHeightChange: (height) => {
             dispatch(changeArrowHeight(height));
