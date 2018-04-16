@@ -5,7 +5,7 @@ import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMo
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
     prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape,
-    distributeShapes, snapToGrid } from '../utilities/shapes';
+    distributeShapes, snapToGrid, shapesOffScreen } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 import * as menu from './menu';
@@ -215,6 +215,7 @@ export function dragStop(stateCopy, action, root) {
         stateCopy.duplicateOffset.y = stateCopy.gridSnapInterval;
     }
     stateCopy.justDuplicated = false;
+
     return stateCopy;
 }
 
@@ -644,4 +645,8 @@ export function distributeClick(stateCopy, action, root) {
         stateCopy.shapes = distributeShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
+}
+
+export function checkOffScreen(stateCopy) {
+    return shapesOffScreen(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.canvasHeight, stateCopy.canvasWidth);
 }

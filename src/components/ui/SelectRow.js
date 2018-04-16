@@ -24,13 +24,20 @@ class SelectRow extends Component {
     render() {
         const { value, children, className, style } = this.props;
 
-        const childrenElements = children.map(child => {
-            const newStyle = child.props.key === value ? { backgroundColor: '#202B33' } : {};
-            React.cloneElement(child, newStyle);
+        const childrenElements = children.map((child, i) => {
+            const newStyle = {
+                backgroundColor: child.props.value === value ? '#10161A' : '#202B33'
+            };
+            return React.cloneElement(child, {
+                style: Object.assign(child.props.style || {}, newStyle),
+                onClick: () => {
+                    this.handleChange(child.props.value);
+                }
+            });
         });
 
         return (
-            <div className={`select-row-container ${className}`} style={style}>
+            <div className={`select-row-container ${className || ''}`} style={style}>
                 {childrenElements}
             </div>
         );

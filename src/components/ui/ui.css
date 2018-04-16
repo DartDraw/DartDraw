@@ -49,3 +49,13 @@
     font-family: helvetica;
     color: #CED9E0;
 }
+
+.select-row-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+    border-color: #5C7080;
+}

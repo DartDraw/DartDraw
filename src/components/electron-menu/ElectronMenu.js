@@ -36,7 +36,14 @@ class ElectronMenu extends Component {
         this.openDialog = this.openDialog.bind(this);
         this.handleToggleSettingsModal = this.handleToggleSettingsModal.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
+<<<<<<< HEAD:src/components/electron-menu/ElectronMenu.js
         // this.handleFileSave = this.handleFileSave.bind(this);
+=======
+
+        this.handleZoomIn = this.handleZoomIn.bind(this);
+        this.handleZoomOut = this.handleZoomOut.bind(this);
+        this.handleSelectRotateTool = this.handleSelectRotateTool.bind(this);
+>>>>>>> 149eb1e11e64e3499bb2458a83a6278f44a05b69:src/components/dd-modal/ElectronMenu.js
     }
 
     handleZoomIn() {
@@ -47,6 +54,7 @@ class ElectronMenu extends Component {
         this.props.onSetCustomZoom(this.props.scale / 2);
     }
 
+<<<<<<< HEAD:src/components/electron-menu/ElectronMenu.js
     // handleFileSave() {
     //     let win = remote.BrowserWindow.getFocusedWindow();
     //     let fs = window.require('fs');
@@ -66,6 +74,16 @@ class ElectronMenu extends Component {
 
     handleFileOpen() {
 
+=======
+    handleSelectRotateTool() {
+        this.props.onToolSelect("rotateTool");
+    }
+
+    callMenuFunction(fn) {
+        if (document.activeElement.className !== 'input' && document.activeElement.className !== 'notranslate public-DraftEditor-content') {
+            fn();
+        }
+>>>>>>> 149eb1e11e64e3499bb2458a83a6278f44a05b69:src/components/dd-modal/ElectronMenu.js
     }
 
     componentDidMount() {
@@ -89,8 +107,8 @@ class ElectronMenu extends Component {
             {
                 label: 'Edit',
                 submenu: [
-                    {role: 'undo', click: () => { this.props.onUndoClick(); }},
-                    {role: 'redo', click: () => { this.props.onRedoClick(); }},
+                    {role: 'undo', click: () => { this.callMenuFunction(this.props.onUndoClick); }},
+                    {role: 'redo', click: () => { this.callMenuFunction(this.props.onRedoClick); }},
                     {type: 'separator'},
                     {role: 'cut'},
                     {role: 'copy'},
@@ -110,17 +128,17 @@ class ElectronMenu extends Component {
             {
                 label: 'View',
                 submenu: [
-                    {label: 'Toggle Rulers', click: () => { this.props.onShowRulers(); }},
-                    {label: 'Toggle Gridlines', click: () => { this.props.onShowGrid(); }},
-                    {label: 'Toggle Grid Subdivisions', click: () => { this.props.onShowSubDivisions(); }},
+                    {label: 'Toggle Rulers', click: () => { this.callMenuFunction(this.props.onShowRulers); }},
+                    {label: 'Toggle Gridlines', click: () => { this.callMenuFunction(this.props.onShowGrid); }},
+                    {label: 'Toggle Grid Subdivisions', click: () => { this.callMenuFunction(this.props.onShowSubDivisions); }},
                     {type: 'separator'},
                     {role: 'reload'},
                     {role: 'forcereload'},
                     {role: 'toggledevtools'},
                     {type: 'separator'},
                     {role: 'resetzoom'},
-                    {role: 'zoomin', click: () => { this.handleZoomIn(); }},
-                    {role: 'zoomout', click: () => { this.handleZoomOut(); }},
+                    {role: 'zoomin', click: () => { this.callMenuFunction(this.handleZoomIn); }},
+                    {role: 'zoomout', click: () => { this.callMenuFunction(this.handleZoomOut); }},
                     {type: 'separator'},
                     {role: 'togglefullscreen'}
                 ]
@@ -138,21 +156,21 @@ class ElectronMenu extends Component {
             {
                 label: 'Arrange',
                 submenu: [
-                    {label: 'Move Forward', accelerator: 'CmdOrCtrl+F', click: () => { this.props.onMoveForward(); }},
-                    {label: 'Move To Front', accelerator: 'CmdOrCtrl+Shift+F', click: () => { this.props.onBringToFront(); }},
-                    {label: 'Move Backward', accelerator: 'CmdOrCtrl+J', click: () => { this.props.onMoveBackward(); }},
-                    {label: 'Move To Back', accelerator: 'CmdOrCtrl+Shift+J', click: () => { this.props.onSendToBack(); }},
+                    {label: 'Move Forward', accelerator: 'CmdOrCtrl+F', click: () => { this.callMenuFunction(this.props.onMoveForward); }},
+                    {label: 'Move To Front', accelerator: 'CmdOrCtrl+Shift+F', click: () => { this.callMenuFunction(this.props.onBringToFront); }},
+                    {label: 'Move Backward', accelerator: 'CmdOrCtrl+J', click: () => { this.callMenuFunction(this.props.onMoveBackward); }},
+                    {label: 'Move To Back', accelerator: 'CmdOrCtrl+Shift+J', click: () => { this.callMenuFunction(this.props.onSendToBack); }},
                     {type: 'separator'},
                     {label: 'Align', accelerator: 'CmdOrCtrl+K'},
                     {label: 'Alignment', accelerator: 'CmdOrCtrl+Shift+K'},
                     {type: 'separator'},
-                    {label: 'Rotate', accelerator: 'CmdOrCtrl+T', click: () => { this.props.onToolSelect("rotateTool"); }},
-                    {label: 'Flip Horizontal', click: () => { this.props.onFlipHorizontal(); }},
-                    {label: 'Flip Vertical', click: () => { this.props.onFlipVertical(); }},
+                    {label: 'Rotate', accelerator: 'CmdOrCtrl+T', click: () => { this.callMenuFunction(this.handleSelectRotateTool); }},
+                    {label: 'Flip Horizontal', click: () => { this.callMenuFunction(this.props.onFlipHorizontal); }},
+                    {label: 'Flip Vertical', click: () => { this.callMenuFunction(this.props.onFlipVertical); }},
                     {label: 'Scale Selection...'},
                     {type: 'separator'},
-                    {label: 'Group', accelerator: 'CmdOrCtrl+G', click: () => { this.props.onGroupClick(); }},
-                    {label: 'Ungroup', accelerator: 'CmdOrCtrl+Shift+G', click: () => { this.props.onUngroupClick(); }},
+                    {label: 'Group', accelerator: 'CmdOrCtrl+G', click: () => { this.callMenuFunction(this.props.onGroupClick); }},
+                    {label: 'Ungroup', accelerator: 'CmdOrCtrl+Shift+G', click: () => { this.callMenuFunction(this.props.onUngroupClick); }},
                     {label: 'Lock', accelerator: 'CmdOrCtrl+H'},
                     {label: 'Unlock', accelerator: 'CmdOrCtrl+Shift+H'}
                 ]

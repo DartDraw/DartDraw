@@ -25,6 +25,7 @@
     flex: initial;
     flex-direction: row;
     width: 100%;
+    min-height: 27px;
     margin-bottom: 21px;
 }
 
@@ -37,6 +38,14 @@
     font-size: 10px;
     font-family: helvetica;
     color: #CED9E0;
+}
+
+.points-list {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: 590px;
+    overflow: scroll;
 }
 
 .text-menu {
