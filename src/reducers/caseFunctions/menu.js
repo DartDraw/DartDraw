@@ -253,3 +253,9 @@ export function changeColorType(stateCopy, action) {
     stateCopy.colorType = action.payload.colorType;
     return stateCopy;
 }
+
+export function changeColorMode(stateCopy, action) {
+    stateCopy.docColorMode = action.payload.colorMode;
+    console.log("changing color mode of doc");
+    return stateCopy;
+}

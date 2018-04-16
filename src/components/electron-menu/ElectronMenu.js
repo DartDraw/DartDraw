@@ -36,14 +36,10 @@ class ElectronMenu extends Component {
         this.openDialog = this.openDialog.bind(this);
         this.handleToggleSettingsModal = this.handleToggleSettingsModal.bind(this);
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
-<<<<<<< HEAD:src/components/electron-menu/ElectronMenu.js
-        // this.handleFileSave = this.handleFileSave.bind(this);
-=======
 
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleSelectRotateTool = this.handleSelectRotateTool.bind(this);
->>>>>>> 149eb1e11e64e3499bb2458a83a6278f44a05b69:src/components/dd-modal/ElectronMenu.js
     }
 
     handleZoomIn() {
@@ -54,27 +50,6 @@ class ElectronMenu extends Component {
         this.props.onSetCustomZoom(this.props.scale / 2);
     }
 
-<<<<<<< HEAD:src/components/electron-menu/ElectronMenu.js
-    // handleFileSave() {
-    //     let win = remote.BrowserWindow.getFocusedWindow();
-    //     let fs = window.require('fs');
-    //     if (win == null) return;
-    //
-    //     remote.dialog.showSaveDialog((filename) => {
-    //         this.props.onFileSave(filename);
-    //         fs.writeFile(filename, (err) => {
-    //             if (err) {
-    //                 console.log("error");
-    //             } else {
-    //                 console.log("save successful");
-    //             }
-    //         });
-    //     });
-    // }
-
-    handleFileOpen() {
-
-=======
     handleSelectRotateTool() {
         this.props.onToolSelect("rotateTool");
     }
@@ -83,7 +58,6 @@ class ElectronMenu extends Component {
         if (document.activeElement.className !== 'input' && document.activeElement.className !== 'notranslate public-DraftEditor-content') {
             fn();
         }
->>>>>>> 149eb1e11e64e3499bb2458a83a6278f44a05b69:src/components/dd-modal/ElectronMenu.js
     }
 
     componentDidMount() {
@@ -178,7 +152,11 @@ class ElectronMenu extends Component {
             {
                 label: 'Settings',
                 submenu: [
-                    {label: 'Canvas Settings',
+                    {label: 'Canvas Size',
+                        click: () => {
+                            this.handleToggleSettingsModal();
+                        }},
+                    {label: 'Color Profile',
                         click: () => {
                             this.handleToggleSettingsModal();
                         }}
@@ -218,7 +196,6 @@ class ElectronMenu extends Component {
     }
 
     handleToggleSettingsModal() {
-        console.log(this.props.settingsModalVisible);
         this.props.onToggleSettingsModal();
     }
 

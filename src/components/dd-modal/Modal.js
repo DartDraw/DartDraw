@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './dd-modal.css';
+import { Select } from '../ui';
 
 class Modal extends Component {
     static propTypes = {
@@ -12,7 +13,9 @@ class Modal extends Component {
         canvasWidthInUnits: PropTypes.number,
         canvasHeightInUnits: PropTypes.number,
         onToggleSettingsModal: PropTypes.func,
-        onSetRulerGrid: PropTypes.func
+        onSetRulerGrid: PropTypes.func,
+        onColorModeChange: PropTypes.func,
+        colorMode: PropTypes.string
     };
 
     constructor(props) {
@@ -21,6 +24,7 @@ class Modal extends Component {
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
         this.handleToggleSettingsModal = this.handleToggleSettingsModal.bind(this);
+        this.handleColorModeChange = this.handleColorModeChange.bind(this);
     }
 
     handleFormSubmit(e) {
@@ -43,8 +47,17 @@ class Modal extends Component {
         });
     }
 
+    handleColorModeChange(value) {
+        const {onColorModeChange} = this.props;
+        const colorMode = value;
+        console.log(colorMode);
+        // onColorModeChange && onColorModeChange(colorMode);
+        console.log('Doc color model:' + this.props.colorMode);
+        this.props.onColorModeChange(colorMode);
+    }
+
     render() {
-        const {canvasWidthInUnits, canvasHeightInUnits, unitDivisions, unitType} = this.props;
+        const {canvasWidthInUnits, canvasHeightInUnits, unitDivisions, unitType, colorMode} = this.props;
         let settingsModal = null;
         if (this.props.settingsModalVisible) {
             settingsModal = <div />;
@@ -56,6 +69,12 @@ class Modal extends Component {
 
                 <div className="modal" style={{ height: 250, top: !this.props.settingsModalVisible ? -400 : 0 }}>
                     <h1>Canvas Settings</h1>
+                    <Select label="Document Color Mode:" value={colorMode} onChange={this.handleColorModeChange} className="modal-select">
+                        <option value="RGB">RGB</option>
+                        <option value="CMYK">CMYK</option>
+                        <option value="HEX">HEX</option>
+                        <option value="HSL">HSL</option>
+                    </Select>
                     <form id="button-icon" onSubmit={(event) => { this.handleSubmitRulerGrid(event); }}>
                         <div id="inline-close">
                             <p>Unit:</p>
@@ -96,7 +115,6 @@ class Modal extends Component {
                         </div>
 
                         <div id="inline-apart" style={{marginTop: '20px'}}>
-                            <input type="submit" value="resize" id="primary-action-button" />
                             <button id="secondary-action-button" onClick={this.handleToggleSettingsModal}>Done</button>
                         </div>
                     </form>

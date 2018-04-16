@@ -24,6 +24,15 @@
   margin-right: 5px;
 }
 
+.modal-select select{
+  background-color: #5C7080;
+  margin-bottom: 5px;
+}
+
+.modal-select::selection, .modal-select:active {
+  outline: none;
+}
+
 input {
   outline: none;
   border: none;
