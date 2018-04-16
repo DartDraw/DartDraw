@@ -221,12 +221,18 @@ export function toggleArrowMode(stateCopy, action) {
 }
 
 export function toggleArrowShow(stateCopy, action) {
+    let status;
+    if (stateCopy.arrowMode === "head") {
+        status = !stateCopy.shapes.byId[stateCopy.selected[0]].arrowHeadShown;
+    } else {
+        status = !stateCopy.shapes.byId[stateCopy.selected[0]].arrowTailShown;
+    }
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             if (stateCopy.arrowMode === "head") {
-                stateCopy.shapes.byId[lineId].arrowHeadShown = !stateCopy.shapes.byId[lineId].arrowHeadShown;
+                stateCopy.shapes.byId[lineId].arrowHeadShown = status;
             } else {
-                stateCopy.shapes.byId[lineId].arrowTailShown = !stateCopy.shapes.byId[lineId].arrowTailShown;
+                stateCopy.shapes.byId[lineId].arrowTailShown = status;
             }
         }
     });
