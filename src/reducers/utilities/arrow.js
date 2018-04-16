@@ -63,29 +63,25 @@ export function setArrowHeight(arrow, newHeight, min, max) {
 }
 
 export function setarrowHeadLength(arrow, arrowMode, newLength, min, max) {
-    // if (arrowMode === "tail") {
-    //     return arrow;
-    // }
-    //
-    // newLength = clamp(newLength, 0, max - min);
-    //
-    // switch (arrow.type) {
-    //     case "triangle":
-    //     case "polyline":
-    //         arrow.points[0] = max - newLength;
-    //         arrow.points[4] = max - newLength;
-    //         break;
-    //     case "barbed":
-    //         const barbLength = findBarbLengthPercentage(arrow);
-    //         arrow.points[6] = max - newLength;
-    //         arrow = setArrowBarbLength(arrow, barbLength, min, max);
-    //         break;
-    //     case "rectangle":
-    //         arrow.x = max - newLength;
-    //         arrow.width = newLength;
-    //         break;
-    //     default: break;
-    // }
+    newLength = clamp(newLength, 0, max - min);
+
+    switch (arrow.type) {
+        case "triangle":
+        case "polyline":
+            arrow.points[0] = max - newLength;
+            arrow.points[4] = max - newLength;
+            break;
+        case "barbed":
+            const barbLength = findBarbLengthPercentage(arrow);
+            arrow.points[6] = max - newLength;
+            arrow = setArrowBarbLength(arrow, barbLength, min, max);
+            break;
+        case "rectangle":
+            arrow.x = max - newLength;
+            arrow.width = newLength;
+            break;
+        default: break;
+    }
 
     return arrow;
 }

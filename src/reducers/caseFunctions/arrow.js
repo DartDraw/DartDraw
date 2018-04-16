@@ -214,11 +214,20 @@ export function toggleArrowMode(stateCopy, action) {
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             stateCopy.arrowMode = mode;
-            // if (mode === "head") {
-            //     stateCopy.shapes.byId[lineId].arrowHeadShown = !stateCopy.shapes.byId[lineId].arrowHeadShown;
-            // } else {
-            //     stateCopy.shapes.byId[lineId].arrowTailShown = !stateCopy.shapes.byId[lineId].arrowTailShown;
-            // }
+        }
+    });
+
+    return stateCopy;
+}
+
+export function toggleArrowShow(stateCopy, action) {
+    stateCopy.selected.map((lineId) => {
+        if (stateCopy.shapes.byId[lineId].type === "line") {
+            if (stateCopy.arrowMode === "head") {
+                stateCopy.shapes.byId[lineId].arrowHeadShown = !stateCopy.shapes.byId[lineId].arrowHeadShown;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailShown = !stateCopy.shapes.byId[lineId].arrowTailShown;
+            }
         }
     });
 

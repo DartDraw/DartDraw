@@ -256,8 +256,8 @@ export function addLine(shapes, arrows, action, fill, panX, panY, scale, gridSna
         strokeLinecap: 'butt',
         arrowheadId: uuidv1(),
         arrowtailId: uuidv1(),
-        arrowHeadShown: true,
-        arrowTailShown: true,
+        arrowHeadShown: false,
+        arrowTailShown: false,
         arrowHeadLength: 0
     };
 

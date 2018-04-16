@@ -257,6 +257,9 @@ function drawingState(state = initialState, action, root) {
         case menuActions.TOGGLE_ARROW_MODE:
             updatedState = arrow.toggleArrowMode(stateCopy, action, root);
             break;
+        case menuActions.TOGGLE_ARROW_SHOW:
+            updatedState = arrow.toggleArrowShow(stateCopy, action, root);
+            break;
         case menuActions.ADD_ARROW_PRESET:
             updatedState = arrow.addArrowPreset(stateCopy, action, root);
             break;

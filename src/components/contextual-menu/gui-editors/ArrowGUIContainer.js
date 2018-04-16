@@ -4,6 +4,7 @@ import {
     arrowHandleDrag,
     toggleArrowAspect,
     toggleArrowMode,
+    toggleArrowShow,
     changeArrowHeight,
     changearrowHeadLength,
     changeArrowBarbLength,
@@ -18,11 +19,13 @@ import {
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, arrows, arrowMode, lockAspectRatio, selected } = drawingState;
 
+    const arrowShown = arrowMode === "head" ? shapes.byId[selected[0]].arrowHeadShown : shapes.byId[selected[0]].arrowTailShown;
     const selectedArrow = arrowMode === "head" ? arrows.byId[shapes.byId[selected[0]].arrowheadId] : arrows.byId[shapes.byId[selected[0]].arrowtailId];
 
     return {
         arrows,
         arrowMode,
+        arrowShown,
         selectedArrow,
         lockAspectRatio,
         presetNames: Object.keys(arrows.presets),
@@ -38,8 +41,11 @@ const mapDispatchToProps = (dispatch) => {
         onToggleArrowAspect: () => {
             dispatch(toggleArrowAspect());
         },
-        ontoggleArrowMode: (mode) => {
+        onToggleArrowMode: (mode) => {
             dispatch(toggleArrowMode(mode));
+        },
+        onToggleArrowShow: () => {
+            dispatch(toggleArrowShow());
         },
         onHeightChange: (height) => {
             dispatch(changeArrowHeight(height));

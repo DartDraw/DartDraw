@@ -11,6 +11,7 @@ class ArrowGUI extends Component {
         arrows: PropTypes.object,
         path: PropTypes.object,
         arrowMode: PropTypes.string,
+        arrowShown: PropTypes.string,
         selectedArrow: PropTypes.object,
         lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
@@ -19,7 +20,8 @@ class ArrowGUI extends Component {
         onArrowHandleDrag: PropTypes.func,
         onApplyArrow: PropTypes.func,
         onToggleArrowAspect: PropTypes.func,
-        ontoggleArrowMode: PropTypes.func,
+        onToggleArrowMode: PropTypes.func,
+        onToggleArrowShow: PropTypes.func,
         onHeightChange: PropTypes.func,
         onLengthChange: PropTypes.func,
         onBarbLengthChange: PropTypes.func,
@@ -48,6 +50,7 @@ class ArrowGUI extends Component {
         this.handleRadiusYChange = this.handleRadiusYChange.bind(this);
         this.handleToggleAspect = this.handleToggleAspect.bind(this);
         this.handleToggleArrowMode = this.handleToggleArrowMode.bind(this);
+        this.handleToggleArrowShow = this.handleToggleArrowShow.bind(this);
         this.handleSelectArrowPreset = this.handleSelectArrowPreset.bind(this);
         this.handleAddArrowPreset = this.handleAddArrowPreset.bind(this);
         this.handleSaveArrowPreset = this.handleSaveArrowPreset.bind(this);
@@ -83,8 +86,12 @@ class ArrowGUI extends Component {
         this.props.onToggleArrowAspect();
     }
 
+    handleToggleArrowShow(event) {
+        this.props.onToggleArrowShow();
+    }
+
     handleToggleArrowMode(value) {
-        this.props.ontoggleArrowMode(value);
+        this.props.onToggleArrowMode(value);
     }
 
     handleArrowHandleDrag(shapeId, handleIndex, draggableData) {
@@ -261,7 +268,7 @@ class ArrowGUI extends Component {
     }
 
     render() {
-        const { path, selectedArrow, arrowMode, presetNames, defaultPresets } = this.props;
+        const { path, selectedArrow, arrowMode, presetNames, defaultPresets, arrowShown } = this.props;
 
         var presetInputs = null;
 
@@ -288,6 +295,8 @@ class ArrowGUI extends Component {
                     <Select value={selectedArrow.preset} onChange={this.handleSelectArrowPreset}>
                         {this.generatePresetList()}
                     </Select>
+                    <div className="editor-row-title">Show:</div>
+                    <input id="show" type="checkbox" onChange={this.handleToggleArrowShow} checked={arrowShown} />
                 </div>
                 <svg className="arrow-gui" style={{ width: ARROW_GUI_WIDTH, height: ARROW_GUI_HEIGHT }}>
                     {this.renderReferenceLine(path, selectedArrow)}
