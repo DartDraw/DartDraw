@@ -10,7 +10,6 @@ class RulerLayer extends Component {
         height: PropTypes.number,
         widthInUnits: PropTypes.number,
         heightInUnits: PropTypes.number,
-        mouseCoords: PropTypes.object,
         showRulers: PropTypes.bool
     };
 
@@ -106,12 +105,10 @@ class RulerLayer extends Component {
     }
 
     render() {
-        const { ruler, mouseCoords, showRulers, dir, width, height } = this.props;
-        var trackerLoc;
+        const { ruler, showRulers, dir, width, height } = this.props;
 
         switch (dir) {
             case "horizontal":
-                trackerLoc = Math.max(0, Math.min(mouseCoords.x - ruler.width - 45, width));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -122,11 +119,10 @@ class RulerLayer extends Component {
                     >
                         {this.renderTicks(ruler.horizontal.ticks)}
                         {this.renderLabels(ruler.horizontal.labels)}
-                        {this.buildTracker(trackerLoc, 0, trackerLoc, ruler.width)}
+                        {this.buildTracker(ruler.mouseTrackers.x, 0, ruler.mouseTrackers.x, ruler.width)}
                     </svg>
                 );
             case "vertical":
-                trackerLoc = Math.max(0, Math.min(mouseCoords.y - ruler.width - 45, height));
                 return (
                     <svg className="ruler"
                         id={dir}
@@ -136,7 +132,7 @@ class RulerLayer extends Component {
                     >
                         {this.renderTicks(ruler.vertical.ticks)}
                         {this.renderLabels(ruler.vertical.labels)}
-                        {this.buildTracker(0, trackerLoc, ruler.width, trackerLoc)}
+                        {this.buildTracker(0, ruler.mouseTrackers.y, ruler.width, ruler.mouseTrackers.y)}
                     </svg>
                 );
             default: break;

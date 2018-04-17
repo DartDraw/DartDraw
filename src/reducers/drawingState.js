@@ -7,16 +7,23 @@ import * as shape from './caseFunctions/shape';
 import * as menu from './caseFunctions/menu';
 import * as zoom from './caseFunctions/zoom';
 import * as rulers from './caseFunctions/rulers';
+import * as arrow from './caseFunctions/arrow';
+import { getArrowDefaultPresets } from './utilities/arrow';
 import { deepCopy } from './utilities/object';
 import { getShapeInfo } from './utilities/info';
 
 const initialState = {
     shapes: {
         byId: {},
-        allIds: [],
-        byArrowId: {},
-        allArrows: []
+        allIds: []
     },
+    arrows: {
+        byId: {},
+        allIds: [],
+        presets: getArrowDefaultPresets()
+    },
+    arrowMode: "head",
+    lockAspectRatio: false,
     selected: [],
     boundingBoxes: {},
     selectionBoxes: {},
@@ -43,6 +50,10 @@ const initialState = {
         unitDivisions: 2,
         width: 30,
         pixelsPerUnit: 96,
+        mouseTrackers: {
+            x: 0,
+            y: 0
+        },
         horizontal: {
             ticks: [],
             labels: []
@@ -216,6 +227,48 @@ function drawingState(state = initialState, action, root) {
         case canvasActions.SCROLL:
             updatedState = canvas.scroll(stateCopy, action, root);
             break;
+        case menuActions.ARROW_HANDLE_DRAG:
+            updatedState = arrow.arrowHandleDrag(stateCopy, action, root);
+            break;
+        // case menuActions.CHANGE_ARROW_TYPE:
+        //     updatedState = arrow.changeArrowType(stateCopy, action, root);
+        //     break;
+        case menuActions.CHANGE_ARROW_HEIGHT:
+            updatedState = arrow.changeArrowHeight(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROW_LENGTH:
+            updatedState = arrow.changearrowHeadLength(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROW_BARB_LENGTH:
+            updatedState = arrow.changeArrowBarbLength(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROW_RADIUS_X:
+            updatedState = arrow.changeArrowRadiusX(stateCopy, action, root);
+            break;
+        case menuActions.CHANGE_ARROW_RADIUS_Y:
+            updatedState = arrow.changeArrowRadiusY(stateCopy, action, root);
+            break;
+        case menuActions.SELECT_ARROW_PRESET:
+            updatedState = arrow.selectArrowPreset(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_ARROW_ASPECT:
+            updatedState = arrow.toggleArrowAspect(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_ARROW_MODE:
+            updatedState = arrow.toggleArrowMode(stateCopy, action, root);
+            break;
+        case menuActions.TOGGLE_ARROW_SHOW:
+            updatedState = arrow.toggleArrowShow(stateCopy, action, root);
+            break;
+        case menuActions.ADD_ARROW_PRESET:
+            updatedState = arrow.addArrowPreset(stateCopy, action, root);
+            break;
+        case menuActions.SAVE_ARROW_PRESET:
+            updatedState = arrow.saveArrowPreset(stateCopy, action, root);
+            break;
+        case menuActions.DELETE_ARROW_PRESET:
+            updatedState = arrow.deleteArrowPreset(stateCopy, action, root);
+            break;
         default: break;
     }
 
@@ -241,7 +294,6 @@ function drawingState(state = initialState, action, root) {
                 updatedState.future = [];
                 let selected = deepCopy(updatedState.selected);
                 updatedState.past.push({ delta, selected });
-                // console.log(action.type, root.menuState);
             }
         }
     }

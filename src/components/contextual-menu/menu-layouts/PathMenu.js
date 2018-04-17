@@ -14,8 +14,6 @@ class PathMenu extends Component {
 
         this.handleStrokeDasharrayChange = this.handleStrokeDasharrayChange.bind(this);
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
-        this.handleArrowShown = this.handleArrowShown.bind(this);
-        this.handleArrowType = this.handleArrowType.bind(this);
     }
 
     handleStrokeDasharrayChange(value) {
@@ -30,18 +28,6 @@ class PathMenu extends Component {
             const newPath = Object.assign({}, path, { strokeWidth: value });
             onEdit && onEdit(newPath);
         }
-    }
-
-    handleArrowShown(value) {
-        const { path, onEdit } = this.props;
-        const newPath = Object.assign({}, path, { arrowShown: value });
-        onEdit && onEdit(newPath);
-    }
-
-    handleArrowType(value) {
-        const { path, onEdit } = this.props;
-        const newPath = Object.assign({}, path, { arrowType: value });
-        onEdit && onEdit(newPath);
     }
 
     render() {
@@ -60,28 +46,11 @@ class PathMenu extends Component {
                 <div className="menu-row">
                     <div className="menu-row-title">Stroke Width:</div>
                     <Select value={this.props.path.strokeWidth} onChange={this.handleStrokeWidth}>
-                        <option value="1">1</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </Select>
-                </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Arrow:</div>
-                    <Select value={this.props.path.arrowShown} onChange={this.handleArrowShown}>
-                        <option value="yes">yes</option>
-                        <option value="no">no</option>
-                    </Select>
-                </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Arrow Type:</div>
-                    <Select value={this.props.path.arrowType} onChange={this.handleArrowType}>
-                        <option value="triangle">triangle</option>
-                        <option value="barbed">barbed</option>
-                        <option value="circle">circle</option>
-                        <option value="square">square</option>
-                        <option value="line">line</option>
+                        <option value={1}>1</option>
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={15}>15</option>
+                        <option value={20}>20</option>
                     </Select>
                 </div>
             </div>

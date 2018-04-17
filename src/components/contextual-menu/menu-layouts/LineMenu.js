@@ -15,8 +15,6 @@ class LineMenu extends Component {
 
         this.handleStrokeDasharrayChange = this.handleStrokeDasharrayChange.bind(this);
         this.handleStrokeWidth = this.handleStrokeWidth.bind(this);
-        this.handleArrowShown = this.handleArrowShown.bind(this);
-        this.handleArrowType = this.handleArrowType.bind(this);
         this.handleRotationChange = this.handleRotationChange.bind(this);
     }
 
@@ -62,18 +60,6 @@ class LineMenu extends Component {
         }
     }
 
-    handleArrowShown(value) {
-        const { line, onEdit } = this.props;
-        const newLine = Object.assign({}, line, { arrowShown: value });
-        onEdit && onEdit(newLine);
-    }
-
-    handleArrowType(value) {
-        const { line, onEdit } = this.props;
-        const newLine = Object.assign({}, line, { arrowType: value });
-        onEdit && onEdit(newLine);
-    }
-
     handleRotationChange(value) {
         const {onRotateShapeTo} = this.props;
         onRotateShapeTo && onRotateShapeTo(value);
@@ -83,16 +69,6 @@ class LineMenu extends Component {
         return (
             <div className="line-menu menu">
                 <div className="menu-title">Line</div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Point 1:</div>
-                    <Input value={this.props.line.points[0]} label="X1" style={{ width: 49, marginRight: 11 }} onChange={this.handleX1Change} />
-                    <Input value={this.props.line.points[1]} label="Y1" style={{ width: 49 }} onChange={this.handleY1Change} />
-                </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Point 2:</div>
-                    <Input value={this.props.line.points[2]} label="X2" style={{ width: 49, marginRight: 11 }} onChange={this.handleX2Change} />
-                    <Input value={this.props.line.points[3]} label="Y2" style={{ width: 49 }} onChange={this.handleY2Change} />
-                </div>
                 <div className="menu-row">
                     <div className="menu-row-title">Rotation:</div>
                     <Input value={this.props.line.info.rotation} label="Rotation" onChange={this.handleRotationChange} />
@@ -116,26 +92,20 @@ class LineMenu extends Component {
                         <option value="20">20</option>
                     </Select>
                 </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Arrow:</div>
-                    <Select value={this.props.line.arrowShown} onChange={this.handleArrowShown}>
-                        <option value="yes">yes</option>
-                        <option value="no">no</option>
-                    </Select>
-                </div>
-                <div className="menu-row">
-                    <div className="menu-row-title">Arrow Type:</div>
-                    <Select value={this.props.line.arrowType} onChange={this.handleArrowType}>
-                        <option value="triangle">triangle</option>
-                        <option value="barbed">barbed</option>
-                        <option value="circle">circle</option>
-                        <option value="square">square</option>
-                        <option value="line">line</option>
-                    </Select>
-                </div>
             </div>
         );
     }
 }
 
 export default LineMenu;
+
+// <div className="menu-row">
+//     <div className="menu-row-title">Point 1:</div>
+//     <Input value={this.props.line.points[0]} label="X1" style={{ width: 49, marginRight: 11 }} onChange={this.handleX1Change} />
+//     <Input value={this.props.line.points[1]} label="Y1" style={{ width: 49 }} onChange={this.handleY1Change} />
+// </div>
+// <div className="menu-row">
+//     <div className="menu-row-title">Point 2:</div>
+//     <Input value={this.props.line.points[2]} label="X2" style={{ width: 49, marginRight: 11 }} onChange={this.handleX2Change} />
+//     <Input value={this.props.line.points[3]} label="Y2" style={{ width: 49 }} onChange={this.handleY2Change} />
+// </div>

@@ -42,6 +42,7 @@
     flex-grow: 1;
     background-color: #30404D;
     max-height: 590px;
+    flex-direction: column;
 }
 
 .zoom-select-row {

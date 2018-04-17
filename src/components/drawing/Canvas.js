@@ -20,7 +20,7 @@ import {
     Line,
     TransparentLine,
     Text,
-    Arrowhead,
+    Arrow,
     Bezier
 } from './shapes';
 
@@ -32,6 +32,7 @@ class Canvas extends Component {
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
         viewBox: PropTypes.array,
+        scale: PropTypes.number,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -236,9 +237,9 @@ class Canvas extends Component {
     }
 
     renderArrows() {
-        const { arrows } = this.props;
-        return arrows.map((shape) => {
-            return <Arrowhead key={shape.arrowId} {...shape} />;
+        const { arrows, scale } = this.props;
+        return arrows.map((arrow) => {
+            return <Arrow key={arrow.id} scale={scale} {...arrow} />;
         });
     }
 
@@ -260,8 +261,8 @@ class Canvas extends Component {
                         ref={(ref) => { this.svgRef = ref; }}
                     >
                         <BackgroundLayerContainer />
-                        {this.renderArrows()}
                         {this.renderDrawing()}
+                        {this.renderArrows()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
                     </svg>

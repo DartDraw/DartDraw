@@ -1,10 +1,11 @@
 import { connect } from 'react-redux';
 import BottomScroll from './BottomScroll';
 import { scroll } from './../../actions/canvas';
+import { MENU_WIDTH } from '../../constants';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     const { panX, panY, canvasWidth, ruler, scale } = drawingState;
-    const maxPanX = canvasWidth - (window.innerWidth - ruler.width - 45) / scale;
+    const maxPanX = canvasWidth - (window.innerWidth - ruler.width - MENU_WIDTH) / scale;
     return {
         panX,
         maxPanX,

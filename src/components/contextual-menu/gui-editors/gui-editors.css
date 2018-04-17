@@ -1,0 +1,75 @@
+.editor-title {
+    width: 173px;
+    height: 22px;
+    margin-bottom: 20px;
+    border-style: solid;
+    border-width: 0;
+    border-bottom-width: 1px;
+    border-bottom-color: #10161A;
+    font-size: 12px;
+    font-family: helvetica;
+    color: #EBF1F5;
+}
+
+.arrow-gui {
+    background-color: white;
+}
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0px 10px;
+    box-sizing: border-box;
+}
+
+.editor-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.editor-row-title {
+    width: 48px;
+    margin-right: 7px;
+    text-align: left;
+    font-size: 10px;
+    font-family: helvetica;
+    color: #CED9E0;
+}
+
+.text-input {
+    display: flex;
+    flex-direction: column;
+    flex: initial;
+    padding-left: 4px;
+    background-color: #10161A;
+    border-color: #10161A;
+    border-radius: 4px;
+    border-width: 0;
+    font-size: 10px;
+    font-family: helvetica;
+    color: #CED9E0;
+}
+
+.editor-select-row {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    flex-direction: row;
+    alignItems: center;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.editor-button {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    height: 23px;
+    font-family: helvetica;
+    font-size: 10px;
+    color: #CED9E0;
+}

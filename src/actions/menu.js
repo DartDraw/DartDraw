@@ -32,6 +32,20 @@ export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
 export const SET_RULER_GRID = 'SET_RULER_GRID';
+export const ARROW_HANDLE_DRAG = 'ARROW_HANDLE_DRAG';
+export const CHANGE_ARROW_TYPE = 'CHANGE_ARROW_TYPE';
+export const TOGGLE_ARROW_ASPECT = 'TOGGLE_ARROW_ASPECT';
+export const TOGGLE_ARROW_MODE = 'TOGGLE_ARROW_MODE';
+export const TOGGLE_ARROW_SHOW = 'TOGGLE_ARROW_SHOW';
+export const CHANGE_ARROW_HEIGHT = 'CHANGE_ARROW_HEIGHT';
+export const CHANGE_ARROW_LENGTH = 'CHANGE_ARROW_LENGTH';
+export const CHANGE_ARROW_BARB_LENGTH = 'CHANGE_ARROW_BARB_LENGTH';
+export const CHANGE_ARROW_RADIUS_X = 'CHANGE_ARROW_RADIUS_X';
+export const CHANGE_ARROW_RADIUS_Y = 'CHANGE_ARROW_RADIUS_Y';
+export const SELECT_ARROW_PRESET = 'SELECT_ARROW_PRESET';
+export const ADD_ARROW_PRESET = 'ADD_ARROW_PRESET';
+export const SAVE_ARROW_PRESET = 'SAVE_ARROW_PRESET';
+export const DELETE_ARROW_PRESET = 'DELETE_ARROW_PRESET';
 export const CHANGE_COLOR_TYPE = 'CHANGE_COLOR_TYPE';
 export const SELECT_RULER = 'SELECT_RULER';
 export const ADD_RULER = 'ADD_RULER';
@@ -232,4 +246,56 @@ export function toggleRuler(forward) {
 
 export function toggleContextualMenu() {
     return { type: TOGGLE_CONTEXTUAL_MENU };
+}
+
+export function arrowHandleDrag(shapeId, handleIndex, draggableData) {
+    return { type: ARROW_HANDLE_DRAG, payload: { shapeId, handleIndex, draggableData } };
+}
+
+export function toggleArrowAspect() {
+    return { type: TOGGLE_ARROW_ASPECT };
+}
+
+export function toggleArrowMode(mode) {
+    return { type: TOGGLE_ARROW_MODE, payload: { mode } };
+}
+
+export function toggleArrowShow() {
+    return { type: TOGGLE_ARROW_SHOW };
+}
+
+export function changeArrowHeight(height) {
+    return { type: CHANGE_ARROW_HEIGHT, payload: { height } };
+}
+
+export function changearrowHeadLength(length) {
+    return { type: CHANGE_ARROW_LENGTH, payload: { length } };
+}
+
+export function changeArrowBarbLength(length) {
+    return { type: CHANGE_ARROW_BARB_LENGTH, payload: { length } };
+}
+
+export function changeArrowRadiusX(rx) {
+    return { type: CHANGE_ARROW_RADIUS_X, payload: { rx } };
+}
+
+export function changeArrowRadiusY(ry) {
+    return { type: CHANGE_ARROW_RADIUS_Y, payload: { ry } };
+}
+
+export function selectArrowPreset(name) {
+    return { type: SELECT_ARROW_PRESET, payload: { name } };
+}
+
+export function addArrowPreset(name, arrow) {
+    return { type: ADD_ARROW_PRESET, payload: { name, arrow } };
+}
+
+export function saveArrowPreset(arrow) {
+    return { type: SAVE_ARROW_PRESET, payload: { arrow } };
+}
+
+export function deleteArrowPreset(presetName) {
+    return { type: DELETE_ARROW_PRESET, payload: { presetName } };
 }

@@ -492,7 +492,7 @@ export function keyDown(stateCopy, action, root) {
             if (stateCopy.mode === 'reshape') {
                 stateCopy.shape = removePoint(stateCopy.shapes, stateCopy.selected, stateCopy.selectedHandle);
             } else {
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy = deleteShapes(stateCopy, stateCopy.selected);
                 stateCopy.selected = [];
             }
             break;
@@ -589,7 +589,7 @@ export function keyDown(stateCopy, action, root) {
         case 88: // cut
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy = deleteShapes(stateCopy, stateCopy.selected);
                 stateCopy.selected = [];
             }
             break;
