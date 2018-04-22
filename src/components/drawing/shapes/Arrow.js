@@ -11,6 +11,7 @@ class Arrow extends Component {
         scale: PropTypes.number,
         type: PropTypes.string,
         points: PropTypes.array,
+        flip: PropTypes.bool,
         cx: PropTypes.number,
         cy: PropTypes.number,
         rx: PropTypes.number,
@@ -64,7 +65,7 @@ class Arrow extends Component {
     // }
 
     render() {
-        const { scale, id, type, refX, points, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
+        const { scale, id, type, refX, points, flip, cx, cy, rx, ry, x, y, width, height, stroke, strokeWidth, strokeDasharray } = this.props;
         const arrowProps = {
             fill: stroke,
             stroke,
@@ -82,7 +83,7 @@ class Arrow extends Component {
                 arrow = (
                     <polygon
                         {...arrowProps}
-                        points={formatPoints(points)}
+                        points={formatPoints(points, type, flip)}
                         strokeWidth={0}
                     />
                 );
@@ -115,7 +116,7 @@ class Arrow extends Component {
                 arrow = (
                     <polyline
                         {...arrowProps}
-                        points={formatPoints(points)}
+                        points={formatPoints(points, type, flip)}
                         fillOpacity={0}
                     />
                 );

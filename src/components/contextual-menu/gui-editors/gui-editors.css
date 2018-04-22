@@ -27,16 +27,22 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
+    padding-bottom: 4px;
 }
 
 .editor-row-title {
-    width: 48px;
-    margin-right: 7px;
+    margin-right: 6px;
+    vertical-align: center;
     text-align: left;
     font-size: 10px;
     font-family: helvetica;
     color: #CED9E0;
+}
+
+.editor-row-element {
+    display: flex;
 }
 
 .text-input {
@@ -72,4 +78,12 @@
     font-family: helvetica;
     font-size: 10px;
     color: #CED9E0;
+}
+
+.editor-row > button:disabled {
+    color: #a9a9a9 !important;
+}
+
+.editor-row > button:disabled:hover {
+    background-color: inherit !important;
 }
