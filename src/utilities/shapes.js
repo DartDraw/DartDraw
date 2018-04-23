@@ -27,14 +27,39 @@ export function formatTransform(transform) {
     return formattedTransform;
 }
 
-export function formatPoints(points) {
+export function formatPoints(points, type, flip) {
     if (!points) {
         return '';
     }
+
+    var pointsCopy = points.slice();
+
+    if (flip) {
+        switch (type) {
+            case "triangle":
+                pointsCopy[0] = points[2];
+                pointsCopy[2] = points[0];
+                pointsCopy[4] = points[2];
+                break;
+            case "barbed":
+                pointsCopy[0] = points[2] + points[6] - points[0];
+                pointsCopy[2] = points[6];
+                pointsCopy[4] = points[2] + points[6] - points[0];
+                pointsCopy[6] = points[2];
+                break;
+            case "polyline":
+                pointsCopy[0] = 2 * points[2] - points[0];
+                pointsCopy[4] = 2 * points[2] - points[0];
+                break;
+            default:
+                break;
+        }
+    }
+
     let formattedP = '';
 
-    for (let i = 0; i < points.length; i += 2) {
-        formattedP = formattedP + points[i] + ',' + points[i + 1] + ' ';
+    for (let i = 0; i < pointsCopy.length; i += 2) {
+        formattedP = formattedP + pointsCopy[i] + ',' + pointsCopy[i + 1] + ' ';
     }
     return formattedP;
 }

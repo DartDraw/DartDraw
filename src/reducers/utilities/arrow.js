@@ -7,18 +7,21 @@ export function getArrowDefaultPresets() {
             type: 'triangle',
             preset: 'triangle',
             fillOpacity: 1,
+            flip: false,
             points: constants.TRIANGLE_POINTS
         },
         "barbed": {
             type: 'barbed',
             preset: 'barbed',
             fillOpacity: 1,
+            flip: false,
             points: constants.BARBED_POINTS
         },
         "ellipse": {
             type: 'ellipse',
             preset: 'ellipse',
             fillOpacity: 1,
+            flip: false,
             cx: constants.ELLIPSE_POINTS[0],
             cy: constants.ELLIPSE_POINTS[1],
             rx: constants.ELLIPSE_POINTS[2],
@@ -28,6 +31,7 @@ export function getArrowDefaultPresets() {
             type: 'rectangle',
             preset: 'rectangle',
             fillOpacity: 1,
+            flip: false,
             x: constants.RECTANGLE_POINTS[0],
             y: constants.RECTANGLE_POINTS[1],
             width: constants.RECTANGLE_POINTS[2],
@@ -37,6 +41,7 @@ export function getArrowDefaultPresets() {
             type: 'polyline',
             preset: 'polyline',
             fillOpacity: 0,
+            flip: false,
             points: constants.POLYLINE_POINTS
         }
     });
@@ -310,7 +315,8 @@ export function newArrowPreset(name, arrow) {
     var newArrowPreset = {
         type: arrow.type,
         preset: name,
-        fillOpacity: arrow.fillOpacity
+        fillOpacity: arrow.fillOpacity,
+        flip: false
     };
 
     switch (arrow.type) {

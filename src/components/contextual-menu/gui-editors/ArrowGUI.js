@@ -11,7 +11,7 @@ class ArrowGUI extends Component {
         arrows: PropTypes.object,
         path: PropTypes.object,
         arrowMode: PropTypes.string,
-        arrowShown: PropTypes.string,
+        arrowShown: PropTypes.bool,
         selectedArrow: PropTypes.object,
         lockAspectRatio: PropTypes.bool,
         presetNames: PropTypes.array,
@@ -22,6 +22,7 @@ class ArrowGUI extends Component {
         onToggleArrowAspect: PropTypes.func,
         onToggleArrowMode: PropTypes.func,
         onToggleArrowShow: PropTypes.func,
+        onToggleArrowFlip: PropTypes.func,
         onHeightChange: PropTypes.func,
         onLengthChange: PropTypes.func,
         onBarbLengthChange: PropTypes.func,
@@ -51,6 +52,7 @@ class ArrowGUI extends Component {
         this.handleToggleAspect = this.handleToggleAspect.bind(this);
         this.handleToggleArrowMode = this.handleToggleArrowMode.bind(this);
         this.handleToggleArrowShow = this.handleToggleArrowShow.bind(this);
+        this.handleToggleArrowFlip = this.handleToggleArrowFlip.bind(this);
         this.handleSelectArrowPreset = this.handleSelectArrowPreset.bind(this);
         this.handleAddArrowPreset = this.handleAddArrowPreset.bind(this);
         this.handleSaveArrowPreset = this.handleSaveArrowPreset.bind(this);
@@ -84,6 +86,10 @@ class ArrowGUI extends Component {
     handleToggleAspect(event) {
         this.setState({isAspectChecked: !this.state.isAspectChecked});
         this.props.onToggleArrowAspect();
+    }
+
+    handleToggleArrowFlip(event) {
+        this.props.onToggleArrowFlip(this.props.selectedArrow.id);
     }
 
     handleToggleArrowShow(event) {
@@ -154,24 +160,25 @@ class ArrowGUI extends Component {
             case "polyline":
                 return (
                     <div className="editor-row">
-                        <div className="editor-row-title">Size:</div>
                         <Input value={findHeightPercentage(selectedArrow)} label="Height %" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
                         <Input value={findLengthPercentage(selectedArrow)} label="Length %" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
+                        <div className="editor-row-title">Flip:</div>
+                        <input id="flip" type="checkbox" onChange={this.handleToggleArrowFlip} checked={selectedArrow.flip} />
                     </div>
                 );
             case "barbed":
                 return (
                     <div className="editor-row">
-                        <div className="editor-row-title">Size:</div>
                         <Input value={findHeightPercentage(selectedArrow)} label="Height %" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
                         <Input value={findLengthPercentage(selectedArrow)} label="Length %" style={{ width: 49, marginRight: 11 }} onChange={this.handleLengthChange} />
                         <Input value={findBarbLengthPercentage(selectedArrow)} label="Point as % of Length" style={{ width: 49, marginRight: 21 }} onChange={this.handleBarbLengthChange} />
+                        <div className="editor-row-title">Flip:</div>
+                        <input id="flip" type="checkbox" onChange={this.handleToggleArrowFlip} checked={selectedArrow.flip} />
                     </div>
                 );
             case "ellipse":
                 return (
                     <div className="editor-row">
-                        <div className="editor-row-title">Size:</div>
                         <Input value={findRxPercentage(selectedArrow.rx)} label="RX %" style={{ width: 49, marginRight: 11 }} onChange={this.handleRadiusXChange} />
                         <Input value={findRyPercentage(selectedArrow.ry)} label="RY %" style={{ width: 49, marginRight: 21 }} onChange={this.handleRadiusYChange} />
                         <div className="editor-row-title">Lock:</div>
@@ -181,7 +188,6 @@ class ArrowGUI extends Component {
             case "rectangle":
                 return (
                     <div className="editor-row">
-                        <div className="editor-row-title">Size:</div>
                         <Input value={findHeightPercentage(selectedArrow)} label="Height %" style={{ width: 49, marginRight: 11 }} onChange={this.handleHeightChange} />
                         <Input value={findLengthPercentage(selectedArrow)} label="Length %" style={{ width: 49, marginRight: 21 }} onChange={this.handleLengthChange} />
                         <div className="editor-row-title">Lock:</div>
@@ -268,17 +274,32 @@ class ArrowGUI extends Component {
     }
 
     render() {
-        const { path, selectedArrow, arrowMode, presetNames, defaultPresets, arrowShown } = this.props;
+        const { path, selectedArrow, arrowMode, defaultPresets, arrowShown } = this.props;
 
-        var presetInputs = null;
+        var disabled = null;
+        var dynamicEditor = null;
 
-        if (presetNames.length > defaultPresets.length) {
-            presetInputs = <div className="editor-row">
-                <button id="basic-button" onClick={this.handleSaveArrowPreset}>Update</button>
-                <button id="basic-button" onClick={this.handleDeleteArrowPreset}>Delete</button>
-            </div>;
-        } else {
-            presetInputs = <div />;
+        if (defaultPresets.includes(selectedArrow.preset)) {
+            disabled = "disabled";
+        }
+
+        if (arrowShown) {
+            dynamicEditor = (
+                <div>
+                    <svg className="arrow-gui" style={{ width: ARROW_GUI_WIDTH, height: ARROW_GUI_HEIGHT }}>
+                        {this.renderReferenceLine(path, selectedArrow)}
+                        {this.renderArrow(selectedArrow)}
+                        {this.renderHandles(selectedArrow)}
+                    </svg>
+                    {this.renderTypeSpecificInputs()}
+                    <div className="editor-row">
+                        <input id="presetName" className='text-input' type="text" placeholder="name" style={{ width: 49, height: 16 }} />
+                        <button id="basic-button" onClick={this.handleAddArrowPreset}>Add</button>
+                        <button id="basic-button" onClick={this.handleSaveArrowPreset} disabled={disabled}>Update</button>
+                        <button id="basic-button" onClick={this.handleDeleteArrowPreset} disabled={disabled}>Delete</button>
+                    </div>
+                </div>
+            );
         }
 
         return (
@@ -291,29 +312,21 @@ class ArrowGUI extends Component {
                     </SelectRow>
                 </div>
                 <div className="editor-row">
-                    <div className="editor-row-title">Preset:</div>
-                    <Select value={selectedArrow.preset} onChange={this.handleSelectArrowPreset}>
-                        {this.generatePresetList()}
-                    </Select>
-                    <div className="editor-row-title">Show:</div>
-                    <input id="show" type="checkbox" onChange={this.handleToggleArrowShow} checked={arrowShown} />
+                    <div className="editor-row-element">
+                        <div className="editor-row-title">Preset:</div>
+                        <Select value={selectedArrow.preset} onChange={this.handleSelectArrowPreset}>
+                            {this.generatePresetList()}
+                        </Select>
+                    </div>
+                    <div className="editor-row-element">
+                        <div className="editor-row-title">Show:</div>
+                        <input id="show" type="checkbox" onChange={this.handleToggleArrowShow} checked={arrowShown} />
+                    </div>
                 </div>
-                <svg className="arrow-gui" style={{ width: ARROW_GUI_WIDTH, height: ARROW_GUI_HEIGHT }}>
-                    {this.renderReferenceLine(path, selectedArrow)}
-                    {this.renderArrow(selectedArrow)}
-                    {this.renderHandles(selectedArrow)}
-                </svg>
-                {this.renderTypeSpecificInputs()}
-                <div className="editor-row">
-                    <input id="presetName" className='text-input' type="text" placeholder="name" style={{ width: 49, height: 16 }} />
-                    <button id="basic-button" onClick={this.handleAddArrowPreset}>Add</button>
-                    {presetInputs}
-                </div>
+                {dynamicEditor}
             </div>
         );
     }
 }
 
 export default ArrowGUI;
-
-// <button id="basic-button" onClick={this.handleResetToPreset}>Reset</button>

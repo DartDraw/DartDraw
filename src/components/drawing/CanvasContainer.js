@@ -19,7 +19,7 @@ import {
     scroll,
     updateBoundingBoxes
 } from './../../actions/canvas';
-import { setRulerGrid } from './../../actions/menu';
+import { setRulerGrid, mouseMove } from './../../actions/menu';
 
 function formatShape(shape, shapes, scale) {
     const formattedShape = Object.assign({}, shape);
@@ -137,6 +137,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: () => {
             dispatch(setRulerGrid());
+        },
+        onMouseMove: (coord) => {
+            dispatch(mouseMove(coord));
         }
     };
 };

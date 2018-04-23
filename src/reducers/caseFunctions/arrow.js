@@ -240,6 +240,24 @@ export function toggleArrowShow(stateCopy, action) {
     return stateCopy;
 }
 
+export function toggleArrowFlip(stateCopy, action) {
+    let { arrowId } = action.payload;
+
+    let status = !stateCopy.arrows.byId[arrowId].flip;
+
+    stateCopy.selected.map((lineId) => {
+        if (stateCopy.shapes.byId[lineId].type === "line") {
+            if (stateCopy.arrowMode === "head") {
+                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowheadId].flip = status;
+            } else {
+                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowtailId].flip = status;
+            }
+        }
+    });
+
+    return stateCopy;
+}
+
 export function addArrowPreset(stateCopy, action) {
     const { name, arrow } = action.payload;
     const { arrowMode } = stateCopy;

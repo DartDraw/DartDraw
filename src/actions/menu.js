@@ -37,6 +37,7 @@ export const CHANGE_ARROW_TYPE = 'CHANGE_ARROW_TYPE';
 export const TOGGLE_ARROW_ASPECT = 'TOGGLE_ARROW_ASPECT';
 export const TOGGLE_ARROW_MODE = 'TOGGLE_ARROW_MODE';
 export const TOGGLE_ARROW_SHOW = 'TOGGLE_ARROW_SHOW';
+export const TOGGLE_ARROW_FLIP = 'TOGGLE_ARROW_FLIP';
 export const CHANGE_ARROW_HEIGHT = 'CHANGE_ARROW_HEIGHT';
 export const CHANGE_ARROW_LENGTH = 'CHANGE_ARROW_LENGTH';
 export const CHANGE_ARROW_BARB_LENGTH = 'CHANGE_ARROW_BARB_LENGTH';
@@ -262,6 +263,10 @@ export function toggleArrowMode(mode) {
 
 export function toggleArrowShow() {
     return { type: TOGGLE_ARROW_SHOW };
+}
+
+export function toggleArrowFlip(arrowId) {
+    return { type: TOGGLE_ARROW_FLIP, payload: { arrowId } };
 }
 
 export function changeArrowHeight(height) {

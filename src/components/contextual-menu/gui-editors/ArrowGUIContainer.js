@@ -5,6 +5,7 @@ import {
     toggleArrowAspect,
     toggleArrowMode,
     toggleArrowShow,
+    toggleArrowFlip,
     changeArrowHeight,
     changearrowHeadLength,
     changeArrowBarbLength,
@@ -46,6 +47,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onToggleArrowShow: () => {
             dispatch(toggleArrowShow());
+        },
+        onToggleArrowFlip: (arrowId) => {
+            dispatch(toggleArrowFlip(arrowId));
         },
         onHeightChange: (height) => {
             dispatch(changeArrowHeight(height));
