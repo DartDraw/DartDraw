@@ -14,9 +14,10 @@ class TransparentLine extends Component {
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         strokeDasharray: PropTypes.string,
-        arrowheadId: PropTypes.string,
-        arrowtailId: PropTypes.string,
+        arrowHeadId: PropTypes.string,
+        arrowTailId: PropTypes.string,
         arrowHeadLength: PropTypes.number,
+        arrowTailLength: PropTypes.number,
         arrowHeadShown: PropTypes.bool,
         fill: PropTypes.string,
         transform: PropTypes.arrayOf(PropTypes.shape({

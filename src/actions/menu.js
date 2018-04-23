@@ -273,7 +273,7 @@ export function changeArrowHeight(height) {
     return { type: CHANGE_ARROW_HEIGHT, payload: { height } };
 }
 
-export function changearrowHeadLength(length) {
+export function changeArrowLength(length) {
     return { type: CHANGE_ARROW_LENGTH, payload: { length } };
 }
 

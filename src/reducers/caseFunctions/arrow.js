@@ -5,7 +5,7 @@ import {
     getArrowInfo,
     setArrowPreset,
     setArrowHeight,
-    setarrowHeadLength,
+    setArrowLength,
     setArrowBarbLength,
     setArrowRadiusX,
     setArrowRadiusY,
@@ -27,6 +27,8 @@ export function arrowHandleDrag(stateCopy, action, root) {
             stateCopy.arrows.byId[arrowId] = reshape(arrow, arrowMode, draggableData, handleIndex, stateCopy.lockAspectRatio);
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = stateCopy.arrows.byId[arrowId].length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = stateCopy.arrows.byId[arrowId].length;
             }
         }
     });
@@ -61,7 +63,7 @@ export function changeArrowHeight(stateCopy, action, root) {
             arrow = setArrowHeight(arrow, height, 0, constants.ARROW_GUI_HEIGHT);
 
             if (lockAspectRatio && arrow.type !== "polyline") {
-                arrow = setarrowHeadLength(arrow, arrowMode, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                arrow = setArrowLength(arrow, arrowMode, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
             }
 
             arrow = updateLengthAndRefX(arrow, arrowMode);
@@ -70,6 +72,8 @@ export function changeArrowHeight(stateCopy, action, root) {
             stateCopy.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = arrow.length;
             }
         }
     });
@@ -77,7 +81,7 @@ export function changeArrowHeight(stateCopy, action, root) {
     return stateCopy;
 }
 
-export function changearrowHeadLength(stateCopy, action, root) {
+export function changeArrowLength(stateCopy, action, root) {
     const { lockAspectRatio, arrowMode } = stateCopy;
     var { length } = action.payload;
 
@@ -103,9 +107,9 @@ export function changearrowHeadLength(stateCopy, action, root) {
 
             if (lockAspectRatio && arrow.type !== "polyline") {
                 arrow = setArrowHeight(arrow, length, 0, constants.ARROW_GUI_HEIGHT);
-                arrow = setarrowHeadLength(arrow, stateCopy.arrowMode, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                arrow = setArrowLength(arrow, stateCopy.arrowMode, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
             } else {
-                arrow = setarrowHeadLength(arrow, arrowMode, length, leftBufferX, rightBufferX);
+                arrow = setArrowLength(arrow, arrowMode, length, leftBufferX, rightBufferX);
             }
 
             arrow = updateLengthAndRefX(arrow, arrowMode);
@@ -114,6 +118,8 @@ export function changearrowHeadLength(stateCopy, action, root) {
             stateCopy.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = arrow.length;
             }
         }
     });
@@ -137,6 +143,8 @@ export function changeArrowBarbLength(stateCopy, action, root) {
             stateCopy.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = arrow.length;
             }
         }
     });
@@ -167,6 +175,8 @@ export function changeArrowRadiusX(stateCopy, action, root) {
             stateCopy.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = arrow.length;
             }
         }
     });
@@ -196,6 +206,8 @@ export function changeArrowRadiusY(stateCopy, action, root) {
             stateCopy.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = arrow.length;
             }
         }
     });
@@ -248,9 +260,9 @@ export function toggleArrowFlip(stateCopy, action) {
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             if (stateCopy.arrowMode === "head") {
-                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowheadId].flip = status;
+                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].flip = status;
             } else {
-                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowtailId].flip = status;
+                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].flip = status;
             }
         }
     });
@@ -272,6 +284,8 @@ export function addArrowPreset(stateCopy, action) {
             stateCopy.arrows.byId[arrowId] = updatedArrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = updatedArrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = updatedArrow.length;
             }
         }
     });
@@ -294,8 +308,8 @@ export function deleteArrowPreset(stateCopy, action) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowheadId].preset = stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowheadId].type;
-            stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowtailId].preset = stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowtailId].type;
+            stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].preset = stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].type;
+            stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].preset = stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].type;
         }
     });
 
@@ -313,8 +327,10 @@ export function selectArrowPreset(stateCopy, action, root) {
             const updatedArrow = setArrowPreset(stateCopy.arrows.presets[name], arrow, arrowMode, line);
 
             stateCopy.arrows.byId[arrowId] = updatedArrow;
-            if (stateCopy.arrowMode === "head") {
+            if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = updatedArrow.length;
+            } else {
+                stateCopy.shapes.byId[lineId].arrowTailLength = updatedArrow.length;
             }
         }
     });

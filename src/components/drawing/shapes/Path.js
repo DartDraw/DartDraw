@@ -6,8 +6,8 @@ import { formatPath, formatTransform } from '../../../utilities/shapes';
 class Path extends Component {
     static propTypes = {
         id: PropTypes.string,
-        arrowheadId: PropTypes.string,
-        arrowtailId: PropTypes.string,
+        arrowHeadId: PropTypes.string,
+        arrowTailId: PropTypes.string,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
         onDragStop: PropTypes.func,
