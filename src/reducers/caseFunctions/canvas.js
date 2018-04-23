@@ -195,7 +195,7 @@ export function dragStop(stateCopy, action, root) {
             // remove if <= 1
             if (Math.abs(transformedShape.width) <= 1 ||
                 Math.abs(transformedShape.height) <= 1) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId, stateCopy.arrows);
             }
             stateCopy.selected = [];
             break;
@@ -212,7 +212,7 @@ export function dragStop(stateCopy, action, root) {
 
             if (Math.abs(transformedBoundingBox.width) <= 1 &&
                 Math.abs(transformedBoundingBox.height) <= 1) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId, stateCopy.arrows);
             }
             stateCopy.selected = [];
             break;
@@ -229,7 +229,7 @@ export function dragStop(stateCopy, action, root) {
             let addedArc = stateCopy.shapes.byId[addedShapeId];
 
             if (addedArc.rx === 0 && addedArc.ry === 0) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId, stateCopy.arrows);
             }
             stateCopy.selected = [];
             break;

@@ -167,7 +167,6 @@ class Canvas extends Component {
     }
 
     handleMouseMove(e) {
-        console.log(e.clientX, e.clientY);
         this.props.onMouseMove({x: e.clientX, y: e.clientY});
     }
 
