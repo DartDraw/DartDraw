@@ -495,8 +495,19 @@ export function resizeTextBoundingBox(shapes, selected, draggableData, handleInd
     return shapes;
 }
 
-export function removeShape(shapes, shapeId) {
+export function removeShape(shapes, shapeId, arrows) {
     const index = shapes.allIds.indexOf(shapeId);
+
+    if (shapes.byId[shapeId].type === "line") {
+        let arrowheadId = shapes.byId[shapeId].arrowheadId;
+        delete arrows.byId[arrowheadId];
+        arrows.allIds.splice(arrows.allIds.indexOf(arrowheadId), 1);
+
+        let arrowtailId = shapes.byId[shapeId].arrowtailId;
+        delete arrows.byId[arrowtailId];
+        arrows.allIds.splice(arrows.allIds.indexOf(arrowtailId), 1);
+    }
+
     delete shapes.byId[shapeId];
     shapes.allIds.splice(index, 1);
     return shapes;
