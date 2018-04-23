@@ -18,6 +18,7 @@ const initialState = {
     rectangleRadius: {x: 50, y: 50},
     currentPalette: 'Default',
     colorType: 'RGB',
+    docColorMode: 'RGB',
     palettes: {
         'Default': {
             colors: [{r: 255, g: 255, b: 255, a: 1}, {r: 244, g: 67, b: 54, a: 1}, {r: 233, g: 30, b: 99, a: 1},
@@ -69,6 +70,8 @@ function menuState(state = initialState, action, root) {
             return menu.selectPalette(stateCopy, action);
         case menuActions.CHANGE_COLOR_TYPE:
             return menu.changeColorType(stateCopy, action);
+        case menuActions.CHANGE_COLOR_MODE:
+            return menu.changeColorMode(stateCopy, action);
         case menuActions.ADD_PALETTE:
             return menu.addPalette(stateCopy, action);
         case menuActions.REMOVE_PALETTE:

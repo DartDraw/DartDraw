@@ -254,6 +254,10 @@ export function changeColorType(stateCopy, action) {
 
 export function setPickerType(stateCopy, action) {
     stateCopy.colorPickerType = action.payload.pickerType;
-    console.log(stateCopy.colorPickerType);
+    return stateCopy;
+}
+
+export function changeColorMode(stateCopy, action) {
+    stateCopy.docColorMode = action.payload.colorMode;
     return stateCopy;
 }

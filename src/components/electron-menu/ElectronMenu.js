@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Modal from './Modal';
+import Modal from '../dd-modal/Modal';
 
 const { remote } = window.require('electron');
 const { Menu, MenuItem, BrowserWindow } = remote;
@@ -25,7 +25,9 @@ class ElectronMenu extends Component {
         onToolSelect: PropTypes.func,
         onSetCustomZoom: PropTypes.func,
         onUndoClick: PropTypes.func,
-        onRedoClick: PropTypes.func
+        onRedoClick: PropTypes.func,
+        onFileSave: PropTypes.func,
+        onFileOpen: PropTypes.func
     };
 
     constructor(props) {
@@ -60,6 +62,22 @@ class ElectronMenu extends Component {
 
     componentDidMount() {
         const template = [
+            {label: 'DartDraw'},
+            {label: 'File',
+                submenu: [
+                    {label: 'Save',
+                        click: () => {
+                            this.handleFileSave();
+                        }},
+                    {label: 'Open',
+                        click: () => {
+
+                        }},
+                    {label: 'New',
+                        click: () => {
+
+                        }}
+                ]},
             {
                 label: 'Edit',
                 submenu: [
@@ -72,6 +90,7 @@ class ElectronMenu extends Component {
                     {label: 'Clear'},
                     {type: 'separator'},
                     {label: 'Duplicate', accelerator: 'CmdOrCtrl+D'},
+                    {accelerator: 'Backspace', click: () => { console.log("deleting a shape"); }},
                     {role: 'selectall'},
                     {type: 'separator'},
                     {label: 'Round Corners...'},
@@ -133,13 +152,13 @@ class ElectronMenu extends Component {
             {
                 label: 'Settings',
                 submenu: [
-                    {label: 'Canvas Settings',
+                    {label: 'Canvas Size',
                         click: () => {
                             this.handleToggleSettingsModal();
                         }},
-                    {label: 'Grid Settings',
-                        click() {
-
+                    {label: 'Color Profile',
+                        click: () => {
+                            this.handleToggleSettingsModal();
                         }}
                 ]
             },
@@ -162,6 +181,11 @@ class ElectronMenu extends Component {
         ];
 
         const menu = Menu.buildFromTemplate(template);
+        let currentMenu = remote.Menu.getApplicationMenu;
+        console.log(currentMenu);
+        // console.log(currentMenu.remote.append(menu));
+        // remote.Menu.getApplicationMenu().append(menu);
+        // Menu.append(menu);
         Menu.setApplicationMenu(menu);
 
         // show whole menu on right click
@@ -171,17 +195,7 @@ class ElectronMenu extends Component {
         }, false);
     }
 
-    componentWillReceiveNextProps() {
-        console.log(remote);
-        let currentMenu = remote.Menu.getApplicationMenu();
-        currentMenu.menu[2].submenu.push(
-            {labe: 'why why'}
-        );
-        Menu.setApplicationMenu(currentMenu);
-    }
-
     handleToggleSettingsModal() {
-        console.log(this.props.settingsModalVisible);
         this.props.onToggleSettingsModal();
     }
 
@@ -201,17 +215,16 @@ class ElectronMenu extends Component {
 
     render() {
         let settingsModal = null;
-        let canvasSettings = <div>
-            <form onSubmit={this.handleFormSubmit}>
+        let canvasSettings =
+            <div>
                 <label>Width:</label><input />
                 <label>Height:</label><input />
                 <input type="submit" value="Submit" id="basic-button" />
-            </form>
-            <button id="basic-button" onClick={this.handleToggleSettingsModal}>Cancel</button>
-        </div>;
+                <button id="basic-button" onClick={this.handleToggleSettingsModal}>Cancel</button>
+            </div>;
         if (this.props.settingsModalVisible) {
             settingsModal = <div>
-                <Modal form={canvasSettings} modalName="Canvas Settings" /></div>;
+                <Modal formContent={canvasSettings} formValues={{canvasWidth: 50, canvasHeight: 50}} modalName="Canvas Settings" /></div>;
         } else {
             settingsModal = <div />;
         }

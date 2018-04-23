@@ -153,16 +153,6 @@ function createWindow() {
     return win;
 }
 
-function openRulerSettings() {
-    dialog.showMessageBox({ message: "These are all the ruler settings",
-        checkboxLabel: 'test',
-        buttons: ["OK", "change background color "]});
-}
-
-function openRulerSettings1() {
-    dialog.showMessageBox({browserWindow: './ruler_settings.html'});
-}
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
