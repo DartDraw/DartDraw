@@ -14,7 +14,6 @@ class ColorMenu extends Component {
         fillColor: PropTypes.object,
         currentColor: PropTypes.object,
         onUpdateOpacity: PropTypes.func,
-
         palettes: PropTypes.object,
         currentPalette: PropTypes.string,
         onAddColor: PropTypes.func,
@@ -63,18 +62,6 @@ class ColorMenu extends Component {
         event.preventDefault();
     }
 
-    // handleColorUpdate(colorPart, event) {
-    //     let newValue = event.target.value;
-    //     if (colorPart === "R") {
-    //         this.setState({r: event.target.value});
-    //     } else if (colorPart === "G") {
-    //         this.setState({g: event.target.value});
-    //     } else {
-    //         this.setState({b: event.target.value});
-    //     }
-    //     this.props.onColorUpdate(colorPart, newValue);
-    // }
-
     handleAddColor() {
         this.setState({showColorPicker: false});
         this.props.onAddColor(this.props.currentColor);
@@ -85,6 +72,8 @@ class ColorMenu extends Component {
     }
 
     handleColorChange(colorInfo) {
+        console.log("what is this color info stuff");
+        console.log(colorInfo);
         this.props.onSelectColor(colorInfo.rgb);
     }
 

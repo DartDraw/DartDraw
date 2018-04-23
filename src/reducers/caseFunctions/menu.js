@@ -1,6 +1,7 @@
 import jsondiffpatch from 'jsondiffpatch';
 import { groupShapes, ungroupShapes } from '../utilities/shapes';
 import { generateEps } from '../../eps/eps';
+import convertColor from './color.js';
 
 export function keyDown(stateCopy, action, root) {
     const { keyCode } = action.payload;
@@ -157,10 +158,6 @@ export function exportClick(stateCopy, action) {
 
 // Color Functions
 
-function colorToString(colorObj) {
-    return "rgba(" + colorObj['r'] + "," + colorObj['g'] + "," + colorObj['b'] + "," + colorObj['a'] + ")";
-}
-
 export function selectColor(stateCopy, action) {
     if (stateCopy.fillStrokeButton === "fill") {
         stateCopy.fillColor = action.payload.color;
@@ -168,6 +165,7 @@ export function selectColor(stateCopy, action) {
         stateCopy.strokeColor = action.payload.color;
     }
     stateCopy.color = action.payload.color; // current color
+    stateCopy.c_color.value = action.payload.color;
     return stateCopy;
 }
 
@@ -222,8 +220,10 @@ export function updateOpacity(stateCopy, action) {
     // console.log(stateCopy.color);
     if (stateCopy.fillStrokeButton === "fill") {
         stateCopy.fillColor.a = action.payload.opacity;
+        stateCopy.c_fillColor.alpha = action.payload.opacity;
     } else {
         stateCopy.strokeColor.a = action.payload.opacity;
+        stateCopy.c_strokeColor.alpha = action.payload.opacity;
     }
     return stateCopy;
 }

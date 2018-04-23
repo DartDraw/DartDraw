@@ -128,6 +128,17 @@ class ElectronMenu extends Component {
                 ]
             },
             {
+                label: 'Text',
+                submenu: [
+                    {label: 'Bold', accelerator: 'CmdOrCtrl+B'},
+                    {label: 'Underline', accelerator: 'CmdOrCtrl+U'},
+                    {label: 'Italicize', accelerator: 'CmdOrCtrl+I'},
+                    {type: 'separator'},
+                    {label: 'Superscript', accelerator: 'CmdOrCtrl+Shift+Up'},
+                    {label: 'Subscript', accelerator: 'CmdOrCtrl+Shift+Down'}
+                ]
+            },
+            {
                 label: 'Arrange',
                 submenu: [
                     {label: 'Move Forward', accelerator: 'CmdOrCtrl+F', click: () => { this.callMenuFunction(this.props.onMoveForward); }},
