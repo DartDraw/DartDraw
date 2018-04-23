@@ -238,7 +238,7 @@ export function constrainInput(payload) {
         case "in":
             minDim = 1;
             maxDim = 120;
-            maxDiv = 64;
+            maxDiv = 256;
             break;
         case "ft":
             minDim = 1;
