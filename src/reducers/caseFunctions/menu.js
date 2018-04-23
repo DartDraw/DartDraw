@@ -107,11 +107,13 @@ export function selectTool(stateCopy, action) {
 }
 
 export function selectButton(stateCopy, action) {
-    console.log(action.payload.button.button);
     console.log(action.payload.button.color);
-    // console.log(action.payload.color);
+    console.log(stateCopy.c_color);
     stateCopy.fillStrokeButton = action.payload.button.button;
     stateCopy.color = action.payload.button.color;
+    let colorObj = action.payload.button.color;
+    stateCopy.c_color.value = [colorObj.r, colorObj.g, colorObj.b];
+    console.log(stateCopy.c_color);
     return stateCopy;
 }
 
@@ -226,28 +228,7 @@ export function updateOpacity(stateCopy, action) {
     return stateCopy;
 }
 
-export function colorUpdate(stateCopy, action) {
-    let colorPart = action.payload.colorPart;
-    let newValue = action.payload.newValue;
-    // action: colorPart and newValue
-    if (colorPart === "R") {
-        stateCopy.color.r = Number(newValue);
-    } else if (colorPart === "G") {
-        stateCopy.color.g = Number(newValue);
-    } else if (colorPart === "B") {
-        stateCopy.color.b = Number(newValue);
-    }
-
-    if (stateCopy.fillStrokeButton === "fill") {
-        stateCopy.fillColor = stateCopy.color;
-    } else {
-        stateCopy.strokeColor = stateCopy.color;
-    }
-    return stateCopy;
-}
-
 export function changeColorType(stateCopy, action) {
-    console.log("changing color in back");
     stateCopy.colorType = action.payload.colorType;
     return stateCopy;
 }

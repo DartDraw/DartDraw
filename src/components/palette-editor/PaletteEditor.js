@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './palette-menu.css';
 import ColorSquare from './ColorSquare';
-import Dropdown from 'react-dropdown';
 import { Select } from '../ui';
 
 class PaletteEditor extends Component {

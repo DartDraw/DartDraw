@@ -1,10 +1,26 @@
 import * as menuActions from '../actions/menu';
 import * as menu from './caseFunctions/menu';
+import * as color from './caseFunctions/color';
 import * as grid from './caseFunctions/grid';
 import * as rulers from './caseFunctions/rulers';
 import { deepCopy } from './utilities/object';
 
 const initialState = {
+    c_color: {
+        type: 'RGB',
+        value: [33, 15, 243],
+        alpha: 1
+    },
+    c_fillColor: {
+        type: 'RGB',
+        value: [125, 125, 100],
+        alpha: 1
+    },
+    c_strokeColor: {
+        type: 'RGB',
+        value: [10, 10, 15],
+        alpha: 1
+    },
     color: {r: 33, g: 15, b: 243, a: 1},
     fillColor: {r: 33, g: 15, b: 243, a: 1},
     strokeColor: {r: 200, g: 0, b: 200, a: 1},
@@ -64,8 +80,6 @@ function menuState(state = initialState, action, root) {
             return menu.updateOpacity(stateCopy, action);
         case menuActions.ADD_COLOR:
             return menu.addColor(stateCopy, action);
-        case menuActions.COLOR_UPDATE:
-            return menu.colorUpdate(stateCopy, action);
         case menuActions.SELECT_PALETTE:
             return menu.selectPalette(stateCopy, action);
         case menuActions.CHANGE_COLOR_TYPE:
@@ -80,7 +94,6 @@ function menuState(state = initialState, action, root) {
             return menu.removeColor(stateCopy, action);
         case menuActions.SET_PICKER_TYPE:
             return menu.setPickerType(stateCopy, action);
-
         case menuActions.TOGGLE_SHOW_GRID:
             return grid.toggleShowGrid(stateCopy, action, root);
         case menuActions.TOGGLE_SHOW_SUBDIVISIONS:

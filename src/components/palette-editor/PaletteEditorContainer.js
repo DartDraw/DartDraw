@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import {
     updateOpacity,
-    colorUpdate,
     addColor,
     selectColor,
     selectPalette,
@@ -27,9 +26,6 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onUpdateOpacity: (opacity) => {
             dispatch(updateOpacity(opacity));
-        },
-        onColorUpdate: (colorPart, newValue) => {
-            dispatch(colorUpdate(colorPart, newValue));
         },
         onAddColor: (colorObj) => {
             dispatch(addColor(colorObj));

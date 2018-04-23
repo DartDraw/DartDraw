@@ -14,7 +14,7 @@ class ColorMenu extends Component {
         fillColor: PropTypes.object,
         currentColor: PropTypes.object,
         onUpdateOpacity: PropTypes.func,
-        onColorUpdate: PropTypes.func,
+
         palettes: PropTypes.object,
         currentPalette: PropTypes.string,
         onAddColor: PropTypes.func,
@@ -39,7 +39,6 @@ class ColorMenu extends Component {
         this.showColorInfo = this.showColorInfo.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleColorUpdate = this.handleColorUpdate.bind(this);
         this.handleAddColor = this.handleAddColor.bind(this);
         this.handleChangeColorType = this.handleChangeColorType.bind(this);
         this.handleColorChange = this.handleColorChange.bind(this);
@@ -64,17 +63,17 @@ class ColorMenu extends Component {
         event.preventDefault();
     }
 
-    handleColorUpdate(colorPart, event) {
-        let newValue = event.target.value;
-        if (colorPart === "R") {
-            this.setState({r: event.target.value});
-        } else if (colorPart === "G") {
-            this.setState({g: event.target.value});
-        } else {
-            this.setState({b: event.target.value});
-        }
-        this.props.onColorUpdate(colorPart, newValue);
-    }
+    // handleColorUpdate(colorPart, event) {
+    //     let newValue = event.target.value;
+    //     if (colorPart === "R") {
+    //         this.setState({r: event.target.value});
+    //     } else if (colorPart === "G") {
+    //         this.setState({g: event.target.value});
+    //     } else {
+    //         this.setState({b: event.target.value});
+    //     }
+    //     this.props.onColorUpdate(colorPart, newValue);
+    // }
 
     handleAddColor() {
         this.setState({showColorPicker: false});

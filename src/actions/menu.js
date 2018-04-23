@@ -27,7 +27,6 @@ export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
 export const UPDATE_OPACITY = 'UPDATE_OPACITY';
-export const COLOR_UPDATE = 'COLOR_UPDATE';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
@@ -138,10 +137,6 @@ export function alignmentClick(id) {
 
 export function updateOpacity(opacity) {
     return { type: UPDATE_OPACITY, payload: { opacity } };
-}
-
-export function colorUpdate(colorPart, newValue) {
-    return {type: COLOR_UPDATE, payload: {colorPart, newValue}};
 }
 
 export function distributeClick(id) {
