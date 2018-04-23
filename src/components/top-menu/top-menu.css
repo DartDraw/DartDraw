@@ -5,6 +5,7 @@
   justify-content: flex-start;
   padding-left: 50px;
   align-items: center;
+  z-index: 100; /* Keep above contextual menu*/
 }
 
 button {
