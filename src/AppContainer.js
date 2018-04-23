@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { keyUp, keyDown, mouseMove } from './actions/menu';
+import { keyUp, keyDown } from './actions/menu';
 import App from './App';
 
 const mapDispatchToProps = (dispatch) => {
@@ -9,9 +9,6 @@ const mapDispatchToProps = (dispatch) => {
         },
         onKeyUp: (keyCode) => {
             dispatch(keyUp(keyCode));
-        },
-        onMouseMove: (coord) => {
-            dispatch(mouseMove(coord));
         }
     };
 };

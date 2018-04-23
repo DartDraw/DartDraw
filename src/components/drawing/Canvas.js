@@ -49,7 +49,8 @@ class Canvas extends Component {
         onRedoClick: PropTypes.func,
         onScroll: PropTypes.func,
         onBoundingBoxUpdate: PropTypes.func,
-        onSetRulerGrid: PropTypes.func
+        onSetRulerGrid: PropTypes.func,
+        onMouseMove: PropTypes.func
     };
 
     constructor(props) {
@@ -72,6 +73,7 @@ class Canvas extends Component {
         this.handleGroupClick = this.handleGroupClick.bind(this);
         this.handleScroll = this.handleScroll.bind(this);
         this.handleResize = this.handleResize.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
     }
 
     componentDidMount() {
@@ -162,6 +164,11 @@ class Canvas extends Component {
 
     handleResize() {
         this.props.onSetRulerGrid();
+    }
+
+    handleMouseMove(e) {
+        console.log(e.clientX, e.clientY);
+        this.props.onMouseMove({x: e.clientX, y: e.clientY});
     }
 
     renderShape(shape) {
@@ -255,6 +262,7 @@ class Canvas extends Component {
                     onStop={this.handleDragStop}
                 >
                     <svg className="Canvas"
+                        onMouseMove={this.handleMouseMove}
                         width={canvasWidth}
                         height={canvasHeight}
                         viewBox={viewBox.join(' ')}
