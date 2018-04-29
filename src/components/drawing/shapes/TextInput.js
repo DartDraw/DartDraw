@@ -15,7 +15,8 @@ function getTextStyle(text) {
         textDecoration: text.textDecoration,
         lineHeight: parseInt(text.fontSize) > parseInt(text.lineHeight) ? text.fontSize + 'px' : text.lineHeight + 'px',
         color: text.fill,
-        stroke: text.stroke
+        stroke: text.stroke,
+        verticalAlign: text.verticalAlign
     };
 }
 
@@ -59,7 +60,6 @@ class TextInput extends Component {
         let editorState = EditorState.createWithContent(ContentState.createFromText(props.text));
         const originalSelectionState = editorState.getSelection();
 
-        console.log(props.tspans);
         // Apply tspan styles:
         if (props.tspans.length > 0) {
             props.tspans.map((tspan, i) => {
@@ -111,7 +111,8 @@ class TextInput extends Component {
                     newTspan.style.fontStyle === tspan.style.fontStyle &&
                     newTspan.style.textDecoration === tspan.style.textDecoration &&
                     newTspan.style.fill === tspan.style.fill &&
-                    newTspan.style.stroke === tspan.style.stroke
+                    newTspan.style.stroke === tspan.style.stroke &&
+                    newTspan.style.verticalAlign === tspan.style.verticalAlign
                 ) {
                     return true;
                 }
@@ -121,7 +122,16 @@ class TextInput extends Component {
 
         const deletedTspans = _.differenceWith(tspans, nextProps.tspans, (newTspan, tspan) => {
             if (newTspan.range[0] === tspan.range[0] && newTspan.range[1] === tspan.range[1]) {
-                if (newTspan.style.fontSize === tspan.style.fontSize) {
+                if (
+                    newTspan.style.fontFamily === tspan.style.fontFamily &&
+                    newTspan.style.fontSize === tspan.style.fontSize &&
+                    newTspan.style.fontWeight === tspan.style.fontWeight &&
+                    newTspan.style.fontStyle === tspan.style.fontStyle &&
+                    newTspan.style.textDecoration === tspan.style.textDecoration &&
+                    newTspan.style.fill === tspan.style.fill &&
+                    newTspan.style.stroke === tspan.style.stroke &&
+                    newTspan.style.verticalAlign === tspan.style.verticalAlign
+                ) {
                     return true;
                 }
             }
@@ -210,6 +220,7 @@ class TextInput extends Component {
             textAlign,
             textDecoration,
             lineHeight,
+            verticalAlign,
             transform,
             propagateEvents
         } = this.props;
@@ -240,7 +251,8 @@ class TextInput extends Component {
                     fontStyle,
                     textAlign,
                     textDecoration,
-                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px'
+                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                    verticalAlign
                 }}
                 ref={(input) => { this.textInput = input; }}
             />
@@ -255,7 +267,8 @@ class TextInput extends Component {
                 fontStyle,
                 textAlign,
                 textDecoration,
-                lineHeight
+                lineHeight,
+                verticalAlign
             } = tspan.style;
 
             return (
@@ -269,7 +282,8 @@ class TextInput extends Component {
                         fontStyle,
                         textAlign,
                         textDecoration,
-                        lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px'
+                        lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                        verticalAlign
                     }}
                 >
                     {text.substring(tspan.range[0], tspan.range[1])}
@@ -325,7 +339,8 @@ class TextInput extends Component {
                             fontStyle,
                             textAlign,
                             textDecoration,
-                            lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px'
+                            lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                            verticalAlign
                         }}
                     >
                         {editing ? editorElement : textElement}

@@ -375,6 +375,7 @@ export function addText(shapes, action, fill, panX, panY, scale, gridSnapping, g
         textDecoration: 'none',
         fontWeight: 'normal',
         fill: formatColor(fill),
+        verticalAlign: 'baseline',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}]
     };
 
