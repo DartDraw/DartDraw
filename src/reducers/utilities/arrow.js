@@ -239,19 +239,19 @@ export function updateHandles(arrow) {
 export function updateLengthAndRefX(arrow, arrowMode) {
     switch (arrow.type) {
         case 'triangle':
-            arrow.refX = arrow.points[0];
+            arrow.refX = arrowMode === "head" ? arrow.points[0] : arrow.points[2];
             arrow.length = arrow.points[2] - arrow.points[0];
             break;
         case 'barbed':
-            arrow.refX = arrow.points[6];
+            arrow.refX = arrowMode === "head" ? arrow.points[6] : arrow.points[2];
             arrow.length = arrow.points[2] - arrow.points[6];
             break;
         case 'ellipse':
-            arrow.refX = arrow.cx - arrow.rx;
+            arrow.refX = arrowMode === "head" ? arrow.cx - arrow.rx : arrow.cx + arrow.rx;
             arrow.length = arrow.rx * 2;
             break;
         case 'rectangle':
-            arrow.refX = arrow.x;
+            arrow.refX = arrowMode === "head" ? arrow.x : arrow.x + arrow.width;
             arrow.length = arrow.width;
             break;
         case 'polyline':

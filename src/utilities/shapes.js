@@ -39,6 +39,7 @@ export function formatPoints(points, type, flip) {
             case "triangle":
                 pointsCopy[0] = points[2];
                 pointsCopy[2] = points[0];
+                // pointsCopy[2] = 2 * points[0] - points[2];
                 pointsCopy[4] = points[2];
                 break;
             case "barbed":
