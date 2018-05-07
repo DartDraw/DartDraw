@@ -51,14 +51,14 @@ function formatArrow(arrow, shapes, scale) {
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, arrows, selected, canvasHeight, canvasWidth, panX, panY, scale } = drawingState;
+    const { shapes, selected, canvasHeight, canvasWidth, panX, panY, scale } = drawingState;
     const { toolType } = menuState;
     const shapesArray = shapes.allIds.map((id) => {
         return formatShape(shapes.byId[id], shapes, scale);
     });
 
-    const arrowsArray = arrows.allIds.map((id) => {
-        return formatArrow(arrows.byId[id], shapes, scale);
+    const arrowsArray = shapes.arrows.allIds.map((id) => {
+        return formatArrow(shapes.arrows.byId[id], shapes, scale);
     });
 
     const propagateEventTools = [

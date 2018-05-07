@@ -287,9 +287,9 @@ export function scaleViewBox(width, height, strokeWidth, scale) {
     return viewBox;
 }
 
-export function getArrowInfo(mode, lineId, shapes, arrows) {
+export function getArrowInfo(mode, lineId, shapes) {
     const arrowId = mode === "head" ? shapes.byId[lineId].arrowHeadId : shapes.byId[lineId].arrowTailId;
-    const arrow = arrows.byId[arrowId];
+    const arrow = shapes.arrows.byId[arrowId];
     const line = shapes.byId[lineId];
 
     return { arrowId, arrow, line };
