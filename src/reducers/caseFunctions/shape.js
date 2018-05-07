@@ -29,7 +29,8 @@ export function editText(stateCopy, action, root) {
         textDecoration: baseShape.textDecoration,
         lineHeight: baseShape.lineHeight,
         fill: baseShape.fill,
-        stroke: baseShape.stroke
+        stroke: baseShape.stroke,
+        verticalAlign: baseShape.verticalAlign
     };
     const newStyle = {
         fontFamily: shape.fontFamily,
@@ -40,7 +41,8 @@ export function editText(stateCopy, action, root) {
         textDecoration: shape.textDecoration,
         lineHeight: shape.lineHeight,
         fill: shape.fill,
-        stroke: shape.stroke
+        stroke: shape.stroke,
+        verticalAlign: shape.verticalAlign
     };
     // Remove undefined style keys:
     Object.keys(newStyle).forEach((key) => (newStyle[key] === undefined) && delete newStyle[key]);

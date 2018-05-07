@@ -16,6 +16,7 @@ import {
     handleDragStart,
     handleDrag,
     handleDragStop,
+    textInputChange,
     scroll,
     updateBoundingBoxes
 } from './../../actions/canvas';
@@ -129,6 +130,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onHandleDragStop: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStop(shapeId, handleIndex, draggableData));
+        },
+        onTextInputChange: (textId, value, focused, selectionRange) => {
+            dispatch(textInputChange(textId, value, focused, selectionRange));
         },
         onScroll: (deltaX, deltaY) => {
             dispatch(scroll(deltaX, deltaY));
