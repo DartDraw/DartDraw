@@ -88,50 +88,26 @@ class Line extends Component {
         let y1 = arrowStartY;
         let x2 = arrowEndX;
         let y2 = arrowEndY;
-        // let x1 = points[0];
-        // let y1 = points[1];
-        // let x2 = points[2];
-        // let y2 = points[3];
 
         if (!arrowHeadShown) {
             svgProps.markerEnd = "none";
             x2 = points[2];
             y2 = points[3];
-            // svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}];
+        } else if (l < arrowHeadLength || isNaN(x2) || isNaN(y2)) {
+            x2 = (1 - (l - 0.01) / l) * points[2] + (l - 0.01) / l * points[0];
+            y2 = (1 - (l - 0.01) / l) * points[3] + (l - 0.01) / l * points[1];
         }
 
         if (!arrowTailShown) {
             svgProps.markerStart = "none";
             x1 = points[0];
             y1 = points[1];
-            // svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [points[2], points[3]]}];
-        }
-
-        if (l < arrowHeadLength || isNaN(arrowEndX) || isNaN(arrowEndY)) {
-            // x2 = arrowEndX;
-            // y2 = arrowEndY;
-            // x2 = (1 - (l - 0.01) / l) * points[2] + (l - 0.01) / l * points[0];
-            // y2 = (1 - (l - 0.01) / l) * points[3] + (l - 0.01) / l * points[1];
-        }
-
-        if (l < arrowTailLength || isNaN(arrowStartX) || isNaN(arrowStartY)) {
-            // x1 = arrowStartX;
-            // y1 = arrowStartY;
-            // x1 = (1 - (l - 0.01) / l) * points[2] + (l - 0.01) / l * points[0];
-            // y1 = (1 - (l - 0.01) / l) * points[3] + (l - 0.01) / l * points[1];
-            // svgProps.d = [{command: 'M', parameters: [points[0], points[1]]}, {command: 'L', parameters: [lineEndX, lineEndY]}];
+        } else if (l < arrowTailLength || isNaN(x1) || isNaN(x2)) {
+            x1 = (1 - (l - 0.01) / l) * points[0] + (l - 0.01) / l * points[2];
+            y1 = (1 - (l - 0.01) / l) * points[1] + (l - 0.01) / l * points[3];
         }
 
         svgProps.d = [{command: 'M', parameters: [x1, y1]}, {command: 'L', parameters: [x2, y2]}];
-
-        // if (isNaN(svgProps.d[1].parameters[0])) svgProps.d[1].parameters[0] = points[0];
-        // if (isNaN(svgProps.d[1].parameters[1])) svgProps.d[1].parameters[1] = points[1];
-
-        // console.log("coordinates:", points[0], points[1], ",", points[2], points[3]);
-        // console.log("arrowShown?", arrowHeadShown, arrowTailShown);
-        // console.log("arrow lengths:", arrowHeadLength, arrowTailLength);
-        // console.log("new coordinates", x1, y1, x2, y2);
-        // console.log("---------------------");
 
         return (
             <Path

@@ -1259,7 +1259,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
         let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-        if (shape.type === 'line' && shape.arrowHeadShown) {
+        if (shape.type === 'line' && (shape.arrowHeadShown || shape.arrowTailShown)) {
             coords0 = {x: selectionBoxes[id].handles[0].x, y: selectionBoxes[id].handles[0].y};
             coords1 = {x: selectionBoxes[id].handles[1].x, y: selectionBoxes[id].handles[1].y};
             coords2 = {x: selectionBoxes[id].handles[2].x, y: selectionBoxes[id].handles[2].y};
@@ -1549,7 +1549,7 @@ function determineScale(shape, boundingBoxes, selectionBoxes, draggableData, han
     let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-    if (shape.type === 'line' && shape.arrowHeadShown) {
+    if (shape.type === 'line' && (shape.arrowHeadShown || shape.arrowTailShown)) {
         coords0 = {x: selectionBoxes[shape.id].handles[0].x, y: selectionBoxes[shape.id].handles[0].y};
         coords1 = {x: selectionBoxes[shape.id].handles[1].x, y: selectionBoxes[shape.id].handles[1].y};
         coords2 = {x: selectionBoxes[shape.id].handles[2].x, y: selectionBoxes[shape.id].handles[2].y};
