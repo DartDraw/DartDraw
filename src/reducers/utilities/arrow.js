@@ -67,7 +67,7 @@ export function setArrowHeight(arrow, newHeight, min, max) {
     return arrow;
 }
 
-export function setarrowHeadLength(arrow, arrowMode, newLength, min, max) {
+export function setArrowLength(arrow, arrowMode, newLength, min, max) {
     newLength = clamp(newLength, 0, max - min);
 
     switch (arrow.type) {
@@ -180,10 +180,10 @@ export function reshape(arrow, arrowMode, draggableData, handleIndex, lockAspect
                 var length = rightBufferX - mouseX;
 
                 if (lockAspectRatio) {
-                    arrow = setarrowHeadLength(arrow, arrowMode, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                    arrow = setArrowLength(arrow, arrowMode, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
                     arrow = setArrowHeight(arrow, length, 0, constants.ARROW_GUI_HEIGHT);
                 } else {
-                    arrow = setarrowHeadLength(arrow, arrowMode, length, leftBufferX, rightBufferX);
+                    arrow = setArrowLength(arrow, arrowMode, length, leftBufferX, rightBufferX);
                 }
             } else if (handleIndex === 1) {
                 var height = constants.ARROW_GUI_HEIGHT - (mouseY * 2);
@@ -191,7 +191,7 @@ export function reshape(arrow, arrowMode, draggableData, handleIndex, lockAspect
                 arrow = setArrowHeight(arrow, height, 0, constants.ARROW_GUI_HEIGHT);
 
                 if (lockAspectRatio) {
-                    arrow = setarrowHeadLength(arrow, arrowMode, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                    arrow = setArrowLength(arrow, arrowMode, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
                 }
             }
             break;
@@ -239,34 +239,24 @@ export function updateHandles(arrow) {
 export function updateLengthAndRefX(arrow, arrowMode) {
     switch (arrow.type) {
         case 'triangle':
-            arrow.refX = arrow.points[0];
-            if (arrowMode === "head") {
-                arrow.length = arrow.points[2] - arrow.points[0];
-            }
+            arrow.refX = arrowMode === "head" ? arrow.points[0] : arrow.points[2];
+            arrow.length = arrow.points[2] - arrow.points[0];
             break;
         case 'barbed':
-            arrow.refX = arrow.points[6];
-            if (arrowMode === "head") {
-                arrow.length = arrow.points[2] - arrow.points[6];
-            }
+            arrow.refX = arrowMode === "head" ? arrow.points[6] : arrow.points[2];
+            arrow.length = arrow.points[2] - arrow.points[6];
             break;
         case 'ellipse':
-            arrow.refX = arrow.cx - arrow.rx;
-            if (arrowMode === "head") {
-                arrow.length = arrow.rx * 2;
-            }
+            arrow.refX = arrowMode === "head" ? arrow.cx - arrow.rx : arrow.cx + arrow.rx;
+            arrow.length = arrow.rx * 2;
             break;
         case 'rectangle':
-            arrow.refX = arrow.x;
-            if (arrowMode === "head") {
-                arrow.length = arrow.width;
-            }
+            arrow.refX = arrowMode === "head" ? arrow.x : arrow.x + arrow.width;
+            arrow.length = arrow.width;
             break;
         case 'polyline':
             arrow.refX = arrow.points[2];
-            if (arrowMode === "head") {
-                arrow.length = 0;
-            }
+            arrow.length = 0;
             break;
         default: break;
     }
@@ -286,8 +276,6 @@ export function setArrowPreset(preset, arrow, arrowMode, line) {
     updatedArrow = generateHandles(updatedArrow);
     updatedArrow = updateLengthAndRefX(updatedArrow, arrowMode);
 
-    // updatedLine = Object.assign({}, line, {arrowHeadLength: updatedArrow.length});
-
     return updatedArrow;
 }
 
@@ -300,7 +288,7 @@ export function scaleViewBox(width, height, strokeWidth, scale) {
 }
 
 export function getArrowInfo(mode, lineId, shapes, arrows) {
-    const arrowId = mode === "head" ? shapes.byId[lineId].arrowheadId : shapes.byId[lineId].arrowtailId;
+    const arrowId = mode === "head" ? shapes.byId[lineId].arrowHeadId : shapes.byId[lineId].arrowTailId;
     const arrow = arrows.byId[arrowId];
     const line = shapes.byId[lineId];
 

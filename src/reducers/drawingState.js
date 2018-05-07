@@ -237,7 +237,7 @@ function drawingState(state = initialState, action, root) {
             updatedState = arrow.changeArrowHeight(stateCopy, action, root);
             break;
         case menuActions.CHANGE_ARROW_LENGTH:
-            updatedState = arrow.changearrowHeadLength(stateCopy, action, root);
+            updatedState = arrow.changeArrowLength(stateCopy, action, root);
             break;
         case menuActions.CHANGE_ARROW_BARB_LENGTH:
             updatedState = arrow.changeArrowBarbLength(stateCopy, action, root);

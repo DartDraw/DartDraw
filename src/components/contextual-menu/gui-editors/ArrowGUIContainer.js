@@ -7,7 +7,7 @@ import {
     toggleArrowShow,
     toggleArrowFlip,
     changeArrowHeight,
-    changearrowHeadLength,
+    changeArrowLength,
     changeArrowBarbLength,
     changeArrowRadiusX,
     changeArrowRadiusY,
@@ -21,7 +21,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     const { shapes, arrows, arrowMode, lockAspectRatio, selected } = drawingState;
 
     const arrowShown = arrowMode === "head" ? shapes.byId[selected[0]].arrowHeadShown : shapes.byId[selected[0]].arrowTailShown;
-    const selectedArrow = arrowMode === "head" ? arrows.byId[shapes.byId[selected[0]].arrowheadId] : arrows.byId[shapes.byId[selected[0]].arrowtailId];
+    const selectedArrow = arrowMode === "head" ? arrows.byId[shapes.byId[selected[0]].arrowHeadId] : arrows.byId[shapes.byId[selected[0]].arrowTailId];
 
     return {
         arrows,
@@ -55,7 +55,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(changeArrowHeight(height));
         },
         onLengthChange: (length) => {
-            dispatch(changearrowHeadLength(length));
+            dispatch(changeArrowLength(length));
         },
         onBarbLengthChange: (length) => {
             dispatch(changeArrowBarbLength(length));

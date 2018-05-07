@@ -30,6 +30,7 @@ function formatShape(shape, shapes, scale) {
     } else {
         if (formattedShape.type === 'line') {
             formattedShape.arrowHeadLength = formattedShape.arrowHeadLength * formattedShape.strokeWidth / ARROW_STROKE_WIDTH;
+            formattedShape.arrowTailLength = formattedShape.arrowTailLength * formattedShape.strokeWidth / ARROW_STROKE_WIDTH;
         }
 
         formattedShape.strokeWidth = formattedShape.strokeWidth * scale;

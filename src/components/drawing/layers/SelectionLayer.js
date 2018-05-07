@@ -131,6 +131,7 @@ class SelectionLayer extends Component {
                     index={index}
                     points={line.points}
                     arrowHeadLength={0}
+                    arrowTailLength={0}
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     pointerEvents={"stroke"}
@@ -156,6 +157,7 @@ class SelectionLayer extends Component {
                     points={line.points}
                     controlPoints={line.controlPoints}
                     arrowHeadLength={0}
+                    arrowTailLength={0}
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     fill={"none"}
@@ -211,6 +213,7 @@ class SelectionLayer extends Component {
                     index={index}
                     points={[control.x1, control.y1, control.x2, control.y2]}
                     arrowHeadLength={0}
+                    arrowTailLength={0}
                     strokeWidth={2}
                     stroke={"black"}
                     propagateEvents={propagateEvents}

@@ -254,41 +254,46 @@ export function addLine(shapes, arrows, action, fill, panX, panY, scale, gridSna
         strokeDasharray: '',
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         strokeLinecap: 'butt',
-        arrowheadId: uuidv1(),
-        arrowtailId: uuidv1(),
+        arrowHeadId: uuidv1(),
+        arrowTailId: uuidv1(),
         arrowHeadShown: false,
         arrowTailShown: false,
-        arrowHeadLength: 0
+        arrowHeadLength: 0,
+        arrowTailLength: 0
     };
 
-    var arrowhead = {
-        id: line.arrowheadId,
+    var arrowHead = {
+        id: line.arrowHeadId,
         lineId: line.id,
         stroke: line.stroke,
         strokeWidth: line.strokeWidth,
         strokeDasharray: line.strokeDasharray
     };
 
-    const updatedArrow = setArrowPreset(arrows.presets["triangle"], arrowhead, "head", line);
+    var updatedArrow = setArrowPreset(arrows.presets["triangle"], arrowHead, "head", line);
 
-    arrows.byId[arrowhead.id] = updatedArrow;
-    arrows.allIds.push(arrowhead.id);
+    arrows.byId[arrowHead.id] = updatedArrow;
+    arrows.allIds.push(arrowHead.id);
 
     line.arrowHeadLength = updatedArrow.length;
 
     shapes.byId[line.id] = line;
     shapes.allIds.push(line.id);
 
-    var arrowtail = {
-        id: line.arrowtailId,
+    var arrowTail = {
+        id: line.arrowTailId,
         lineId: line.id,
         stroke: line.stroke,
         strokeWidth: line.strokeWidth,
         strokeDasharray: line.strokeDasharray
     };
 
-    arrows.byId[arrowtail.id] = setArrowPreset(arrows.presets["triangle"], arrowtail, "head", line);
-    arrows.allIds.push(arrowtail.id);
+    updatedArrow = setArrowPreset(arrows.presets["triangle"], arrowTail, "tail", line);
+
+    arrows.byId[arrowTail.id] = updatedArrow;
+    arrows.allIds.push(arrowTail.id);
+
+    line.arrowTailLength = updatedArrow.length;
 
     if (gridSnapping) {
         line.points[0] = Math.round(line.points[0] / gridSnapInterval) * gridSnapInterval;
@@ -499,13 +504,13 @@ export function removeShape(shapes, shapeId, arrows) {
     const index = shapes.allIds.indexOf(shapeId);
 
     if (shapes.byId[shapeId].type === "line") {
-        let arrowheadId = shapes.byId[shapeId].arrowheadId;
-        delete arrows.byId[arrowheadId];
-        arrows.allIds.splice(arrows.allIds.indexOf(arrowheadId), 1);
+        let arrowHeadId = shapes.byId[shapeId].arrowHeadId;
+        delete arrows.byId[arrowHeadId];
+        arrows.allIds.splice(arrows.allIds.indexOf(arrowHeadId), 1);
 
-        let arrowtailId = shapes.byId[shapeId].arrowtailId;
-        delete arrows.byId[arrowtailId];
-        arrows.allIds.splice(arrows.allIds.indexOf(arrowtailId), 1);
+        let arrowTailId = shapes.byId[shapeId].arrowTailId;
+        delete arrows.byId[arrowTailId];
+        arrows.allIds.splice(arrows.allIds.indexOf(arrowTailId), 1);
     }
 
     delete shapes.byId[shapeId];
@@ -1217,13 +1222,13 @@ export function deleteShapes(stateCopy, selected) {
         if (shapes.byId[id].type === "group") {
             stateCopy = deleteShapes(stateCopy, shapes.byId[id].members);
         } else if (shapes.byId[id].type === "line") {
-            let arrowheadId = shapes.byId[id].arrowheadId;
-            delete arrows.byId[arrowheadId];
-            arrows.allIds.splice(arrows.allIds.indexOf(arrowheadId), 1);
+            let arrowHeadId = shapes.byId[id].arrowHeadId;
+            delete arrows.byId[arrowHeadId];
+            arrows.allIds.splice(arrows.allIds.indexOf(arrowHeadId), 1);
 
-            let arrowtailId = shapes.byId[id].arrowtailId;
-            delete arrows.byId[arrowtailId];
-            arrows.allIds.splice(arrows.allIds.indexOf(arrowtailId), 1);
+            let arrowTailId = shapes.byId[id].arrowTailId;
+            delete arrows.byId[arrowTailId];
+            arrows.allIds.splice(arrows.allIds.indexOf(arrowTailId), 1);
         }
         delete shapes.byId[id];
         shapes.allIds.splice(shapes.allIds.indexOf(id), 1);
@@ -1254,7 +1259,7 @@ export function resizeShape(shapes, boundingBoxes, selected, draggableData, hand
         let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
         let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-        if (shape.type === 'line' && shape.arrowHeadShown) {
+        if (shape.type === 'line' && (shape.arrowHeadShown || shape.arrowTailShown)) {
             coords0 = {x: selectionBoxes[id].handles[0].x, y: selectionBoxes[id].handles[0].y};
             coords1 = {x: selectionBoxes[id].handles[1].x, y: selectionBoxes[id].handles[1].y};
             coords2 = {x: selectionBoxes[id].handles[2].x, y: selectionBoxes[id].handles[2].y};
@@ -1544,7 +1549,7 @@ function determineScale(shape, boundingBoxes, selectionBoxes, draggableData, han
     let coords2 = transformPoint(boundingBox.x, boundingBox.y + boundingBox.height, shapeMatrix);
     let coords3 = transformPoint(boundingBox.x, boundingBox.y, shapeMatrix);
 
-    if (shape.type === 'line' && shape.arrowHeadShown) {
+    if (shape.type === 'line' && (shape.arrowHeadShown || shape.arrowTailShown)) {
         coords0 = {x: selectionBoxes[shape.id].handles[0].x, y: selectionBoxes[shape.id].handles[0].y};
         coords1 = {x: selectionBoxes[shape.id].handles[1].x, y: selectionBoxes[shape.id].handles[1].y};
         coords2 = {x: selectionBoxes[shape.id].handles[2].x, y: selectionBoxes[shape.id].handles[2].y};
