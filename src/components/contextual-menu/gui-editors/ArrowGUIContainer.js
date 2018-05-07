@@ -18,18 +18,18 @@ import {
 } from '../../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
-    const { shapes, arrows, arrowMode, lockAspectRatio, selected } = drawingState;
+    const { shapes, arrowMode, lockAspectRatio, selected } = drawingState;
 
     const arrowShown = arrowMode === "head" ? shapes.byId[selected[0]].arrowHeadShown : shapes.byId[selected[0]].arrowTailShown;
-    const selectedArrow = arrowMode === "head" ? arrows.byId[shapes.byId[selected[0]].arrowHeadId] : arrows.byId[shapes.byId[selected[0]].arrowTailId];
+    const selectedArrow = arrowMode === "head" ? shapes.arrows.byId[shapes.byId[selected[0]].arrowHeadId] : shapes.arrows.byId[shapes.byId[selected[0]].arrowTailId];
 
     return {
-        arrows,
         arrowMode,
         arrowShown,
         selectedArrow,
         lockAspectRatio,
-        presetNames: Object.keys(arrows.presets),
+        arrows: shapes.arrows,
+        presetNames: Object.keys(shapes.arrows.presets),
         defaultPresets: ["triangle", "barbed", "ellipse", "rectangle", "polyline"]
     };
 };

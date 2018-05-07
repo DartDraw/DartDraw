@@ -79,7 +79,7 @@ export function dragStart(stateCopy, action, root) {
             }
             break;
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, stateCopy.arrows, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addLine(stateCopy.shapes, stateCopy.shapes.arrows, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
@@ -195,7 +195,7 @@ export function dragStop(stateCopy, action, root) {
             // remove if <= 1
             if (Math.abs(transformedShape.width) <= 1 ||
                 Math.abs(transformedShape.height) <= 1) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId, stateCopy.arrows);
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
             }
             stateCopy.selected = [];
             break;
@@ -212,7 +212,7 @@ export function dragStop(stateCopy, action, root) {
 
             if (Math.abs(transformedBoundingBox.width) <= 1 &&
                 Math.abs(transformedBoundingBox.height) <= 1) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId, stateCopy.arrows);
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
             }
             stateCopy.selected = [];
             break;
@@ -229,7 +229,7 @@ export function dragStop(stateCopy, action, root) {
             let addedArc = stateCopy.shapes.byId[addedShapeId];
 
             if (addedArc.rx === 0 && addedArc.ry === 0) {
-                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId, stateCopy.arrows);
+                stateCopy.shapes = removeShape(stateCopy.shapes, addedShapeId);
             }
             stateCopy.selected = [];
             break;

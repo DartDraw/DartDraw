@@ -15,12 +15,12 @@ import { getShapeInfo } from './utilities/info';
 const initialState = {
     shapes: {
         byId: {},
-        allIds: []
-    },
-    arrows: {
-        byId: {},
         allIds: [],
-        presets: getArrowDefaultPresets()
+        arrows: {
+            byId: {},
+            allIds: [],
+            presets: getArrowDefaultPresets()
+        }
     },
     arrowMode: "head",
     lockAspectRatio: false,

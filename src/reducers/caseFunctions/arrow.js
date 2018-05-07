@@ -22,13 +22,13 @@ export function arrowHandleDrag(stateCopy, action, root) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes);
 
-            stateCopy.arrows.byId[arrowId] = reshape(arrow, arrowMode, draggableData, handleIndex, stateCopy.lockAspectRatio);
+            stateCopy.shapes.arrows.byId[arrowId] = reshape(arrow, arrowMode, draggableData, handleIndex, stateCopy.lockAspectRatio);
             if (arrowMode === "head") {
-                stateCopy.shapes.byId[lineId].arrowHeadLength = stateCopy.arrows.byId[arrowId].length;
+                stateCopy.shapes.byId[lineId].arrowHeadLength = stateCopy.shapes.arrows.byId[arrowId].length;
             } else {
-                stateCopy.shapes.byId[lineId].arrowTailLength = stateCopy.arrows.byId[arrowId].length;
+                stateCopy.shapes.byId[lineId].arrowTailLength = stateCopy.shapes.arrows.byId[arrowId].length;
             }
         }
     });
@@ -39,37 +39,43 @@ export function arrowHandleDrag(stateCopy, action, root) {
 export function changeArrowHeight(stateCopy, action, root) {
     const { lockAspectRatio, arrowMode } = stateCopy;
     var { height } = action.payload;
+    console.log('here');
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowId, arrow } = getArrowInfo(stateCopy.arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            var { arrowId, arrow } = getArrowInfo(stateCopy.arrowMode, lineId, stateCopy.shapes);
+
+            var newHeight;
 
             switch (arrow.type) {
                 case "triangle":
-                    height = height / 100.0 * constants.TRIANGLE_HEIGHT;
+                    newHeight = height / 100.0 * constants.TRIANGLE_HEIGHT;
                     break;
                 case "polyline":
-                    height = height / 100.0 * constants.POLYLINE_HEIGHT;
+                    newHeight = height / 100.0 * constants.POLYLINE_HEIGHT;
                     break;
                 case "barbed":
-                    height = height / 100.0 * constants.BARBED_HEIGHT;
+                    newHeight = height / 100.0 * constants.BARBED_HEIGHT;
                     break;
                 case "rectangle":
-                    height = height / 100.0 * constants.RECTANGLE_HEIGHT;
+                    newHeight = height / 100.0 * constants.RECTANGLE_HEIGHT;
                     break;
                 default: break;
             }
 
-            arrow = setArrowHeight(arrow, height, 0, constants.ARROW_GUI_HEIGHT);
+            console.log('hi:', arrow.type, newHeight);
+
+            arrow = setArrowHeight(arrow, newHeight, 0, constants.ARROW_GUI_HEIGHT);
 
             if (lockAspectRatio && arrow.type !== "polyline") {
-                arrow = setArrowLength(arrow, arrowMode, height, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                arrow = setArrowLength(arrow, arrowMode, newHeight, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
             }
 
             arrow = updateLengthAndRefX(arrow, arrowMode);
             arrow = updateHandles(arrow);
 
-            stateCopy.arrows.byId[arrowId] = arrow;
+            stateCopy.shapes.arrows.byId[arrowId] = arrow;
+
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
             } else {
@@ -87,35 +93,37 @@ export function changeArrowLength(stateCopy, action, root) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowId, arrow } = getArrowInfo(stateCopy.arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            var { arrowId, arrow } = getArrowInfo(stateCopy.arrowMode, lineId, stateCopy.shapes);
+
+            var newLength;
 
             switch (arrow.type) {
                 case "triangle":
-                    length = length / 100.0 * constants.TRIANGLE_LENGTH;
+                    newLength = length / 100.0 * constants.TRIANGLE_LENGTH;
                     break;
                 case "polyline":
-                    length = length / 100.0 * constants.POLYLINE_LENGTH;
+                    newLength = length / 100.0 * constants.POLYLINE_LENGTH;
                     break;
                 case "barbed":
-                    length = length / 100.0 * constants.BARBED_LENGTH;
+                    newLength = length / 100.0 * constants.BARBED_LENGTH;
                     break;
                 case "rectangle":
-                    length = length / 100.0 * constants.RECTANGLE_LENGTH;
+                    newLength = length / 100.0 * constants.RECTANGLE_LENGTH;
                     break;
                 default: break;
             }
 
             if (lockAspectRatio && arrow.type !== "polyline") {
-                arrow = setArrowHeight(arrow, length, 0, constants.ARROW_GUI_HEIGHT);
-                arrow = setArrowLength(arrow, stateCopy.arrowMode, length, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
+                arrow = setArrowHeight(arrow, newLength, 0, constants.ARROW_GUI_HEIGHT);
+                arrow = setArrowLength(arrow, stateCopy.arrowMode, newLength, rightBufferX - constants.ARROW_GUI_HEIGHT, rightBufferX);
             } else {
-                arrow = setArrowLength(arrow, arrowMode, length, leftBufferX, rightBufferX);
+                arrow = setArrowLength(arrow, arrowMode, newLength, leftBufferX, rightBufferX);
             }
 
             arrow = updateLengthAndRefX(arrow, arrowMode);
             arrow = updateHandles(arrow);
 
-            stateCopy.arrows.byId[arrowId] = arrow;
+            stateCopy.shapes.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
             } else {
@@ -133,14 +141,14 @@ export function changeArrowBarbLength(stateCopy, action, root) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes);
 
             arrow = setArrowBarbLength(arrow, length, leftBufferX, rightBufferX);
 
             arrow = updateLengthAndRefX(arrow, arrowMode);
             arrow = updateHandles(arrow);
 
-            stateCopy.arrows.byId[arrowId] = arrow;
+            stateCopy.shapes.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
             } else {
@@ -160,7 +168,7 @@ export function changeArrowRadiusX(stateCopy, action, root) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes);
 
             if (lockAspectRatio) {
                 arrow = setArrowRadiusY(arrow, rx, 0, constants.ARROW_GUI_HEIGHT);
@@ -172,7 +180,7 @@ export function changeArrowRadiusX(stateCopy, action, root) {
             arrow = updateLengthAndRefX(arrow, arrowMode);
             arrow = updateHandles(arrow);
 
-            stateCopy.arrows.byId[arrowId] = arrow;
+            stateCopy.shapes.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
             } else {
@@ -192,7 +200,7 @@ export function changeArrowRadiusY(stateCopy, action, root) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            var { arrowId, arrow } = getArrowInfo(arrowMode, lineId, stateCopy.shapes);
 
             arrow = setArrowRadiusY(arrow, ry, 0, constants.ARROW_GUI_HEIGHT);
 
@@ -203,7 +211,7 @@ export function changeArrowRadiusY(stateCopy, action, root) {
             arrow = updateLengthAndRefX(arrow, arrowMode);
             arrow = updateHandles(arrow);
 
-            stateCopy.arrows.byId[arrowId] = arrow;
+            stateCopy.shapes.arrows.byId[arrowId] = arrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = arrow.length;
             } else {
@@ -255,14 +263,14 @@ export function toggleArrowShow(stateCopy, action) {
 export function toggleArrowFlip(stateCopy, action) {
     let { arrowId } = action.payload;
 
-    let status = !stateCopy.arrows.byId[arrowId].flip;
+    let status = !stateCopy.shapes.arrows.byId[arrowId].flip;
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
             if (stateCopy.arrowMode === "head") {
-                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].flip = status;
+                stateCopy.shapes.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].flip = status;
             } else {
-                stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].flip = status;
+                stateCopy.shapes.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].flip = status;
             }
         }
     });
@@ -274,14 +282,14 @@ export function addArrowPreset(stateCopy, action) {
     const { name, arrow } = action.payload;
     const { arrowMode } = stateCopy;
 
-    stateCopy.arrows.presets[name] = newArrowPreset(name, arrow);
+    stateCopy.shapes.arrows.presets[name] = newArrowPreset(name, arrow);
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            const { arrowId, arrow, line } = getArrowInfo(arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
-            const updatedArrow = setArrowPreset(stateCopy.arrows.presets[name], arrow, arrowMode, line);
+            const { arrowId, arrow, line } = getArrowInfo(arrowMode, lineId, stateCopy.shapes);
+            const updatedArrow = setArrowPreset(stateCopy.shapes.arrows.presets[name], arrow, arrowMode, line);
 
-            stateCopy.arrows.byId[arrowId] = updatedArrow;
+            stateCopy.shapes.arrows.byId[arrowId] = updatedArrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = updatedArrow.length;
             } else {
@@ -296,7 +304,7 @@ export function addArrowPreset(stateCopy, action) {
 export function saveArrowPreset(stateCopy, action) {
     const { arrow } = action.payload;
 
-    stateCopy.arrows.presets[arrow.preset] = newArrowPreset(arrow.preset, arrow);
+    stateCopy.shapes.arrows.presets[arrow.preset] = newArrowPreset(arrow.preset, arrow);
 
     return stateCopy;
 }
@@ -304,12 +312,12 @@ export function saveArrowPreset(stateCopy, action) {
 export function deleteArrowPreset(stateCopy, action) {
     const { presetName } = action.payload;
 
-    delete stateCopy.arrows.presets[presetName];
+    delete stateCopy.shapes.arrows.presets[presetName];
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].preset = stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].type;
-            stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].preset = stateCopy.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].type;
+            stateCopy.shapes.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].preset = stateCopy.shapes.arrows.byId[stateCopy.shapes.byId[lineId].arrowHeadId].type;
+            stateCopy.shapes.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].preset = stateCopy.shapes.arrows.byId[stateCopy.shapes.byId[lineId].arrowTailId].type;
         }
     });
 
@@ -322,11 +330,11 @@ export function selectArrowPreset(stateCopy, action, root) {
 
     stateCopy.selected.map((lineId) => {
         if (stateCopy.shapes.byId[lineId].type === "line") {
-            const { arrowId, arrow, line } = getArrowInfo(arrowMode, lineId, stateCopy.shapes, stateCopy.arrows);
+            const { arrowId, arrow, line } = getArrowInfo(arrowMode, lineId, stateCopy.shapes);
 
-            const updatedArrow = setArrowPreset(stateCopy.arrows.presets[name], arrow, arrowMode, line);
+            const updatedArrow = setArrowPreset(stateCopy.shapes.arrows.presets[name], arrow, arrowMode, line);
 
-            stateCopy.arrows.byId[arrowId] = updatedArrow;
+            stateCopy.shapes.arrows.byId[arrowId] = updatedArrow;
             if (arrowMode === "head") {
                 stateCopy.shapes.byId[lineId].arrowHeadLength = updatedArrow.length;
             } else {
