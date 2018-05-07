@@ -56,6 +56,8 @@ class Shape extends Component {
                 onDrag={this.handleDrag}
                 onStop={this.handleDragStop}
                 propagateEvents={propagateEvents}
+                enableUserSelectHack={false}
+                cancel=".DraftEditor-root"
             >
                 {React.cloneElement(children, { onClick: this.handleClick })}
             </Draggable>
