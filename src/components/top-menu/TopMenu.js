@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './top-menu.css';
-import { CirclePicker } from 'react-color';
+import ReactTooltip from 'react-tooltip';
 
 class TopMenu extends Component {
     static propTypes = {
@@ -116,10 +116,11 @@ class TopMenu extends Component {
         };
         return (
             <div id="top-bar">
-                <button onClick={this.handleUndoClick}>
+                <ReactTooltip className="tooltip-style" effect="solid" />
+                <button onClick={this.handleUndoClick} data-tip="Undo">
                     <img src="./assets/undo.svg" alt="undo" id="button-icon" />
                 </button>
-                <button onClick={this.handleRedoClick}>
+                <button onClick={this.handleRedoClick} data-tip="Redo">
                     <img src="./assets/redo.svg" alt="redo" id="button-icon" />
                 </button>
 
@@ -132,49 +133,49 @@ class TopMenu extends Component {
                     <label htmlFor="stroke" style={strokeStyle} onClick={() => { this.handleButtonSelect(strokeColor, "stroke"); }} />
                     <p>Stroke</p>
                 </form>
-                <button onClick={this.handleGroupClick}>
+                <button onClick={this.handleGroupClick} data-tip="Group">
                     <img src="./assets/group.svg" alt="group" id="button-icon" />
                 </button>
-                <button onClick={this.handleUngroupClick}>
+                <button onClick={this.handleUngroupClick} data-tip="Ungroup">
                     <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
                 </button>
-                <button onClick={this.handleMoveForward}>
+                <button onClick={this.handleMoveForward} data-tip="Bring Forward">
                     <img src="./assets/upone.svg" alt="upone" id="button-icon" />
                 </button>
-                <button onClick={this.handleMoveBackward}>
+                <button onClick={this.handleMoveBackward} data-tip="Send Backward">
                     <img src="./assets/backone.svg" alt="downone" id="button-icon" />
                 </button>
-                <button onClick={this.handleSendToBack}>
+                <button onClick={this.handleSendToBack} data-tip="Send to Back">
                     <img src="./assets/SendToBack.svg" alt="backall" id="button-icon" />
                 </button>
-                <button onClick={this.handleBringToFront}>
+                <button onClick={this.handleBringToFront} data-tip="Bring to Front">
                     <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
                 </button>
-                <button onClick={this.handleFlipHorizontal}>
+                <button onClick={this.handleFlipHorizontal} data-tip="Flip Horizontal">
                     <img src="./assets/flip-horz.svg" alt="frontall" id="button-icon" />
                 </button>
-                <button onClick={this.handleFlipVertical}>
+                <button onClick={this.handleFlipVertical} data-tip="Flip Vertical">
                     <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
                 </button>
-                <button onClick={this.handleToggleGridSnapping} id="button-icon">
+                <button onClick={this.handleToggleGridSnapping} id="button-icon" data-tip="Grid Snap">
                     <img src="./assets/gridsnap.svg" alt="grid snap" id="button-icon" />
                 </button>
-                <button onClick={this.handleAlignmentClick}>
+                <button onClick={this.handleAlignmentClick} data-tip="Center Align">
                     <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
                 </button>
-                <button onClick={this.handleAlignmentClick}>
+                <button onClick={this.handleAlignmentClick} data-tip="Vertical Align">
                     <img src="./assets/vertical-alignment.svg" alt="vertical-alignment" id="alignment-horizontal" />
                 </button>
-                <button onClick={this.handleAlignmentClick}>
+                <button onClick={this.handleAlignmentClick} data-tip="Left Align">
                     <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />
                 </button>
-                <button onClick={this.handleAlignmentClick}>
+                <button onClick={this.handleAlignmentClick} data-tip="Right Align">
                     <img src="./assets/right-alignment.svg" alt="right-alignment" id="alignment-right" />
                 </button>
-                <button onClick={this.handleAlignmentClick}>
+                <button onClick={this.handleAlignmentClick} data-tip="Bottom Align">
                     <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="alignment-bottom" />
                 </button>
-                <button onClick={this.handleAlignmentClick}>
+                <button onClick={this.handleAlignmentClick} data-tip="Top Align">
                     <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
                 </button>
             </div>

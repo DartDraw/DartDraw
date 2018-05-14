@@ -28,3 +28,9 @@ button:hover {
 #button-icon {
   margin: 3px;
 }
+
+.tooltip-style {
+  background-color: #202B33 !important;
+  font-family: Catamaran, sans-serif !important;
+  font-size: 10px;
+}
