@@ -1,5 +1,18 @@
+// import { DartColor } from './reducers/caseFunctions';
+
+export var DartColor = function(colorType, rgba, value, alpha) {
+    this.colorType = colorType;
+    this.rgba = rgba;
+    this.value = value;
+    this.alpha = alpha;
+};
+
 export const CONTEXTUAL_MENU_WIDTH = 220;
 export const SCROLL_BAR_WIDTH = 18;
+
+// color
+export var defaultFill = new DartColor("rgb", {r: 200, g: 200, b: 200, a: 1}, [200, 200, 200], 1);
+export var defaultStroke = new DartColor("rgb", {r: 100, g: 100, b: 100, a: 1}, [100, 100, 100], 1);
 
 // menu
 export const MENU_WIDTH = 45;

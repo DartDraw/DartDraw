@@ -103,8 +103,6 @@ class TopMenu extends Component {
     }
 
     handleButtonSelect(color, button) {
-        // console.log(color);
-        // console.log(button);
         this.props.onButtonSelect({color, button});
     }
 
@@ -158,12 +156,14 @@ class TopMenu extends Component {
                 <button onClick={this.handleFlipVertical}>
                     <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
                 </button>
-                <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
+                <button onClick={this.handleToggleGridSnapping} id="button-icon">
+                    <img src="./assets/gridsnap.svg" alt="grid snap" id="button-icon" />
+                </button>
                 <button onClick={this.handleAlignmentClick}>
                     <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
                 </button>
                 <button onClick={this.handleAlignmentClick}>
-                    <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="alignment-horizontal" />
+                    <img src="./assets/vertical-alignment.svg" alt="vertical-alignment" id="alignment-horizontal" />
                 </button>
                 <button onClick={this.handleAlignmentClick}>
                     <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />

@@ -135,7 +135,7 @@ let windows = [];
 
 function createWindow() {
     // Create the browser window.
-    let win = new BrowserWindow({width: 800, height: 600});
+    let win = new BrowserWindow({width: 1200, height: 1000, minWidth: 500, minHeight: 300});
     windows.push(win);
     win.focus();
 
@@ -151,16 +151,6 @@ function createWindow() {
     });
 
     return win;
-}
-
-function openRulerSettings() {
-    dialog.showMessageBox({ message: "These are all the ruler settings",
-        checkboxLabel: 'test',
-        buttons: ["OK", "change background color "]});
-}
-
-function openRulerSettings1() {
-    dialog.showMessageBox({browserWindow: './ruler_settings.html'});
 }
 
 // This method will be called when Electron has finished

@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import {
     updateOpacity,
-    colorUpdate,
     addColor,
     selectColor,
     selectPalette,
@@ -16,8 +15,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: drawingState.scale,
-        fillColor: menuState.fillColor,
-        currentColor: menuState.color,
+        fillColor: menuState.fillColor.rgba,
+        currentColor: menuState.color.rgba,
         palettes: menuState.palettes,
         currentPalette: menuState.currentPalette
     };
@@ -27,9 +26,6 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onUpdateOpacity: (opacity) => {
             dispatch(updateOpacity(opacity));
-        },
-        onColorUpdate: (colorPart, newValue) => {
-            dispatch(colorUpdate(colorPart, newValue));
         },
         onAddColor: (colorObj) => {
             dispatch(addColor(colorObj));

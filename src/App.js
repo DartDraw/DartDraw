@@ -7,7 +7,8 @@ import { LeftMenuContainer } from './components/left-menu';
 import { BottomScrollContainer, RightScrollContainer } from './components/scroll-bars';
 import { RulerLayerContainer } from './components/drawing/layers';
 import { ContextualMenuContainer } from './components/contextual-menu';
-import { ElectronMenuContainer } from './components/dd-modal';
+import { ElectronMenuContainer } from './components/electron-menu';
+import { ModalContainer } from './components/dd-modal';
 
 class App extends Component {
     static propTypes = {
@@ -45,6 +46,7 @@ class App extends Component {
                 tabIndex={-1}
             >
                 <ElectronMenuContainer />
+                <ModalContainer />
                 <BottomScrollContainer />
                 <RightScrollContainer />
                 <ContextualMenuContainer />

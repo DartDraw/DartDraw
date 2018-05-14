@@ -110,7 +110,6 @@ export function editText(stateCopy, action, root) {
 
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
-
     switch (root.menuState.toolType) {
         case "selectTool":
         case "rotateTool":

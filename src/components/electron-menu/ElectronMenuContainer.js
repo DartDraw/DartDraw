@@ -13,7 +13,11 @@ import {
     flipVertical,
     bringToFront,
     setCustomZoom,
-    selectTool
+    selectTool,
+    undoClick,
+    redoClick,
+    fileSave,
+    fileOpen
 } from '../../actions/menu';
 import ElectronMenu from './ElectronMenu';
 
@@ -66,6 +70,18 @@ const mapDispatchToProps = (dispatch) => {
         },
         onToolSelect: (toolType) => {
             dispatch(selectTool(toolType));
+        },
+        onUndoClick: () => {
+            dispatch(undoClick());
+        },
+        onRedoClick: () => {
+            dispatch(redoClick());
+        },
+        onFileSave: (data) => {
+            dispatch(fileSave(data));
+        },
+        onFileOpen: (data) => {
+            dispatch(fileOpen(data));
         }
     };
 };

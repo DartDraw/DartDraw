@@ -3,11 +3,17 @@ import PropTypes from 'prop-types';
 
 class ColorSquare extends Component {
     static propTypes = {
-        color: PropTypes.object
+        color: PropTypes.object,
+        colorClick: PropTypes.func
     };
 
     constructor(props) {
         super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick() {
+        this.props.colorClick(this.props.color);
     }
 
     render() {
@@ -16,7 +22,7 @@ class ColorSquare extends Component {
             backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
         };
         return (
-            <div className="color-square" style={colorSquareStyle} />
+            <div className="color-square" style={colorSquareStyle} onClick={this.handleClick} />
         );
     }
 }

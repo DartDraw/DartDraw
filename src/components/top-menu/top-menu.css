@@ -5,6 +5,7 @@
   justify-content: flex-start;
   padding-left: 50px;
   align-items: center;
+  z-index: 100; /* Keep above contextual menu*/
 }
 
 button {
@@ -12,19 +13,6 @@ button {
   background-color: rgba(0,0,0,0);
   height: 40px;
   width:40px;
-}
-
-button img:hover {
-  color: #605870;
-  background-color: rgba(255, 0, 0, 0);
-}
-
-#button-icon {
-  /* filter: grayscale(100%); */
-
-  /*just temporary!*/
-  font-size: 20px;
-  color: #EBF1F5;
 }
 
 #color-palette {
@@ -43,7 +31,6 @@ input[type='radio'] {
 }
 
 #fill-toggle input[type='radio'] + label {
-  /*background-color: red;*/
   display: block;
   /*min-height: 25px;
 	padding-left: 35px;*/

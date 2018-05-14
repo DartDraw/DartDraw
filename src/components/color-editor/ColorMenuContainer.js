@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import {
     updateOpacity,
-    colorUpdate,
     addColor,
     changeColorType,
-    selectColor
+    selectColor,
+    setPickerType
 } from '../../actions/menu';
 import ColorMenu from './ColorMenu';
 
@@ -13,11 +13,12 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: drawingState.scale,
-        fillColor: menuState.fillColor,
-        currentColor: menuState.color,
+        fillColor: menuState.fillColor.rgba,
+        currentColor: menuState.color.rgba,
         palettes: menuState.palettes,
         currentPalette: menuState.currentPalette,
-        colorType: menuState.colorType
+        colorType: menuState.colorType,
+        pickerType: menuState.colorPickerType
     };
 };
 
@@ -25,9 +26,6 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onUpdateOpacity: (opacity) => {
             dispatch(updateOpacity(opacity));
-        },
-        onColorUpdate: (colorPart, newValue) => {
-            dispatch(colorUpdate(colorPart, newValue));
         },
         onAddColor: (colorObj) => {
             dispatch(addColor(colorObj));
@@ -37,6 +35,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSelectColor: (colorObj) => {
             dispatch(selectColor(colorObj));
+        },
+        onSetPickerType: (pickerType) => {
+            dispatch(setPickerType(pickerType));
         }
     };
 };

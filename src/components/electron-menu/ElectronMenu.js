@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Modal from './Modal';
+import Modal from '../dd-modal/Modal';
 
 const { remote } = window.require('electron');
 const { Menu, MenuItem, BrowserWindow } = remote;
@@ -25,7 +25,9 @@ class ElectronMenu extends Component {
         onToolSelect: PropTypes.func,
         onSetCustomZoom: PropTypes.func,
         onUndoClick: PropTypes.func,
-        onRedoClick: PropTypes.func
+        onRedoClick: PropTypes.func,
+        onFileSave: PropTypes.func,
+        onFileOpen: PropTypes.func
     };
 
     constructor(props) {
@@ -38,6 +40,8 @@ class ElectronMenu extends Component {
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleSelectRotateTool = this.handleSelectRotateTool.bind(this);
+        this.handleFileSave = this.handleFileSave.bind(this);
+        this.handleFileOpen = this.handleFileOpen.bind(this);
     }
 
     handleZoomIn() {
@@ -52,6 +56,14 @@ class ElectronMenu extends Component {
         this.props.onToolSelect("rotateTool");
     }
 
+    handleFileSave(event) {
+        this.props.onFileSave(event);
+    }
+
+    handleFileOpen(data) {
+        this.props.onFileOpen(data);
+    }
+
     callMenuFunction(fn) {
         if (document.activeElement.className !== 'input' && document.activeElement.className !== 'notranslate public-DraftEditor-content') {
             fn();
@@ -60,6 +72,22 @@ class ElectronMenu extends Component {
 
     componentDidMount() {
         const template = [
+            {label: 'DartDraw'},
+            {label: 'File',
+                submenu: [
+                    {label: 'Save',
+                        click: () => {
+                            this.handleFileSave();
+                        }},
+                    {label: 'Open',
+                        click: () => {
+
+                        }},
+                    {label: 'New',
+                        click: () => {
+
+                        }}
+                ]},
             {
                 label: 'Edit',
                 submenu: [
@@ -72,6 +100,7 @@ class ElectronMenu extends Component {
                     {label: 'Clear'},
                     {type: 'separator'},
                     {label: 'Duplicate', accelerator: 'CmdOrCtrl+D'},
+                    {label: 'Delete', accelerator: 'Backspace', click: () => { console.log("deleting a shape"); }},
                     {role: 'selectall'},
                     {type: 'separator'},
                     {label: 'Round Corners...'},
@@ -109,6 +138,22 @@ class ElectronMenu extends Component {
                 ]
             },
             {
+                label: 'Text',
+                submenu: [
+                    {label: 'Bold', accelerator: 'CmdOrCtrl+B'},
+                    {label: 'Underline', accelerator: 'CmdOrCtrl+U'},
+                    {label: 'Italicize', accelerator: 'CmdOrCtrl+I'},
+                    {type: 'separator'},
+                    {label: 'Left', accelerator: 'CmdOrCtrl+['},
+                    {label: 'Right', accelerator: 'CmdOrCtrl+]'},
+                    {label: 'Center', accelerator: 'CmdOrCtrl+\\'},
+                    {label: 'Justified', accelerator: 'Shift+CmdOrCtrl+\\'},
+                    {type: 'separator'},
+                    {label: 'Superscript', accelerator: 'Ctrl+Plus'},
+                    {label: 'Subscript', accelerator: 'Ctrl+-'}
+                ]
+            },
+            {
                 label: 'Arrange',
                 submenu: [
                     {label: 'Move Forward', accelerator: 'CmdOrCtrl+F', click: () => { this.callMenuFunction(this.props.onMoveForward); }},
@@ -136,10 +181,6 @@ class ElectronMenu extends Component {
                     {label: 'Canvas Settings',
                         click: () => {
                             this.handleToggleSettingsModal();
-                        }},
-                    {label: 'Grid Settings',
-                        click() {
-
                         }}
                 ]
             },
@@ -171,22 +212,11 @@ class ElectronMenu extends Component {
         }, false);
     }
 
-    componentWillReceiveNextProps() {
-        console.log(remote);
-        let currentMenu = remote.Menu.getApplicationMenu();
-        currentMenu.menu[2].submenu.push(
-            {labe: 'why why'}
-        );
-        Menu.setApplicationMenu(currentMenu);
-    }
-
     handleToggleSettingsModal() {
-        console.log(this.props.settingsModalVisible);
         this.props.onToggleSettingsModal();
     }
 
     openDialog() {
-        console.log("this is a test");
         const menu = new Menu();
         menu.append(new MenuItem({label: 'MenuItem1', click() { console.log('item 1 clicked'); }}));
         menu.append(new MenuItem({type: 'separator'}));
@@ -196,29 +226,11 @@ class ElectronMenu extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-        console.log(e.target.value);
     }
 
     render() {
-        let settingsModal = null;
-        let canvasSettings = <div>
-            <form onSubmit={this.handleFormSubmit}>
-                <label>Width:</label><input />
-                <label>Height:</label><input />
-                <input type="submit" value="Submit" id="basic-button" />
-            </form>
-            <button id="basic-button" onClick={this.handleToggleSettingsModal}>Cancel</button>
-        </div>;
-        if (this.props.settingsModalVisible) {
-            settingsModal = <div>
-                <Modal form={canvasSettings} modalName="Canvas Settings" /></div>;
-        } else {
-            settingsModal = <div />;
-        }
         return (
-            <div>
-                {settingsModal}
-            </div>
+            <div />
         );
     }
 }

@@ -75,6 +75,10 @@
     color: #CED9E0;
 }
 
+.zoom-button:hover {
+  cursor: auto;
+}
+
 .zoom-input-row {
     display: flex;
     flex-direction: row;
@@ -102,7 +106,7 @@
     height: 30px;
     position: absolute;
     top: 48%;
-    left: -20px;
+    left: -15px;
     background-color: #202B33;
     border-radius: 50%;
 }

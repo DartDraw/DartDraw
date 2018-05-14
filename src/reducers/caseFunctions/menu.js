@@ -1,6 +1,7 @@
 import jsondiffpatch from 'jsondiffpatch';
 import { groupShapes, ungroupShapes } from '../utilities/shapes';
 import { generateEps } from '../../eps/eps';
+import { convertColor } from './color.js';
 
 export function keyDown(stateCopy, action, root) {
     const { keyCode } = action.payload;
@@ -107,11 +108,8 @@ export function selectTool(stateCopy, action) {
 }
 
 export function selectButton(stateCopy, action) {
-    console.log(action.payload.button.button);
-    console.log(action.payload.button.color);
-    // console.log(action.payload.color);
     stateCopy.fillStrokeButton = action.payload.button.button;
-    stateCopy.color = action.payload.button.color;
+    stateCopy.color.rgba = action.payload.button.color;
     return stateCopy;
 }
 
@@ -155,19 +153,14 @@ export function exportClick(stateCopy, action) {
 
 // Color Functions
 
-function colorToString(colorObj) {
-    return "rgba(" + colorObj['r'] + "," + colorObj['g'] + "," + colorObj['b'] + "," + colorObj['a'] + ")";
-}
-
 export function selectColor(stateCopy, action) {
-    console.log("selecting a new color");
     if (stateCopy.fillStrokeButton === "fill") {
-        stateCopy.fillColor = action.payload.color;
+        stateCopy.fillColor.rgba = action.payload.color;
     } else {
-        stateCopy.strokeColor = action.payload.color;
+        stateCopy.strokeColor.rgba = action.payload.color;
     }
-    stateCopy.color = action.payload.color; // current color
-    console.log("current color: " + stateCopy.color);
+    stateCopy.color.rgba = action.payload.color; // current color
+    stateCopy.color.value = convertColor(stateCopy, action.payload.color);
     return stateCopy;
 }
 
@@ -179,13 +172,17 @@ export function selectPalette(stateCopy, action) {
 }
 
 export function addColor(stateCopy, action) {
-    console.log("added color");
-    stateCopy.palettes[stateCopy.currentPalette].colors.push(action.payload.color);
+    const color = {
+        type: stateCopy.colorMode,
+        rgba: action.payload.color,
+        value: convertColor(stateCopy, action.payload.color),
+        alpha: action.payload.color.a
+    };
+    stateCopy.palettes[stateCopy.currentPalette].colors.push(color);
     return stateCopy;
 }
 
 export function removeColor(stateCopy, action) {
-    console.log("removing color");
     const palette = stateCopy.palettes[stateCopy.currentPalette].colors;
     stateCopy.palettes[stateCopy.currentPalette].colors.map((color, index) => {
         if (JSON.stringify(color) === JSON.stringify(action.payload.color)) {
@@ -196,7 +193,6 @@ export function removeColor(stateCopy, action) {
 }
 
 export function addPalette(stateCopy, action) {
-    console.log(action);
     stateCopy.palettes[action.payload.paletteName] = {
         'colors': []
     };
@@ -216,40 +212,41 @@ export function removePalette(stateCopy, action) {
 }
 
 export function updateOpacity(stateCopy, action) {
-    // console.log(action.payload);
-    // console.log("we are updating opacity hopefully");
-    stateCopy.color.a = action.payload.opacity;
-    // console.log(stateCopy.color);
+    stateCopy.color.rgba.a = action.payload.opacity;
     if (stateCopy.fillStrokeButton === "fill") {
-        stateCopy.fillColor.a = action.payload.opacity;
+        stateCopy.fillColor.rgba.a = action.payload.opacity;
     } else {
-        stateCopy.strokeColor.a = action.payload.opacity;
-    }
-    return stateCopy;
-}
-
-export function colorUpdate(stateCopy, action) {
-    let colorPart = action.payload.colorPart;
-    let newValue = action.payload.newValue;
-    // action: colorPart and newValue
-    if (colorPart === "R") {
-        stateCopy.color.r = Number(newValue);
-    } else if (colorPart === "G") {
-        stateCopy.color.g = Number(newValue);
-    } else if (colorPart === "B") {
-        stateCopy.color.b = Number(newValue);
-    }
-
-    if (stateCopy.fillStrokeButton === "fill") {
-        stateCopy.fillColor = stateCopy.color;
-    } else {
-        stateCopy.strokeColor = stateCopy.color;
+        stateCopy.strokeColor.rgba.a = action.payload.opacity;
     }
     return stateCopy;
 }
 
 export function changeColorType(stateCopy, action) {
-    console.log("changing color in back");
     stateCopy.colorType = action.payload.colorType;
+
+    return stateCopy;
+}
+
+export function setPickerType(stateCopy, action) {
+    stateCopy.colorPickerType = action.payload.pickerType;
+    return stateCopy;
+}
+
+export function changeColorMode(stateCopy, action) {
+    stateCopy.docColorMode = action.payload.colorMode;
+    stateCopy.color.type = action.payload.colorMode;
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.fillColor.rgba));
+        stateCopy.fillColor.value = convertColor(stateCopy, stateCopy.fillColor.rgba);
+    } else if (stateCopy.fillStrokeButton === "stroke") {
+        stateCopy.strokeColor.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.strokeColor.rgba));
+        stateCopy.strokeColor.value = convertColor(stateCopy, stateCopy.strokeColor.rgba);
+    } else {
+        stateCopy.color.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.color.rgba));
+        stateCopy.color.value = convertColor(stateCopy, stateCopy.color.rgba);
+    }
     return stateCopy;
 }

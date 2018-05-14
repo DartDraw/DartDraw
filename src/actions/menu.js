@@ -27,7 +27,6 @@ export const FLIP_VERTICAL = 'FLIP_VERTICAL';
 export const TOGGLE_GRID_SNAPPING = 'TOGGLE_GRID_SNAPPING';
 export const SELECT_BUTTON = 'SELECT_BUTTON';
 export const UPDATE_OPACITY = 'UPDATE_OPACITY';
-export const COLOR_UPDATE = 'COLOR_UPDATE';
 export const TOGGLE_SHOW_GRID = 'TOGGLE_SHOW_GRID';
 export const TOGGLE_SHOW_RULER = 'TOGGLE_SHOW_RULER';
 export const TOGGLE_SHOW_SUBDIVISIONS = 'TOGGLE_SHOW_SUBDIVISIONS';
@@ -60,6 +59,8 @@ export const TOGGLE_CONTEXTUAL_MENU = 'TOGGLE_CONTEXTUAL_MENU';
 export const FILE_SAVE = 'FILE_SAVE';
 export const FILE_OPEN = 'FILE_OPEN';
 export const TOGGLE_SETTINGS_MODAL = 'TOGGLE_SETTINGS_MODAL';
+export const SET_PICKER_TYPE = 'SET_PICKER_TYPE';
+export const CHANGE_COLOR_MODE = 'CHANGE_COLOR_MODE';
 
 export function editShape(shape) {
     return { type: EDIT_SHAPE, payload: { shape } };
@@ -125,6 +126,10 @@ export function changeColorType(colorType) {
     return { type: CHANGE_COLOR_TYPE, payload: { colorType } };
 }
 
+export function changeColorMode(colorMode) {
+    return { type: CHANGE_COLOR_MODE, payload: { colorMode } };
+}
+
 export function undoClick() {
     return { type: UNDO_CLICK };
 }
@@ -137,16 +142,16 @@ export function setCustomZoom(customScale) {
     return { type: SET_CUSTOM_ZOOM, payload: { customScale } };
 }
 
+export function setPickerType(pickerType) {
+    return { type: SET_PICKER_TYPE, payload: { pickerType } };
+}
+
 export function alignmentClick(id) {
     return { type: ALIGNMENT_CHANGE, payload: { id } };
 }
 
 export function updateOpacity(opacity) {
     return { type: UPDATE_OPACITY, payload: { opacity } };
-}
-
-export function colorUpdate(colorPart, newValue) {
-    return {type: COLOR_UPDATE, payload: {colorPart, newValue}};
 }
 
 export function distributeClick(id) {

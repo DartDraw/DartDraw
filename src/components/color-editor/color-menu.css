@@ -6,6 +6,15 @@
   /* transition: all 2s linear; */
 }
 
+.color-editor {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.color-editor > * {
+  margin-bottom: 5px;
+}
+
 label {
   text-transform: none;
 }
@@ -75,11 +84,11 @@ label {
 #color-picker {
   padding: 5px;
     width: 200px;
-    height: 200px;
+    height: 230px;
     z-index: 2;
     background-color: #394B59;
     position: absolute;
-    top: 40px;
+    top: 80px;
     left: -210px;
     border-radius: 5px;
 
@@ -109,13 +118,15 @@ label {
 #basic-button-1 {
   background-color: transparent;
   width: auto;
-  color: #394B59;
+  color: #EBF1F5;
   border-radius: 2px;
   font-size: 0.5em;
+  height: 30px;
+  margin: 1px;
 }
 
 #basic-button-1:hover {
-  background-color: #EBF1F5;
+  background-color: #394B59;
 }
 
 #current-color-display {
@@ -154,15 +165,18 @@ label {
 
 
 input[type=text] {
-  background-color: #182026;
-  border: none;
-  border-bottom: 1px solid #5C7080;
-  outline: none;
-  color: #EBF1F5;
-  text-align: center;
-  font-weight: 100;
-  width:35px;
+  width: 80%;
+  padding-left: 5px;
+  background-color: #10161A;
+  border-color: #10161A;
+  border-radius: 4px;
+  border-width: 0;
+  font-size: 10px;
+  font-family: helvetica;
+  color: #CED9E0;
 }
+
+
 
 /* Input range styling from http://brennaobrien.com/blog/2014/05/style-input-type-range-in-every-browser.html */
 
@@ -174,6 +188,7 @@ input[type=range]:focus {
   width: 60px;
   margin: 2px;
   margin: 10px;
+  background-color: #202B33;
 }
 
 input[type=range] {
@@ -227,8 +242,9 @@ input[type=range]::-ms-thumb {
 #inline-apart {
   display: flex;
   flex-flow: row nowrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
+  height: auto;
 }
 
 #inline-apart h1 {
@@ -244,7 +260,7 @@ input[type=range]::-ms-thumb {
 
 .horz-div {
   height: 1px;
-  width: 330px;
+  width: 200px;
   background-color: #5C7080;
   align-self: center;
   margin: 5px;
@@ -253,7 +269,7 @@ input[type=range]::-ms-thumb {
 }
 
 #opacity-form {
-  margin-left: 10px;
+  /* margin-left: 10px; */
   margin-right: 20px;
   display: flex;
   flex-flow: row nowrap;
@@ -262,4 +278,10 @@ input[type=range]::-ms-thumb {
 
 h1 {
   font-size: 2em;
+}
+
+.swatches-picker {
+  background-color: red;
+  height: 5px;
+  width: 5px;
 }
