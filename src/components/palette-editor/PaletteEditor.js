@@ -103,7 +103,7 @@ class PaletteEditor extends Component {
         }
         const palette = colorList.map((color) =>
             <div id="color-square">
-                <ColorSquare color={color} colorClick={this.handleColorClick} />
+                <ColorSquare color={color.rgba} colorClick={this.handleColorClick} />
                 <p style={deleteColorStyle}>x</p>
             </div>
         );

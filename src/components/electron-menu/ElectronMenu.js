@@ -90,7 +90,7 @@ class ElectronMenu extends Component {
                     {label: 'Clear'},
                     {type: 'separator'},
                     {label: 'Duplicate', accelerator: 'CmdOrCtrl+D'},
-                    {accelerator: 'Backspace', click: () => { console.log("deleting a shape"); }},
+                    {label: 'Delete', accelerator: 'Backspace', click: () => { console.log("deleting a shape"); }},
                     {role: 'selectall'},
                     {type: 'separator'},
                     {label: 'Round Corners...'},
@@ -134,8 +134,13 @@ class ElectronMenu extends Component {
                     {label: 'Underline', accelerator: 'CmdOrCtrl+U'},
                     {label: 'Italicize', accelerator: 'CmdOrCtrl+I'},
                     {type: 'separator'},
-                    {label: 'Superscript', accelerator: 'CmdOrCtrl+Shift+Up'},
-                    {label: 'Subscript', accelerator: 'CmdOrCtrl+Shift+Down'}
+                    {label: 'Left', accelerator: 'CmdOrCtrl+['},
+                    {label: 'Right', accelerator: 'CmdOrCtrl+]'},
+                    {label: 'Center', accelerator: 'CmdOrCtrl+\\'},
+                    {label: 'Justified', accelerator: 'Shift+CmdOrCtrl+\\'},
+                    {type: 'separator'},
+                    {label: 'Superscript', accelerator: 'Ctrl+Plus'},
+                    {label: 'Subscript', accelerator: 'Ctrl+-'}
                 ]
             },
             {
@@ -163,7 +168,7 @@ class ElectronMenu extends Component {
             {
                 label: 'Settings',
                 submenu: [
-                    {label: 'Canvas Size',
+                    {label: 'Canvas Settings',
                         click: () => {
                             this.handleToggleSettingsModal();
                         }},

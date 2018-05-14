@@ -45,7 +45,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         currentRuler: ruler.current,
         currentKeys: currentKeys,
         hidden: !menuState.showContextualMenu,
-        fillColor: menuState.fillColor
+        fillColor: menuState.fillColor.rgba
     };
 };
 

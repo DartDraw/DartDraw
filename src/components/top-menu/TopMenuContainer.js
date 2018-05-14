@@ -20,8 +20,8 @@ import {
 const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         scale: drawingState.scale,
-        fillColor: menuState.fillColor,
-        strokeColor: menuState.strokeColor
+        fillColor: menuState.fillColor.rgba,
+        strokeColor: menuState.strokeColor.rgba
     };
 };
 

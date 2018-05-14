@@ -14,8 +14,10 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
         ry: rectangleRadius.y,
         width: 1,
         height: 1,
-        fill: formatColor(fill),
-        stroke: formatColor(stroke),
+        fill: formatColor(fill.rgba),
+        trueFill: fill,
+        stroke: formatColor(stroke.rgba),
+        trueStroke: stroke,
         strokeWidth: 0,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         info: {}

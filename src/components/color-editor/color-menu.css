@@ -174,14 +174,6 @@ input[type=text] {
   font-size: 10px;
   font-family: helvetica;
   color: #CED9E0;
-  /* background-color: #182026;
-  border: none;
-  border-bottom: 1px solid #5C7080;
-  outline: none;
-  color: #EBF1F5;
-  text-align: center;
-  font-weight: 100;
-  width:35px; */
 }
 
 
@@ -196,6 +188,7 @@ input[type=range]:focus {
   width: 60px;
   margin: 2px;
   margin: 10px;
+  background-color: #202B33;
 }
 
 input[type=range] {

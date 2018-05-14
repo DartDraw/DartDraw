@@ -69,7 +69,6 @@ class Modal extends Component {
                         <Select label="Document Color Mode:" value={colorMode} onChange={this.handleColorModeChange} className="modal-select" >
                             <option value="RGB">RGB</option>
                             <option value="CMYK">CMYK</option>
-                            <option value="HEX">HEX</option>
                             <option value="HSL">HSL</option>
                         </Select>
                     </div>

@@ -135,7 +135,7 @@ let windows = [];
 
 function createWindow() {
     // Create the browser window.
-    let win = new BrowserWindow({width: 1200, height: 1000});
+    let win = new BrowserWindow({width: 1200, height: 1000, minWidth: 500, minHeight: 300});
     windows.push(win);
     win.focus();
 

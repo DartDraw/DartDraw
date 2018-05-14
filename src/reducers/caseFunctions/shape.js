@@ -108,7 +108,8 @@ export function editText(stateCopy, action, root) {
 
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
-
+    console.log("you clicked on a shape");
+    console.log(stateCopy.shapes);
     switch (root.menuState.toolType) {
         case "selectTool":
         case "rotateTool":

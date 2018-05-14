@@ -13,8 +13,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         selectedShape: shapes.byId[selected[0]],
         scale: drawingState.scale,
-        fillColor: menuState.fillColor,
-        currentColor: menuState.color,
+        fillColor: menuState.fillColor.rgba,
+        currentColor: menuState.fillColor.rgba,
         palettes: menuState.palettes,
         currentPalette: menuState.currentPalette,
         colorType: menuState.colorType,

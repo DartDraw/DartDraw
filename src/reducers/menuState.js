@@ -4,26 +4,28 @@ import * as color from './caseFunctions/color';
 import * as grid from './caseFunctions/grid';
 import * as rulers from './caseFunctions/rulers';
 import { deepCopy } from './utilities/object';
+import { defaultFill, defaultStroke } from '../constants';
+import { PRIMARY, DEFAULT, TEST } from '../defaultPalettes';
 
 const initialState = {
-    c_color: {
+    color: {
         type: 'RGB',
-        value: [33, 15, 243],
-        alpha: 1
+        rgba: {r: 10, g: 10, b: 100, a: defaultFill.alpha},
+        value: [defaultFill.value[0], defaultFill.value[1], defaultFill.value[2]],
+        alpha: defaultFill.alpha
     },
-    c_fillColor: {
+    fillColor: {
         type: 'RGB',
-        value: [125, 125, 100],
-        alpha: 1
+        rgba: {r: defaultFill.value[0], g: defaultFill.value[1], b: defaultFill.value[2], a: defaultFill.alpha},
+        value: [defaultFill.value[0], defaultFill.value[1], defaultFill.value[2]],
+        alpha: defaultFill.alpha
     },
-    c_strokeColor: {
+    strokeColor: {
         type: 'RGB',
-        value: [10, 10, 15],
-        alpha: 1
+        rgba: {r: defaultStroke.value[0], g: defaultStroke.value[1], b: defaultStroke.value[2], a: defaultStroke.alpha},
+        value: [defaultStroke.value[0], defaultStroke.value[1], defaultStroke.value[2]],
+        alpha: defaultStroke.alpha
     },
-    color: {r: 33, g: 15, b: 243, a: 1},
-    fillColor: {r: 33, g: 15, b: 243, a: 1},
-    strokeColor: {r: 200, g: 0, b: 200, a: 1},
     toolType: '',
     fillStrokeButton: 'fill',
     currentKeys: {},
@@ -32,18 +34,18 @@ const initialState = {
     align: ['top', 'left'],
     centeredControl: false,
     rectangleRadius: {x: 50, y: 50},
-    currentPalette: 'Default',
+    currentPalette: 'Primary',
     colorType: 'RGB',
     docColorMode: 'RGB',
     palettes: {
         'Default': {
-            colors: [{r: 255, g: 255, b: 255, a: 1}, {r: 244, g: 67, b: 54, a: 1}, {r: 233, g: 30, b: 99, a: 1},
-                {r: 103, g: 58, b: 183, a: 1}, {r: 33, g: 150, b: 243, a: 1}, {r: 76, g: 175, b: 80, a: 1},
-                {r: 255, g: 235, b: 59, a: 1}, {r: 255, g: 152, b: 0, a: 1}, {r: 121, g: 85, b: 72, a: 1},
-                {r: 0, g: 0, b: 0, a: 1}]
+            colors: DEFAULT
         },
         'Primary': {
-            colors: [{r: 255, g: 0, b: 0, a: 1}, {r: 0, g: 0, b: 255, a: 1}, {r: 255, g: 255, b: 0, a: 1}]
+            colors: PRIMARY
+        },
+        'Test': {
+            colors: TEST
         },
         'Grid': { // {r: , g: , b: , a:1}
             colors: [{r: 0, g: 0, b: 0, a: 1}, {r: 51, g: 51, b: 51, a: 1}, {r: 102, g: 102, b: 102, a: 1}, {r: 140, g: 140, b: 140, a: 1}, {r: 179, g: 179, b: 179, a: 1}, {r: 204, g: 204, b: 204, a: 1}, {r: 255, g: 255, b: 255, a: 1}]

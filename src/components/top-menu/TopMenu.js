@@ -103,8 +103,6 @@ class TopMenu extends Component {
     }
 
     handleButtonSelect(color, button) {
-        // console.log(color);
-        // console.log(button);
         this.props.onButtonSelect({color, button});
     }
 

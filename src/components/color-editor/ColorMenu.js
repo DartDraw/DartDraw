@@ -72,8 +72,6 @@ class ColorMenu extends Component {
     }
 
     handleColorChange(colorInfo) {
-        console.log("what is this color info stuff");
-        console.log(colorInfo);
         this.props.onSelectColor(colorInfo.rgb);
     }
 
@@ -98,6 +96,7 @@ class ColorMenu extends Component {
     }
 
     toggleColorEditor() {
+        // `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${currentColor.a} )`
         this.setState({showColorEditor: !this.state.showColorEditor});
     }
 

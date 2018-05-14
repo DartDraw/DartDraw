@@ -19,7 +19,6 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
             selected.push(shapeId);
         }
     }
-
     return selected;
 }
 
