@@ -6,8 +6,8 @@ import DDColorPicker from './DDColorPicker';
 import {ColorInput, ColorPicker} from 'react-colors';
 import { Select } from '../ui';
 import { SwatchesPicker, CompactPicker } from 'react-color';
-import ColorList from './ColorList';
-import { GRID_PALETTE } from '../../constants';
+// import ColorList from './ColorList';
+// import { PRIMARY } from '../../defaultPalettes';
 
 class ColorMenu extends Component {
     static propTypes = {
@@ -88,11 +88,7 @@ class ColorMenu extends Component {
     }
 
     handlePickerRender() {
-        if (this.props.pickerType === 'Gradient') {
-            return <DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} />;
-        } else {
-            return <ColorList colorList={GRID_PALETTE} />;
-        }
+        return <DDColorPicker onChangeComplete={this.handleColorChange} color={this.props.currentColor} />;
     }
 
     toggleColorEditor() {
