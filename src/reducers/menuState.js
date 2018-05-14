@@ -34,7 +34,7 @@ const initialState = {
     align: ['top', 'left'],
     centeredControl: false,
     rectangleRadius: {x: 50, y: 50},
-    currentPalette: 'Primary',
+    currentPalette: 'Default',
     colorType: 'RGB',
     docColorMode: 'RGB',
     palettes: {
@@ -46,9 +46,6 @@ const initialState = {
         },
         'Test': {
             colors: TEST
-        },
-        'Grid': { // {r: , g: , b: , a:1}
-            colors: [{r: 0, g: 0, b: 0, a: 1}, {r: 51, g: 51, b: 51, a: 1}, {r: 102, g: 102, b: 102, a: 1}, {r: 140, g: 140, b: 140, a: 1}, {r: 179, g: 179, b: 179, a: 1}, {r: 204, g: 204, b: 204, a: 1}, {r: 255, g: 255, b: 255, a: 1}]
         }
     },
     gridSnapping: false,
