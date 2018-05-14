@@ -40,6 +40,8 @@ class ElectronMenu extends Component {
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
         this.handleSelectRotateTool = this.handleSelectRotateTool.bind(this);
+        this.handleFileSave = this.handleFileSave.bind(this);
+        this.handleFileOpen = this.handleFileOpen.bind(this);
     }
 
     handleZoomIn() {
@@ -52,6 +54,14 @@ class ElectronMenu extends Component {
 
     handleSelectRotateTool() {
         this.props.onToolSelect("rotateTool");
+    }
+
+    handleFileSave(event) {
+        this.props.onFileSave(event);
+    }
+
+    handleFileOpen(data) {
+        this.props.onFileOpen(data);
     }
 
     callMenuFunction(fn) {
@@ -171,10 +181,6 @@ class ElectronMenu extends Component {
                     {label: 'Canvas Settings',
                         click: () => {
                             this.handleToggleSettingsModal();
-                        }},
-                    {label: 'Color Profile',
-                        click: () => {
-                            this.handleToggleSettingsModal();
                         }}
                 ]
             },
@@ -199,9 +205,6 @@ class ElectronMenu extends Component {
         const menu = Menu.buildFromTemplate(template);
         let currentMenu = remote.Menu.getApplicationMenu;
         console.log(currentMenu);
-        // console.log(currentMenu.remote.append(menu));
-        // remote.Menu.getApplicationMenu().append(menu);
-        // Menu.append(menu);
         Menu.setApplicationMenu(menu);
 
         // show whole menu on right click
@@ -230,24 +233,8 @@ class ElectronMenu extends Component {
     }
 
     render() {
-        let settingsModal = null;
-        let canvasSettings =
-            <div>
-                <label>Width:</label><input />
-                <label>Height:</label><input />
-                <input type="submit" value="Submit" id="basic-button" />
-                <button id="basic-button" onClick={this.handleToggleSettingsModal}>Cancel</button>
-            </div>;
-        if (this.props.settingsModalVisible) {
-            settingsModal = <div>
-                <Modal formContent={canvasSettings} formValues={{canvasWidth: 50, canvasHeight: 50}} modalName="Canvas Settings" /></div>;
-        } else {
-            settingsModal = <div />;
-        }
         return (
-            <div>
-                {settingsModal}
-            </div>
+            <div />
         );
     }
 }
