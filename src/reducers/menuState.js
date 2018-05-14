@@ -10,7 +10,7 @@ import { PRIMARY, DEFAULT, TEST } from '../defaultPalettes';
 const initialState = {
     color: {
         type: 'RGB',
-        rgba: {r: 10, g: 10, b: 100, a: defaultFill.alpha},
+        rgba: {r: defaultFill.value[0], g: defaultFill.value[1], b: defaultFill.value[2], a: defaultFill.alpha},
         value: [defaultFill.value[0], defaultFill.value[1], defaultFill.value[2]],
         alpha: defaultFill.alpha
     },
