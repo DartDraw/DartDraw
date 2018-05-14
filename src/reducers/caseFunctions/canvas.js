@@ -5,6 +5,7 @@ import { selectShape, selectShapes, updateSelectionBoxes, updateSelectionBoxesCo
 import { transformPoint } from '../utilities/matrix';
 import { addMarqueeBox, resizeMarqueeBox } from '../utilities/marquee';
 import { pan, zoomToMarqueeBox } from '../caseFunctions/zoom';
+import { updateMouseTrackers } from '../utilities/rulers';
 
 export function dragStart(stateCopy, action, root) {
     const prevEditState = stateCopy.editInProgress;
@@ -78,7 +79,7 @@ export function dragStart(stateCopy, action, root) {
             }
             break;
         case "lineTool":
-            stateCopy.shapes = addLine(stateCopy.shapes, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
+            stateCopy.shapes = addLine(stateCopy.shapes, stateCopy.shapes.arrows, action, root.menuState.strokeColor, stateCopy.panX, stateCopy.panY,
                 stateCopy.scale, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
             shapeIds = stateCopy.shapes.allIds;
             addedShapeId = shapeIds[shapeIds.length - 1];
@@ -263,6 +264,8 @@ export function handleBoundingBoxUpdate(stateCopy, action, root) {
 
 export function mouseMove(stateCopy, action, root) {
     const { x, y } = action.payload;
+
+    stateCopy.ruler.mouseTrackers = updateMouseTrackers(x, y, stateCopy.scale, stateCopy.panX, stateCopy.panY, stateCopy.ruler.width, stateCopy.canvasWidth, stateCopy.canvasHeight, root.menuState.gridSnapping, stateCopy.gridSnapInterval);
 
     stateCopy.mouseCoords.x = x;
     stateCopy.mouseCoords.y = y;

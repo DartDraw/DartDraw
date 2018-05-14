@@ -203,8 +203,6 @@ class ElectronMenu extends Component {
         ];
 
         const menu = Menu.buildFromTemplate(template);
-        let currentMenu = remote.Menu.getApplicationMenu;
-        console.log(currentMenu);
         Menu.setApplicationMenu(menu);
 
         // show whole menu on right click
@@ -219,7 +217,6 @@ class ElectronMenu extends Component {
     }
 
     openDialog() {
-        console.log("this is a test");
         const menu = new Menu();
         menu.append(new MenuItem({label: 'MenuItem1', click() { console.log('item 1 clicked'); }}));
         menu.append(new MenuItem({type: 'separator'}));
@@ -229,7 +226,6 @@ class ElectronMenu extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-        console.log(e.target.value);
     }
 
     render() {

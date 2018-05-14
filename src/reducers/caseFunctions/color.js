@@ -13,7 +13,6 @@ function convertRGBtoRGB(colorObj) {
 
 function convertRGBtoHSL(colorObj) {
     // return
-    console.log("convert rgb to hsl");
     let {r, g, b} = colorObj;
     let max, min;
     r = r / 255;
@@ -39,9 +38,7 @@ function convertRGBtoHSL(colorObj) {
 
         h /= 6;
     }
-    // console.log([h, s, l]);
     return [ h, s, l ];
-    // return 0;
 }
 
 // rgb to cmyk conversion from: https://www.rapidtables.com/convert/color/rgb-to-cmyk.html
@@ -63,16 +60,12 @@ function convertRGBtoCMYK(colorObj) {
     m = (1 - gPrime - k) / (1 - k);
     y = (1 - bPrime - k) / (1 - k);
 
-    console.log("convert rgb to cmyk");
-    console.log([c.toFixed(2), m.toFixed(2), y.toFixed(2), k.toFixed(2)]);
-
     return [c.toFixed(2), m.toFixed(2), y.toFixed(2), k.toFixed(2)];
 }
 
 // decimal to HEX conversion from: https://gist.github.com/agirorn/0e740d012b620968225de58859ccef5c
 function convertRGBtoHEX(colorObj) {
     // return
-    console.log("convert rgb to hex");
     let r, g, b, rHex, gHex, bHex, hex;
     r = colorObj.r;
     g = colorObj.g;
@@ -83,7 +76,6 @@ function convertRGBtoHEX(colorObj) {
     bHex = (b + 0x10000).toString(16).substr(-2).toUpperCase();
 
     hex = "#" + rHex + gHex + bHex;
-    console.log(hex);
     return hex;
 }
 

@@ -19,6 +19,7 @@ class Ellipse extends Component {
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number,
         fill: PropTypes.string,
+        fillOpacity: PropTypes.number,
         transform: PropTypes.arrayOf(PropTypes.shape({
             command: PropTypes.string,
             parameters: PropTypes.arrayOf(PropTypes.number)
@@ -69,6 +70,7 @@ class Ellipse extends Component {
             stroke,
             strokeWidth,
             fill,
+            fillOpacity,
             transform,
             propagateEvents
         } = this.props;
@@ -82,6 +84,7 @@ class Ellipse extends Component {
             stroke,
             strokeWidth,
             fill,
+            fillOpacity,
             transform: formatTransform(transform),
             vectorEffect: "non-scaling-stroke"
         };

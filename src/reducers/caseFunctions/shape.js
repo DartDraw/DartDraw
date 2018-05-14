@@ -29,7 +29,8 @@ export function editText(stateCopy, action, root) {
         textDecoration: baseShape.textDecoration,
         lineHeight: baseShape.lineHeight,
         fill: baseShape.fill,
-        stroke: baseShape.stroke
+        stroke: baseShape.stroke,
+        verticalAlign: baseShape.verticalAlign
     };
     const newStyle = {
         fontFamily: shape.fontFamily,
@@ -40,7 +41,8 @@ export function editText(stateCopy, action, root) {
         textDecoration: shape.textDecoration,
         lineHeight: shape.lineHeight,
         fill: shape.fill,
-        stroke: shape.stroke
+        stroke: shape.stroke,
+        verticalAlign: shape.verticalAlign
     };
     // Remove undefined style keys:
     Object.keys(newStyle).forEach((key) => (newStyle[key] === undefined) && delete newStyle[key]);
@@ -108,8 +110,6 @@ export function editText(stateCopy, action, root) {
 
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
-    console.log("you clicked on a shape");
-    console.log(stateCopy.shapes);
     switch (root.menuState.toolType) {
         case "selectTool":
         case "rotateTool":
@@ -493,7 +493,7 @@ export function keyDown(stateCopy, action, root) {
             if (stateCopy.mode === 'reshape') {
                 stateCopy.shape = removePoint(stateCopy.shapes, stateCopy.selected, stateCopy.selectedHandle);
             } else {
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy = deleteShapes(stateCopy, stateCopy.selected);
                 stateCopy.selected = [];
             }
             break;
@@ -590,7 +590,7 @@ export function keyDown(stateCopy, action, root) {
         case 88: // cut
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy = deleteShapes(stateCopy, stateCopy.selected);
                 stateCopy.selected = [];
             }
             break;

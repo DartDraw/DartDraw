@@ -14,11 +14,7 @@ class SelectionLayer extends Component {
         onControlDragStart: PropTypes.func,
         onControlDrag: PropTypes.func,
         onControlDragStop: PropTypes.func,
-        onAddPointDragStop: PropTypes.func,
-        onTextHandleDragStart: PropTypes.func,
-        onTextHandleDrag: PropTypes.func,
-        onTextHandleDragStop: PropTypes.func,
-        onTextHandleClick: PropTypes.func
+        onAddPointDragStop: PropTypes.func
     };
 
     constructor(props) {
@@ -31,10 +27,6 @@ class SelectionLayer extends Component {
         this.handleControlDrag = this.handleControlDrag.bind(this);
         this.handleControlDragStop = this.handleControlDragStop.bind(this);
         this.handleAddPointDragStop = this.handleAddPointDragStop.bind(this);
-        this.handleTextHandleDragStart = this.handleTextHandleDragStart.bind(this);
-        this.handleTextHandleDrag = this.handleTextHandleDrag.bind(this);
-        this.handleTextHandleDragStop = this.handleTextHandleDragStop.bind(this);
-        this.handleTextHandleClick = this.handleTextHandleClick.bind(this);
     }
 
     handleHandleDragStart(shapeId, handleIndex, draggableData) {
@@ -63,22 +55,6 @@ class SelectionLayer extends Component {
 
     handleAddPointDragStop(shapeId, handleIndex, draggableData) {
         this.props.onAddPointDragStop(shapeId, handleIndex, draggableData);
-    }
-
-    handleTextHandleDragStart(shapeId, draggableData) {
-        this.props.onTextHandleDragStart(shapeId, draggableData);
-    }
-
-    handleTextHandleDrag(shapeId, draggableData) {
-        this.props.onTextHandleDrag(shapeId, draggableData);
-    }
-
-    handleTextHandleDragStop(shapeId, draggableData) {
-        this.props.onTextHandleDragStop(shapeId, draggableData);
-    }
-
-    handleTextHandleClick(shapeId, event) {
-        this.props.onTextHandleClick(shapeId, event);
     }
 
     renderHandles(selectionBox) {
@@ -130,7 +106,8 @@ class SelectionLayer extends Component {
                     shapeId={selectionBox.shapeId}
                     index={index}
                     points={line.points}
-                    arrowLength={0}
+                    arrowHeadLength={0}
+                    arrowTailLength={0}
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     pointerEvents={"stroke"}
@@ -155,7 +132,8 @@ class SelectionLayer extends Component {
                     index={index}
                     points={line.points}
                     controlPoints={line.controlPoints}
-                    arrowLength={0}
+                    arrowHeadLength={0}
+                    arrowTailLength={0}
                     strokeWidth={line.stroke}
                     stroke={"transparent"}
                     fill={"none"}
@@ -210,37 +188,14 @@ class SelectionLayer extends Component {
                     shapeId={selectionBox.shapeId}
                     index={index}
                     points={[control.x1, control.y1, control.x2, control.y2]}
-                    arrowLength={0}
+                    arrowHeadLength={0}
+                    arrowTailLength={0}
                     strokeWidth={2}
                     stroke={"black"}
                     propagateEvents={propagateEvents}
                 />
             );
         });
-    }
-
-    renderTextHandle(selectionBox) {
-        const { propagateEvents, scale } = this.props;
-
-        if (selectionBox.shapeType === 'text') {
-            return (
-                <Rectangle
-                    id={selectionBox.shapeId}
-                    x={selectionBox.x + selectionBox.width / 2 - 7 / scale}
-                    y={selectionBox.y - 15 / scale}
-                    width={14 / scale}
-                    height={14 / scale}
-                    transform={selectionBox.transform}
-                    onDragStart={this.handleTextHandleDragStart}
-                    onDrag={this.handleTextHandleDrag}
-                    onDragStop={this.handleTextHandleDragStop}
-                    onClick={this.handleTextHandleClick}
-                    propagateEvents={propagateEvents}
-                />
-            );
-        } else {
-            return null;
-        }
     }
 
     renderSelectionBoxes() {
@@ -265,7 +220,6 @@ class SelectionLayer extends Component {
                     {this.renderControlLines(selectionBox)}
                     {this.renderHandles(selectionBox)}
                     {this.renderControls(selectionBox)}
-                    {this.renderTextHandle(selectionBox)}
                 </g>
             );
         });

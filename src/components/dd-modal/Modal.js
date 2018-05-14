@@ -30,8 +30,6 @@ class Modal extends Component {
 
     handleFormSubmit(e) {
         e.preventDefault();
-        // onSubmitRulerGrid (pass object)
-        console.log(e.target.value);
     }
 
     handleToggleSettingsModal() {

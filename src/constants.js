@@ -10,48 +10,63 @@ export var DartColor = function(colorType, rgba, value, alpha) {
 export const CONTEXTUAL_MENU_WIDTH = 220;
 export const SCROLL_BAR_WIDTH = 18;
 
+// color
 export var defaultFill = new DartColor("rgb", {r: 200, g: 200, b: 200, a: 1}, [200, 200, 200], 1);
 export var defaultStroke = new DartColor("rgb", {r: 100, g: 100, b: 100, a: 1}, [100, 100, 100], 1);
 
-export const GRID_PALETTE = [{r: 0, g: 0, b: 0, a: 1}, {r: 51, g: 51, b: 51, a: 1}, {r: 102, g: 102, b: 102, a: 1}, {r: 140, g: 140, b: 140, a: 1}, {r: 179, g: 179, b: 179, a: 1}, {r: 204, g: 204, b: 204, a: 1}, {r: 255, g: 255, b: 255, a: 1}, {r: 153, g: 0, b: 0, a: 1},
-    {r: 204, g: 0, b: 0, a: 1},
-    {r: 255, g: 0, b: 0, a: 1},
-    {r: 255, g: 51, b: 51, a: 1},
-    {r: 255, g: 102, b: 102, a: 1},
-    {r: 255, g: 153, b: 153, a: 1},
-    {r: 255, g: 204, b: 204, a: 1},
-    {r: 153, g: 61, b: 0, a: 1},
-    {r: 204, g: 82, b: 0, a: 1},
-    {r: 255, g: 102, b: 0, a: 1},
-    {r: 255, g: 133, b: 51, a: 1},
-    {r: 255, g: 163, b: 102, a: 1},
-    {r: 255, g: 194, b: 153, a: 1},
-    {r: 255, g: 224, b: 204, a: 1},
-    {r: 153, g: 153, b: 0, a: 1},
-    {r: 204, g: 204, b: 0, a: 1},
-    {r: 255, g: 255, b: 0, a: 1},
-    {r: 255, g: 255, b: 51, a: 1},
-    {r: 255, g: 255, b: 102, a: 1},
-    {r: 255, g: 255, b: 153, a: 1},
-    {r: 255, g: 255, b: 204, a: 1},
-    {r: 0, g: 153, b: 38, a: 1},
-    {r: 0, g: 204, b: 51, a: 1},
-    {r: 0, g: 255, b: 64, a: 1},
-    {r: 51, g: 255, b: 102, a: 1},
-    {r: 102, g: 255, b: 140, a: 1},
-    {r: 153, g: 255, b: 179, a: 1},
-    {r: 204, g: 255, b: 217, a: 1},
+// menu
+export const MENU_WIDTH = 45;
 
-    {g: 0, b: 153, r: 38, a: 1},
-    {g: 0, b: 204, r: 51, a: 1},
-    {g: 0, b: 255, r: 64, a: 1},
-    {g: 51, b: 255, r: 102, a: 1},
-    {g: 102, b: 255, r: 140, a: 1},
-    {g: 153, b: 255, r: 179, a: 1},
-    {g: 204, b: 255, r: 217, a: 1} ];
+// zoom
+export const MAX_ZOOM = 32;
+export const MIN_ZOOM = 0.1;
 
-// default palette:
-// [{r: 255, g: 255, b: 255, a: 1}, {r: 244, g: 67, b: 54, a: 1}, {r: 233, g: 30, b: 99, a: 1},
-//     {r: 103, g: 58, b: 183, a: 1}, {r: 33, g: 150, b: 243, a: 1}, {r: 76, g: 175, b: 80, a: 1},
-//     {r: 255, g: 235, b: 59, a: 1}, {r: 255, g: 152, b: 0, a: 1}, {r: 121, g: 85, b: 72, a: 1},
-//     {r: 0, g: 0, b: 0, a: 1}]
+// arrow
+export const ARROW_STROKE_WIDTH = 5;
+
+export const ARROW_GUI_WIDTH = 174;
+export const ARROW_GUI_HEIGHT = 150;
+export const ARROW_GUI_BUFFER = 10;
+
+export const TRIANGLE_HEIGHT = 40;
+export const TRIANGLE_LENGTH = 60;
+export const BARBED_HEIGHT = 40;
+export const BARBED_LENGTH = 60;
+export const ELLIPSE_RX = 15;
+export const ELLIPSE_RY = 15;
+export const RECTANGLE_HEIGHT = 30;
+export const RECTANGLE_LENGTH = 30;
+export const POLYLINE_HEIGHT = 40;
+export const POLYLINE_LENGTH = 60;
+
+export const TRIANGLE_POINTS = [
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - TRIANGLE_LENGTH,
+    (ARROW_GUI_HEIGHT - TRIANGLE_HEIGHT) / 2,
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER,
+    ARROW_GUI_HEIGHT / 2,
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - TRIANGLE_LENGTH,
+    (ARROW_GUI_HEIGHT + TRIANGLE_HEIGHT) / 2
+];
+export const BARBED_POINTS = [
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - (1.25 * BARBED_LENGTH),
+    (ARROW_GUI_HEIGHT - BARBED_HEIGHT) / 2,
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER,
+    ARROW_GUI_HEIGHT / 2,
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - (1.25 * BARBED_LENGTH),
+    (ARROW_GUI_HEIGHT + BARBED_HEIGHT) / 2,
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - BARBED_LENGTH,
+    ARROW_GUI_HEIGHT / 2
+];
+export const ELLIPSE_POINTS = [
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - ELLIPSE_RX,
+    ARROW_GUI_HEIGHT / 2,
+    ELLIPSE_RX,
+    ELLIPSE_RY
+];
+export const RECTANGLE_POINTS = [
+    ARROW_GUI_WIDTH - ARROW_GUI_BUFFER - RECTANGLE_LENGTH,
+    (ARROW_GUI_HEIGHT - RECTANGLE_HEIGHT) / 2,
+    RECTANGLE_LENGTH,
+    RECTANGLE_HEIGHT
+];
+export const POLYLINE_POINTS = TRIANGLE_POINTS;

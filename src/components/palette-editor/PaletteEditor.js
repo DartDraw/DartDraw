@@ -83,7 +83,6 @@ class PaletteEditor extends Component {
         const { dialog } = window.require('electron').remote;
         // cancel = 1, yes = 0
         if (dialog.showMessageBox({options: ["warning"], message: 'Are you sure you want to delete the current palette?', buttons: ['Yes', 'Cancel']}) === 0) {
-            console.log("deleting palette");
             this.props.onDeletePalette(this.props.currentPalette);
         }
     }

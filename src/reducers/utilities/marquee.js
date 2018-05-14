@@ -12,7 +12,7 @@ export function addMarqueeBox(action, panX, panY, scale) {
         height: 0,
         stroke: 'rgba(102, 204, 255, 0.7)',
         strokeWidth: 2,
-        strokeDasharray: 5,
+        strokeDasharray: "5",
         fill: 'none'
     };
 

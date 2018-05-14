@@ -110,8 +110,6 @@ export function selectTool(stateCopy, action) {
 export function selectButton(stateCopy, action) {
     stateCopy.fillStrokeButton = action.payload.button.button;
     stateCopy.color.rgba = action.payload.button.color;
-    console.log("selectButton");
-    console.log(action);
     return stateCopy;
 }
 
@@ -174,7 +172,6 @@ export function selectPalette(stateCopy, action) {
 }
 
 export function addColor(stateCopy, action) {
-    console.log("added color");
     const color = {
         type: stateCopy.colorMode,
         rgba: action.payload.color,
@@ -215,16 +212,11 @@ export function removePalette(stateCopy, action) {
 }
 
 export function updateOpacity(stateCopy, action) {
-    // console.log(action.payload);
-    // console.log("we are updating opacity hopefully");
     stateCopy.color.rgba.a = action.payload.opacity;
-    // console.log(stateCopy.color);
     if (stateCopy.fillStrokeButton === "fill") {
         stateCopy.fillColor.rgba.a = action.payload.opacity;
-        // stateCopy.c_fillColor.alpha = action.payload.opacity;
     } else {
         stateCopy.strokeColor.rgba.a = action.payload.opacity;
-        // stateCopy.c_strokeColor.alpha = action.payload.opacity;
     }
     return stateCopy;
 }
@@ -243,7 +235,6 @@ export function setPickerType(stateCopy, action) {
 export function changeColorMode(stateCopy, action) {
     stateCopy.docColorMode = action.payload.colorMode;
     stateCopy.color.type = action.payload.colorMode;
-    // stateCopy.color.value = convertColor(stateCopy, stateCopy.color.rgba);
     if (stateCopy.fillStrokeButton === "fill") {
         stateCopy.fillColor.type = action.payload.colorMode;
         console.log(convertColor(stateCopy, stateCopy.fillColor.rgba));
@@ -254,6 +245,7 @@ export function changeColorMode(stateCopy, action) {
         stateCopy.strokeColor.value = convertColor(stateCopy, stateCopy.strokeColor.rgba);
     } else {
         stateCopy.color.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.color.rgba));
         stateCopy.color.value = convertColor(stateCopy, stateCopy.color.rgba);
     }
     return stateCopy;

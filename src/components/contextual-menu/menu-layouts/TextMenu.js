@@ -23,6 +23,8 @@ class TextMenu extends Component {
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleXChange = this.handleXChange.bind(this);
         this.handleYChange = this.handleYChange.bind(this);
+        this.handleSubscriptToggle = this.handleSubscriptToggle.bind(this);
+        this.handleSuperscriptToggle = this.handleSuperscriptToggle.bind(this);
     }
 
     handleFontFamilyChange(value) {
@@ -75,7 +77,28 @@ class TextMenu extends Component {
         onEdit && onEdit({ ...text, y: value });
     }
 
+    handleSubscriptToggle() {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({
+            id: text.id,
+            fontSize: Math.round(text.fontSize * 0.62).toString(),
+            verticalAlign: 'sub'
+        });
+    }
+
+    handleSuperscriptToggle() {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({
+            id: text.id,
+            fontSize: Math.round(text.fontSize * 0.62).toString(),
+            verticalAlign: 'super'
+        });
+    }
+
     render() {
+        const { text: { selectionRange } } = this.props;
+        const noSelection = selectionRange[0] === selectionRange[1];
+
         return (
             <div className="text-menu menu">
                 <div className="menu-title">TEXT SETTINGS</div>
@@ -136,6 +159,8 @@ class TextMenu extends Component {
                     <Input value={this.props.text.width} label="Width" style={{ width: 49, marginRight: 11 }} onChange={this.handleWidthChange} />
                     <Input value={this.props.text.height} label="Height" style={{ width: 49 }} onChange={this.handleHeightChange} />
                 </div>
+                <div className="button" onClick={noSelection ? () => {} : this.handleSubscriptToggle} />
+                <div className="button" onClick={noSelection ? () => {} : this.handleSuperscriptToggle} />
             </div>
         );
     }

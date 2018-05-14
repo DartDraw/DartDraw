@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import Canvas from './Canvas';
+import { ARROW_STROKE_WIDTH } from '../../constants';
 import {
     canvasDragStart,
     canvasDrag,
@@ -15,10 +16,11 @@ import {
     handleDragStart,
     handleDrag,
     handleDragStop,
+    textInputChange,
     scroll,
     updateBoundingBoxes
 } from './../../actions/canvas';
-import { setRulerGrid } from './../../actions/menu';
+import { setRulerGrid, mouseMove } from './../../actions/menu';
 
 function formatShape(shape, shapes, scale) {
     const formattedShape = Object.assign({}, shape);
@@ -27,9 +29,25 @@ function formatShape(shape, shapes, scale) {
             return formatShape(shapes.byId[shapeId], shapes, scale);
         });
     } else {
+        if (formattedShape.type === 'line') {
+            formattedShape.arrowHeadLength = formattedShape.arrowHeadLength * formattedShape.strokeWidth / ARROW_STROKE_WIDTH;
+            formattedShape.arrowTailLength = formattedShape.arrowTailLength * formattedShape.strokeWidth / ARROW_STROKE_WIDTH;
+        }
+
         formattedShape.strokeWidth = formattedShape.strokeWidth * scale;
     }
+
     return formattedShape;
+}
+
+function formatArrow(arrow, shapes, scale) {
+    const line = shapes.byId[arrow.lineId];
+    const strokeProps = {
+        stroke: line.stroke,
+        strokeWidth: line.strokeWidth * scale,
+        strokeDasharray: line.strokeDasharray
+    };
+    return Object.assign({}, arrow, strokeProps);
 }
 
 const mapStateToProps = ({ drawingState, menuState }) => {
@@ -39,8 +57,8 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         return formatShape(shapes.byId[id], shapes, scale);
     });
 
-    const arrowsArray = shapes.allArrows.map((id) => {
-        return formatShape(shapes.byId[shapes.byArrowId[id].id], shapes, scale);
+    const arrowsArray = shapes.arrows.allIds.map((id) => {
+        return formatArrow(shapes.arrows.byId[id], shapes, scale);
     });
 
     const propagateEventTools = [
@@ -64,6 +82,7 @@ const mapStateToProps = ({ drawingState, menuState }) => {
         canvasHeight: canvasHeight * scale,
         canvasWidth: canvasWidth * scale,
         viewBox: [panX, panY, canvasWidth, canvasHeight],
+        scale,
         propagateEvents: propagateEventTools.indexOf(toolType) > -1
     };
 };
@@ -112,6 +131,9 @@ const mapDispatchToProps = (dispatch) => {
         onHandleDragStop: (shapeId, handleIndex, draggableData) => {
             dispatch(handleDragStop(shapeId, handleIndex, draggableData));
         },
+        onTextInputChange: (textId, value, focused, selectionRange) => {
+            dispatch(textInputChange(textId, value, focused, selectionRange));
+        },
         onScroll: (deltaX, deltaY) => {
             dispatch(scroll(deltaX, deltaY));
         },
@@ -120,6 +142,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         onSetRulerGrid: () => {
             dispatch(setRulerGrid());
+        },
+        onMouseMove: (coord) => {
+            dispatch(mouseMove(coord));
         }
     };
 };

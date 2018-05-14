@@ -15,7 +15,8 @@ import {
 } from './menu-layouts';
 import { ColorMenuContainer } from '../color-editor';
 import { PaletteEditorContainer } from '../palette-editor';
-import { CONTEXTUAL_MENU_WIDTH } from '../../constants';
+import { CONTEXTUAL_MENU_WIDTH, MAX_ZOOM, MIN_ZOOM } from '../../constants';
+import { ArrowGUIContainer } from './gui-editors';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -87,7 +88,8 @@ class ContextualMenu extends Component {
         this.handleShowGrid = this.handleShowGrid.bind(this);
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
-        this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
+        this.handleSubmitCustomZoomText = this.handleSubmitCustomZoomText.bind(this);
+        this.handleSubmitCustomZoomSlider = this.handleSubmitCustomZoomSlider.bind(this);
         this.handleSelectScale = this.handleSelectScale.bind(this);
         this.handleSelectZoomTool = this.handleSelectZoomTool.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
@@ -211,11 +213,12 @@ class ContextualMenu extends Component {
         this.props.onShowSubDivisions();
     }
 
-    handleSubmitCustomZoom(value) {
-        var scale = parseFloat(value) / 100.0;
-        if (scale >= 0.1 && scale <= 32) {
-            this.props.onSetCustomZoom(scale);
-        }
+    handleSubmitCustomZoomText(value) {
+        this.props.onSetCustomZoom(parseFloat(value) / 100.0);
+    }
+
+    handleSubmitCustomZoomSlider(event) {
+        this.props.onSetCustomZoom(parseFloat(event.target.value) / 100.0);
     }
 
     handleSelectScale(value) {
@@ -331,6 +334,8 @@ class ContextualMenu extends Component {
         const { hidden, selectedShape, scale } = this.props;
 
         let menuLayout = null;
+        let guiEditor = null;
+
         if (selectedShape) {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} onEditText={this.handleEditText} />;
@@ -338,6 +343,7 @@ class ContextualMenu extends Component {
                 menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
                 menuLayout = <LineMenu line={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+                guiEditor = <ArrowGUIContainer path={selectedShape} />;
             } else if (selectedShape.type === 'ellipse') {
                 // needs onMoveShape to and onResizeShapeTo for rx, ry, cx, cy
                 menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
@@ -367,6 +373,7 @@ class ContextualMenu extends Component {
                         </div>
                         <div className="dynamic-menu">
                             { menuLayout }
+                            { guiEditor }
                         </div>
                     </div>
                     <div className="zoom-menu">
@@ -388,14 +395,14 @@ class ContextualMenu extends Component {
                                     className="zoom-slider"
                                     type="range"
                                     defaultValue={Math.round(scale * 100.0)}
-                                    min="10"
-                                    max="3200"
-                                    onInput={this.handleSubmitCustomZoom}
+                                    min={MIN_ZOOM * 100}
+                                    max={MAX_ZOOM * 100}
+                                    onChange={this.handleSubmitCustomZoomSlider}
                                 />
                                 <Input
                                     className="zoom-input"
                                     value={Math.round(scale * 100.0)}
-                                    onChange={this.handleSubmitCustomZoom}
+                                    onChange={this.handleSubmitCustomZoomText}
                                 />
                             </div>
                         </div>
@@ -407,3 +414,64 @@ class ContextualMenu extends Component {
 }
 
 export default ContextualMenu;
+
+//
+// <h2>Ruler / Grid / Canvas Settings</h2>
+// <div className="temp">
+//     <button onClick={this.handleShowRulers} id="button-icon">R</button>
+//     <button onClick={this.handleShowGrid} id="button-icon">G</button>
+//     <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
+//     <button onClick={this.handleToggleRuler} id="button-icon">P</button>
+//     <button onClick={this.handleToggleCanvasOrientation} id="button-icon">O</button>
+// </div>
+// <div className="ruler-menu">
+//     <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
+//         {this.createRulerPresetList()}
+//     </select>
+//     <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
+//         <select
+//             id="unitType"
+//             defaultValue={unitType}
+//         >
+//             <option value="in">{"in"}</option>
+//             <option value="ft">ft</option>
+//             <option value="mm">mm</option>
+//             <option value="cm">cm</option>
+//             <option value="m">m</option>
+//             <option value="px">px</option>
+//             <option value="pt">pt</option>
+//         </select>
+//         <input
+//             id="width"
+//             defaultValue={canvasWidthInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="height"
+//             defaultValue={canvasHeightInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="unitDivisions"
+//             defaultValue={unitDivisions}
+//             type="number"
+//         />
+//         <input type="submit" value="resize" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleAddRuler}>
+//         <input type="submit" value="add" />
+//         <input
+//             id="rulerName"
+//             placeholder="name your ruler"
+//             type="text"
+//         />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleSaveRuler}>
+//         <input type="submit" value="save" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleDeleteRuler}>
+//         <input type="submit" value="delete" />
+//     </form>
+// </div>
