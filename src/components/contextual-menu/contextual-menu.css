@@ -1,14 +1,17 @@
 .contextual-menu {
   background-color: #202B33;
   display: flex;
-  width: 360px;
   position: absolute;
-  top: 43px;
+  top: 0;
   bottom: 0;
   transition: right 500ms ease-in-out;
   color: #EBF1F5;
   padding: 0;
+  padding-top: 45px;
+  padding-left: 13px;
+  padding-right: 13px;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .contextual-menu h2 {
@@ -20,43 +23,90 @@
 
 .menu-column {
     display: flex;
-    flex: 1;
+    flex: initial;
+    justify-content: space-between;
+    box-sizing: border-box;
+    width: 100%;
     flex-direction: column;
+    padding-bottom: 21px;
 }
 
 .static-menu {
     display: flex;
-    flex: 0.05;
-    height: 80px;
     background-color: #202B33;
     padding-bottom: 5px;
 }
 
 .dynamic-menu {
     display: flex;
-    flex: 0.85;
-    height: 80px;
+    flex-grow: 1;
     background-color: #30404D;
+    max-height: 590px;
+    flex-direction: column;
+}
+
+.zoom-select-row {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    flex-direction: row;
+    alignItems: center;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.zoom-row {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    flex-direction: row;
+    alignItems: center;
+    width: 100%;
+}
+
+.zoom-button {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    height: 23px;
+    font-family: helvetica;
+    font-size: 10px;
+    color: #CED9E0;
+}
+
+.zoom-button:hover {
+  cursor: auto;
+}
+
+.zoom-input-row {
+    display: flex;
+    flex-direction: row;
 }
 
 .zoom-menu {
     display: flex;
-    flex: 0.05;
-    height: 80px;
-    background-color: #202B33;
+    flex-direction: column;
 }
 
-.hide-button-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 8px;
+.zoom-slider {
+    width: 57px;
+    background-color: #202B33;
+    margin-right: 11px;
+}
+
+.zoom-input {
+    width: 22px;
+    height: 16px;
+    margin-top: 6px;
 }
 
 .hide-button {
     width: 30px;
     height: 30px;
-    background-color: #182026;
+    position: absolute;
+    top: 48%;
+    left: -15px;
+    background-color: #202B33;
     border-radius: 50%;
 }

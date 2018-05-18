@@ -19,31 +19,36 @@ const template = [
         label: 'File',
         submenu: [
             {
-                label: 'Save', 
+                label: 'Save',
                 click() {
                     let win = BrowserWindow.getFocusedWindow();
                     if (win == null) return;
-                    dialog.showSaveDialog(function (filename) {
-                        win.webContents.send('file-save', 'writing to file');
-                        ipcMain.on('file-save', (event, stateString) => {
-                            fs.writeFile(filename, stateString, (err) => {
-                                if(err){
-                                    let message = "An error ocurred creating the file "+ err.message;
-                                    win.webContents.send('error', message);
-                                } else {
-                                    win.webContents.send('alert', 'The file has been successfully saved');
-                                }
+                    dialog.showSaveDialog(function(filename) {
+                        if (filename === undefined) {
+                            return;
+                        } else {
+
+                            win.webContents.send('file-save', 'writing to file');
+                            ipcMain.on('file-save', (event, stateString) => {
+                                fs.writeFile(filename, stateString, (err) => {
+                                    if (err) {
+                                        let message = "An error ocurred creating the file " + err.message;
+                                        win.webContents.send('error', message);
+                                    } else {
+                                        win.webContents.send('alert', 'The file has been successfully saved');
+                                    }
+                                });
                             });
-                        });
+                        }
                     });
                 }
             },
             {
-                label: 'Open', 
+                label: 'Open',
                 click() {
-                    dialog.showOpenDialog(function (filenames) {
+                    dialog.showOpenDialog(function(filenames) {
                         if (filenames[0] === null) {
-                            return;
+
                         } else {
                             let win;
                             var numFiles = filenames.length;
@@ -61,7 +66,7 @@ const template = [
                 }
             },
             {
-                label: 'New', 
+                label: 'New',
                 click() {
                     createWindow();
                 }
@@ -70,7 +75,7 @@ const template = [
     },
     {
         label: 'View',
-          submenu: [
+        submenu: [
             {role: 'reload'},
             {role: 'forcereload'},
             {role: 'toggledevtools'},
@@ -81,6 +86,51 @@ const template = [
             {type: 'separator'},
             {role: 'togglefullscreen'}
         ]
+    },
+    {
+        label: 'File',
+        submenu: [
+            {label: 'New',
+                click() {
+                    createWindow();
+                }},
+            {role: 'Save'},
+            {
+                label: 'Open',
+                click() {
+                    dialog.showOpenDialog(function(filenames) {
+                        if (filenames[0] === null) {
+
+                        } else {
+                            let win;
+                            var numFiles = filenames.length;
+                            for (var i = 0; i < numFiles; i++) {
+                                let filename = filenames[i];
+                                win = createWindow();
+                                win.webContents.on('dom-ready', () => {
+                                    fs.readFile(filename, 'utf8', (err, data) => {
+                                        win.webContents.send('file-open', data);
+                                    });
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        ]
+    },
+    {
+        label: 'Settings',
+        submenu: [
+            {label: 'Ruler Settings',
+                click() {
+                    openRulerSettings();
+                }},
+            {label: 'Canvas Settings',
+                click() {
+                    openRulerSettings1();
+                }}
+        ]
     }
 ];
 
@@ -90,7 +140,7 @@ let windows = [];
 
 function createWindow() {
     // Create the browser window.
-    let win = new BrowserWindow({width: 800, height: 600});
+    let win = new BrowserWindow({width: 1200, height: 1000, minWidth: 500, minHeight: 300});
     windows.push(win);
     win.focus();
 

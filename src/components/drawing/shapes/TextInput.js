@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Editor, EditorState, ContentState, SelectionState, RichUtils } from 'draft-js';
-import './text-input.css';
+import { Shape } from '.';
+import { formatTransform } from '../../../utilities/shapes';
 
 function getTextStyle(text) {
     return {
@@ -14,7 +15,8 @@ function getTextStyle(text) {
         textDecoration: text.textDecoration,
         lineHeight: parseInt(text.fontSize) > parseInt(text.lineHeight) ? text.fontSize + 'px' : text.lineHeight + 'px',
         color: text.fill,
-        stroke: text.stroke
+        stroke: text.stroke,
+        verticalAlign: text.verticalAlign
     };
 }
 
@@ -44,6 +46,10 @@ class TextInput extends Component {
         lineHeight: PropTypes.string,
         fill: PropTypes.string,
         stroke: PropTypes.string,
+        transform: PropTypes.arrayOf(PropTypes.shape({
+            command: PropTypes.string,
+            parameters: PropTypes.arrayOf(PropTypes.number)
+        })),
         onChange: PropTypes.func,
         propagateEvents: PropTypes.bool
     };
@@ -74,16 +80,22 @@ class TextInput extends Component {
         editorState = EditorState.forceSelection(editorState, originalSelectionState);
 
         this.state = {
-            editorState
+            editorState,
+            editing: true
         };
 
+        this.handleDragStart = this.handleDragStart.bind(this);
+        this.handleDrag = this.handleDrag.bind(this);
+        this.handleDragStop = this.handleDragStop.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidMount() {
         setTimeout(() => {
-            this.textInput.focus();
+            this.setState({ editing: true }, () => {
+                this.textInput.focus();
+            });
         }, 200);
     }
 
@@ -99,7 +111,8 @@ class TextInput extends Component {
                     newTspan.style.fontStyle === tspan.style.fontStyle &&
                     newTspan.style.textDecoration === tspan.style.textDecoration &&
                     newTspan.style.fill === tspan.style.fill &&
-                    newTspan.style.stroke === tspan.style.stroke
+                    newTspan.style.stroke === tspan.style.stroke &&
+                    newTspan.style.verticalAlign === tspan.style.verticalAlign
                 ) {
                     return true;
                 }
@@ -109,7 +122,16 @@ class TextInput extends Component {
 
         const deletedTspans = _.differenceWith(tspans, nextProps.tspans, (newTspan, tspan) => {
             if (newTspan.range[0] === tspan.range[0] && newTspan.range[1] === tspan.range[1]) {
-                if (newTspan.style.fontSize === tspan.style.fontSize) {
+                if (
+                    newTspan.style.fontFamily === tspan.style.fontFamily &&
+                    newTspan.style.fontSize === tspan.style.fontSize &&
+                    newTspan.style.fontWeight === tspan.style.fontWeight &&
+                    newTspan.style.fontStyle === tspan.style.fontStyle &&
+                    newTspan.style.textDecoration === tspan.style.textDecoration &&
+                    newTspan.style.fill === tspan.style.fill &&
+                    newTspan.style.stroke === tspan.style.stroke &&
+                    newTspan.style.verticalAlign === tspan.style.verticalAlign
+                ) {
                     return true;
                 }
             }
@@ -150,6 +172,21 @@ class TextInput extends Component {
         }
     }
 
+    handleDragStart(id, draggableData) {
+        const { onDragStart } = this.props;
+        onDragStart && onDragStart(id, draggableData);
+    }
+
+    handleDrag(id, draggableData) {
+        const { onDrag } = this.props;
+        onDrag && onDrag(id, draggableData);
+    }
+
+    handleDragStop(id, draggableData) {
+        const { onDragStop } = this.props;
+        onDragStop && onDragStop(id, draggableData);
+    }
+
     handleClick(id, event) {
         const { onClick } = this.props;
         onClick && onClick(id, event);
@@ -167,11 +204,15 @@ class TextInput extends Component {
     render() {
         const {
             id,
+            text,
+            // still need to do selectionrange
+            selectionRange,
             tspans,
             x,
             y,
             width,
             height,
+            fill,
             fontFamily,
             fontSize,
             fontWeight,
@@ -179,10 +220,11 @@ class TextInput extends Component {
             textAlign,
             textDecoration,
             lineHeight,
-            fill,
+            verticalAlign,
+            transform,
             propagateEvents
         } = this.props;
-        const { editorState } = this.state;
+        const { editorState, editing } = this.state;
 
         // Array of all style objects:
         const styleMap = { 0: getTextStyle(this.props) };
@@ -190,14 +232,16 @@ class TextInput extends Component {
             styleMap[i + 1] = getTextStyle(style);
         });
 
-        return (
-            <div
-                id={id}
+        const editorElement = (
+            <Editor
+                editorState={editorState}
+                onChange={this.handleChange}
+                onFocus={event => { this.handleClick(id, event); }}
+                onBlur={event => {
+                    this.setState({ editing: false });
+                }}
+                customStyleMap={styleMap}
                 style={{
-                    pointerEvents: propagateEvents ? 'none' : 'all',
-                    position: 'absolute',
-                    left: width < 0 ? x + width : x,
-                    top: height < 0 ? y + height : y,
                     width: Math.abs(width),
                     height: Math.abs(height),
                     color: fill,
@@ -207,24 +251,102 @@ class TextInput extends Component {
                     fontStyle,
                     textAlign,
                     textDecoration,
-                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px'
+                    lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                    verticalAlign
+                }}
+                ref={(input) => { this.textInput = input; }}
+            />
+        );
+
+        const spans = tspans.length === 0 ? text : tspans.map(tspan => {
+            const {
+                fill,
+                fontFamily,
+                fontSize,
+                fontWeight,
+                fontStyle,
+                textAlign,
+                textDecoration,
+                lineHeight,
+                verticalAlign
+            } = tspan.style;
+
+            return (
+                <span
+                    key={tspan.range[0]}
+                    style={{
+                        color: fill,
+                        fontFamily,
+                        fontSize: fontSize + 'px',
+                        fontWeight,
+                        fontStyle,
+                        textAlign,
+                        textDecoration,
+                        lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                        verticalAlign
+                    }}
+                >
+                    {text.substring(tspan.range[0], tspan.range[1])}
+                </span>
+            );
+        });
+
+        const textElement = (
+            <div
+                style={{
+                    display: 'block',
+                    whiteSpace: 'pre-wrap',
+                    wordWrap: 'break-word',
+                    overflowWrap: 'break-word',
+                    userSelect: 'none'
+                }}
+                onDoubleClick={(event) => {
+                    event.preventDefault();
+                    this.setState({ editing: true }, () => { this.textInput.focus(); });
                 }}
             >
-                <Editor
-                    editorState={editorState}
-                    onChange={this.handleChange}
-                    onFocus={event => { this.handleClick(id, event); }}
-                    customStyleMap={styleMap}
-                    style={{
-                        position: 'absolute',
-                        left: width < 0 ? x + width : x,
-                        top: height < 0 ? y + height : y,
-                        width: Math.abs(width),
-                        height: Math.abs(height)
-                    }}
-                    ref={(input) => { this.textInput = input; }}
-                />
+                {spans}
             </div>
+        );
+
+        return (
+            <Shape
+                id={id}
+                onDragStart={this.handleDragStart}
+                onDrag={this.handleDrag}
+                onDragStop={this.handleDragStop}
+                onClick={this.handleClick}
+                propagateEvents={propagateEvents}
+            >
+                <foreignObject
+                    id={id}
+                    x={width < 0 ? x + width : x}
+                    y={height < 0 ? y + height : y}
+                    width={Math.abs(width)}
+                    height={Math.abs(height)}
+                    transform={formatTransform(transform)}
+                    style={{
+                        pointerEvents: propagateEvents ? 'none' : 'all',
+                        position: 'absolute'
+                    }}
+                >
+                    <div
+                        style={{
+                            color: fill,
+                            fontFamily,
+                            fontSize: fontSize + 'px',
+                            fontWeight,
+                            fontStyle,
+                            textAlign,
+                            textDecoration,
+                            lineHeight: parseInt(fontSize) > parseInt(lineHeight) ? fontSize + 'px' : lineHeight + 'px',
+                            verticalAlign
+                        }}
+                    >
+                        {editing ? editorElement : textElement}
+                    </div>
+                </foreignObject>
+            </Shape>
         );
     }
 }

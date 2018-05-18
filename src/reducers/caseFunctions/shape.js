@@ -5,7 +5,7 @@ import { resizeShape, resizeTextBoundingBox, moveShape, endMoveShape, keyboardMo
     fillShape, strokeShape, changeZIndex, bringToFront, sendToBack, deleteShapes, copyShapes, pasteShapes,
     flipShape, moveShapeTo, removeTransformation, reshape, resizeShapeTo, rotateShapeTo, resetShapeSigns,
     prepareForReshape, moveControl, addPoint, removePoint, smoothShapes, unSmoothShapes, alignToShape,
-    distributeShapes, snapToGrid } from '../utilities/shapes';
+    distributeShapes, snapToGrid, shapesOffScreen } from '../utilities/shapes';
 
 import { selectShape, updateSelectionBoxesCorners, determineShiftDirection, updateSelectionBoxes } from '../utilities/selection';
 import * as menu from './menu';
@@ -29,7 +29,8 @@ export function editText(stateCopy, action, root) {
         textDecoration: baseShape.textDecoration,
         lineHeight: baseShape.lineHeight,
         fill: baseShape.fill,
-        stroke: baseShape.stroke
+        stroke: baseShape.stroke,
+        verticalAlign: baseShape.verticalAlign
     };
     const newStyle = {
         fontFamily: shape.fontFamily,
@@ -40,7 +41,8 @@ export function editText(stateCopy, action, root) {
         textDecoration: shape.textDecoration,
         lineHeight: shape.lineHeight,
         fill: shape.fill,
-        stroke: shape.stroke
+        stroke: shape.stroke,
+        verticalAlign: shape.verticalAlign
     };
     // Remove undefined style keys:
     Object.keys(newStyle).forEach((key) => (newStyle[key] === undefined) && delete newStyle[key]);
@@ -108,9 +110,9 @@ export function editText(stateCopy, action, root) {
 
 export function click(stateCopy, action, root) {
     if (stateCopy.mode === 'reshape') { return stateCopy; }
-
     switch (root.menuState.toolType) {
         case "selectTool":
+        case "rotateTool":
             if (!stateCopy.editInProgress) {
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 let selectMultiple = false;
@@ -161,6 +163,7 @@ export function drag(stateCopy, action, root) {
         stateCopy.selectionBoxes = updateSelectionBoxesCorners(stateCopy.selected, stateCopy.selectionBoxes);
         switch (root.menuState.toolType) {
             case "selectTool":
+            case "rotateTool":
                 let shiftSelected = 16 in root.menuState.currentKeys;
                 if (stateCopy.selected.indexOf(action.payload.shapeId) < 0) {
                     stateCopy.selected = selectShape(stateCopy.selected, action.payload.shapeId, shiftSelected, shiftSelected);
@@ -213,6 +216,7 @@ export function dragStop(stateCopy, action, root) {
         stateCopy.duplicateOffset.y = stateCopy.gridSnapInterval;
     }
     stateCopy.justDuplicated = false;
+
     return stateCopy;
 }
 
@@ -452,6 +456,24 @@ export function flipHorizontal(stateCopy, action, root) {
     return stateCopy;
 }
 
+export function resizeShapes(stateCopy, action, root) {
+    stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
+export function moveShapes(stateCopy, action, root) {
+    stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
+export function rotateShapes(stateCopy, action, root) {
+    stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
+        stateCopy.boundingBoxes, stateCopy.selectionBoxes);
+    return stateCopy;
+}
+
 export function keyDown(stateCopy, action, root) {
     // No keyboard shortcuts during text focus
     const shapeIds = stateCopy.shapes.allIds;
@@ -471,7 +493,7 @@ export function keyDown(stateCopy, action, root) {
             if (stateCopy.mode === 'reshape') {
                 stateCopy.shape = removePoint(stateCopy.shapes, stateCopy.selected, stateCopy.selectedHandle);
             } else {
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy = deleteShapes(stateCopy, stateCopy.selected);
                 stateCopy.selected = [];
             }
             break;
@@ -568,32 +590,9 @@ export function keyDown(stateCopy, action, root) {
         case 88: // cut
             if (commandSelected && !root.menuState.copied) {
                 stateCopy.toCopy = copyShapes(stateCopy.shapes, stateCopy.selected);
-                stateCopy.shapes = deleteShapes(stateCopy.shapes, stateCopy.selected);
+                stateCopy = deleteShapes(stateCopy, stateCopy.selected);
                 stateCopy.selected = [];
             }
-            break;
-        case 50: // TEMP RESIZE X
-            action.payload.x = 50;
-            //  action.payload.y = 50;
-            stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
-        case 51: // TEMP RESIZE X
-            action.payload.y = 50;
-            //  action.payload.y = 50;
-            stateCopy.shapes = resizeShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
-        case 52: // TEMP MOVE
-            action.payload.x = 50;
-            action.payload.y = 50;
-            stateCopy.shapes = moveShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
-            break;
-        case 53: // TEMP Rotate
-            action.payload.degree = 45;
-            stateCopy.shapes = rotateShapeTo(stateCopy.shapes, stateCopy.selected, action, stateCopy.scale,
-                stateCopy.boundingBoxes, stateCopy.selectionBoxes);
             break;
         case 54: // TEMP Hard Coded Arc Flip
             if (stateCopy.selected.length > 0 && stateCopy.shapes.byId[stateCopy.selected[0]].type === 'arc') {
@@ -647,4 +646,8 @@ export function distributeClick(stateCopy, action, root) {
         stateCopy.shapes = distributeShapes(stateCopy.shapes, stateCopy.selected, stateCopy.boundingBoxes, stateCopy.selectionBoxes, action.payload.id);
     }
     return stateCopy;
+}
+
+export function checkOffScreen(stateCopy) {
+    return shapesOffScreen(stateCopy.shapes, stateCopy.boundingBoxes, stateCopy.canvasHeight, stateCopy.canvasWidth);
 }

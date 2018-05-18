@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Select } from '../../shared';
+import { Input, Select } from '../../ui';
 import './menu-layouts.css';
 
 class TextMenu extends Component {
@@ -23,6 +23,8 @@ class TextMenu extends Component {
         this.handleHeightChange = this.handleHeightChange.bind(this);
         this.handleXChange = this.handleXChange.bind(this);
         this.handleYChange = this.handleYChange.bind(this);
+        this.handleSubscriptToggle = this.handleSubscriptToggle.bind(this);
+        this.handleSuperscriptToggle = this.handleSuperscriptToggle.bind(this);
     }
 
     handleFontFamilyChange(value) {
@@ -30,97 +32,135 @@ class TextMenu extends Component {
         onEditText && onEditText({ id: text.id, fontFamily: value });
     }
 
-    handleFontSizeChange(event) {
+    handleFontSizeChange(value) {
         const { text, onEditText } = this.props;
-        onEditText && onEditText({ id: text.id, fontSize: event.target.value });
+        onEditText && onEditText({ id: text.id, fontSize: value });
     }
 
-    handleFontStyleChange(event) {
+    handleFontStyleChange(value) {
         const { text, onEditText } = this.props;
-        onEditText && onEditText({ id: text.id, fontStyle: event.target.value });
+        onEditText && onEditText({ id: text.id, fontStyle: value });
     }
 
-    handleTextAlignChange(event) {
+    handleTextAlignChange(value) {
         const { text, onEdit } = this.props;
-        onEdit && onEdit({ ...text, textAlign: event.target.value });
+        onEdit && onEdit({ ...text, textAlign: value });
     }
 
-    handleTextDecorationChange(event) {
+    handleTextDecorationChange(value) {
         const { text, onEditText } = this.props;
-        onEditText && onEditText({ id: text.id, textDecoration: event.target.value });
+        onEditText && onEditText({ id: text.id, textDecoration: value });
     }
 
-    handleFontWeightChange(event) {
+    handleFontWeightChange(value) {
         const { text, onEditText } = this.props;
-        onEditText && onEditText({ id: text.id, fontWeight: event.target.value });
+        onEditText && onEditText({ id: text.id, fontWeight: value });
     }
 
-    handleWidthChange(event) {
+    handleWidthChange(value) {
         const { text, onEdit } = this.props;
-        onEdit && onEdit({ ...text, width: event.target.value });
+        onEdit && onEdit({ ...text, width: value });
     }
 
-    handleHeightChange(event) {
+    handleHeightChange(value) {
         const { text, onEdit } = this.props;
-        onEdit && onEdit({ ...text, height: event.target.value });
+        onEdit && onEdit({ ...text, height: value });
     }
 
-    handleXChange(event) {
+    handleXChange(value) {
         const { text, onEdit } = this.props;
-        onEdit && onEdit({ ...text, x: event.target.value });
+        onEdit && onEdit({ ...text, x: value });
     }
 
-    handleYChange(event) {
+    handleYChange(value) {
         const { text, onEdit } = this.props;
-        onEdit && onEdit({ ...text, y: event.target.value });
+        onEdit && onEdit({ ...text, y: value });
+    }
+
+    handleSubscriptToggle() {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({
+            id: text.id,
+            fontSize: Math.round(text.fontSize * 0.62).toString(),
+            verticalAlign: 'sub'
+        });
+    }
+
+    handleSuperscriptToggle() {
+        const { text, onEditText } = this.props;
+        onEditText && onEditText({
+            id: text.id,
+            fontSize: Math.round(text.fontSize * 0.62).toString(),
+            verticalAlign: 'super'
+        });
     }
 
     render() {
+        const { text: { selectionRange } } = this.props;
+        const noSelection = selectionRange[0] === selectionRange[1];
+
         return (
-            <div className="text-menu">
-                <Select value={this.props.text.fontFamily} onChange={this.handleFontFamilyChange}>
-                    <option value="helvetica">Helvetica</option>
-                    <option value="arial">Arial</option>
-                    <option value="times new roman">Times New Roman</option>
-                    <option value="times">Times</option>
-                    <option value="courier">Courier</option>
-                    <option value="courier new">Courier New</option>
-                    <option value="verdana">Verdana</option>
-                    <option value="georgia">Georgia</option>
-                    <option value="garamond">Garamond</option>
-                    <option value="comic sans ms">Comic Sans</option>
-                </Select>
-                <select value={this.props.text.fontSize} onChange={this.handleFontSizeChange}>
-                    <option value={5}>5</option>
-                    <option value={12}>12</option>
-                    <option value={24}>24</option>
-                    <option value={72}>72</option>
-                    <option value={100}>100</option>
-                </select>
-                <select value={this.props.text.fontStyle} onChange={this.handleFontStyleChange}>
-                    <option value="normal">normal</option>
-                    <option value="italic">italic</option>
-                    <option value="oblique">oblique</option>
-                </select>
-                <select value={this.props.text.fontWeight} onChange={this.handleFontWeightChange}>
-                    <option value="lighter">lighter</option>
-                    <option value="normal">normal</option>
-                    <option value="bold">bold</option>
-                </select>
-                <select value={this.props.text.textAlign} onChange={this.handleTextAlignChange}>
-                    <option value="left">Left</option>
-                    <option value="right">Right</option>
-                    <option value="center">Center</option>
-                </select>
-                <select value={this.props.text.textDecoration} onChange={this.handleTextDecorationChange}>
-                    <option value="none">None</option>
-                    <option value="underline">Underline</option>
-                    <option value="line-through">Strikethrough</option>
-                </select>
-                <input value={this.props.text.x} />
-                <input value={this.props.text.y} />
-                <input value={this.props.text.width} />
-                <input value={this.props.text.height} />
+            <div className="text-menu menu">
+                <div className="menu-title">TEXT SETTINGS</div>
+                <div className="menu-row">
+                    <Select value={this.props.text.fontFamily} label="Typeface" onChange={this.handleFontFamilyChange}>
+                        <option value="helvetica">Helvetica</option>
+                        <option value="arial">Arial</option>
+                        <option value="times new roman">Times New Roman</option>
+                        <option value="times">Times</option>
+                        <option value="courier">Courier</option>
+                        <option value="courier new">Courier New</option>
+                        <option value="verdana">Verdana</option>
+                        <option value="georgia">Georgia</option>
+                        <option value="garamond">Garamond</option>
+                        <option value="comic sans ms">Comic Sans</option>
+                    </Select>
+                </div>
+                <div className="menu-row">
+                    <Select value={this.props.text.fontSize} label="Font Size" onChange={this.handleFontSizeChange} style={{ width: 46, marginRight: 12 }}>
+                        <option value={5}>5</option>
+                        <option value={12}>12</option>
+                        <option value={24}>24</option>
+                        <option value={72}>72</option>
+                        <option value={100}>100</option>
+                    </Select>
+                    <Select value={this.props.text.fontWeight} label="Weight" onChange={this.handleFontWeightChange} style={{ width: 73 }}>
+                        <option value="lighter">lighter</option>
+                        <option value="normal">normal</option>
+                        <option value="bold">bold</option>
+                    </Select>
+                </div>
+                <div className="menu-row">
+                    <Select value={this.props.text.textAlign} label="Text Align" onChange={this.handleTextAlignChange}>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                        <option value="center">Center</option>
+                    </Select>
+                </div>
+                <div className="menu-row">
+                    <Select value={this.props.text.fontStyle} label="Font Style" onChange={this.handleFontStyleChange} style={{ marginRight: 12 }}>
+                        <option value="normal">normal</option>
+                        <option value="italic">italic</option>
+                        <option value="oblique">oblique</option>
+                    </Select>
+                    <Select value={this.props.text.textDecoration} label="Text Decoration" onChange={this.handleTextDecorationChange}>
+                        <option value="none">None</option>
+                        <option value="underline">Underline</option>
+                        <option value="line-through">Strikethrough</option>
+                    </Select>
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Position:</div>
+                    <Input value={this.props.text.x} label="X" style={{ width: 49, marginRight: 11 }} onChange={this.handleXChange} />
+                    <Input value={this.props.text.y} label="Y" style={{ width: 49 }} onChange={this.handleYChange} />
+                </div>
+                <div className="menu-row">
+                    <div className="menu-row-title">Size:</div>
+                    <Input value={this.props.text.width} label="Width" style={{ width: 49, marginRight: 11 }} onChange={this.handleWidthChange} />
+                    <Input value={this.props.text.height} label="Height" style={{ width: 49 }} onChange={this.handleHeightChange} />
+                </div>
+                <div className="button" onClick={noSelection ? () => {} : this.handleSubscriptToggle} />
+                <div className="button" onClick={noSelection ? () => {} : this.handleSuperscriptToggle} />
             </div>
         );
     }

@@ -8,7 +8,9 @@ class Draggable extends Component {
         onStart: PropTypes.func,
         onDrag: PropTypes.func,
         onStop: PropTypes.func,
-        propagateEvents: PropTypes.bool
+        propagateEvents: PropTypes.bool,
+        cancel: PropTypes.string,
+        enableUserSelectHack: PropTypes.bool
     }
 
     static defaultProps = {
@@ -64,13 +66,15 @@ class Draggable extends Component {
     }
 
     render() {
-        const { children } = this.props;
+        const { cancel, enableUserSelectHack, children } = this.props;
 
         return (
             <DraggableCore
                 onStart={this.handleDragStart}
                 onDrag={this.handleDrag}
                 onStop={this.handleDragStop}
+                cancel={cancel}
+                enableUserSelectHack={enableUserSelectHack}
             >
                 {children}
             </DraggableCore>

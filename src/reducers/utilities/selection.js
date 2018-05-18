@@ -19,7 +19,6 @@ export function selectShape(selected, shapeId, selectMultiple, shiftSelected) {
             selected.push(shapeId);
         }
     }
-
     return selected;
 }
 
@@ -82,7 +81,7 @@ export function updateSelectionBoxes(selected, shapes, selectionBoxes, boundingB
         const selectionBox = selectionBoxes[id];
         const boundingBox = boundingBoxes[id];
 
-        if (shape.type === 'arrowhead') {
+        if (shape.type === 'arrow') {
             return;
         }
 

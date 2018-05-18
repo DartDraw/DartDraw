@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 34 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>GridSnap</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="GridSnap">
+            <g id="Group-2">
+                <path d="M7.5,0.5 L7.5,34.5" id="Line-2" stroke="#EBF1F5" stroke-width="3" stroke-linecap="square"></path>
+                <path d="M27,4.17393184 C26.5184807,4.06018869 26.0162692,4 25.5,4 C24.9837308,4 24.4815193,4.06018869 24,4.17393184 L24,0.5 L24,0 L27,0 L27,0.5 L27,4.17393184 Z M27,16.8260682 L27,34.5 L27,35 L24,35 L24,34.5 L24,16.8260682 C24.4815193,16.9398113 24.9837308,17 25.5,17 C26.0162692,17 26.5184807,16.9398113 27,16.8260682 Z" id="Combined-Shape" fill="#EBF1F5"></path>
+                <path d="M31.9235518,11.5 C31.9738853,11.1740301 32,10.8400648 32,10.5 C32,9.80218991 31.8900394,9.13006248 31.6865006,8.5 L33,8.5 L33.5,8.5 L33.5,11.5 L33,11.5 L31.9235518,11.5 Z M19.0764482,11.5 L1,11.5 L0.5,11.5 L0.5,8.5 L1,8.5 L19.3134994,8.5 C19.1099606,9.13006248 19,9.80218991 19,10.5 C19,10.8400648 19.0261147,11.1740301 19.0764482,11.5 Z" id="Combined-Shape" fill="#EBF1F5"></path>
+                <path d="M33,26 L0.496154074,26" id="Line-2-Copy-2" stroke="#EBF1F5" stroke-width="3" stroke-linecap="square"></path>
+            </g>
+            <circle id="Oval-4" fill="#EBF1F5" cx="25.5" cy="10.5" r="5.5"></circle>
+        </g>
+    </g>
+</svg>

@@ -4,14 +4,24 @@ import {
     undoClick,
     redoClick,
     selectColor,
-    selectButton
+    selectButton,
+    alignmentClick,
+    groupButtonClick,
+    ungroupButtonClick,
+    moveBackward,
+    moveForward,
+    sendToBack,
+    flipHorizontal,
+    flipVertical,
+    bringToFront,
+    toggleGridSnapping
 } from './../../actions/menu';
 
 const mapStateToProps = ({ drawingState, menuState }) => {
     return {
         scale: drawingState.scale,
-        fillColor: menuState.fillColor,
-        strokeColor: menuState.strokeColor
+        fillColor: menuState.fillColor.rgba,
+        strokeColor: menuState.strokeColor.rgba
     };
 };
 
@@ -26,8 +36,38 @@ const mapDispatchToProps = (dispatch) => {
         onColorSelect: (color) => { // replace with onColorSelect
             dispatch(selectColor(color));
         },
-        onButtonSelect: (button) => {
-            dispatch(selectButton(button));
+        onButtonSelect: (buttonInfo) => {
+            dispatch(selectButton(buttonInfo));
+        },
+        onAllignmentClick: (id) => {
+            dispatch(alignmentClick(id));
+        },
+        onGroupClick: () => {
+            dispatch(groupButtonClick());
+        },
+        onUngroupClick: () => {
+            dispatch(ungroupButtonClick());
+        },
+        onMoveBackward: () => {
+            dispatch(moveBackward());
+        },
+        onMoveForward: () => {
+            dispatch(moveForward());
+        },
+        onSendToBack: () => {
+            dispatch(sendToBack());
+        },
+        onBringToFront: () => {
+            dispatch(bringToFront());
+        },
+        onFlipHorizontal: () => {
+            dispatch(flipHorizontal());
+        },
+        onFlipVertical: () => {
+            dispatch(flipVertical());
+        },
+        onToggleGridSnapping: () => {
+            dispatch(toggleGridSnapping());
         }
     };
 };

@@ -5,8 +5,7 @@ import { Draggable } from '../shared';
 import {
     BackgroundLayerContainer,
     GridLayerContainer,
-    SelectionLayerContainer,
-    TextInputLayerContainer
+    SelectionLayerContainer
 } from './layers';
 import {
     Group,
@@ -19,8 +18,8 @@ import {
     Arc,
     Line,
     TransparentLine,
-    Text,
-    Arrowhead,
+    Arrow,
+    TextInput,
     Bezier
 } from './shapes';
 
@@ -32,6 +31,7 @@ class Canvas extends Component {
         canvasHeight: PropTypes.number,
         canvasWidth: PropTypes.number,
         viewBox: PropTypes.array,
+        scale: PropTypes.number,
         propagateEvents: PropTypes.bool,
         onDragStart: PropTypes.func,
         onDrag: PropTypes.func,
@@ -44,9 +44,13 @@ class Canvas extends Component {
         onGroupDrag: PropTypes.func,
         onGroupDragStop: PropTypes.func,
         onGroupClick: PropTypes.func,
+        onTextInputChange: PropTypes.func,
         onUndoClick: PropTypes.func,
         onRedoClick: PropTypes.func,
-        onBoundingBoxUpdate: PropTypes.func
+        onScroll: PropTypes.func,
+        onBoundingBoxUpdate: PropTypes.func,
+        onSetRulerGrid: PropTypes.func,
+        onMouseMove: PropTypes.func
     };
 
     constructor(props) {
@@ -67,6 +71,18 @@ class Canvas extends Component {
         this.handleGroupDrag = this.handleGroupDrag.bind(this);
         this.handleGroupDragStop = this.handleGroupDragStop.bind(this);
         this.handleGroupClick = this.handleGroupClick.bind(this);
+        this.handleTextInputChange = this.handleTextInputChange.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
+        this.handleResize = this.handleResize.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.handleResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
     }
 
     componentDidUpdate(prevProps) {
@@ -135,12 +151,29 @@ class Canvas extends Component {
         this.props.onGroupClick(groupId, event);
     }
 
+    handleTextInputChange(id, value, focused, selectionRange) {
+        const { onTextInputChange } = this.props;
+        onTextInputChange && onTextInputChange(id, value, focused, selectionRange);
+    }
+
     handleUndoClick() {
         this.props.onUndoClick();
     }
 
     handleRedoClick() {
         this.props.onRedoClick();
+    }
+
+    handleScroll({ deltaX, deltaY }) {
+        this.props.onScroll(deltaX, deltaY);
+    }
+
+    handleResize() {
+        this.props.onSetRulerGrid();
+    }
+
+    handleMouseMove(e) {
+        this.props.onMouseMove({x: e.clientX, y: e.clientY});
     }
 
     renderShape(shape) {
@@ -197,12 +230,12 @@ class Canvas extends Component {
                 };
 
                 return (
-                    <g className="line">
+                    <g key={line.id} className="line">
                         <Line {...shapeProps} />
                         <TransparentLine {...line} />
                     </g>);
             case 'text':
-                return <Text {...shapeProps} />;
+                return <TextInput {...shapeProps} onChange={this.handleTextInputChange} />;
             default:
                 break;
         }
@@ -216,32 +249,34 @@ class Canvas extends Component {
     }
 
     renderArrows() {
-        const { arrows } = this.props;
-        return arrows.map((shape) => {
-            return <Arrowhead {...shape} />;
+        const { arrows, scale } = this.props;
+        return arrows.map((arrow) => {
+            return <Arrow key={arrow.id} scale={scale} {...arrow} />;
         });
     }
 
     render() {
-        const { canvasHeight, canvasWidth, viewBox, propagateEvents } = this.props;
+        const { canvasHeight, canvasWidth, viewBox } = this.props;
 
         return (
-            <div style={{flex: 1, overflow: 'hidden'}}>
-                <TextInputLayerContainer propagateEvents={propagateEvents} />
+            <div style={{flex: 1, overflow: 'hidden'}} onWheel={this.handleScroll}>
                 <Draggable
                     onStart={this.handleDragStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleDragStop}
+                    enableUserSelectHack={false}
+                    cancel=".DraftEditor-root"
                 >
                     <svg className="Canvas"
+                        onMouseMove={this.handleMouseMove}
                         width={canvasWidth}
                         height={canvasHeight}
                         viewBox={viewBox.join(' ')}
                         ref={(ref) => { this.svgRef = ref; }}
                     >
                         <BackgroundLayerContainer />
-                        {this.renderArrows()}
                         {this.renderDrawing()}
+                        {this.renderArrows()}
                         <GridLayerContainer />
                         <SelectionLayerContainer />
                     </svg>

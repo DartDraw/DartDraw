@@ -1,6 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TextMenu, PathMenu, RectangleMenu, EllipseMenu } from './menu-layouts';
+import { Input, SelectRow } from '../ui';
+import {
+    TextMenu,
+    PathMenu,
+    RectangleMenu,
+    EllipseMenu,
+    LineMenu,
+    PolygonMenu,
+    PolylineMenu,
+    BezierMenu,
+    ArcMenu,
+    FreehandPathMenu
+} from './menu-layouts';
+import { ColorMenuContainer } from '../color-editor';
+import { PaletteEditorContainer } from '../palette-editor';
+import { CONTEXTUAL_MENU_WIDTH, MAX_ZOOM, MIN_ZOOM } from '../../constants';
+import { ArrowGUIContainer } from './gui-editors';
 import './contextual-menu.css';
 
 class ContextualMenu extends Component {
@@ -11,11 +27,16 @@ class ContextualMenu extends Component {
         unitDivisions: PropTypes.number,
         canvasWidthInUnits: PropTypes.number,
         canvasHeightInUnits: PropTypes.number,
+        rulerNames: PropTypes.array,
+        currentRuler: PropTypes.string,
+        currentKeys: PropTypes.object,
+        hidden: PropTypes.bool,
+        onToggleHidden: PropTypes.func,
         editShape: PropTypes.func,
+        fillColor: PropTypes.object,
         onAlignmentClick: PropTypes.func,
         onDistributeClick: PropTypes.func,
         editText: PropTypes.func,
-        onAlignmentClick: PropTypes.func,
         onGroupClick: PropTypes.func,
         onUngroupClick: PropTypes.func,
         onMoveBackward: PropTypes.func,
@@ -26,20 +47,29 @@ class ContextualMenu extends Component {
         onFlipVertical: PropTypes.func,
         onToggleGridSnapping: PropTypes.func,
         onSetCustomZoom: PropTypes.func,
+        onSelectZoomTool: PropTypes.func,
         onShowGrid: PropTypes.func,
         onShowRulers: PropTypes.func,
         onShowSubDivisions: PropTypes.func,
-        onSetRulerGrid: PropTypes.func
+        onSetRulerGrid: PropTypes.func,
+        onSelectRuler: PropTypes.func,
+        onAddRuler: PropTypes.func,
+        onSaveRuler: PropTypes.func,
+        onDeleteRuler: PropTypes.func,
+        onToggleRuler: PropTypes.func,
+        onResizeShapeTo: PropTypes.func,
+        onMoveShapeTo: PropTypes.func,
+        onRotateShapeTo: PropTypes.func
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            hidden: false
+            toggleScale: 1
         };
 
-        this.toggleMenu = this.toggleMenu.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
+        this.handleToggleHidden = this.handleToggleHidden.bind(this);
         this.handleEditText = this.handleEditText.bind(this);
         this.handleAlignmentClick = this.handleAlignmentClick.bind(this);
         this.handleDistributeClick = this.handleDistributeClick.bind(this);
@@ -54,18 +84,29 @@ class ContextualMenu extends Component {
         this.handleToggleGridSnapping = this.handleToggleGridSnapping.bind(this);
         this.handleZoomIn = this.handleZoomIn.bind(this);
         this.handleZoomOut = this.handleZoomOut.bind(this);
+        this.handleToggleScale = this.handleToggleScale.bind(this);
         this.handleShowGrid = this.handleShowGrid.bind(this);
         this.handleShowRulers = this.handleShowRulers.bind(this);
         this.handleShowSubDivisions = this.handleShowSubDivisions.bind(this);
-        this.handleSubmitCustomZoom = this.handleSubmitCustomZoom.bind(this);
+        this.handleSubmitCustomZoomText = this.handleSubmitCustomZoomText.bind(this);
+        this.handleSubmitCustomZoomSlider = this.handleSubmitCustomZoomSlider.bind(this);
+        this.handleSelectScale = this.handleSelectScale.bind(this);
+        this.handleSelectZoomTool = this.handleSelectZoomTool.bind(this);
         this.handleSubmitRulerGrid = this.handleSubmitRulerGrid.bind(this);
+        this.handleSelectRuler = this.handleSelectRuler.bind(this);
+        this.handleAddRuler = this.handleAddRuler.bind(this);
+        this.handleSaveRuler = this.handleSaveRuler.bind(this);
+        this.handleDeleteRuler = this.handleDeleteRuler.bind(this);
+        this.handleToggleRuler = this.handleToggleRuler.bind(this);
+        this.handleToggleCanvasOrientation = this.handleToggleCanvasOrientation.bind(this);
+        this.handleResizeShapeTo = this.handleResizeShapeTo.bind(this);
+        this.handleMoveShapeTo = this.handleMoveShapeTo.bind(this);
+        this.handleRotateShapeTo = this.handleRotateShapeTo.bind(this);
     }
 
-    toggleMenu() {
-        const { hidden } = this.state;
-        this.setState({
-            hidden: !hidden
-        });
+    handleToggleHidden() {
+        const { onToggleHidden } = this.props;
+        onToggleHidden && onToggleHidden();
     }
 
     handleEdit(shape) {
@@ -142,6 +183,24 @@ class ContextualMenu extends Component {
         this.props.onSetCustomZoom(this.props.scale / 2);
     }
 
+    handleToggleScale() {
+        var { toggleScale } = this.state;
+        var currentScale = this.props.scale;
+
+        if (currentScale === 1) {
+            this.props.onSetCustomZoom(toggleScale);
+        } else {
+            this.props.onSetCustomZoom(1);
+            this.setState({
+                toggleScale: currentScale
+            });
+        }
+    }
+
+    handleSelectZoomTool() {
+        this.props.onSelectZoomTool();
+    }
+
     handleShowRulers() {
         this.props.onShowRulers();
     }
@@ -154,9 +213,16 @@ class ContextualMenu extends Component {
         this.props.onShowSubDivisions();
     }
 
-    handleSubmitCustomZoom(event) {
-        this.props.onSetCustomZoom(parseFloat(document.getElementById("scale").value) / 100.0);
-        event.preventDefault();
+    handleSubmitCustomZoomText(value) {
+        this.props.onSetCustomZoom(parseFloat(value) / 100.0);
+    }
+
+    handleSubmitCustomZoomSlider(event) {
+        this.props.onSetCustomZoom(parseFloat(event.target.value) / 100.0);
+    }
+
+    handleSelectScale(value) {
+        this.props.onSetCustomZoom(value);
     }
 
     handleSubmitRulerGrid(event) {
@@ -169,157 +235,177 @@ class ContextualMenu extends Component {
         event.preventDefault();
     }
 
+    handleResizeShapeTo(width, height) {
+        this.props.onResizeShapeTo(width, height);
+    }
+
+    handleMoveShapeTo(x, y) {
+        console.log("handleMoveShapeTo called");
+        this.props.onMoveShapeTo(x, y);
+    }
+
+    handleRotateShapeTo(degree) {
+        this.props.onRotateShapeTo(degree);
+    }
+
+    handleToggleCanvasOrientation(event) {
+        const { unitType, canvasWidthInUnits, canvasHeightInUnits, unitDivisions } = this.props;
+        this.props.onSetRulerGrid({
+            unitType,
+            width: canvasHeightInUnits,
+            height: canvasWidthInUnits,
+            unitDivisions
+        });
+        event.preventDefault();
+    }
+
+    handleSelectRuler(event) {
+        this.props.onSelectRuler(event.target.value);
+        event.preventDefault();
+    }
+
+    handleAddRuler(event) {
+        const { rulerNames } = this.props;
+        var name = document.getElementById("rulerName").value;
+
+        if (name === "") {
+            console.error("Please name your new ruler.");
+        } else if (rulerNames.indexOf(name) === -1) {
+            this.props.onAddRuler({
+                name,
+                unitType: document.getElementById("unitType").value,
+                unitDivisions: parseInt(document.getElementById("unitDivisions").value, 10)
+            });
+        } else {
+            console.error("The name '%s' is already taken. Please enter a different name for your ruler preset.", name);
+        }
+        event.preventDefault();
+    }
+
+    handleSaveRuler(event) {
+        const { currentRuler } = this.props;
+
+        if (currentRuler !== "Default") {
+            this.props.onSaveRuler({
+                unitType: document.getElementById("unitType").value,
+                unitDivisions: parseInt(document.getElementById("unitDivisions").value, 10)
+            });
+        } else {
+            console.error("You cannot edit the default ruler.");
+        }
+        event.preventDefault();
+    }
+
+    handleDeleteRuler(event) {
+        const { currentRuler } = this.props;
+
+        if (currentRuler !== "Default") {
+            this.props.onDeleteRuler();
+        } else {
+            console.error("You cannot delete the default ruler.");
+        }
+        event.preventDefault();
+    }
+
+    handleToggleRuler(event) {
+        const { currentKeys } = this.props;
+        var forward = true;
+
+        if (currentKeys[18]) {
+            forward = false;
+        }
+
+        this.props.onToggleRuler(forward);
+        event.preventDefault();
+    }
+
+    createRulerPresetList() {
+        const { rulerNames } = this.props;
+        let list = [];
+
+        rulerNames.map((presetName) => {
+            list.push(<option key={presetName} value={presetName}>{presetName}</option>);
+        });
+
+        return list;
+    }
+
     render() {
-        const { selectedShape, scale, unitType, unitDivisions, canvasWidthInUnits, canvasHeightInUnits } = this.props;
-        const { hidden } = this.state;
+        const { hidden, selectedShape, scale } = this.props;
+
         let menuLayout = null;
+        let guiEditor = null;
+
         if (selectedShape) {
             if (selectedShape.type === 'text') {
                 menuLayout = <TextMenu text={selectedShape} onEdit={this.handleEdit} onEditText={this.handleEditText} />;
             } else if (selectedShape.type === 'rectangle') {
-                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <RectangleMenu rectangle={selectedShape} onEdit={this.handleEdit} onResizeShapeTo={this.handleResizeShapeTo} onMoveShapeTo={this.handleMoveShapeTo} onRotateShapeTo={this.handleRotateShapeTo} />;
             } else if (selectedShape.type === 'line') {
-                menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} />;
+                menuLayout = <LineMenu line={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+                guiEditor = <ArrowGUIContainer path={selectedShape} />;
             } else if (selectedShape.type === 'ellipse') {
-                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} />;
+                // needs onMoveShape to and onResizeShapeTo for rx, ry, cx, cy
+                menuLayout = <EllipseMenu ellipse={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'polygon') {
+                menuLayout = <PolygonMenu polygon={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'polyline') {
+                menuLayout = <PolylineMenu polyline={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'bezier') {
+                menuLayout = <BezierMenu bezier={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'arc') {
+                menuLayout = <ArcMenu arc={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'path') {
+                menuLayout = <PathMenu path={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
+            } else if (selectedShape.type === 'freehandPath') {
+                menuLayout = <FreehandPathMenu freehandPath={selectedShape} onEdit={this.handleEdit} onRotateShapeTo={this.handleRotateShapeTo} />;
             }
         }
 
         return (
-            <div className="contextual-menu" style={{ right: hidden ? -352 : 0 }}>
-                <div className="hide-button-column">
-                    <div className="hide-button" onClick={this.toggleMenu} />
-                </div>
+            <div className="contextual-menu" style={{ width: CONTEXTUAL_MENU_WIDTH, right: hidden ? -CONTEXTUAL_MENU_WIDTH : 0 }}>
+                <div className="hide-button" onClick={this.handleToggleHidden} />
                 <div className="menu-column">
-                    <h2>Object Manipulation</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleGroupClick}>
-                            <img src="./assets/group.svg" alt="group" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleUngroupClick}>
-                            <img src="./assets/ungroup.svg" alt="ungroup" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleMoveForward}>
-                            <img src="./assets/upone.svg" alt="upone" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleMoveBackward}>
-                            <img src="./assets/backone.svg" alt="downone" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleSendToBack}>
-                            <img src="./assets/SendToBack.svg" alt="backall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleBringToFront}>
-                            <img src="./assets/BringToFront.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleFlipHorizontal}>
-                            <img src="./assets/flip-horz.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleFlipVertical}>
-                            <img src="./assets/flip-vert.svg" alt="frontall" id="button-icon" />
-                        </button>
-                        <button onClick={this.handleToggleGridSnapping} id="button-icon">G</button>
-                    </div>
-                    <h2>Alignment</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/center-alignment.svg" alt="center-alignment" id="alignment-vertical" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment.svg" alt="center-alignment" id="alignment-horizontal" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/left-alignment.svg" alt="left-alignment" id="alignment-left" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/right-alignment.svg" alt="right-alignment" id="alignment-right" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment-1.svg" alt="vertical-alignment-1" id="alignment-bottom" />
-                        </button>
-                        <button onClick={this.handleAlignmentClick}>
-                            <img src="./assets/vertical-alignment-2.svg" alt="vertical-alignment-2" id="alignment-top" />
-                        </button>
-                    </div>
-                    <h2>Distribution</h2>
-                    <div className="static-menu">
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="top" id="distribute-top" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="center" id="distribute-vertical" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="bottom" id="distribute-bottom" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="height" id="distribute-height" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="left" id="distribute-left" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="center" id="distribute-horizontal" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="right" id="distribute-right" />
-                        </button>
-                        <button onClick={this.handleDistributeClick}>
-                            <img src="" alt="width" id="distribute-width" />
-                        </button>
-                    </div>
-                    <div className="dynamic-menu">
-                        { menuLayout }
-                    </div>
-                    <div className="temp">
-                        <button onClick={this.handleShowRulers} id="button-icon">R</button>
-                        <button onClick={this.handleShowGrid} id="button-icon">G</button>
-                        <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
-                    </div>
-                    <div className="ruler-menu">
-                        <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
-                            <select
-                                id="unitType"
-                                defaultValue={unitType}
-                            >
-                                <option value="in">{"in"}</option>
-                                <option value="ft">ft</option>
-                                <option value="mm">mm</option>
-                                <option value="cm">cm</option>
-                                <option value="m">m</option>
-                                <option value="px">px</option>
-                                <option value="pt">pt</option>
-                            </select>
-                            <input
-                                id="width"
-                                defaultValue={canvasWidthInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="height"
-                                defaultValue={canvasHeightInUnits}
-                                type="number"
-                                step="0.01"
-                            />
-                            <input
-                                id="unitDivisions"
-                                defaultValue={unitDivisions}
-                                type="number"
-                            />
-                            <input type="submit" value="resize" />
-                        </form>
+                    <div className="menu-column-top">
+                        <div className="color-menu">
+                            <ColorMenuContainer />
+                            <PaletteEditorContainer />
+                        </div>
+                        <div className="dynamic-menu">
+                            { menuLayout }
+                            { guiEditor }
+                        </div>
                     </div>
                     <div className="zoom-menu">
-                        <button onClick={this.handleZoomIn} id="button-icon">+</button>
-                        <button onClick={this.handleZoomOut} id="button-icon">-</button>
-                        <form id="button-icon" onSubmit={this.handleSubmitCustomZoom}>
-                            {Math.round(scale * 100.0) + "% "}
-                            <input
-                                id="scale"
-                                defaultValue={Math.round(scale * 100.0)}
-                                type="number"
-                            />
-                        </form>
+                        <div className="zoom-select-row">
+                            <SelectRow value={scale} onChange={this.handleSelectScale}>
+                                <div value={0.1} className="zoom-button">10%</div>
+                                <div value={0.5} className="zoom-button">50%</div>
+                                <div value={1} className="zoom-button">100%</div>
+                                <div value={1.5} className="zoom-button">150%</div>
+                                <div value={2.0} className="zoom-button">200%</div>
+                            </SelectRow>
+                        </div>
+                        <div className="zoom-row">
+                            <button onClick={this.handleSelectZoomTool}>
+                                <img src="./assets/marquee-zoom.svg" />
+                            </button>
+                            <div className="zoom-input-row">
+                                <input
+                                    className="zoom-slider"
+                                    type="range"
+                                    defaultValue={Math.round(scale * 100.0)}
+                                    min={MIN_ZOOM * 100}
+                                    max={MAX_ZOOM * 100}
+                                    onChange={this.handleSubmitCustomZoomSlider}
+                                />
+                                <Input
+                                    className="zoom-input"
+                                    value={Math.round(scale * 100.0)}
+                                    onChange={this.handleSubmitCustomZoomText}
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,3 +414,64 @@ class ContextualMenu extends Component {
 }
 
 export default ContextualMenu;
+
+//
+// <h2>Ruler / Grid / Canvas Settings</h2>
+// <div className="temp">
+//     <button onClick={this.handleShowRulers} id="button-icon">R</button>
+//     <button onClick={this.handleShowGrid} id="button-icon">G</button>
+//     <button onClick={this.handleShowSubDivisions} id="button-icon">S</button>
+//     <button onClick={this.handleToggleRuler} id="button-icon">P</button>
+//     <button onClick={this.handleToggleCanvasOrientation} id="button-icon">O</button>
+// </div>
+// <div className="ruler-menu">
+//     <select id="selectRuler" value={currentRuler} onChange={this.handleSelectRuler}>
+//         {this.createRulerPresetList()}
+//     </select>
+//     <form id="button-icon" onSubmit={this.handleSubmitRulerGrid}>
+//         <select
+//             id="unitType"
+//             defaultValue={unitType}
+//         >
+//             <option value="in">{"in"}</option>
+//             <option value="ft">ft</option>
+//             <option value="mm">mm</option>
+//             <option value="cm">cm</option>
+//             <option value="m">m</option>
+//             <option value="px">px</option>
+//             <option value="pt">pt</option>
+//         </select>
+//         <input
+//             id="width"
+//             defaultValue={canvasWidthInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="height"
+//             defaultValue={canvasHeightInUnits}
+//             type="number"
+//             step="0.01"
+//         />
+//         <input
+//             id="unitDivisions"
+//             defaultValue={unitDivisions}
+//             type="number"
+//         />
+//         <input type="submit" value="resize" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleAddRuler}>
+//         <input type="submit" value="add" />
+//         <input
+//             id="rulerName"
+//             placeholder="name your ruler"
+//             type="text"
+//         />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleSaveRuler}>
+//         <input type="submit" value="save" />
+//     </form>
+//     <form id="button-icon" onSubmit={this.handleDeleteRuler}>
+//         <input type="submit" value="delete" />
+//     </form>
+// </div>

@@ -1,6 +1,7 @@
 import jsondiffpatch from 'jsondiffpatch';
 import { groupShapes, ungroupShapes } from '../utilities/shapes';
 import { generateEps } from '../../eps/eps';
+import { convertColor } from './color.js';
 
 export function keyDown(stateCopy, action, root) {
     const { keyCode } = action.payload;
@@ -107,17 +108,8 @@ export function selectTool(stateCopy, action) {
 }
 
 export function selectButton(stateCopy, action) {
-    stateCopy.fillStrokeButton = action.payload.button;
-    return stateCopy;
-}
-
-export function selectColor(stateCopy, action) {
-    if (stateCopy.fillStrokeButton === "fill") {
-        stateCopy.fillColor = action.payload.color;
-    } else {
-        stateCopy.strokeColor = action.payload.color;
-    }
-    stateCopy.color = action.payload.color;
+    stateCopy.fillStrokeButton = action.payload.button.button;
+    stateCopy.color.rgba = action.payload.button.color;
     return stateCopy;
 }
 
@@ -156,5 +148,105 @@ export function ungroupButtonClick(stateCopy, action, root) {
 
 export function exportClick(stateCopy, action) {
     generateEps(stateCopy);
+    return stateCopy;
+}
+
+// Color Functions
+
+export function selectColor(stateCopy, action) {
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor.rgba = action.payload.color;
+    } else {
+        stateCopy.strokeColor.rgba = action.payload.color;
+    }
+    stateCopy.color.rgba = action.payload.color; // current color
+    stateCopy.color.value = convertColor(stateCopy, action.payload.color);
+    return stateCopy;
+}
+
+export function selectPalette(stateCopy, action) {
+    if (action.payload.paletteName in stateCopy.palettes) {
+        stateCopy.currentPalette = action.payload.paletteName;
+    }
+    return stateCopy;
+}
+
+export function addColor(stateCopy, action) {
+    const color = {
+        type: stateCopy.colorMode,
+        rgba: action.payload.color,
+        value: convertColor(stateCopy, action.payload.color),
+        alpha: action.payload.color.a
+    };
+    stateCopy.palettes[stateCopy.currentPalette].colors.push(color);
+    return stateCopy;
+}
+
+export function removeColor(stateCopy, action) {
+    const palette = stateCopy.palettes[stateCopy.currentPalette].colors;
+    stateCopy.palettes[stateCopy.currentPalette].colors.map((color, index) => {
+        if (JSON.stringify(color) === JSON.stringify(action.payload.color)) {
+            palette.splice(index, 1);
+        }
+    });
+    return stateCopy;
+}
+
+export function addPalette(stateCopy, action) {
+    stateCopy.palettes[action.payload.paletteName] = {
+        'colors': []
+    };
+    return stateCopy;
+}
+
+export function removePalette(stateCopy, action) {
+    const palette = action.payload.paletteName;
+    // can't delete the default palette
+    if (palette in stateCopy.palettes && palette !== "Default") {
+        if (stateCopy.currentPalette === palette) {
+            stateCopy.currentPalette = "Default";
+        }
+        delete stateCopy.palettes[palette];
+    }
+    return stateCopy;
+}
+
+export function updateOpacity(stateCopy, action) {
+    stateCopy.color.rgba.a = action.payload.opacity;
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor.rgba.a = action.payload.opacity;
+    } else {
+        stateCopy.strokeColor.rgba.a = action.payload.opacity;
+    }
+    return stateCopy;
+}
+
+export function changeColorType(stateCopy, action) {
+    stateCopy.colorType = action.payload.colorType;
+
+    return stateCopy;
+}
+
+export function setPickerType(stateCopy, action) {
+    stateCopy.colorPickerType = action.payload.pickerType;
+    return stateCopy;
+}
+
+export function changeColorMode(stateCopy, action) {
+    stateCopy.docColorMode = action.payload.colorMode;
+    stateCopy.color.type = action.payload.colorMode;
+    if (stateCopy.fillStrokeButton === "fill") {
+        stateCopy.fillColor.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.fillColor.rgba));
+        stateCopy.fillColor.value = convertColor(stateCopy, stateCopy.fillColor.rgba);
+    } else if (stateCopy.fillStrokeButton === "stroke") {
+        stateCopy.strokeColor.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.strokeColor.rgba));
+        stateCopy.strokeColor.value = convertColor(stateCopy, stateCopy.strokeColor.rgba);
+    } else {
+        stateCopy.color.type = action.payload.colorMode;
+        console.log(convertColor(stateCopy, stateCopy.color.rgba));
+        stateCopy.color.value = convertColor(stateCopy, stateCopy.color.rgba);
+    }
     return stateCopy;
 }
