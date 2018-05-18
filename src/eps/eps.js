@@ -54,12 +54,16 @@ ${drawing}
 	const dialog = window.require('electron').remote.dialog;
 	const fs = window.require('fs');
 	dialog.showSaveDialog(function (filename) {
-		fs.writeFile(filename, epsTemplate, (err) => {
-		    if(err){
-		        alert("An error ocurred creating the file "+ err.message)
-		    }
-		                
-		    alert("The file has been succesfully saved");
-		});
+		if (filename === undefined) {
+			return;
+		} else {
+			fs.writeFile(filename, epsTemplate, (err) => {
+			    if(err){
+			        alert("An error ocurred creating the file "+ err.message)
+			    }
+			                
+			    alert("The file has been succesfully saved");
+			});
+		}
 	});
 }
