@@ -235,13 +235,13 @@ class ArrowGUI extends Component {
         switch (arrow.type) {
             case 'triangle':
             case 'barbed':
-                return <Polygon {...arrowProps} strokeWidth={0} />;
+                return <Polygon {...arrowProps} strokeWidth={1} />;
             case 'ellipse':
-                return <Ellipse {...arrowProps} strokeWidth={0} />;
+                return <Ellipse {...arrowProps} strokeWidth={1} />;
             case 'rectangle':
-                return <Rectangle {...arrowProps} strokeWidth={0} />;
+                return <Rectangle {...arrowProps} strokeWidth={1} />;
             case 'polyline':
-                return <Polyline {...arrowProps} fillOpacity={0} />;
+                return <Polyline {...arrowProps} fillOpacity={1} />;
             default: break;
         }
     }

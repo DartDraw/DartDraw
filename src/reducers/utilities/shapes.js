@@ -19,7 +19,7 @@ export function addRectangle(shapes, action, fill, stroke, panX, panY, scale, gr
         trueFill: fill,
         stroke: formatColor(stroke.rgba),
         trueStroke: stroke,
-        strokeWidth: 0,
+        strokeWidth: 1,
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         info: {}
     };
@@ -46,7 +46,7 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
         ry: 0.5,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
-        strokeWidth: 0,
+        strokeWidth: 1, // switched default from 0 to 1
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         info: {}
     };
@@ -734,8 +734,8 @@ export function strokeShape(shapes, selected, action) {
     return shapes;
 }
 
-export function formatColor(rgba) {
-    const { r, g, b, a } = rgba;
+export function formatColor(colorObj) {
+    const { r, g, b, a } = colorObj.rgba;
     return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
 
