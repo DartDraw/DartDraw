@@ -15,12 +15,13 @@ class boundingBox {
 		this.ury = 0;
 		this.canvasHeightInPixels = canvasHeightInPixels;
 		this.updateBoundsIfNecessary = this.updateBoundsIfNecessary.bind(this);
-		this.updateBoundsRectangleHelper = this.updateBoundsRectangleHelper.bind(this);
+		this.updateBoundsRectangle = this.updateBoundsRectangle.bind(this);
 		this.updateBoundsLine = this.updateBoundsLine.bind(this);
 		this.updateBoundsRectangleHelper = this.updateBoundsRectangleHelper.bind(this);
 		this.updateBoundsEllipseHelper = this.updateBoundsEllipseHelper.bind(this);
 		this.updateBoundsPolygonHelper = this.updateBoundsPolygonHelper.bind(this);
 		this.updateBoundsBezierHelper = this.updateBoundsBezierHelper.bind(this);
+		this.updateBoundsArrowHelper = this.updateBoundsArrowHelper.bind(this);
 		this.quadraticSolverForY = this.quadraticSolverForY.bind(this);
 		this.normalizeAngle = this.normalizeAngle.bind(this);
 	}
@@ -50,18 +51,12 @@ class boundingBox {
 		var helperTerm = math.sqrt(math.subtract(math.pow(secondCoefficient,math.bignumber(2)), math.multiply(math.bignumber(4), firstCoefficient, thirdCoefficient)));
 		
 		if ( math.smaller(math.divide(diff, math.pow(secondCoefficient, 2)), math.divide(1, 1000000)) ) {
-			console.log("diff is sufficiently small");
 			helperTerm = 0;
-		} else {
-			console.log("diff is too large");
 		}
 
 		var firstPotentialY = math.divide(math.add(math.multiply(math.bignumber(-1), secondCoefficient), helperTerm), math.multiply(math.bignumber(2), firstCoefficient));
 		var secondPotentialY = math.divide(math.subtract(math.multiply(math.bignumber(-1), secondCoefficient), helperTerm), math.multiply(math.bignumber(2), firstCoefficient));
 
-		console.log("\nprinting potential y coordinates for this arc / ellipse");
-		console.log(math.number(firstPotentialY));
-		console.log(math.number(secondPotentialY));
 		return firstPotentialY;
 	}
 
@@ -81,18 +76,12 @@ class boundingBox {
 		var helperTerm = math.sqrt(math.subtract(math.pow(secondCoefficient,math.bignumber(2)), math.multiply(math.bignumber(4), firstCoefficient, thirdCoefficient)));
 		
 		if ( math.smaller(math.divide(diff, math.pow(secondCoefficient, 2)), math.divide(1, 1000000)) ) {
-			console.log("diff is sufficiently small");
 			helperTerm = 0;
-		} else {
-			console.log("diff is too large");
 		}
 
 		var firstPotentialX = math.divide(math.add(math.multiply(math.bignumber(-1), secondCoefficient), helperTerm), math.multiply(math.bignumber(2), firstCoefficient));
 		var secondPotentialX = math.divide(math.subtract(math.multiply(math.bignumber(-1), secondCoefficient), helperTerm), math.multiply(math.bignumber(2), firstCoefficient));
 
-		console.log("\nprinting potential x coordinates for this arc / ellipse");
-		console.log(math.number(firstPotentialX));
-		console.log(math.number(secondPotentialX));
 		return firstPotentialX;
 	}
 
@@ -117,7 +106,7 @@ class boundingBox {
 
 		switch (shape.type) {
 			case "rectangle":
-				this.updateBoundsRectangleHelper(shape);
+				this.updateBoundsRectangle(shape);
 				break;
 			case "line":
 				this.updateBoundsLine(shape);
@@ -134,8 +123,34 @@ class boundingBox {
 			case "bezier":
 				this.updateBoundsBezierHelper(shape);
 				break;
+			case "arrow":
+				this.updateBoundsArrowHelper(shape);
+				break;
 			default:
 				break;
+		}
+	}
+
+	updateBoundsArrowHelper(shape) {
+		const coords = shape.getCoords();
+		let x, y;
+		for (var i = 0; i < coords.length; i++) {
+			x = coords[i].x;
+			y = coords[i].y;
+
+			// first check endpoints
+		    if (x  - strokeWidth < this.llx) {
+				this.llx = x - strokeWidth;
+			}
+			if (x + strokeWidth > this.urx) {
+				this.urx = x + strokeWidth;
+			}
+			if ((this.canvasHeightInPixels - y - strokeWidth) < this.lly) {
+				this.lly = this.canvasHeightInPixels - y - strokeWidth;
+			}
+			if ((this.canvasHeightInPixels - y + strokeWidth) > this.ury) {
+				this.ury = this.canvasHeightInPixels - y + strokeWidth;
+			}
 		}
 	}
 
@@ -144,10 +159,7 @@ class boundingBox {
 		const coords = myShape.getCoords();
 		const controlPoints = myShape.getControlPoints();
 		const strokeWidth = myShape.getStrokeWidth()/2;
-		console.log("logging strokeWidth");
 		const numPoints = myShape.getParams().numPoints;
-
-		console.log("logging coords, controlPoints, strokeWidth, numPoints");
 
 		if (!coords.hasOwnProperty(0)) {
 			return;
@@ -159,8 +171,6 @@ class boundingBox {
 		    let controlPointTwo;
 		    let coord2;
 		    let index;
-		    console.log("logging i");
-		    console.log(i);
 
 		    if (i == 0) {
 		    	index = controlPoints.length-1;
@@ -170,11 +180,6 @@ class boundingBox {
 		    }
 	    	controlPointTwo = controlPoints[i][0];
 	    	coord2 = coords[i+1];
-	    	console.log("logging coord1, controlPointOne, controlPointTwo, coord2");
-	    	console.log(coord1);
-	    	console.log(controlPointOne);
-	    	console.log(controlPointTwo);
-	    	console.log(coord2);
 
 		    // first check endpoints
 		    if (coord1.x  - strokeWidth < this.llx) {
@@ -200,7 +205,6 @@ class boundingBox {
 		    let c = v1;
 
 		    if ( math.smaller( math.subtract (math.pow(b,math.bignumber(2)),math.multiply(math.bignumber(4),a,c) ),0) ) {
-		    	console.log("b^2 - 4ac is less than 0");
 		    	continue;
 		    }
 
@@ -208,10 +212,6 @@ class boundingBox {
 
 			let firstPotentialT = math.divide(math.add(math.multiply(math.bignumber(-1),b), helperTerm), math.multiply(math.bignumber(2),a));
 			let secondPotentialT = math.divide(math.subtract(math.multiply(math.bignumber(-1),b), helperTerm), math.multiply(math.bignumber(2),a));
-			
-			console.log("logging firstPotentialT, secondPotentialT for x");
-			console.log(math.number(firstPotentialT));
-			console.log(math.number(secondPotentialT));
 
 			// make sure a value of t lies between 0 and 1
 			let tExtremum = firstPotentialT;
@@ -274,9 +274,21 @@ class boundingBox {
 		return;
 	}
 
+	updateBoundsRectangle(shape) {
+		var myShape = new epsShape(shape);
+		var coords = myShape.getCoords();
+		var strokeWidth = myShape.getStrokeWidth();
+
+		let lastIndex = coords.length-1;
+		for (var i=0; i < lastIndex; i++) {
+			this.updateBoundsRectangleHelper(coords[i], coords[i+1], strokeWidth);
+		}
+		this.updateBoundsRectangleHelper(coords[lastIndex], coords[0], strokeWidth);
+	}
+
 
 	updateBoundsRectangleHelper(point1, point2, strokeWidth) {
-		var halfStrokeWidth = math.divide(math.bignumber(strokeWidth),2);
+		var halfStrokeWidth = math.divide(math.bignumber(strokeWidth),math.bignumber(2));
 		var baseAdjacent = math.subtract(math.bignumber(point2.x), math.bignumber(point1.x));
 		var baseOpposite = math.subtract(math.bignumber(point2.y), math.bignumber(point1.y));
 		var lineAngle = math.atan2(baseOpposite, baseAdjacent);
@@ -287,11 +299,7 @@ class boundingBox {
 
 		var adjacent = math.abs(math.multiply(math.cos(smallHypotenuseAngle),smallHypotenuseLength));
 		var opposite = math.abs(math.multiply(math.sin(smallHypotenuseAngle),smallHypotenuseLength));
-		console.log("logging adjacent and opposite");
-		console.log(math.number(adjacent));
-		console.log(math.number(opposite));
 		
-
 		// compute boundaries of one end of the line
 		if (math.smaller(math.subtract(math.bignumber(point1.x),adjacent),math.bignumber(this.llx))) {
 			this.llx = math.number(math.subtract(math.bignumber(point1.x),adjacent));
@@ -327,7 +335,6 @@ class boundingBox {
 		var rx = params.rx;
 		var ry = params.ry;
 		var alpha = params.alpha * (Math.PI/180);
-		console.log(alpha);
 
 		var xA = (ry**2) * ((Math.sin(alpha))**2) + (rx**2) * ((Math.cos(alpha))**2);
 		var yA = (ry**2) * ((Math.cos(alpha))**2) + (rx**2) * ((Math.sin(alpha))**2);
@@ -347,19 +354,15 @@ class boundingBox {
 		var strokeWidth = myShape.getStrokeWidth() / 2;
 
 		if (minX - strokeWidth < this.llx) {
-			console.log("updating llx");
 			this.llx = minX - strokeWidth;
 		}
 		if (maxX + strokeWidth > this.urx) {
-			console.log("updating urx");
 			this.urx = maxX + strokeWidth;
 		}
 		if ((this.canvasHeightInPixels - maxY - strokeWidth) < this.lly) {
-			console.log("updating lly");
 			this.lly = this.canvasHeightInPixels - maxY - strokeWidth;
 		}
 		if ((this.canvasHeightInPixels - minY + strokeWidth) > this.ury) {
-			console.log("updating ury");
 			this.ury = this.canvasHeightInPixels - minY + strokeWidth;
 		}
 	}
@@ -426,26 +429,6 @@ class boundingBox {
 				this.ury = math.number(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(pointTwo.y),vertical)));
 			}
 		}
-
-		// for (var key in coords) {
-		//     // skip loop if the property is from prototype
-		//     if (!coords.hasOwnProperty(key)) continue;
-
-		//     var coord = coords[key];
-
-		//     if (coord.x < this.llx) {
-		// 		this.llx = coord.x;
-		// 	}
-		// 	if ((coord.x) > this.urx) {
-		// 		this.urx = coord.x;
-		// 	}
-		// 	if ((this.canvasHeightInPixels - coord.y) < this.lly) {
-		// 		this.lly = this.canvasHeightInPixels - coord.y;
-		// 	}
-		// 	if ((this.canvasHeightInPixels - coord.y) > this.ury) {
-		// 		this.ury = this.canvasHeightInPixels - coord.y;
-		// 	}
-		// }
 	}
 
 	updateBoundsArcHelper(shape) {
@@ -509,7 +492,6 @@ class boundingBox {
 		    var strokeWidth = myShape.getStrokeWidth() / 2;
 		    if (!flipArc) {
 		    	if (tau >= 0 && tau <= firstAngle) {
-		    		console.log("extremum lies within angle range");
 					if (rotatedExtremum.x - strokeWidth < this.llx) {
 						this.llx = rotatedExtremum.x - strokeWidth;
 					}
@@ -523,7 +505,6 @@ class boundingBox {
 						this.ury = this.canvasHeightInPixels - rotatedExtremum.y + strokeWidth;
 					}
 		    	} else {
-		    		console.log("extremum does not lie within angle range");
 
 		    		if (firstEndPointExtremum.x < this.llx) {
 		    			this.llx = firstEndPointExtremum.x;
@@ -553,7 +534,6 @@ class boundingBox {
 		    	}
 		    } else {
 		    	if (tau >= 0 && tau <= firstAngle) {
-		    		console.log("extremum does not lie within angle range");
 
 		    		if (firstEndPointExtremum.x < this.llx) {
 		    			this.llx = firstEndPointExtremum.x;
@@ -581,7 +561,6 @@ class boundingBox {
 		    			this.ury = this.canvasHeightInPixels - secondEndPointExtremum.y;
 		    		}
 		    	} else {
-		    		console.log("extremum lies within angle range");
 		    		if (rotatedExtremum.x - strokeWidth < this.llx) {
 						this.llx = rotatedExtremum.x - strokeWidth;
 					}
@@ -598,7 +577,6 @@ class boundingBox {
 		    }
 		}
 	}
-
 }
 
 export default boundingBox;

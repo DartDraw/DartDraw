@@ -2,38 +2,46 @@ import epsShape from './epsShape';
 import epsLine from './epsLine';
 import epsArrow from './epsArrow';
 import boundingBox from './boundingBox';
+import { deepCopy } from '../reducers/utilities/object'
 
 export function generateEps(stateCopy) {
-	console.log(stateCopy.canvasHeight);
-	console.log(stateCopy.shapes.arrows);
-	console.log(stateCopy.shapes.byId);
 	var drawing = '';
 	var myBoundingBox = new boundingBox(stateCopy.canvasHeight, stateCopy.canvasWidth);
 
 	for (var i = 0; i < stateCopy.shapes.allIds.length; i++) {
 		var id = stateCopy.shapes.allIds[i];
 		var shape = stateCopy.shapes.byId[id];
+		var myShape;
 
 		if (shape.type === "line") {
-			let linePoints = shape.points;
-			let arrowHead = stateCopy.shapes.arrows.byId[shape.arrowHeadId];
-			let arrowTail = stateCopy.shapes.arrows.byId[shape.arrowTailId];
+			let lineCopy = deepCopy(shape);
+			let linePoints = lineCopy.points;
+			let arrowHead = stateCopy.shapes.arrows.byId[lineCopy.arrowHeadId];
+			let arrowTail = stateCopy.shapes.arrows.byId[lineCopy.arrowTailId];
 
 			if (shape.arrowHeadShown) {
 				let arrowHeadShape = new epsArrow(arrowHead, true, linePoints);
-				drawing = drawing + arrowHeadShape.produceEps(stateCopy.canvasHeight);
-				// myBoundingBox.updateBoundsIfNecessary(arrowHeadShape);
+				let data = arrowHeadShape.produceEps(stateCopy.canvasHeight);
+				drawing = drawing + data.drawing;
+				lineCopy.points[2] = data.endPoint.x;
+				lineCopy.points[3] = data.endPoint.y;
+				console.log(arrowHeadShape);
+				//myBoundingBox.updateBoundsIfNecessary(arrowHeadShape);
 			}
 
 			if (shape.arrowTailShown) {
 				let arrowTailShape = new epsArrow(arrowTail, false, linePoints);
-				drawing = drawing + arrowTailShape.produceEps(stateCopy.canvasHeight);
+				let data = arrowTailShape.produceEps(stateCopy.canvasHeight);
+				drawing = drawing + data.drawing;
+				lineCopy.points[0] = data.endPoint.x;
+				lineCopy.points[1] = data.endPoint.y;
 				// myBoundingBox.updateBoundsIfNecessary(arrowTailShape);
 			}
-
+			var myShape = new epsShape(lineCopy);
+		} else {
+			var myShape = new epsShape(shape);
 		}
-		var myShape = new epsShape(shape);
-		console.log(myShape);
+
 		drawing = drawing + myShape.produceEps(stateCopy.canvasHeight);
 		myBoundingBox.updateBoundsIfNecessary(shape);
 	}

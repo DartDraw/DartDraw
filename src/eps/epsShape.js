@@ -12,9 +12,6 @@ class epsShape {
 
 	constructor(shape) {
 		this.shape = shape;
-		console.log("printing shape and type");
-		console.log(this.shape);
-		console.log(this.shape.type);
 		this.produceEps = this.produceEps.bind(this);
 		this.getCoords = this.getCoords.bind(this);
 		this.getParams = this.getParams.bind(this);

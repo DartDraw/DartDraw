@@ -9,10 +9,6 @@ class epsRectangle {
 	}
 
 	produceEps(canvasHeightInPixels) {
-		console.log("printing height of rectangle");
-		console.log(this.rectangle.height);
-		console.log("printing width of rectangle");
-		console.log(this.rectangle.width);
 		var coords = this.getCoords();
 		var x0 = coords[0].x;
 		var y0 = canvasHeightInPixels - coords[0].y;

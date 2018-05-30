@@ -9,14 +9,13 @@ math.config({
 class epsArrow {
 
 	constructor(arrow, head, linePoints) {
-		console.log("logging arrow");
-		console.log(arrow);
 		this.arrow = arrow;
 		this.head = head;
 		this.linePoints = linePoints;
 		this.produceEps = this.produceEps.bind(this);
 		this.getCoords = this.getCoords.bind(this);
 		this.getDrawing = this.getDrawing.bind(this);
+		this.type = "arrow";
 	}
 
 	produceEps(canvasHeightInPixels) {
@@ -42,54 +41,135 @@ ${strokeR} ${strokeG} ${strokeB} setrgbcolor
 fill
 `;
 
-		return drawingInfo;
+		const coords = this.getCoords();
+		console.log("logging arrowhead coords");
+		console.log(coords);
+		var endX, endY;
+
+		if (this.head) {
+			if (this.arrow.type === "barbed") {
+				if (this.arrow.flip) {
+					endX = coords[0].x;
+					endY = coords[0].y;
+				} else {
+					endX = coords[2].x;
+					endY = coords[2].y;
+				}
+			} else {
+				if (this.arrow.flip) {
+					endX = coords[0].x;
+					endY = coords[0].y;
+				} else {
+					endX = coords[1].x - (coords[1].x - coords[2].x)/2;
+					endY = coords[1].y - (coords[1].y - coords[2].y)/2;
+				}
+			}
+		} else {
+			if (this.arrow.type === "barbed") {
+				if (this.arrow.flip) {
+					endX = coords[2].x;
+					endY = coords[2].y;
+				} else {
+					endX = coords[0].x;
+					endY = coords[0].y;
+				}
+			} else {
+				if (this.arrow.flip) {
+					endX = coords[1].x - (coords[1].x - coords[2].x)/2;
+					endY = coords[1].y - (coords[1].y - coords[2].y)/2;
+				} else {
+					endX = coords[0].x;
+					endY = coords[0].y;
+				}
+			}
+		}
+
+		return {
+			drawing: drawingInfo,
+			endPoint: {x: endX, y: endY}
+		};
 	}
 
 	getCoords() {
 		const coords = [];
-		var anchor = (this.head) ? {x: this.linePoints[2], y: this.linePoints[3]} : {x: this.linePoints[0], y: this.linePoints[1]}
-		coords.push(anchor);
+		var anchor, lineXDimension, lineLength, cosAngle, lineAngle;
+		let arrowLength, arrowHeight, arrowBaseX, arrowBaseY, tempX, tempY;
 
-		var lineXDimension = math.subtract(math.bignumber(this.linePoints[2]),math.bignumber(this.linePoints[0]));
-		var lineLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(this.linePoints[2]), math.bignumber(this.linePoints[0])),math.bignumber(2)),math.pow(math.subtract(math.bignumber(this.linePoints[3]), math.bignumber(this.linePoints[1])),math.bignumber(2))));
-		var cosAngle = math.divide(lineXDimension,lineLength);
-		var lineAngle = math.acos(cosAngle);
-		if (math.smaller(math.subtract(math.bignumber(this.linePoints[3]),math.bignumber(this.linePoints[1])),math.bignumber(0))) {
-			lineAngle = math.multiply(math.bignumber(-1),lineAngle);
+		if (this.head) {
+			anchor = {x: math.bignumber(this.linePoints[2]), y: math.bignumber(this.linePoints[3])};
+			lineXDimension = math.subtract(math.bignumber(this.linePoints[2]),math.bignumber(this.linePoints[0]));
+			lineLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(this.linePoints[2]), math.bignumber(this.linePoints[0])),math.bignumber(2)),math.pow(math.subtract(math.bignumber(this.linePoints[3]), math.bignumber(this.linePoints[1])),math.bignumber(2))));
+			cosAngle = math.divide(lineXDimension,lineLength);
+			lineAngle = math.acos(cosAngle);
+
+			if (math.smaller(math.subtract(math.bignumber(this.linePoints[3]),math.bignumber(this.linePoints[1])),math.bignumber(0))) {
+				lineAngle = math.multiply(math.bignumber(-1),lineAngle);
+			}
+	
+			arrowLength = math.subtract(math.bignumber(this.arrow.points[2]),math.bignumber(this.arrow.points[0]));
+			arrowHeight = math.subtract(math.bignumber(this.arrow.points[5]),math.bignumber(this.arrow.points[1]));
+			arrowBaseX = math.subtract(math.bignumber(anchor.x), math.multiply(arrowLength,math.cos(lineAngle)));
+			arrowBaseY = math.subtract(math.bignumber(anchor.y), math.multiply(arrowLength,math.sin(lineAngle)));
+
+			if (this.arrow.flip) {
+				lineAngle = math.subtract(lineAngle,math.pi);
+				tempX = arrowBaseX;
+				tempY = arrowBaseY;
+				arrowBaseX = anchor.x;
+				arrowBaseY = anchor.y;
+				anchor.x = tempX;
+				anchor.y = tempY;
+			}
+
+		} else {
+			arrowBaseX = math.bignumber(this.linePoints[0]);
+			arrowBaseY = math.bignumber(this.linePoints[1]);
+
+			lineXDimension = math.subtract(math.bignumber(this.linePoints[2]),math.bignumber(this.linePoints[0]));
+			lineLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(this.linePoints[2]), math.bignumber(this.linePoints[0])),math.bignumber(2)),math.pow(math.subtract(math.bignumber(this.linePoints[3]), math.bignumber(this.linePoints[1])),math.bignumber(2))));
+			cosAngle = math.divide(lineXDimension,lineLength);
+			lineAngle = math.acos(cosAngle);
+
+			if (math.smaller(math.subtract(math.bignumber(this.linePoints[3]),math.bignumber(this.linePoints[1])),math.bignumber(0))) {
+				lineAngle = math.multiply(math.bignumber(-1),lineAngle);
+			}
+
+			arrowLength = math.subtract(math.bignumber(this.arrow.points[2]),math.bignumber(this.arrow.points[0]));
+			arrowHeight = math.subtract(math.bignumber(this.arrow.points[5]),math.bignumber(this.arrow.points[1]));
+			anchor = {};
+			anchor.x = math.add(math.bignumber(arrowBaseX), math.multiply(arrowLength,math.cos(lineAngle)));
+			anchor.y = math.add(math.bignumber(arrowBaseY), math.multiply(arrowLength,math.sin(lineAngle)));
+
+			if (this.arrow.flip) {
+				lineAngle = math.subtract(lineAngle,math.pi);
+				tempX = arrowBaseX;
+				tempY = arrowBaseY;
+				arrowBaseX = anchor.x;
+				arrowBaseY = anchor.y;
+				anchor.x = tempX;
+				anchor.y = tempY;
+			}
 		}
-		console.log(math.number(lineAngle));
 
-		let arrowLength, arrowHeight;
+		coords.push({x: math.number(anchor.x), y: math.number(anchor.y)});
 
-		switch(this.arrow.type) {
-			case "triangle":
-				arrowLength = math.subtract(math.bignumber(this.arrow.points[2]),math.bignumber(this.arrow.points[0]));
-				arrowHeight = math.subtract(math.bignumber(this.arrow.points[5]),math.bignumber(this.arrow.points[1]));
+		let xDiff = math.multiply(math.divide(arrowHeight,math.bignumber(2)),math.cos(math.subtract(math.divide(math.pi,math.bignumber(2)),lineAngle)));
+		let yDiff = math.multiply(math.divide(arrowHeight,math.bignumber(2)),math.sin(math.subtract(math.divide(math.pi,math.bignumber(2)),lineAngle)));
 
-				let arrowBaseX = math.subtract(math.bignumber(coords[0].x), math.multiply(arrowLength,math.cos(lineAngle)));
-				let arrowBaseY = math.subtract(math.bignumber(coords[0].y), math.multiply(arrowLength,math.sin(lineAngle)));
+		let testCoord = {}
+		testCoord.x = math.number(math.add(arrowBaseX,xDiff));
+		testCoord.y = math.number(math.subtract(arrowBaseY,yDiff));
+		coords.push(testCoord);
 
-				console.log("logging the end of line point, then the arrow base coordinates");
-				console.log(coords[0]);
-				console.log(math.number(arrowBaseX));
-				console.log(math.number(arrowBaseY));
-
-				let xDiff = math.multiply(math.divide(arrowHeight,math.bignumber(2)),math.cos(math.subtract(math.divide(math.pi,math.bignumber(2)),lineAngle)));
-				let yDiff = math.multiply(math.divide(arrowHeight,math.bignumber(2)),math.sin(math.subtract(math.divide(math.pi,math.bignumber(2)),lineAngle)));
-
-				console.log("logging xDiff and yDiff");
-				console.log(math.number(xDiff));
-				console.log(math.number(yDiff));
-
-				coords.push({x: math.number(math.add(arrowBaseX,xDiff)),y: math.number(math.subtract(arrowBaseY,yDiff))});
-				coords.push({x: math.number(math.subtract(arrowBaseX,xDiff)),y: math.number(math.add(arrowBaseY,yDiff))});
-
-				return coords;
-			// case "barbed":
-			// 	return coords;
-			default:
-				return this.arrow.points;
+		if (this.arrow.type === "barbed") {
+			let arrowMinorLength = math.subtract(math.bignumber(this.arrow.points[2]),math.bignumber(this.arrow.points[6]));
+			let controlPointX = math.subtract(math.bignumber(coords[0].x), math.multiply(arrowMinorLength,math.cos(lineAngle)));
+			let controlPointY = math.subtract(math.bignumber(coords[0].y), math.multiply(arrowMinorLength,math.sin(lineAngle)));
+			coords.push({x: math.number(controlPointX), y: math.number(controlPointY)});
 		}
+		coords.push({x: math.number(math.subtract(arrowBaseX,xDiff)),y: math.number(math.add(arrowBaseY,yDiff))});
+
+		return coords;
 	}
 
 	getDrawing(canvasHeightInPixels) {
