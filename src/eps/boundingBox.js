@@ -89,6 +89,8 @@ class boundingBox {
 		var str;
 		if (shape.type == 'text') {
 			str = shape.fill;
+		} else if (shape.type == 'arrow'){
+			str = shape.arrow.stroke;
 		} else {
 			str = shape.stroke;
 		}
@@ -133,23 +135,25 @@ class boundingBox {
 
 	updateBoundsArrowHelper(shape) {
 		const coords = shape.getCoords();
+		console.log("logging arrow coords");
+		console.log(coords);
 		let x, y;
 		for (var i = 0; i < coords.length; i++) {
 			x = coords[i].x;
 			y = coords[i].y;
 
 			// first check endpoints
-		    if (x  - strokeWidth < this.llx) {
-				this.llx = x - strokeWidth;
+		    if (x < this.llx) {
+				this.llx = x;
 			}
-			if (x + strokeWidth > this.urx) {
-				this.urx = x + strokeWidth;
+			if (x > this.urx) {
+				this.urx = x;
 			}
-			if ((this.canvasHeightInPixels - y - strokeWidth) < this.lly) {
-				this.lly = this.canvasHeightInPixels - y - strokeWidth;
+			if ((this.canvasHeightInPixels - y) < this.lly) {
+				this.lly = this.canvasHeightInPixels - y;
 			}
-			if ((this.canvasHeightInPixels - y + strokeWidth) > this.ury) {
-				this.ury = this.canvasHeightInPixels - y + strokeWidth;
+			if ((this.canvasHeightInPixels - y) > this.ury) {
+				this.ury = this.canvasHeightInPixels - y;
 			}
 		}
 	}

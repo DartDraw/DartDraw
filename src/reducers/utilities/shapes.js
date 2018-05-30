@@ -46,7 +46,7 @@ export function addEllipse(shapes, action, fill, stroke, panX, panY, scale, grid
         ry: 0.5,
         fill: formatColor(fill),
         stroke: formatColor(stroke),
-        strokeWidth: 1,
+        strokeWidth: 1, // switched default from 0 to 1
         transform: [{command: 'matrix', parameters: [1, 0, 0, 1, 0, 0]}],
         info: {}
     };

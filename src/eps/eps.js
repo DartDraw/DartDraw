@@ -15,7 +15,7 @@ export function generateEps(stateCopy) {
 
 		if (shape.type === "line") {
 			let lineCopy = deepCopy(shape);
-			let linePoints = lineCopy.points;
+			let linePoints = shape.points;
 			let arrowHead = stateCopy.shapes.arrows.byId[lineCopy.arrowHeadId];
 			let arrowTail = stateCopy.shapes.arrows.byId[lineCopy.arrowTailId];
 
@@ -26,7 +26,7 @@ export function generateEps(stateCopy) {
 				lineCopy.points[2] = data.endPoint.x;
 				lineCopy.points[3] = data.endPoint.y;
 				console.log(arrowHeadShape);
-				//myBoundingBox.updateBoundsIfNecessary(arrowHeadShape);
+				myBoundingBox.updateBoundsIfNecessary(arrowHeadShape);
 			}
 
 			if (shape.arrowTailShown) {
@@ -35,7 +35,7 @@ export function generateEps(stateCopy) {
 				drawing = drawing + data.drawing;
 				lineCopy.points[0] = data.endPoint.x;
 				lineCopy.points[1] = data.endPoint.y;
-				// myBoundingBox.updateBoundsIfNecessary(arrowTailShape);
+				myBoundingBox.updateBoundsIfNecessary(arrowTailShape);
 			}
 			var myShape = new epsShape(lineCopy);
 		} else {
