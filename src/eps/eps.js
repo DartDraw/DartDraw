@@ -1,20 +1,52 @@
 import epsShape from './epsShape';
+import epsLine from './epsLine';
+import epsArrow from './epsArrow';
 import boundingBox from './boundingBox';
 
 export function generateEps(stateCopy) {
-	console.log("made it to export/exportEps");
+	console.log(stateCopy.canvasHeight);
+	console.log(stateCopy.shapes.arrows);
+	console.log(stateCopy.shapes.byId);
 	var drawing = '';
-	var myBoundingBox = new boundingBox(stateCopy.canvasHeight);
+	var myBoundingBox = new boundingBox(stateCopy.canvasHeight, stateCopy.canvasWidth);
 
 	for (var i = 0; i < stateCopy.shapes.allIds.length; i++) {
 		var id = stateCopy.shapes.allIds[i];
-		console.log(id);
 		var shape = stateCopy.shapes.byId[id];
 
+		if (shape.type === "line") {
+			let linePoints = shape.points;
+			let arrowHead = stateCopy.shapes.arrows.byId[shape.arrowHeadId];
+			let arrowTail = stateCopy.shapes.arrows.byId[shape.arrowTailId];
+
+			if (shape.arrowHeadShown) {
+				let arrowHeadShape = new epsArrow(arrowHead, true, linePoints);
+				drawing = drawing + arrowHeadShape.produceEps(stateCopy.canvasHeight);
+				// myBoundingBox.updateBoundsIfNecessary(arrowHeadShape);
+			}
+
+			if (shape.arrowTailShown) {
+				let arrowTailShape = new epsArrow(arrowTail, false, linePoints);
+				drawing = drawing + arrowTailShape.produceEps(stateCopy.canvasHeight);
+				// myBoundingBox.updateBoundsIfNecessary(arrowTailShape);
+			}
+
+		}
 		var myShape = new epsShape(shape);
+		console.log(myShape);
 		drawing = drawing + myShape.produceEps(stateCopy.canvasHeight);
 		myBoundingBox.updateBoundsIfNecessary(shape);
 	}
+
+	// for (var i = 0; i < stateCopy.shapes.arrows.allIds.length; i++) {
+	// 	var arrowID = stateCopy.shapes.arrows.allIds[i];
+	// 	var arrow = stateCopy.shapes.arrows.byId[id];
+
+	// 	var myArrow = new epsShape(arrow);
+	// 	console.log(myArrow);
+	// 	drawing = drawing + myARrow.produceEps(stateCopy.canvasHeight);
+	// 	myBoundingBox.updateBoundsIfNecessary(shape);
+	// }
 
 	var epsTemplate = 
 `%!PS-Adobe-3.0 EPSF-3.0
@@ -55,13 +87,12 @@ ${drawing}
 	const fs = window.require('fs');
 	dialog.showSaveDialog(function (filename) {
 		if (filename === undefined) {
-			return;
+			return
 		} else {
 			fs.writeFile(filename, epsTemplate, (err) => {
 			    if(err){
 			        alert("An error ocurred creating the file "+ err.message)
-			    }
-			                
+			    }      
 			    alert("The file has been succesfully saved");
 			});
 		}
