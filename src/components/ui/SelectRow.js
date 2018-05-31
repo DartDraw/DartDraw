@@ -29,6 +29,7 @@ class SelectRow extends Component {
                 backgroundColor: child.props.value === value ? '#10161A' : '#202B33'
             };
             return React.cloneElement(child, {
+                key: child.props.value,
                 style: Object.assign(child.props.style || {}, newStyle),
                 onClick: () => {
                     this.handleChange(child.props.value);

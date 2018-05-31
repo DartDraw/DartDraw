@@ -100,8 +100,8 @@ class PaletteEditor extends Component {
                 display: 'none'
             };
         }
-        const palette = colorList.map((color) =>
-            <div id="color-square">
+        const palette = colorList.map((color, i) =>
+            <div id="color-square" key={i}>
                 <ColorSquare color={color.rgba} colorClick={this.handleColorClick} />
                 <p style={deleteColorStyle}>x</p>
             </div>
@@ -130,7 +130,7 @@ class PaletteEditor extends Component {
                 </div>
                 <Select value={currentPalette} onChange={this.handleChangePalette}>
                     {Object.keys(palettes).map((p) => {
-                        return <option value={p}>{p}</option>;
+                        return <option key={p} value={p}>{p}</option>;
                     })}
                 </Select>
                 {newPalette}

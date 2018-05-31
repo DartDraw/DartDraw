@@ -2,7 +2,7 @@ import 'react-select/dist/react-select.css';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { CustomPicker } from 'react-color';
-var { EditableInput, Saturation, Hue } = window.require('react-color/lib/components/common');
+import { EditableInput, Saturation, Hue } from 'react-color/lib/components/common';
 
 class DDColorPicker extends Component {
     static propTypes = {

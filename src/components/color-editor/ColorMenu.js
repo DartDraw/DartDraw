@@ -179,7 +179,7 @@ class ColorMenu extends Component {
                             <button id="basic-button-1" onClick={this.handleAddColor}>+</button>
                             <Select value={colorType} onChange={this.handleChangeColorType}>
                                 {colorOptions.map(({ value, label }) => {
-                                    return <option value={value}>{label}</option>;
+                                    return <option key={value} value={value}>{label}</option>;
                                 })}
                             </Select>
                         </div>
