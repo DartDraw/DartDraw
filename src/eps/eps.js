@@ -5,6 +5,12 @@ import boundingBox from './boundingBox';
 import { deepCopy } from '../reducers/utilities/object'
 
 export function generateEps(stateCopy) {
+	console.log("attempting to log special character");
+	console.log("test↵ing");
+	console.log("\r");
+
+	console.log("logging stateCopy");
+	console.log(stateCopy);
 	var drawing = '';
 	var myBoundingBox = new boundingBox(stateCopy.canvasHeight, stateCopy.canvasWidth);
 

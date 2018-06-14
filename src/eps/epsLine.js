@@ -2,13 +2,11 @@ import { transformPoint } from '../reducers/utilities/matrix';
 
 class epsLine {
 
-	constructor(line, arrowHead, arrowTail) {
+	constructor(line) {
 		this.line = line;
 		this.produceEps = this.produceEps.bind(this);
 		this.getCoords = this.getCoords.bind(this);
 		this.getPoints = this.getPoints.bind(this);
-		this.arrowHead = arrowHead;
-		this.arrowTail = arrowTail;
 	}
 
 	produceEps(canvasHeight) {
@@ -50,14 +48,6 @@ stroke
 	getPoints() {
 		// start off by assuming no arrows
 		const points = this.getCoords();
-		if (this.line.arrowHeadShown) {
-
-		}
-
-		if (this.line.arrowTailShown) {
-
-		}
-
 		return points;
 	}
 }

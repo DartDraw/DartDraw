@@ -61,8 +61,6 @@ stroke
 			commandString += " lineto";
 		}
 
-		pointsString += " " + coords[0].x.toString() + " " + (canvasHeightInPixels - coords[0].y).toString();
-		commandString += " lineto";
 		return {
 			pointsString: pointsString,
 			commandString: commandString

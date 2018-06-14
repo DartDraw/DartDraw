@@ -82,6 +82,12 @@ class epsShape {
 			case "bezier":
 				var myBezier = new epsBezier(this.shape);
 				return myBezier.getCoords();
+			case "text":
+				var myText = new epsText(this.shape);
+				return myText.getCoords();
+			case "freehandPath":
+				var myFreehandPath = new epsFreehandPath(this.shape);
+				return myFreehandPath.getCoords();
 			default:
 				return {};
 		}
@@ -163,6 +169,9 @@ class epsShape {
 			case "bezier":
 				var myBezier = new epsBezier(this.shape);
 				return myBezier.bezier.strokeWidth;
+			case "freehandPath":
+				var myFreehandPath = new epsFreehandPath(this.shape);
+				return myFreehandPath.freehandPath.strokeWidth;
 			default:
 				return null;
 		}

@@ -17,11 +17,13 @@ class boundingBox {
 		this.updateBoundsIfNecessary = this.updateBoundsIfNecessary.bind(this);
 		this.updateBoundsRectangle = this.updateBoundsRectangle.bind(this);
 		this.updateBoundsLine = this.updateBoundsLine.bind(this);
+		this.updateBoundsFreehandPath = this.updateBoundsFreehandPath.bind(this);
 		this.updateBoundsRectangleHelper = this.updateBoundsRectangleHelper.bind(this);
 		this.updateBoundsEllipseHelper = this.updateBoundsEllipseHelper.bind(this);
 		this.updateBoundsPolygonHelper = this.updateBoundsPolygonHelper.bind(this);
 		this.updateBoundsBezierHelper = this.updateBoundsBezierHelper.bind(this);
 		this.updateBoundsArrowHelper = this.updateBoundsArrowHelper.bind(this);
+		this.updateBoundsTextHelper = this.updateBoundsTextHelper.bind(this);
 		this.quadraticSolverForY = this.quadraticSolverForY.bind(this);
 		this.normalizeAngle = this.normalizeAngle.bind(this);
 	}
@@ -113,6 +115,9 @@ class boundingBox {
 			case "line":
 				this.updateBoundsLine(shape);
 				break;
+			case "freehandPath":
+				this.updateBoundsFreehandPath(shape);
+				break;
 			case "ellipse":
 				this.updateBoundsEllipseHelper(shape);
 				break;
@@ -128,8 +133,34 @@ class boundingBox {
 			case "arrow":
 				this.updateBoundsArrowHelper(shape);
 				break;
+			case "text":
+				this.updateBoundsTextHelper(shape);
 			default:
 				break;
+		}
+	}
+
+	updateBoundsTextHelper(shape) {
+		const myShape = new epsShape(shape);
+		const coords = myShape.getCoords();
+		let x, y;
+		for (var i = 0; i < coords.length; i++) {
+			x = coords[i].x;
+			y = coords[i].y;
+
+			// first check endpoints
+		    if (x < this.llx) {
+				this.llx = x;
+			}
+			if (x > this.urx) {
+				this.urx = x;
+			}
+			if ((this.canvasHeightInPixels - y) < this.lly) {
+				this.lly = this.canvasHeightInPixels - y;
+			}
+			if ((this.canvasHeightInPixels - y) > this.ury) {
+				this.ury = this.canvasHeightInPixels - y;
+			}
 		}
 	}
 
@@ -160,122 +191,40 @@ class boundingBox {
 
 	updateBoundsBezierHelper(shape) {
 		const myShape = new epsShape(shape);
+		const strokeWidth = myShape.getStrokeWidth()/2;
 		const coords = myShape.getCoords();
 		const controlPoints = myShape.getControlPoints();
-		const strokeWidth = myShape.getStrokeWidth()/2;
-		const numPoints = myShape.getParams().numPoints;
+		const points = coords;
 
-		if (!coords.hasOwnProperty(0)) {
-			return;
+		var i;
+		let controlPointOne, controlPointTwo;
+		for (i = 0; i < controlPoints.length; i++) {
+			controlPointOne = controlPoints[i][0];
+			controlPointTwo = controlPoints[i][1];
+			points.push(controlPointOne);
+			points.push(controlPointTwo);
 		}
 
-		for (var i = 0; i < numPoints-1; i = i + 1) {
-		    let coord1 = coords[i];
-		    let controlPointOne;
-		    let controlPointTwo;
-		    let coord2;
-		    let index;
+		console.log("logging points for bezier");
+		console.log(points);
 
-		    if (i == 0) {
-		    	index = controlPoints.length-1;
-		    	controlPointOne = controlPoints[index][1];
-		    } else {
-		    	controlPointOne = controlPoints[i-1][1];
-		    }
-	    	controlPointTwo = controlPoints[i][0];
-	    	coord2 = coords[i+1];
+		let point;
+		for (i = 0; i < points.length; i++) {
+			point = points[i];
 
-		    // first check endpoints
-		    if (coord1.x  - strokeWidth < this.llx) {
-				this.llx = coord1.x - strokeWidth;
+			if (point.x - strokeWidth < this.llx) {
+				this.llx = point.x - strokeWidth;
 			}
-			if (coord1.x + strokeWidth > this.urx) {
-				this.urx = coord1.x + strokeWidth;
+			if (this.canvasHeightInPixels - point.y - strokeWidth < this.lly) {
+				this.lly = this.canvasHeightInPixels - point.y - strokeWidth;
 			}
-			if ((this.canvasHeightInPixels - coord1.y - strokeWidth) < this.lly) {
-				this.lly = this.canvasHeightInPixels - coord1.y - strokeWidth;
+			if (point.x + strokeWidth > this.urx) {
+				this.urx = point.x + strokeWidth;
 			}
-			if ((this.canvasHeightInPixels - coord1.y + strokeWidth) > this.ury) {
-				this.ury = this.canvasHeightInPixels - coord1.y + strokeWidth;
+			if (this.canvasHeightInPixels - point.y + strokeWidth > this.ury) {
+				this.ury = this.canvasHeightInPixels - point.y + strokeWidth;
 			}
-
-		    // x extrema
-		    let v1 = math.multiply(math.bignumber(3),math.subtract(math.bignumber(controlPointTwo.x),math.bignumber(controlPointOne.x)));
-		    let v2 = math.multiply(math.bignumber(3),math.subtract(math.bignumber(coord2.x),math.bignumber(controlPointTwo.x)));
-		    let v3 = math.multiply(math.bignumber(3),math.subtract(math.bignumber(controlPointTwo.x),math.bignumber(controlPointOne.x)));
-
-		    let a = math.subtract(math.add(v1,v3),math.multiply(math.bignumber(2),v2));
-		    let b = math.multiply(math.bignumber(2), math.subtract(v2,v1));
-		    let c = v1;
-
-		    if ( math.smaller( math.subtract (math.pow(b,math.bignumber(2)),math.multiply(math.bignumber(4),a,c) ),0) ) {
-		    	continue;
-		    }
-
-			let helperTerm = math.sqrt(math.subtract(math.pow(b,math.bignumber(2)), math.multiply(math.bignumber(4),a,c)));
-
-			let firstPotentialT = math.divide(math.add(math.multiply(math.bignumber(-1),b), helperTerm), math.multiply(math.bignumber(2),a));
-			let secondPotentialT = math.divide(math.subtract(math.multiply(math.bignumber(-1),b), helperTerm), math.multiply(math.bignumber(2),a));
-
-			// make sure a value of t lies between 0 and 1
-			let tExtremum = firstPotentialT;
-			if (math.smaller(tExtremum,0) || math.larger(tExtremum,1)) {
-				if (math.smaller(secondPotentialT,0) || math.larger(secondPotentialT,1)) {
-					continue;
-				} else {
-					tExtremum = secondPotentialT;
-				}
-			}
-
-			// plug value of t back into the equation
-			let x = math.add(math.multiply(math.pow(math.subtract(math.bignumber(1),tExtremum),math.bignumber(3)),math.bignumber(coord1.x)),math.multiply(math.bignumber(3),math.pow(math.subtract(math.bignumber(1),tExtremum),math.bignumber(2)),tExtremum,math.bignumber(controlPointOne.x)),math.multiply(math.bignumber(3),math.subtract(math.bignumber(1),tExtremum),math.pow(tExtremum,math.bignumber(2)),math.bignumber(controlPointTwo.x)),math.multiply(math.pow(tExtremum,math.bignumber(3)),math.bignumber(coord2.x)));
-
-			// // y extrema
-		 //    a = math.add(math.subtract(math.multiply(3,math.subtract(controlPointOne.y, coord1.y)), math.subtract(controlPointTwo.y, controlPointOne.y)), math.multiply(3, math.subtract(coord2.y, controlPointTwo.y)));
-		 //    b = math.multiply(6,math.subtract(math.subtract(controlPointTwo.y, controlPointOne.y), math.subtract(controlPointOne.y, coord1.y)));
-			// c = math.multiply(3, math.subtract(controlPointOne.y, coord1.y));
-
-			// helperTerm = math.sqrt(math.subtract(math.pow(b,2), math.multiply(4,a,c)));
-
-			// firstPotentialT = math.divide(math.add(math.multiply(-1,b), helperTerm), math.multiply(2,a));
-			// secondPotentialT = math.divide(math.subtract(math.multiply(-1,b), helperTerm), math.multiply(2,a));
-			
-			// console.log("logging firstPotentialT, secondPotentialT for y");
-			// console.log(firstPotentialT);
-			// console.log(secondPotentialT);
-
-			// // plug appropriate value of t back into equation
-
-			// // make sure a value of t lies between 0 and 1
-			// tExtremum = firstPotentialT;
-			// if (tExtremum < 0 || tExtremum > 1) {
-			// 	if (secondPotentialT < 0 || secondPotentialT > 1) {
-			// 		return;
-			// 	} else {
-			// 		tExtremum = secondPotentialT;
-			// 	}
-			// }
-			// let y = math.add(math.multiply(math.pow(math.subtract(1,tExtremum),3),coord1.y),math.multiply(3,math.pow(math.subtract(1,tExtremum),2),tExtremum,controlPointOne.y),math.multiply(3,math.subtract(1,tExtremum),math.pow(tExtremum,2),controlPointTwo.y),math.multiply(math.pow(tExtremum,3),coord2.y));
-
-			// now check extrema
-		    if (x  - strokeWidth < this.llx) {
-				this.llx = x - strokeWidth;
-			}
-			if (x + strokeWidth > this.urx) {
-				this.urx = x + strokeWidth;
-			}
-			// if ((this.canvasHeightInPixels - y - strokeWidth) < this.lly) {
-			// 	this.lly = this.canvasHeightInPixels - y - strokeWidth;
-			// }
-			// if ((this.canvasHeightInPixels - y + strokeWidth) > this.ury) {
-			// 	this.ury = this.canvasHeightInPixels - y + strokeWidth;
-			// }
-
-			console.log("printing x for bezier curve");
-			console.log(math.number(x));
-			// console.log(y);
 		}
-		return;
 	}
 
 	updateBoundsRectangle(shape) {
@@ -285,50 +234,150 @@ class boundingBox {
 
 		let lastIndex = coords.length-1;
 		for (var i=0; i < lastIndex; i++) {
-			this.updateBoundsRectangleHelper(coords[i], coords[i+1], strokeWidth);
+			this.updateBoundsRectangleHelper(coords[i], coords[i+1], strokeWidth, true);
 		}
-		this.updateBoundsRectangleHelper(coords[lastIndex], coords[0], strokeWidth);
+		this.updateBoundsRectangleHelper(coords[lastIndex], coords[0], strokeWidth, true);
 	}
 
 
-	updateBoundsRectangleHelper(point1, point2, strokeWidth) {
+	updateBoundsRectangleHelper(point1, point2, strokeWidth, partOfRectangle) {
+		console.log("entered updateBoundsRectangleHelper");
 		var halfStrokeWidth = math.divide(math.bignumber(strokeWidth),math.bignumber(2));
 		var baseAdjacent = math.subtract(math.bignumber(point2.x), math.bignumber(point1.x));
 		var baseOpposite = math.subtract(math.bignumber(point2.y), math.bignumber(point1.y));
 		var lineAngle = math.atan2(baseOpposite, baseAdjacent);
-		var angle = math.subtract(math.divide(math.pi,4),lineAngle);
 
-		var smallHypotenuseLength = math.multiply(math.sqrt(math.bignumber(2)),halfStrokeWidth);
-		var smallHypotenuseAngle = math.subtract(lineAngle,math.divide(math.pi,4));
+		var angle, hypotenuseLength, xDiff, yDiff;
 
-		var adjacent = math.abs(math.multiply(math.cos(smallHypotenuseAngle),smallHypotenuseLength));
-		var opposite = math.abs(math.multiply(math.sin(smallHypotenuseAngle),smallHypotenuseLength));
-		
-		// compute boundaries of one end of the line
-		if (math.smaller(math.subtract(math.bignumber(point1.x),adjacent),math.bignumber(this.llx))) {
-			this.llx = math.number(math.subtract(math.bignumber(point1.x),adjacent));
-		}
+		if (partOfRectangle) {
+			angle = math.subtract(lineAngle, math.divide(math.pi,math.bignumber(4)));
+			hypotenuseLength = math.multiply(math.sqrt(math.bignumber(2)),halfStrokeWidth);
+			xDiff = math.multiply(hypotenuseLength,math.cos(angle));
+			yDiff = math.multiply(hypotenuseLength,math.sin(angle));
 
-		if (math.smaller(math.subtract(this.canvasHeightInPixels,math.add(math.bignumber(point1.y),opposite)),math.bignumber(this.lly))) {
-			this.lly = math.number(math.subtract(this.canvasHeightInPixels,math.add(math.bignumber(point1.y),opposite)));
-		}
+			var newPointX = math.add(math.bignumber(point2.x),xDiff);
+			var newPointY = math.add(math.bignumber(point2.y), yDiff);
 
-		if (math.larger(math.add(math.bignumber(point2.x),adjacent),math.bignumber(this.urx))) {
-			this.urx = math.number(math.add(math.bignumber(point2.x),adjacent));
-		}
+			if (math.smaller(newPointX, math.bignumber(this.llx))) {
+				this.llx = math.number(newPointX);
+			}
 
-		if (math.larger(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(point2.y),opposite)),math.bignumber(this.ury))) {
-			this.ury = math.number(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(point2.y),opposite)));
+			if (math.smaller(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY),math.bignumber(this.lly))) {
+				this.lly = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY));
+			}
+
+			if (math.larger(newPointX, math.bignumber(this.urx))) {
+				this.urx = math.number(newPointX);
+			}
+
+			if (math.larger(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY),math.bignumber(this.ury))) {
+				this.ury = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY));
+			}
+
+
+		} else {
+			angle = math.add(lineAngle, math.divide(math.pi,math.bignumber(2)));
+			hypotenuseLength = halfStrokeWidth;
+			xDiff = math.multiply(hypotenuseLength,math.cos(angle));
+			yDiff = math.multiply(hypotenuseLength,math.sin(angle));
+
+			var newPointOneFirstX = math.add(math.bignumber(point1.x),xDiff);
+			var newPointOneFirstY = math.add(math.bignumber(point1.y), yDiff);
+
+			if (math.smaller(newPointOneFirstX, math.bignumber(this.llx))) {
+				this.llx = math.number(newPointOneFirstX);
+			}
+
+			if (math.smaller(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneFirstY),math.bignumber(this.lly))) {
+				this.lly = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneFirstY));
+			}
+
+			if (math.larger(newPointOneFirstX, math.bignumber(this.urx))) {
+				this.urx = math.number(newPointOneFirstX);
+			}
+
+			if (math.larger(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneFirstY),math.bignumber(this.ury))) {
+				this.ury = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneFirstY));
+			}
+
+			var newPointOneSecondX = math.subtract(math.bignumber(point1.x),xDiff);
+			var newPointOneSecondY = math.subtract(math.bignumber(point1.y), yDiff);
+
+			if (math.smaller(newPointOneSecondX, math.bignumber(this.llx))) {
+				this.llx = math.number(newPointOneSecondX);
+			}
+
+			if (math.smaller(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneSecondY),math.bignumber(this.lly))) {
+				this.lly = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneSecondY));
+			}
+
+			if (math.larger(newPointOneSecondX, math.bignumber(this.urx))) {
+				this.urx = math.number(newPointOneSecondX);
+			}
+
+			if (math.larger(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneSecondY),math.bignumber(this.ury))) {
+				this.ury = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointOneSecondY));
+			}
+
+			var newPointTwoFirstX = math.add(math.bignumber(point2.x),xDiff);
+			var newPointTwoFirstY = math.add(math.bignumber(point2.y), yDiff);
+
+			if (math.smaller(newPointTwoFirstX, math.bignumber(this.llx))) {
+				this.llx = math.number(newPointTwoFirstX);
+			}
+
+			if (math.smaller(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoFirstY),math.bignumber(this.lly))) {
+				this.lly = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoFirstY));
+			}
+
+			if (math.larger(newPointTwoFirstX, math.bignumber(this.urx))) {
+				this.urx = math.number(newPointTwoFirstX);
+			}
+
+			if (math.larger(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoFirstY),math.bignumber(this.ury))) {
+				this.ury = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoFirstY));
+			}
+
+			var newPointTwoSecondX = math.subtract(math.bignumber(point2.x),xDiff);
+			var newPointTwoSecondY = math.subtract(math.bignumber(point2.y), yDiff);
+
+			if (math.smaller(newPointTwoSecondX, math.bignumber(this.llx))) {
+				this.llx = math.number(newPointTwoSecondX);
+			}
+
+			if (math.smaller(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoSecondY),math.bignumber(this.lly))) {
+				this.lly = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoSecondY));
+			}
+
+			if (math.larger(newPointTwoSecondX, math.bignumber(this.urx))) {
+				this.urx = math.number(newPointTwoSecondX);
+			}
+
+			if (math.larger(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoSecondY),math.bignumber(this.ury))) {
+				this.ury = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointTwoSecondY));
+			}
 		}
 	}
 
-	updateBoundsLine(shape) {
-		return;
+	updateBoundsFreehandPath(shape) {
 		var myShape = new epsShape(shape);
 		var coords = myShape.getCoords();
 		var strokeWidth = myShape.getStrokeWidth();
 
-		this.updateBoundsLineHelper(coords[0], coords[1], strokeWidth);
+		let coord1, coord2;
+		for (var i = 0; i < coords.length-1; i++) {
+			coord1 = coords[i];
+			coord2 = coords[i+1];
+			this.updateBoundsRectangleHelper(coord1,coord2,strokeWidth,false);
+		}
+	}
+
+	updateBoundsLine(shape) {
+		var myShape = new epsShape(shape);
+		var coords = myShape.getCoords();
+		var strokeWidth = myShape.getStrokeWidth();
+
+		this.updateBoundsRectangleHelper(coords[0], coords[1], strokeWidth, false);
 	}
 
 	updateBoundsEllipseHelper(shape) {
@@ -376,11 +425,22 @@ class boundingBox {
 		var coords = myShape.getCoords();
 		var halfStrokeWidth = math.divide(myShape.getStrokeWidth(),math.bignumber(2));
 
+		let index, secondIndex, thirdIndex;
+		let pointOne, pointTwo, pointThree;
+		let vectorOne, vectorTwo, dotProduct;
+		let vectorOneLength, vectorTwoLength;
+		let cosOmega, omega;
+		let vLength;
+		let dx, dy;
+		let theta, phi;
+		let xDiff, yDiff;
+		let newPointX, newPointY;
+
 		for (var i=0; i < coords.length-1; i++) {
 			// we need three points to determine angles
-			let index = i;
-			let secondIndex = i+1;
-			let thirdIndex = i+2;
+			index = i;
+			secondIndex = i+1;
+			thirdIndex = i+2;
 
 			// wrap around
 			if (index == coords.length-3) {
@@ -391,47 +451,103 @@ class boundingBox {
 				thirdIndex = 1;
 			}
 
-			let pointOne = coords[index];
-			let pointTwo = coords[secondIndex];
-			let pointThree = coords[thirdIndex];
+			pointOne = coords[index];
+			pointTwo = coords[secondIndex];
+			pointThree = coords[thirdIndex];
 
-			// this is all to get the angle between the two vectors
-			// first we get the length of the vectors
-			let vectorOneLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(pointOne.x),math.bignumber(pointTwo.x)),math.bignumber(2)),math.pow(math.subtract(math.bignumber(pointOne.y),math.bignumber(pointTwo.y)),math.bignumber(2))));
-			let vectorTwoLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(pointTwo.x),math.bignumber(pointThree.x)),math.bignumber(2)),math.pow(math.subtract(math.bignumber(pointTwo.y),math.bignumber(pointThree.y)),math.bignumber(2))));
-			// then we normalize the vectors (both originating at pointTwo)
-			let vectorOne = [math.divide(math.subtract(math.bignumber(pointOne.x),math.bignumber(pointTwo.x)),vectorOneLength), math.divide(math.subtract(math.bignumber(pointOne.y),math.bignumber(pointTwo.y)),vectorOneLength)];
-			let vectorTwo = [math.divide(math.subtract(math.bignumber(pointThree.x),math.bignumber(pointTwo.x)),vectorTwoLength), math.divide(math.subtract(math.bignumber(pointThree.y),math.bignumber(pointTwo.y)),vectorTwoLength)];
-			// and get the angle between the vectors
-			let cosAngle = math.add(math.multiply(vectorOne[0],vectorTwo[0]),math.multiply(vectorOne[1],vectorTwo[1]));
-			let angle = math.acos(cosAngle);
-
-			// this is gathering other data we need
-			let middleLineLength = math.divide(halfStrokeWidth,math.sin(math.divide(angle,math.bignumber(2))));
-			let theta = math.asec(vectorOneLength);
-			// check to make sure the angle isn't pi/2
-			if (undefined === theta) {
-				theta = math.divide(math.pi,math.bignumber(2));
+			// check to see if we can ignore this corner
+			if (pointTwo.x >= pointOne.x && pointThree.x >= pointTwo.x) {
+				if ((pointTwo.y >= pointOne.y && pointThree.y >= pointTwo.y) || (pointTwo.y <= pointOne.y && pointThree.y <= pointTwo.y)) {
+					continue;
+				}
+			}
+			if (pointTwo.x <= pointOne.x && pointThree.x <= pointTwo.x) {
+				if ((pointTwo.y >= pointOne.y && pointThree.y >= pointTwo.y) || (pointTwo.y <= pointOne.y && pointThree.y <= pointTwo.y)) {
+					continue;
+				}
 			}
 
-			// now we get the values to check
-			let phi = math.subtract(theta,math.divide(angle,math.bignumber(2)));
-			let horizontal = math.abs(math.multiply(middleLineLength,math.sin(phi)));
-			let vertical = math.abs(math.multiply(middleLineLength,math.cos(phi)));
+			vectorOneLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(pointTwo.x),math.bignumber(pointOne.x)),math.bignumber(2)),math.pow(math.subtract(math.bignumber(pointTwo.y),math.bignumber(pointOne.y)),math.bignumber(2))));
+			vectorTwoLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(pointThree.x),math.bignumber(pointTwo.x)),math.bignumber(2)),math.pow(math.subtract(math.bignumber(pointThree.y),math.bignumber(pointTwo.y)),math.bignumber(2))));
+			dotProduct = math.add(math.multiply(math.subtract(math.bignumber(pointOne.x),math.bignumber(pointTwo.x)),math.subtract(math.bignumber(pointThree.x),math.bignumber(pointTwo.x))),math.multiply(math.subtract(math.bignumber(pointOne.y),math.bignumber(pointTwo.y)),math.subtract(math.bignumber(pointThree.y),math.bignumber(pointTwo.y))));
+
+			cosOmega = math.divide(dotProduct,math.multiply(vectorOneLength,vectorTwoLength));
+			omega = math.acos(cosOmega);
+			console.log("logging omega");
+			console.log(math.number(omega));
+
+			vLength = math.multiply(halfStrokeWidth,math.csc(math.divide(omega,math.bignumber(2))));
+			console.log("logging vLength");
+			console.log(math.number(vLength));
+
+			dx = math.subtract(math.bignumber(pointTwo.x), math.bignumber(pointOne.x));
+			dy = math.subtract(math.bignumber(pointTwo.y), math.bignumber(pointOne.y));
+			theta = math.atan2(dy,dx);
+			console.log("logging theta");
+			console.log(math.number(theta));
+			phi = math.add(theta,math.divide(omega,math.bignumber(2)));
+			console.log("logging phi");
+			console.log(math.number(phi));
+
+			xDiff = math.multiply(math.cos(phi),vLength);
+			yDiff = math.multiply(math.sin(phi),vLength);
+
+			newPointX = math.add(math.bignumber(pointTwo.x),xDiff);
+			newPointY = math.add(math.bignumber(pointTwo.y), yDiff);
+
+			if (math.smaller(newPointX, math.bignumber(this.llx))) {
+				this.llx = math.number(newPointX);
+			}
+
+			if (math.smaller(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY),math.bignumber(this.lly))) {
+				this.lly = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY));
+			}
+
+			if (math.larger(newPointX, math.bignumber(this.urx))) {
+				this.urx = math.number(newPointX);
+			}
+
+			if (math.larger(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY),math.bignumber(this.ury))) {
+				this.ury = math.number(math.subtract(math.bignumber(this.canvasHeightInPixels),newPointY));
+			}
+
+			// // this is all to get the angle between the two vectors
+			// // first we get the length of the vectors
+			// let vectorOneLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(pointOne.x),math.bignumber(pointTwo.x)),math.bignumber(2)),math.pow(math.subtract(math.bignumber(pointOne.y),math.bignumber(pointTwo.y)),math.bignumber(2))));
+			// let vectorTwoLength = math.sqrt(math.add(math.pow(math.subtract(math.bignumber(pointTwo.x),math.bignumber(pointThree.x)),math.bignumber(2)),math.pow(math.subtract(math.bignumber(pointTwo.y),math.bignumber(pointThree.y)),math.bignumber(2))));
+			// // then we normalize the vectors (both originating at pointTwo)
+			// let vectorOne = [math.divide(math.subtract(math.bignumber(pointOne.x),math.bignumber(pointTwo.x)),vectorOneLength), math.divide(math.subtract(math.bignumber(pointOne.y),math.bignumber(pointTwo.y)),vectorOneLength)];
+			// let vectorTwo = [math.divide(math.subtract(math.bignumber(pointThree.x),math.bignumber(pointTwo.x)),vectorTwoLength), math.divide(math.subtract(math.bignumber(pointThree.y),math.bignumber(pointTwo.y)),vectorTwoLength)];
+			// // and get the angle between the vectors
+			// let cosAngle = math.add(math.multiply(vectorOne[0],vectorTwo[0]),math.multiply(vectorOne[1],vectorTwo[1]));
+			// let angle = math.acos(cosAngle);
+
+			// // this is gathering other data we need
+			// let middleLineLength = math.divide(halfStrokeWidth,math.sin(math.divide(angle,math.bignumber(2))));
+			// let theta = math.asec(vectorOneLength);
+			// // check to make sure the angle isn't pi/2
+			// if (undefined === theta) {
+			// 	theta = math.divide(math.pi,math.bignumber(2));
+			// }
+
+			// // now we get the values to check
+			// let phi = math.subtract(theta,math.divide(angle,math.bignumber(2)));
+			// let horizontal = math.abs(math.multiply(middleLineLength,math.sin(phi)));
+			// let vertical = math.abs(math.multiply(middleLineLength,math.cos(phi)));
 
 
-			if (math.smaller(math.subtract(math.bignumber(pointTwo.x),horizontal),math.bignumber(this.llx))) {
-				this.llx = math.number(math.subtract(math.bignumber(pointTwo.x),horizontal));
-			}
-			if (math.smaller(math.subtract(this.canvasHeightInPixels,math.add(math.bignumber(pointTwo.y),vertical)),math.bignumber(this.lly))) {
-				this.lly = math.number(math.subtract(this.canvasHeightInPixels,math.add(math.bignumber(pointTwo.y),vertical)));
-			}
-			if (math.larger(math.add(math.bignumber(pointTwo.x),horizontal),math.bignumber(this.urx))) {
-				this.urx = math.number(math.add(math.bignumber(pointTwo.x),horizontal));
-			}
-			if (math.larger(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(pointTwo.y),vertical)),math.bignumber(this.ury))) {
-				this.ury = math.number(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(pointTwo.y),vertical)));
-			}
+			// if (math.smaller(math.subtract(math.bignumber(pointTwo.x),horizontal),math.bignumber(this.llx))) {
+			// 	this.llx = math.number(math.subtract(math.bignumber(pointTwo.x),horizontal));
+			// }
+			// if (math.smaller(math.subtract(this.canvasHeightInPixels,math.add(math.bignumber(pointTwo.y),vertical)),math.bignumber(this.lly))) {
+			// 	this.lly = math.number(math.subtract(this.canvasHeightInPixels,math.add(math.bignumber(pointTwo.y),vertical)));
+			// }
+			// if (math.larger(math.add(math.bignumber(pointTwo.x),horizontal),math.bignumber(this.urx))) {
+			// 	this.urx = math.number(math.add(math.bignumber(pointTwo.x),horizontal));
+			// }
+			// if (math.larger(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(pointTwo.y),vertical)),math.bignumber(this.ury))) {
+			// 	this.ury = math.number(math.subtract(this.canvasHeightInPixels,math.subtract(math.bignumber(pointTwo.y),vertical)));
+			// }
 		}
 	}
 
