@@ -24,22 +24,17 @@ const template = [
                     let win = BrowserWindow.getFocusedWindow();
                     if (win == null) return;
                     dialog.showSaveDialog(function(filename) {
-                        if (filename === undefined) {
-                            return;
-                        } else {
-
-                            win.webContents.send('file-save', 'writing to file');
-                            ipcMain.on('file-save', (event, stateString) => {
-                                fs.writeFile(filename, stateString, (err) => {
-                                    if (err) {
-                                        let message = "An error ocurred creating the file " + err.message;
-                                        win.webContents.send('error', message);
-                                    } else {
-                                        win.webContents.send('alert', 'The file has been successfully saved');
-                                    }
-                                });
+                        win.webContents.send('file-save', 'writing to file');
+                        ipcMain.on('file-save', (event, stateString) => {
+                            fs.writeFile(filename, stateString, (err) => {
+                                if (err) {
+                                    let message = "An error ocurred creating the file " + err.message;
+                                    win.webContents.send('error', message);
+                                } else {
+                                    win.webContents.send('alert', 'The file has been successfully saved');
+                                }
                             });
-                        }
+                        });
                     });
                 }
             },
