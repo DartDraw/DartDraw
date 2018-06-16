@@ -1,4 +1,6 @@
 const electron = require('electron');
+const isDev = require('electron-is-dev');
+const path = require('path');
 
 // Module to control application life.
 const app = electron.app;
@@ -135,12 +137,12 @@ let windows = [];
 
 function createWindow() {
     // Create the browser window.
-    let win = new BrowserWindow({width: 1200, height: 1000, minWidth: 500, minHeight: 300});
+    let win = new BrowserWindow({width: 1200, height: 1000, minWidth: 500, minHeight: 300, "web-preferences": { "web-security": false }});
     windows.push(win);
     win.focus();
 
     // and load the index.html of the app.
-    win.loadURL('http://localhost:3000');
+    win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
 
     // Emitted when the window is closed.
     win.on('closed', function() {
