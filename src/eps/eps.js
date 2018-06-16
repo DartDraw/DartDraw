@@ -1,20 +1,66 @@
 import epsShape from './epsShape';
+import epsLine from './epsLine';
+import epsArrow from './epsArrow';
 import boundingBox from './boundingBox';
+import { deepCopy } from '../reducers/utilities/object'
 
 export function generateEps(stateCopy) {
-	console.log("made it to export/exportEps");
+	console.log("attempting to log special character");
+	console.log("test↵ing");
+	console.log("\r");
+
+	console.log("logging stateCopy");
+	console.log(stateCopy);
 	var drawing = '';
-	var myBoundingBox = new boundingBox(stateCopy.canvasHeight);
+	var myBoundingBox = new boundingBox(stateCopy.canvasHeight, stateCopy.canvasWidth);
 
 	for (var i = 0; i < stateCopy.shapes.allIds.length; i++) {
 		var id = stateCopy.shapes.allIds[i];
-		console.log(id);
 		var shape = stateCopy.shapes.byId[id];
+		var myShape;
 
-		var myShape = new epsShape(shape);
+		if (shape.type === "line") {
+			let lineCopy = deepCopy(shape);
+			let linePoints = shape.points;
+			let arrowHead = stateCopy.shapes.arrows.byId[lineCopy.arrowHeadId];
+			let arrowTail = stateCopy.shapes.arrows.byId[lineCopy.arrowTailId];
+
+			if (shape.arrowHeadShown) {
+				let arrowHeadShape = new epsArrow(arrowHead, true, linePoints);
+				let data = arrowHeadShape.produceEps(stateCopy.canvasHeight);
+				drawing = drawing + data.drawing;
+				lineCopy.points[2] = data.endPoint.x;
+				lineCopy.points[3] = data.endPoint.y;
+				console.log(arrowHeadShape);
+				myBoundingBox.updateBoundsIfNecessary(arrowHeadShape);
+			}
+
+			if (shape.arrowTailShown) {
+				let arrowTailShape = new epsArrow(arrowTail, false, linePoints);
+				let data = arrowTailShape.produceEps(stateCopy.canvasHeight);
+				drawing = drawing + data.drawing;
+				lineCopy.points[0] = data.endPoint.x;
+				lineCopy.points[1] = data.endPoint.y;
+				myBoundingBox.updateBoundsIfNecessary(arrowTailShape);
+			}
+			var myShape = new epsShape(lineCopy);
+		} else {
+			var myShape = new epsShape(shape);
+		}
+
 		drawing = drawing + myShape.produceEps(stateCopy.canvasHeight);
 		myBoundingBox.updateBoundsIfNecessary(shape);
 	}
+
+	// for (var i = 0; i < stateCopy.shapes.arrows.allIds.length; i++) {
+	// 	var arrowID = stateCopy.shapes.arrows.allIds[i];
+	// 	var arrow = stateCopy.shapes.arrows.byId[id];
+
+	// 	var myArrow = new epsShape(arrow);
+	// 	console.log(myArrow);
+	// 	drawing = drawing + myARrow.produceEps(stateCopy.canvasHeight);
+	// 	myBoundingBox.updateBoundsIfNecessary(shape);
+	// }
 
 	var epsTemplate = 
 `%!PS-Adobe-3.0 EPSF-3.0
@@ -54,12 +100,15 @@ ${drawing}
 	const dialog = window.require('electron').remote.dialog;
 	const fs = window.require('fs');
 	dialog.showSaveDialog(function (filename) {
-		fs.writeFile(filename, epsTemplate, (err) => {
-		    if(err){
-		        alert("An error ocurred creating the file "+ err.message)
-		    }
-		                
-		    alert("The file has been succesfully saved");
-		});
+		if (filename === undefined) {
+			return
+		} else {
+			fs.writeFile(filename, epsTemplate, (err) => {
+			    if(err){
+			        alert("An error ocurred creating the file "+ err.message)
+			    }      
+			    alert("The file has been succesfully saved");
+			});
+		}
 	});
 }

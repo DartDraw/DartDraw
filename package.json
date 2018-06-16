@@ -28,6 +28,7 @@
     "fsevents": "^1.2.4",
     "jsondiffpatch": "0.2.4",
     "lodash": "^4.17.5",
+    "mathjs": "^4.2.2",
     "react": "15.6.1",
     "react-color": "2.13.8",
     "react-color-picker": "^4.0.2",
